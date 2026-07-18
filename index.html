@@ -288,6 +288,22 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 .next-steps b{color:var(--ink)}
 
 
+
+/* planes */
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;align-items:stretch}
+.plan-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:1.9rem 1.7rem;display:flex;flex-direction:column;box-shadow:var(--shadow);position:relative}
+.plan-card.featured{border:2px solid transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--grad) border-box;box-shadow:var(--shadow-lg)}
+.plan-badge{position:absolute;top:-.85rem;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.07em;padding:.32rem .95rem;border-radius:999px;white-space:nowrap}
+.plan-name{font-family:var(--display);font-size:1.25rem;font-weight:700;color:var(--navy)}
+.plan-goal{font-size:.84rem;color:var(--brand-strong);font-weight:700;margin:.15rem 0 .9rem}
+.plan-price{font-family:var(--display);font-size:2rem;font-weight:800;color:var(--ink);line-height:1}
+.plan-price span{font-size:.82rem;color:var(--muted);font-weight:500}
+.plan-feats{list-style:none;margin:1.2rem 0 1.5rem;display:flex;flex-direction:column;gap:.55rem;flex:1}
+.plan-feats li{display:flex;gap:.55rem;font-size:.88rem;color:var(--muted);align-items:flex-start}
+.plan-feats li::before{content:"✓";color:var(--green);font-weight:800;flex-shrink:0}
+.plan-feats li.plus::before{content:"★";color:var(--brand-strong)}
+.plan-note{font-size:.78rem;color:var(--faint);margin-top:.9rem;text-align:center}
+.plan-card .btn{justify-content:center}
 /* demo + análisis real */
 .demo-banner{display:flex;gap:.6rem;align-items:flex-start;background:var(--amber-bg);border:1px solid var(--amber-line);color:#7d5c10;font-size:.87rem;border-radius:12px;padding:.75rem 1rem;margin-bottom:1.4rem}
 .real-cta{background:var(--grad);border-radius:20px;padding:1.8rem 2rem;color:#fff;margin-top:1.4rem;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;flex-wrap:wrap;box-shadow:var(--shadow-lg)}
@@ -300,6 +316,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   .hero{grid-template-columns:1fr;padding-top:2rem;gap:2.5rem}
   .problem{grid-template-columns:1fr;padding:2.5rem 1.6rem}
   .steps{grid-template-columns:1fr}
+  .plans-grid{grid-template-columns:1fr}
   .benefits{grid-template-columns:1fr}
   .req-cols,.two-col,.adapt-grid{grid-template-columns:1fr}
   .compat-hero{grid-template-columns:1fr;justify-items:center;text-align:center}
@@ -321,6 +338,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     <div class="nav-links">
       <a href="#como-funciona">Cómo funciona</a>
       <a href="#beneficios">Beneficios</a>
+      <a href="#planes">Planes</a>
       <button class="btn btn-primary" onclick="startApp()">Probar la demo</button>
     </div>
   </nav>
@@ -340,14 +358,14 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <span class="demo-float">Análisis Workea</span>
       <div class="dc-head">
         <div>
-          <h3>Talent Acquisition Specialist IT</h3>
-          <p>NovaTech Solutions · Santiago, híbrido</p>
+          <h3>Analista de Marketing Digital</h3>
+          <p>TiendaViva (e-commerce) · Santiago, híbrido</p>
         </div>
-        <span class="dc-badge">Compatibilidad 74%</span>
+        <span class="dc-badge">Compatibilidad 72%</span>
       </div>
-      <div class="dc-row"><span class="dc-dot" style="background:var(--green)"></span><p><b>Coincide:</b> gestión de ciclo completo de selección y entrevistas por competencias.</p></div>
-      <div class="dc-row"><span class="dc-dot" style="background:var(--amber)"></span><p><b>Mejorable:</b> tu experiencia con perfiles digitales existe, pero no se detalla en el CV.</p></div>
-      <div class="dc-row"><span class="dc-dot" style="background:var(--red)"></span><p><b>No se identifica:</b> manejo de LinkedIn Recruiter.</p></div>
+      <div class="dc-row"><span class="dc-dot" style="background:var(--green)"></span><p><b>Coincide:</b> campañas en redes sociales y email marketing con resultados de venta.</p></div>
+      <div class="dc-row"><span class="dc-dot" style="background:var(--amber)"></span><p><b>Mejorable:</b> tu experiencia vendiendo online existe, pero tu CV no la llama "e-commerce".</p></div>
+      <div class="dc-row"><span class="dc-dot" style="background:var(--red)"></span><p><b>No se identifica:</b> Google Ads ni Google Analytics.</p></div>
       <div class="dc-reading"><b>Lectura Workea:</b> postula, pero ajusta tu presentación. Tu experiencia es pertinente; tu CV aún no la comunica del todo.</div>
     </div>
   </header>
@@ -399,6 +417,89 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <div class="benefit"><div class="b-ico">💬</div><div><h4>Explicaciones, no solo números</h4><p>Cada resultado viene con el porqué: qué coincide, qué falta comunicar y qué preparar.</p></div></div>
       <div class="benefit"><div class="b-ico">✍️</div><div><h4>Mejora tu CV sin inventar nada</h4><p>Las recomendaciones se basan solo en tu experiencia real. Nada de keyword stuffing.</p></div></div>
       <div class="benefit"><div class="b-ico">🎤</div><div><h4>Llega preparado a la entrevista</h4><p>Preguntas probables, qué evalúa cada una y qué deberías tener listo para responder.</p></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="planes" style="padding-top:0">
+    <div class="section-head">
+      <h2>Elige el nivel de análisis que necesitas</h2>
+      <p>No todos los candidatos necesitan el mismo nivel de orientación. Todos los Informes Workea tienen un mismo objetivo: ayudarte a tomar mejores decisiones antes de postular. La diferencia está en la profundidad del análisis y el nivel de estrategia que recibirás.</p>
+    </div>
+    <div class="plans-grid">
+
+      <div class="plan-card">
+        <p class="plan-name">🩵 Informe Workea Esencial</p>
+        <p class="plan-goal">¿Vale la pena postular a esta oferta?</p>
+        <p class="plan-price">Gratis</p>
+        <ul class="plan-feats">
+          <li>Análisis de 1 CV y 1 oferta laboral</li>
+          <li>WorkScore: tu compatibilidad con la oferta</li>
+          <li>Principales fortalezas y oportunidades de mejora</li>
+          <li>Recomendación final: postula, ajusta antes, o esta oferta probablemente no es tu mejor opción</li>
+        </ul>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> si realmente calzas con el cargo, qué podría dejarte fuera del proceso y si vale la pena postular.</p>
+        <button class="btn btn-ghost" onclick="startApp()">Comenzar gratis</button>
+        <p class="plan-note"><a class="btn-link esencial-link" href="#" style="font-size:.8rem">Solicita tu Informe Esencial con tus datos →</a></p>
+      </div>
+
+      <div class="plan-card featured">
+        <span class="plan-badge">⭐ RECOMENDADO</span>
+        <p class="plan-name">💙 Informe Workea Estratégico</p>
+        <p class="plan-goal">¿Qué debo hacer para conseguir una entrevista?</p>
+        <p class="plan-price">$5.990 <span>/ informe</span></p>
+        <ul class="plan-feats">
+          <li>Todo lo del Informe Esencial, más:</li>
+          <li>Análisis de 1 CV y hasta 3 ofertas laborales, con comparación entre oportunidades</li>
+          <li>Análisis detallado de tu CV y de cada oferta</li>
+          <li>Palabras clave que faltan y competencias relevantes</li>
+          <li>Riesgos de descarte y experiencias que deberías destacar</li>
+          <li>Checklist antes de postular</li>
+          <li class="plus">🎯 Plan de Acción Workea: recomendaciones concretas y priorizadas. No solo sabrás qué cambiar: sabrás qué hacer primero.</li>
+        </ul>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> a qué oferta conviene postular primero, qué cambios tienen mayor impacto y cómo aumentar tus posibilidades de ser llamado a entrevista.</p>
+        <a class="btn btn-brand pro-link" href="#">Obtener Informe Estratégico →</a>
+        <p class="plan-note">Resultado inmediato con tu código de acceso</p>
+      </div>
+
+      <div class="plan-card">
+        <p class="plan-name">💜 Informe Workea Experto</p>
+        <p class="plan-goal">¿Cuál es mi mejor estrategia para encontrar trabajo?</p>
+        <p class="plan-price">$14.990 <span>/ 30 días</span></p>
+        <ul class="plan-feats">
+          <li>Todo lo del Informe Estratégico, más:</li>
+          <li>Análisis de hasta 10 ofertas laborales durante 30 días</li>
+          <li>📊 Insights Workea: habilidades más pedidas en tus ofertas, requisitos que se repiten, qué está limitando tus posibilidades</li>
+          <li>Fortalezas que hoy no estás comunicando</li>
+          <li>Riesgos y señales de alerta detectadas en las ofertas</li>
+          <li class="plus">🎯 Estrategia Workea: hoja de ruta personalizada elaborada por una especialista en selección, con acciones priorizadas para conseguir entrevistas</li>
+        </ul>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> qué cargos tienen mayor compatibilidad contigo, qué habilidades potenciar y dónde vale la pena invertir tu tiempo.</p>
+        <a class="btn btn-primary premium-link" href="#">Obtener Informe Experto →</a>
+        <p class="plan-note">Cada análisis es inmediato · tu Estrategia llega revisada por una persona real</p>
+      </div>
+
+    </div>
+
+    <div class="kw-legend" style="justify-content:center;margin-top:1.6rem;gap:1.6rem">
+      <span>🔒 Pago seguro vía Mercado Pago</span>
+      <span>👩‍💼 Estrategia Experto revisada por especialista real en selección</span>
+      <span>✨ Sin suscripciones automáticas: pagas solo lo que usas</span>
+    </div>
+
+    <div style="max-width:46rem;margin:2.8rem auto 0">
+      <h3 style="font-size:1.15rem;margin-bottom:1rem;text-align:center">Preguntas frecuentes</h3>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Cómo recibo mi Informe Estratégico?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Tras confirmar tu pago, recibes por correo tu código de acceso personal. Lo activas en la plataforma, pegas tu CV y hasta 3 ofertas, y en menos de un minuto tienes tu análisis comparado en pantalla, descargable en PDF.</p></div></div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué hace diferente al Informe Experto?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">No analiza solo una oferta: analiza tu búsqueda completa. Analizas hasta 10 ofertas durante 30 días y, al cierre, una especialista en selección con más de 5 años reclutando revisa tus patrones y elabora tu Estrategia Workea: dónde invertir tu tiempo, qué potenciar y cómo aumentar tus entrevistas. Criterio profesional, no solo más texto.</p></div></div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Tengo que suscribirme?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">No. El Esencial es gratis, el Estratégico se paga por informe y el Experto es un pago único que cubre 30 días. Sin mensualidades ni renovaciones automáticas.</p></div></div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué pasa con mi CV y mis datos?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Tu información se usa únicamente para generar tu análisis. No se comparte con empresas ni reclutadores, y puedes pedir su eliminación cuando quieras escribiendo a workea@tupartnerlaboral.cl.</p></div></div>
+      </div>
     </div>
   </section>
 
@@ -459,10 +560,16 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <label for="offerText">Contenido de la oferta</label>
           <textarea id="offerText" placeholder="Copia y pega aquí el contenido de la oferta" oninput="validateInput()"></textarea>
           <p class="hint">Incluye el cargo, los requisitos y las responsabilidades para un mejor análisis.</p>
+          <div id="extraOffers" class="hidden" style="margin-top:1rem">
+            <label for="offerText2">Oferta 2 (opcional — tu plan permite comparar hasta 3)</label>
+            <textarea id="offerText2" style="min-height:110px" placeholder="Pega aquí una segunda oferta si quieres compararlas"></textarea>
+            <label for="offerText3" style="margin-top:.8rem">Oferta 3 (opcional)</label>
+            <textarea id="offerText3" style="min-height:110px" placeholder="Pega aquí una tercera oferta"></textarea>
+          </div>
         </div>
 
         <div id="tab-file" class="tab-panel hidden">
-          <div class="dropzone" onclick="fakeFile('offer','oferta-talent-acquisition.pdf')" onkeydown="if(event.key==='Enter')fakeFile('offer','oferta-talent-acquisition.pdf')" tabindex="0" role="button">
+          <div class="dropzone" onclick="fakeFile('offer','oferta-marketing-digital.pdf')" onkeydown="if(event.key==='Enter')fakeFile('offer','oferta-marketing-digital.pdf')" tabindex="0" role="button">
             <div class="dz-ico">📄</div>
             <p>Arrastra el archivo aquí o <b>búscalo en tu equipo</b></p>
             <p class="dz-formats">PDF · PNG · JPG · máx. 10 MB</p>
@@ -520,14 +627,14 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <div class="card">
         <div class="offer-header">
           <div>
-            <h3>Talent Acquisition Specialist IT</h3>
-            <p class="company">NovaTech Solutions · Tecnología / SaaS</p>
+            <h3>Analista de Marketing Digital</h3>
+            <p class="company">TiendaViva · E-commerce / Retail</p>
           </div>
-          <span class="dc-badge" style="background:var(--brand-tint);color:var(--brand-deep);border-color:var(--brand-tint-2)">Seniority: Semi Senior</span>
+          <span class="dc-badge" style="background:var(--brand-tint);color:var(--brand-deep);border-color:var(--brand-tint-2)">Seniority: Analista</span>
         </div>
         <div class="meta-grid">
           <div class="meta-item"><span>Ubicación</span><b>Santiago, Chile</b></div>
-          <div class="meta-item"><span>Modalidad</span><b>Híbrida (3x2)</b></div>
+          <div class="meta-item"><span>Modalidad</span><b>Híbrida</b></div>
           <div class="meta-item"><span>Contrato</span><b>Indefinido</b></div>
           <div class="meta-item"><span>Jornada</span><b>Completa</b></div>
         </div>
@@ -539,19 +646,19 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <div>
             <p style="font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red);margin-bottom:.7rem">Críticos · probables filtros</p>
             <ul class="req-list">
-              <li><span class="mark crit">!</span><span>3+ años de experiencia en reclutamiento y selección de ciclo completo.</span></li>
-              <li><span class="mark crit">!</span><span>Experiencia comprobable reclutando <b>perfiles tecnológicos</b> (desarrollo, datos, QA).</span></li>
-              <li><span class="mark crit">!</span><span>Manejo de <b>LinkedIn Recruiter</b> para sourcing activo.</span></li>
-              <li><span class="mark crit">!</span><span>Inglés intermedio-avanzado (entrevistas con equipos globales).</span></li>
+              <li><span class="mark crit">!</span><span>2+ años de experiencia en marketing digital.</span></li>
+              <li><span class="mark crit">!</span><span>Gestión de campañas pagadas en <b>Meta Ads y Google Ads</b>.</span></li>
+              <li><span class="mark crit">!</span><span>Manejo de <b>Google Analytics (GA4)</b> y reportería de métricas.</span></li>
+              <li><span class="mark crit">!</span><span>Experiencia en e-commerce o venta online.</span></li>
             </ul>
           </div>
           <div>
             <p style="font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-strong);margin-bottom:.7rem">Deseables · suman valor</p>
             <ul class="req-list">
-              <li><span class="mark nice">+</span><span>Experiencia en startups o empresas SaaS de rápido crecimiento.</span></li>
-              <li><span class="mark nice">+</span><span>Uso de ATS como Greenhouse o Lever.</span></li>
-              <li><span class="mark nice">+</span><span>Sourcing técnico en comunidades (GitHub, Stack Overflow).</span></li>
-              <li><span class="mark nice">+</span><span>Certificaciones en RRHH o Talent Acquisition.</span></li>
+              <li><span class="mark nice">+</span><span>Email marketing (Mailchimp o Klaviyo).</span></li>
+              <li><span class="mark nice">+</span><span>Conocimientos básicos de SEO.</span></li>
+              <li><span class="mark nice">+</span><span>Manejo de Canva o Figma.</span></li>
+              <li><span class="mark nice">+</span><span>Certificaciones de Google o Meta.</span></li>
             </ul>
           </div>
         </div>
@@ -561,13 +668,13 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <div class="card" style="margin-top:0">
           <h3>Competencias técnicas</h3>
           <div class="pill-row">
-            <span class="pill">LinkedIn Recruiter</span><span class="pill">Sourcing booleano</span><span class="pill">ATS (Greenhouse / Lever)</span><span class="pill">Entrevistas por competencias</span><span class="pill">Hunting directo</span><span class="pill">Métricas de reclutamiento</span>
+            <span class="pill">Meta Ads</span><span class="pill">Google Ads</span><span class="pill">Google Analytics (GA4)</span><span class="pill">Email marketing</span><span class="pill">SEO</span><span class="pill">Reportería de resultados</span>
           </div>
         </div>
         <div class="card" style="margin-top:0">
           <h3>Competencias conductuales</h3>
           <div class="pill-row">
-            <span class="pill">Comunicación con hiring managers</span><span class="pill">Orientación a resultados</span><span class="pill">Autonomía</span><span class="pill">Adaptabilidad</span><span class="pill">Gestión de prioridades</span>
+            <span class="pill">Orientación a resultados</span><span class="pill">Análisis de datos</span><span class="pill">Autonomía</span><span class="pill">Trabajo con equipo comercial</span><span class="pill">Adaptabilidad</span>
           </div>
         </div>
       </div>
@@ -575,16 +682,16 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <div class="card">
         <h3>Experiencia que espera el cargo</h3>
         <div class="meta-grid" style="margin-top:0">
-          <div class="meta-item"><span>Años</span><b>3 o más</b></div>
-          <div class="meta-item"><span>Tipo</span><b>Ciclo completo de selección</b></div>
-          <div class="meta-item"><span>Industria</span><b>Tecnología (ideal)</b></div>
-          <div class="meta-item"><span>Autonomía</span><b>Media-alta</b></div>
+          <div class="meta-item"><span>Años</span><b>2 o más</b></div>
+          <div class="meta-item"><span>Tipo</span><b>Campañas de punta a punta</b></div>
+          <div class="meta-item"><span>Industria</span><b>E-commerce (ideal)</b></div>
+          <div class="meta-item"><span>Autonomía</span><b>Media</b></div>
         </div>
-        <p style="font-size:.92rem;color:var(--muted);margin-top:1rem">Responsabilidades centrales: levantar perfiles con líderes técnicos, buscar candidatos activamente, conducir entrevistas y gestionar el proceso de punta a punta.</p>
+        <p style="font-size:.92rem;color:var(--muted);margin-top:1rem">Responsabilidades centrales: planificar y ejecutar campañas, gestionar presupuesto publicitario, crear contenidos con el equipo comercial, y medir y reportar resultados de venta.</p>
       </div>
 
       <div class="note-card" style="margin-top:1.2rem">
-        <b>Lectura Workea:</b> esta oferta pesa más el <b>sourcing activo de perfiles IT</b> que la gestión administrativa. Si tu experiencia incluye búsqueda directa de candidatos tecnológicos, ese será tu mejor argumento.
+        <b>Lectura Workea:</b> esta oferta pesa más la <b>pauta pagada y la medición de resultados</b> que la creación de contenido. Si tu experiencia incluye campañas con presupuesto y números de venta, ese será tu mejor argumento.
       </div>
 
       <div class="actions split">
@@ -605,7 +712,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <button class="tab" data-cvtab="text" onclick="setCvTab('text')">📋 Pegar contenido</button>
         </div>
         <div id="cvtab-file" class="tab-panel">
-          <div class="dropzone" onclick="fakeFile('cv','CV-Fernanda-Rojas.pdf')" onkeydown="if(event.key==='Enter')fakeFile('cv','CV-Fernanda-Rojas.pdf')" tabindex="0" role="button">
+          <div class="dropzone" onclick="fakeFile('cv','CV-Camila-Torres.pdf')" onkeydown="if(event.key==='Enter')fakeFile('cv','CV-Camila-Torres.pdf')" tabindex="0" role="button">
             <div class="dz-ico">📎</div>
             <p>Arrastra tu CV aquí o <b>búscalo en tu equipo</b></p>
             <p class="dz-formats">PDF · DOCX · máx. 10 MB</p>
@@ -637,7 +744,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       </div>
 
       <div class="compat-hero">
-        <div class="ring-wrap" aria-label="Compatibilidad estimada 74 por ciento">
+        <div class="ring-wrap" aria-label="Compatibilidad estimada 72 por ciento">
           <svg width="130" height="130" viewBox="0 0 130 130">
             <circle class="ring-bg" cx="65" cy="65" r="56" fill="none" stroke-width="11"/>
             <circle class="ring-val" id="ringVal" cx="65" cy="65" r="56" fill="none" stroke-width="11" stroke-dasharray="352" stroke-dashoffset="352"/>
@@ -646,35 +753,35 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         </div>
         <div class="compat-reading">
           <p class="kicker">Compatibilidad estimada · lo que significa</p>
-          <h3>Tu experiencia presenta una buena alineación con las responsabilidades principales del cargo.</h3>
-          <p>Sin embargo, existen dos requisitos relevantes que no se identifican claramente en tu CV: el manejo de LinkedIn Recruiter y el nivel de inglés. Antes de postular, conviene revisar cómo comunicas tu experiencia con perfiles tecnológicos, que hoy aparece de forma muy general.</p>
+          <h3>Tu experiencia presenta una buena alineación con la parte creativa y de contenidos del cargo.</h3>
+          <p>Sin embargo, dos requisitos críticos no se identifican claramente en tu CV: Google Ads y Google Analytics. Además, tu experiencia vendiendo online y tus campañas promocionadas existen, pero están contadas con un lenguaje que no conecta con lo que la oferta pide medir: resultados de venta.</p>
         </div>
       </div>
 
       <div class="finding-group">
         <div class="finding-head"><span class="fh-dot" style="background:var(--green)"></span><h3>Fortalezas</h3><span class="count">3</span></div>
-        <div class="finding f-green"><b>Ciclo completo de selección</b><p>Tu experiencia gestionando procesos desde el levantamiento del perfil hasta la contratación coincide directamente con la responsabilidad central del cargo.</p></div>
-        <div class="finding f-green"><b>Entrevistas por competencias</b><p>Mencionas explícitamente el uso de entrevistas por competencias, una de las metodologías que la oferta solicita.</p></div>
-        <div class="finding f-green"><b>Relación con jefaturas y áreas cliente</b><p>Tu trabajo directo con jefaturas para definir perfiles se relaciona bien con la colaboración con hiring managers que espera el cargo.</p></div>
+        <div class="finding f-green"><b>Campañas pagadas en Meta</b><p>Tus "publicaciones promocionadas" en Instagram y Facebook son campañas de Meta Ads: coinciden con uno de los requisitos centrales, aunque tu CV las nombra de una forma que les resta valor.</p></div>
+        <div class="finding f-green"><b>Email marketing con Mailchimp</b><p>Manejas exactamente la herramienta que la oferta menciona como deseable. Es una coincidencia directa que conviene mantener visible.</p></div>
+        <div class="finding f-green"><b>Creación de contenido y manejo de marca</b><p>Tu experiencia gestionando redes para varias marcas (agencia + pyme) responde a la responsabilidad de crear contenidos junto al equipo comercial.</p></div>
       </div>
 
       <div class="finding-group">
         <div class="finding-head"><span class="fh-dot" style="background:var(--amber)"></span><h3>Oportunidades de mejora</h3><span class="count">3</span></div>
-        <div class="finding f-amber"><b>Perfiles tecnológicos: existen, pero no se detallan</b><p>Tu CV menciona "perfiles digitales y comerciales", pero no especifica qué tipo de perfiles tecnológicos trabajaste ni con qué herramientas los buscaste. Para esta oferta, ese detalle es clave.</p></div>
-        <div class="finding f-amber"><b>Sourcing sin describir</b><p>Indicas "búsqueda de candidatos", pero no cuentas cómo: canales, estrategias o volumen. La oferta valora especialmente el sourcing activo.</p></div>
-        <div class="finding f-amber"><b>Logros sin resultados visibles</b><p>Tus responsabilidades están claras, pero no aparecen resultados (tiempos de cierre, procesos completados, satisfacción de clientes internos) que respalden tu impacto.</p></div>
+        <div class="finding f-amber"><b>Tu experiencia e-commerce está escondida</b><p>Apoyaste la tienda online y la coordinación de pedidos de Dulce Sur: eso ES experiencia en venta online, pero tu CV nunca usa la palabra "e-commerce", que es un requisito crítico de la oferta.</p></div>
+        <div class="finding f-amber"><b>Resultados sin números</b><p>Tus reportes hablan de "seguidores e interacciones". Esta oferta pide resultados de venta: si tus campañas generaron pedidos, ventas o crecimiento, esos números hoy no aparecen.</p></div>
+        <div class="finding f-amber"><b>Lenguaje amateur para trabajo profesional</b><p>"Publicaciones promocionadas" y "envío de correos" describen con lenguaje casero tareas que la industria llama gestión de campañas Meta Ads y email marketing. El reclutador busca esos términos.</p></div>
       </div>
 
       <div class="finding-group">
         <div class="finding-head"><span class="fh-dot" style="background:var(--red)"></span><h3>Brechas</h3><span class="count">2</span></div>
-        <div class="finding f-red"><b>LinkedIn Recruiter</b><p>Este requisito no se identifica claramente en tu CV. Mencionas LinkedIn como canal, pero no la licencia Recruiter ni sourcing avanzado. Si la has usado, es importante decirlo; si no, considera que es un requisito crítico de la oferta.</p></div>
-        <div class="finding f-red"><b>Nivel de inglés</b><p>Tu CV no menciona idiomas. La oferta pide inglés intermedio-avanzado para entrevistas con equipos globales. Si lo manejas, inclúyelo con su nivel; este dato hoy no puede evaluarse a tu favor.</p></div>
+        <div class="finding f-red"><b>Google Ads</b><p>Este requisito crítico no se identifica en tu CV. Si has hecho campañas en Google, es importante decirlo; si no, considera que probablemente funcione como filtro y prepárate para abordarlo con honestidad.</p></div>
+        <div class="finding f-red"><b>Google Analytics (GA4)</b><p>No se identifica en tu CV. La oferta lo pide para medir resultados. Si lo has usado aunque sea básico, inclúyelo con su nivel; si no, es una brecha concreta que puedes cerrar con un curso gratuito de Google.</p></div>
       </div>
 
       <div class="finding-group">
         <div class="finding-head"><span class="fh-dot" style="background:var(--faint)"></span><h3>Información insuficiente</h3><span class="count">2</span></div>
-        <div class="finding f-neutral"><b>Experiencia en industria tecnológica</b><p>Trabajaste en consultoría de RRHH, pero no es claro si tus clientes incluían empresas de tecnología. Con la información disponible, este punto no puede evaluarse.</p></div>
-        <div class="finding f-neutral"><b>Nivel de autonomía</b><p>El CV no permite estimar cuánta autonomía tuviste en tus procesos. La oferta espera autonomía media-alta; vale la pena reflejarlo si fue tu caso.</p></div>
+        <div class="finding f-neutral"><b>Presupuestos gestionados</b><p>El CV no permite saber qué montos de inversión publicitaria has manejado. La oferta incluye gestión de presupuesto; vale la pena indicarlo si fue parte de tu rol.</p></div>
+        <div class="finding f-neutral"><b>Nivel de reportería</b><p>Mencionas reportes mensuales, pero no qué medías ni con qué herramientas. Con la información disponible, este punto no puede evaluarse.</p></div>
       </div>
 
       <div class="actions split">
@@ -693,40 +800,40 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <div class="card adapt-block">
         <h3>🏷️ Titular profesional</h3>
         <div class="adapt-grid">
-          <div class="version v-current"><span class="v-tag">Tu versión actual</span>Psicóloga organizacional</div>
-          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>Especialista en Reclutamiento y Selección · 4 años en procesos de ciclo completo</div>
+          <div class="version v-current"><span class="v-tag">Tu versión actual</span>Publicista</div>
+          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>Analista de Marketing Digital · 3 años gestionando campañas, contenido y email marketing para marcas de consumo</div>
         </div>
-        <div class="why">💡<span><b>Por qué importa:</b> el titular es lo primero que se lee. "Psicóloga organizacional" describe tu formación; el titular recomendado describe la función que la oferta busca, usando solo tu experiencia real.</span></div>
-      </div>
-
-      <div class="card adapt-block">
-        <h3>👤 Perfil profesional</h3>
-        <div class="adapt-grid">
-          <div class="version v-current"><span class="v-tag">Tu versión actual</span>"Profesional con experiencia en recursos humanos y procesos de selección, orientada a las personas y al trabajo en equipo."</div>
-          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>"Especialista en selección con 4 años gestionando procesos de ciclo completo para perfiles profesionales, digitales y comerciales. Experiencia levantando perfiles con jefaturas, conduciendo entrevistas por competencias y gestionando múltiples procesos en paralelo."</div>
-        </div>
-        <div class="why">💡<span><b>Por qué importa:</b> tu versión actual es genérica y podría acompañar cualquier postulación. La recomendada conecta tu experiencia concreta con las responsabilidades centrales de esta oferta.</span></div>
+        <div class="why">💡<span><b>Por qué importa:</b> "Publicista" describe tu carrera; el titular recomendado describe la función que la oferta busca, usando solo experiencia que ya tienes.</span></div>
       </div>
 
       <div class="card adapt-block">
         <h3>💼 Experiencia laboral</h3>
         <div class="adapt-grid">
-          <div class="version v-current"><span class="v-tag">Tu versión actual</span>"Realización de procesos de selección."</div>
-          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>"Gestión integral de procesos de selección para perfiles profesionales, desde el levantamiento del perfil con jefaturas hasta la presentación de candidatos finalistas."</div>
+          <div class="version v-current"><span class="v-tag">Tu versión actual</span>"Publicaciones promocionadas para lanzamientos y fechas especiales."</div>
+          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>"Gestión de campañas pagadas en Meta Ads (Instagram y Facebook) para lanzamientos y ventas online, incluyendo segmentación de audiencias, presupuesto y análisis de resultados."</div>
         </div>
-        <div class="why">💡<span><b>Por qué importa:</b> la nueva redacción comunica mayor nivel de responsabilidad y se relaciona mejor con la experiencia solicitada. Además: ordena tus experiencias poniendo primero los procesos con perfiles digitales, y agrega resultados donde los tengas (n° de procesos, tiempos de cierre).</span></div>
+        <div class="why">💡<span><b>Por qué importa:</b> es la misma experiencia, contada en el idioma de la industria. "Meta Ads" es la palabra que el reclutador (y los filtros automáticos) van a buscar. Además: agrega números donde los tengas — ventas generadas, crecimiento, pedidos.</span></div>
+      </div>
+
+      <div class="card adapt-block">
+        <h3>🛒 Tu experiencia e-commerce</h3>
+        <div class="adapt-grid">
+          <div class="version v-current"><span class="v-tag">Tu versión actual</span>"Apoyo en la tienda online y coordinación de pedidos."</div>
+          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>"Gestión del canal e-commerce de la marca: administración de la tienda online, coordinación de pedidos y campañas orientadas a venta digital."</div>
+        </div>
+        <div class="why">💡<span><b>Por qué importa:</b> la oferta pide experiencia en e-commerce y tú la tienes — pero tu CV nunca usa esa palabra. Nómbrala tal como la industria la busca.</span></div>
       </div>
 
       <div class="card adapt-block">
         <h3>🛠️ Habilidades</h3>
         <div class="adapt-grid">
-          <div class="version v-current"><span class="v-tag">Tu versión actual</span>Trabajo en equipo · Comunicación · Office · LinkedIn</div>
-          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>Entrevistas por competencias · Levantamiento de perfiles · Búsqueda activa en LinkedIn · Gestión de ATS interno · Comunicación con jefaturas</div>
+          <div class="version v-current"><span class="v-tag">Tu versión actual</span>Canva · redes sociales · Office · trabajo en equipo</div>
+          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>Meta Ads · Email marketing (Mailchimp) · Gestión de redes sociales · Creación de contenido · Canva · Reportería de resultados</div>
         </div>
-        <div class="why">💡<span><b>Por qué importa:</b> las competencias que la oferta valora ya están en tu experiencia, pero hoy no son visibles como habilidades. Nómbralas tal como las ejerciste, sin agregar herramientas que no hayas usado.</span></div>
+        <div class="why">💡<span><b>Por qué importa:</b> las competencias que la oferta valora ya están en tu experiencia, pero hoy no son visibles como habilidades. No agregues Google Ads ni GA4 si no los has usado: esas brechas se abordan con honestidad (o con un curso, que ambos ofrecen gratis).</span></div>
       </div>
 
-      <div class="honesty">⚠️<span><b>Un principio importante:</b> no agregues LinkedIn Recruiter, inglés ni experiencia en tecnología si no los tienes. Un CV honesto y bien comunicado siempre rinde más que uno inflado: las brechas reales se conversan en la entrevista, no se ocultan.</span></div>
+      <div class="honesty">⚠️<span><b>Un principio importante:</b> no agregues Google Ads ni Google Analytics si no los has usado. Un CV honesto y bien comunicado siempre rinde más que uno inflado: las brechas reales se conversan en la entrevista, no se ocultan.</span></div>
 
       <div class="actions split">
         <button class="btn btn-ghost" onclick="showScreen('scr-compare',3)">← Volver a la comparación</button>
@@ -749,32 +856,27 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         </div>
 
         <div class="kw-group"><h4>Funciones</h4>
-          <span class="kw-chip kw-p"><i></i>Selección de personal</span>
-          <span class="kw-chip kw-p"><i></i>Entrevistas por competencias</span>
-          <span class="kw-chip kw-r"><i></i>Talent Acquisition</span>
-          <span class="kw-chip kw-r"><i></i>Hunting</span>
+          <span class="kw-chip kw-p"><i></i>Gestión de redes sociales</span>
+          <span class="kw-chip kw-p"><i></i>Creación de contenido</span>
+          <span class="kw-chip kw-r"><i></i>Gestión de campañas</span>
+          <span class="kw-chip kw-r"><i></i>E-commerce</span>
         </div>
         <div class="kw-group"><h4>Herramientas</h4>
-          <span class="kw-chip kw-p"><i></i>LinkedIn</span>
-          <span class="kw-chip kw-r"><i></i>ATS</span>
-          <span class="kw-chip kw-n"><i></i>LinkedIn Recruiter</span>
-          <span class="kw-chip kw-n"><i></i>Greenhouse / Lever</span>
+          <span class="kw-chip kw-p"><i></i>Mailchimp</span>
+          <span class="kw-chip kw-p"><i></i>Canva</span>
+          <span class="kw-chip kw-r"><i></i>Meta Ads</span>
+          <span class="kw-chip kw-n"><i></i>Google Ads</span>
+          <span class="kw-chip kw-n"><i></i>Google Analytics (GA4)</span>
         </div>
         <div class="kw-group"><h4>Competencias técnicas</h4>
-          <span class="kw-chip kw-p"><i></i>Levantamiento de perfiles</span>
-          <span class="kw-chip kw-r"><i></i>Sourcing</span>
-          <span class="kw-chip kw-n"><i></i>Búsqueda booleana</span>
+          <span class="kw-chip kw-p"><i></i>Email marketing</span>
+          <span class="kw-chip kw-r"><i></i>Reportería de resultados</span>
+          <span class="kw-chip kw-n"><i></i>SEO</span>
         </div>
-        <div class="kw-group"><h4>Industria y seniority</h4>
-          <span class="kw-chip kw-p"><i></i>Consultoría RRHH</span>
-          <span class="kw-chip kw-r"><i></i>Semi Senior</span>
-          <span class="kw-chip kw-n"><i></i>Perfiles IT</span>
-          <span class="kw-chip kw-n"><i></i>SaaS / startup</span>
-        </div>
-        <div class="kw-group"><h4>Competencias conductuales</h4>
-          <span class="kw-chip kw-p"><i></i>Comunicación</span>
-          <span class="kw-chip kw-r"><i></i>Orientación a resultados</span>
-          <span class="kw-chip kw-n"><i></i>Inglés</span>
+        <div class="kw-group"><h4>Industria y resultados</h4>
+          <span class="kw-chip kw-p"><i></i>Marcas de consumo</span>
+          <span class="kw-chip kw-r"><i></i>Venta online</span>
+          <span class="kw-chip kw-n"><i></i>ROAS / métricas de venta</span>
         </div>
 
         <div class="note-card"><b>Importante:</b> las palabras "relacionadas" puedes incorporarlas usando el término exacto de la oferta, porque describen experiencia que ya tienes. Las "no identificadas" solo agrégalas si realmente corresponden a tu experiencia.</div>
@@ -794,46 +896,46 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       </div>
 
       <p class="q-cat">Sobre tu experiencia</p>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"Cuéntame sobre tu experiencia trabajando con perfiles tecnológicos."<span class="chev">▾</span></button>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"Cuéntame de una campaña que hayas gestionado de principio a fin."<span class="chev">▾</span></button>
         <div class="q-body">
-          <div class="qb"><span>Qué está evaluando</span><p>Tu nivel de exposición real a perfiles IT y tu capacidad para explicar tu experiencia de manera concreta, no genérica.</p></div>
-          <div class="qb"><span>Qué deberías preparar</span><p>Dos ejemplos específicos: qué perfil buscabas, cómo lo encontraste, qué fue lo difícil y cómo terminó el proceso. Si tu experiencia con perfiles digitales fue parcial, dilo con claridad y muestra lo aprendido.</p></div>
+          <div class="qb"><span>Qué está evaluando</span><p>Si realmente gestionas campañas completas (objetivo, audiencia, presupuesto, medición) o solo publicas contenido.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Un caso con estructura: objetivo de la campaña → a quién apuntaste → cuánto invertiste → qué resultado hubo. Usa tu mejor campaña de Dulce Sur, con números aunque sean modestos.</p></div>
         </div>
       </div>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"Descríbeme un proceso de selección que hayas gestionado de principio a fin."<span class="chev">▾</span></button>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"¿Qué resultados de venta lograste con tus campañas?"<span class="chev">▾</span></button>
         <div class="q-body">
-          <div class="qb"><span>Qué está evaluando</span><p>Si realmente manejas el ciclo completo o solo participaste en etapas. Buscan autonomía y orden metodológico.</p></div>
-          <div class="qb"><span>Qué deberías preparar</span><p>Un caso con estructura: levantamiento del perfil → estrategia de búsqueda → filtro → entrevistas → presentación de finalistas → cierre. Incluye tiempos y tu rol en cada etapa.</p></div>
+          <div class="qb"><span>Qué está evaluando</span><p>Tu orientación a resultados de negocio, no solo a likes. Es el corazón de este cargo en un e-commerce.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Recupera números reales: pedidos generados, crecimiento de ventas online, campañas con mejor retorno. Si no medías ventas directamente, prepara lo más cercano que tengas y dilo con honestidad.</p></div>
         </div>
       </div>
 
       <p class="q-cat">Técnicas</p>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"¿Cómo haces sourcing cuando el perfil es difícil de encontrar?"<span class="chev">▾</span></button>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"¿Cómo segmentas una campaña en Meta Ads?"<span class="chev">▾</span></button>
         <div class="q-body">
-          <div class="qb"><span>Qué está evaluando</span><p>Tu caja de herramientas de búsqueda activa: canales, criterios y persistencia. Es el corazón técnico de este cargo.</p></div>
-          <div class="qb"><span>Qué deberías preparar</span><p>Describe tu método real: cómo defines criterios, dónde buscas, cómo contactas. Si no has usado LinkedIn Recruiter, prepárate para explicar cómo lograbas resultados con las herramientas que sí usaste y tu disposición a aprenderla.</p></div>
+          <div class="qb"><span>Qué está evaluando</span><p>Tu dominio real de la herramienta: audiencias, objetivos de campaña, presupuestos.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Describe cómo armabas tus campañas promocionadas: a quién apuntabas, con qué criterio y cómo decidías la inversión. Habla en el lenguaje de la plataforma (audiencias, alcance, conversión).</p></div>
         </div>
       </div>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"¿Qué métricas usas para evaluar un proceso de selección?"<span class="chev">▾</span></button>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"No vemos Google Ads ni Analytics en tu CV, ¿cómo lo abordarías?"<span class="chev">▾</span></button>
         <div class="q-body">
-          <div class="qb"><span>Qué está evaluando</span><p>Tu orientación a resultados y si gestionas con datos: tiempo de cierre, conversión por etapa, calidad de contratación.</p></div>
-          <div class="qb"><span>Qué deberías preparar</span><p>Recupera números reales de tus procesos: cuántos gestionabas en paralelo, tiempos promedio de cierre, tasa de aceptación de ofertas. Si no medías formalmente, prepara estimaciones honestas.</p></div>
+          <div class="qb"><span>Qué está evaluando</span><p>Tu honestidad frente a las brechas y tu disposición a aprender rápido.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Una respuesta directa: reconoce la brecha, muestra que dominas la lógica de campañas (que es transferible desde Meta) y menciona un plan concreto — ambas herramientas tienen certificaciones gratuitas que puedes iniciar incluso antes de la entrevista.</p></div>
         </div>
       </div>
 
       <p class="q-cat">Conductuales</p>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"Cuéntame de una vez en que un hiring manager no estaba de acuerdo contigo."<span class="chev">▾</span></button>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"Cuéntame de una vez en que una campaña no funcionó."<span class="chev">▾</span></button>
         <div class="q-body">
-          <div class="qb"><span>Qué está evaluando</span><p>Tu comunicación con jefaturas y tu capacidad de influir con argumentos, una competencia central del cargo.</p></div>
-          <div class="qb"><span>Qué deberías preparar</span><p>Un caso real con formato STAR: situación, qué propusiste, cómo manejaste la diferencia y qué resultado hubo. Evita casos donde "simplemente cediste".</p></div>
+          <div class="qb"><span>Qué está evaluando</span><p>Tu capacidad de análisis y de ajustar sobre la marcha, clave en pauta pagada.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Un caso real con formato STAR: qué salió mal, cómo lo detectaste, qué cambiaste y qué aprendiste. Evita culpar al presupuesto o al algoritmo.</p></div>
         </div>
       </div>
 
       <p class="q-cat">Sobre el cargo</p>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"¿Por qué quieres moverte de consultoría a una empresa de tecnología?"<span class="chev">▾</span></button>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"¿Por qué pasar de una pyme a un e-commerce más grande?"<span class="chev">▾</span></button>
         <div class="q-body">
-          <div class="qb"><span>Qué está evaluando</span><p>Tu motivación real y si entiendes las diferencias entre reclutar como consultora externa y hacerlo desde dentro de una empresa tech.</p></div>
-          <div class="qb"><span>Qué deberías preparar</span><p>Una respuesta que conecte tu experiencia (variedad de procesos, presión por resultados) con lo que buscas ahora: profundidad en un solo negocio, cercanía con los equipos y especialización en perfiles IT.</p></div>
+          <div class="qb"><span>Qué está evaluando</span><p>Tu motivación real y si entiendes la diferencia de ritmo, presupuesto y exigencia de resultados.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Una respuesta que valore lo aprendido en la pyme (hacer de todo, resultados con poco presupuesto) y lo que buscas ahora: especializarte en performance, trabajar con más datos y presupuesto real.</p></div>
         </div>
       </div>
 
@@ -847,39 +949,39 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     <section class="screen hidden" id="scr-summary">
       <div class="summary-hero">
         <p class="kicker">Tu análisis Workea</p>
-        <h2>Talent Acquisition Specialist IT</h2>
-        <p class="sh-sub">NovaTech Solutions · Compatibilidad estimada: <b style="color:#fff">74%</b></p>
+        <h2>Analista de Marketing Digital</h2>
+        <p class="sh-sub">TiendaViva · Compatibilidad estimada: <b style="color:#fff">72%</b></p>
         <div class="verdict">
           <span class="v-emoji">🟡</span>
           <div>
             <h3>Postula, pero ajusta tu presentación</h3>
-            <p>Tu experiencia es pertinente para este cargo, pero tu CV todavía no comunica bien tu encaje. Antes de enviar tu postulación, aplica las recomendaciones de Workea: detalla tu experiencia con perfiles digitales, describe cómo haces sourcing y aclara tu nivel de inglés. La decisión final es tuya; estos ajustes la hacen mucho más sólida.</p>
+            <p>Tu experiencia es pertinente para este cargo, pero tu CV la cuenta en un lenguaje que le resta valor. Antes de postular: nombra tus campañas como Meta Ads, haz visible tu experiencia e-commerce, agrega resultados con números, y aborda con un plan las brechas de Google Ads y Analytics. La decisión final es tuya; estos ajustes la hacen mucho más sólida.</p>
           </div>
         </div>
       </div>
 
       <div class="summary-grid">
-        <div class="sum-card"><span class="sc-tag sc-green">● Tu principal fortaleza</span><p>Tu gestión de procesos de selección de ciclo completo coincide con las responsabilidades centrales del cargo.</p></div>
-        <div class="sum-card"><span class="sc-tag sc-amber">● Tu principal oportunidad</span><p>Tu experiencia relacionada con perfiles digitales y sourcing existe, pero no está suficientemente visible en tu CV.</p></div>
-        <div class="sum-card"><span class="sc-tag sc-red">● Tu principal brecha</span><p>No se identifica claramente el manejo de LinkedIn Recruiter ni tu nivel de inglés, dos requisitos críticos de la oferta.</p></div>
+        <div class="sum-card"><span class="sc-tag sc-green">● Tu principal fortaleza</span><p>Gestionas campañas pagadas en Meta y email marketing con Mailchimp: dos requisitos directos de la oferta.</p></div>
+        <div class="sum-card"><span class="sc-tag sc-amber">● Tu principal oportunidad</span><p>Tu experiencia e-commerce y tus resultados existen, pero están contados sin la palabra clave y sin números.</p></div>
+        <div class="sum-card"><span class="sc-tag sc-red">● Tu principal brecha</span><p>No se identifica Google Ads ni Google Analytics (GA4), dos requisitos críticos de la oferta.</p></div>
       </div>
 
       <div class="card next-steps">
         <h3>Antes de postular</h3>
         <ol>
           <li><b>Ajusta tu CV</b> con las recomendaciones de la sección "Potencia tu CV".</li>
-          <li><b>Incorpora los términos "relacionados"</b> de la oferta que ya describen tu experiencia real.</li>
-          <li><b>Prepara tus respuestas</b> para las preguntas probables de entrevista, especialmente sobre sourcing y perfiles IT.</li>
-          <li><b>Sé transparente</b> con las brechas: es mejor conversarlas que ocultarlas.</li>
+          <li><b>Incorpora los términos "relacionados"</b> (Meta Ads, e-commerce, gestión de campañas) que ya describen tu experiencia real.</li>
+          <li><b>Considera iniciar las certificaciones gratuitas</b> de Google Ads y GA4: cierran tu brecha y muestran iniciativa.</li>
+          <li><b>Prepara tus respuestas</b> para las preguntas probables, especialmente sobre resultados de venta.</li>
         </ol>
       </div>
 
       <div class="real-cta">
         <div>
           <h3>¿Quieres tu análisis real? 💬</h3>
-          <p>Este fue un ejemplo. Envíanos la oferta que te interesa y tu CV a <b>workea@tupartnerlaboral.cl</b>, y en menos de 24 horas recibirás tu análisis Workea completo, revisado por especialistas en selección.</p>
+          <p>Este fue un ejemplo. Solicita gratis tu Informe Esencial con tu propia oferta y tu CV, o revisa los planes Estratégico y Experto para un análisis en profundidad.</p>
         </div>
-        <a class="btn btn-wa wa-link" href="#" target="_blank" rel="noopener">Pedir mi análisis real →</a>
+        <a class="btn btn-wa esencial-link" href="#">Pedir mi Informe Esencial gratis →</a>
       </div>
       <div class="actions split">
         <button class="btn btn-ghost" onclick="showScreen('scr-compare',3)">Ver análisis completo</button>
@@ -905,7 +1007,13 @@ const CONTACTO_EMAIL = 'workea@tupartnerlaboral.cl';
 const CONTACTO_URL = 'mailto:' + CONTACTO_EMAIL
   + '?subject=' + encodeURIComponent('Quiero mi análisis Workea')
   + '&body=' + encodeURIComponent('¡Hola! Vengo de workea.vercel.app y quiero mi análisis real.\n\nAdjunto en este correo:\n1. La oferta laboral que me interesa (texto, link o captura).\n2. Mi CV en PDF.\n\n¡Gracias!');
-document.addEventListener('DOMContentLoaded',()=>{ document.querySelectorAll('.wa-link').forEach(a=>{a.href=CONTACTO_URL;a.removeAttribute('target');}); });
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.wa-link').forEach(a=>{a.href=CONTACTO_URL;a.removeAttribute('target');});
+  const mk=(asunto,cuerpo)=>'mailto:'+CONTACTO_EMAIL+'?subject='+encodeURIComponent(asunto)+'&body='+encodeURIComponent(cuerpo);
+  document.querySelectorAll('.esencial-link').forEach(a=>{a.href=mk('Quiero mi Informe Esencial gratis','¡Hola! Quiero mi Informe Workea Esencial gratuito.\n\nAdjunto:\n1. La oferta laboral que me interesa (texto, link o captura).\n2. Mi CV en PDF.\n\n¡Gracias!');});
+  document.querySelectorAll('.pro-link').forEach(a=>{a.href=mk('Quiero el Informe Estratégico','¡Hola! Quiero contratar el Informe Workea Estratégico ($5.990).\n\nPor favor envíenme los datos de pago. Apenas confirme, quedo atenta/o a mi código de acceso para hacer mi análisis al instante (1 CV y hasta 3 ofertas).\n\n¡Gracias!');});
+  document.querySelectorAll('.premium-link').forEach(a=>{a.href=mk('Quiero el Informe Experto','¡Hola! Quiero contratar el Informe Workea Experto ($14.990 / 30 días).\n\nPor favor envíenme los datos de pago. Apenas confirme, quedo atenta/o a mi código de acceso para comenzar a analizar mis ofertas.\n\n¡Gracias!');});
+});
 
 /* ================= estado ================= */
 const state = { offerReady:false, cvReady:false, tab:'link', cvTab:'file' };
@@ -939,7 +1047,7 @@ function showScreen(id, stepIdx){
   el.style.animation='none'; void el.offsetWidth; el.style.animation='';
   renderStepper(stepIdx);
   window.scrollTo({top:0});
-  if(id==='scr-compare') animateRing(74);
+  if(id==='scr-compare') animateRing(72);
 }
 function renderStepper(activeIdx){
   const wrap = document.getElementById('stepper');
@@ -996,17 +1104,17 @@ function removeFile(target,kind){
 function useDemoOffer(){
   setTab('text');
   document.getElementById('offerText').value =
-`Talent Acquisition Specialist IT — NovaTech Solutions (Santiago, híbrido)
+`Analista de Marketing Digital — TiendaViva (Santiago, híbrido)
 
-Buscamos un/a especialista en atracción de talento para liderar procesos de selección de perfiles tecnológicos (desarrollo, datos, QA) de punta a punta.
+Buscamos un/a analista para liderar el marketing digital de nuestro e-commerce: campañas pagadas, contenidos y medición de resultados.
 
-Requisitos: 3+ años en reclutamiento y selección de ciclo completo; experiencia comprobable con perfiles IT; manejo de LinkedIn Recruiter; inglés intermedio-avanzado.
+Requisitos: 2+ años en marketing digital; gestión de campañas pagadas en Meta Ads y Google Ads; manejo de Google Analytics (GA4) y reportería de métricas; experiencia en e-commerce o venta online.
 
-Deseable: experiencia en startups o SaaS; uso de ATS (Greenhouse/Lever); sourcing técnico en comunidades; certificaciones en RRHH.
+Deseable: email marketing (Mailchimp/Klaviyo), SEO básico, manejo de Canva o Figma, certificaciones de Google o Meta.
 
-Responsabilidades: levantar perfiles con líderes técnicos, sourcing activo, entrevistas por competencias, gestión de métricas del proceso y experiencia de candidato.
+Responsabilidades: planificar y ejecutar campañas de punta a punta, gestionar presupuesto publicitario, crear contenidos junto al equipo comercial, medir y reportar resultados de venta.
 
-Contrato indefinido · Jornada completa · Modalidad híbrida 3x2.`;
+Contrato indefinido · Jornada completa · Modalidad híbrida.`;
   validateInput();
 }
 
@@ -1028,21 +1136,23 @@ function validateCv(){
 function useDemoCv(){
   setCvTab('text');
   document.getElementById('cvText').value =
-`Fernanda Rojas — Psicóloga organizacional
+`Camila Torres — Publicista
 
 Experiencia:
-Consultora de Selección, People First Consultores (2022–hoy)
-- Realización de procesos de selección para clientes de distintas industrias.
-- Levantamiento de perfiles con jefaturas y áreas cliente.
-- Entrevistas por competencias y elaboración de informes.
-- Búsqueda de candidatos para perfiles profesionales, digitales y comerciales.
-- Gestión de procesos en ATS interno de la consultora.
+Encargada de Marketing, Dulce Sur (pyme de alimentos, 2023–hoy)
+- Manejo de redes sociales de la marca (Instagram, Facebook, TikTok).
+- Publicaciones promocionadas para lanzamientos y fechas especiales.
+- Envío de correos a clientes con Mailchimp.
+- Apoyo en la tienda online y coordinación de pedidos.
+- Creación de contenido y material gráfico en Canva.
 
-Analista de RRHH, Retail Andes (2021–2022)
-- Apoyo en reclutamiento masivo y selección de mandos medios.
+Community Manager, Agencia Prisma (2021–2023)
+- Gestión de redes sociales para 5 marcas de consumo.
+- Redacción de contenidos y calendarios de publicación.
+- Reportes mensuales de seguidores e interacciones.
 
-Educación: Psicología, Universidad de Chile (2020).
-Habilidades: trabajo en equipo, comunicación, Office, LinkedIn.`;
+Educación: Publicidad, Duoc UC (2020).
+Habilidades: Canva, redes sociales, Office, trabajo en equipo.`;
   validateCv();
 }
 
@@ -1112,8 +1222,9 @@ function activarCodigo(){
   if(!v){ return; }
   accessCode = v; realMode = true;
   document.getElementById('realStrip').innerHTML =
-    '<p><b>✅ Análisis real activado.</b> Pega la oferta como texto y luego tu CV: la IA de Workea generará tu análisis personalizado.</p>';
+    '<p><b>✅ Análisis real activado.</b> Pega tu oferta (o hasta 3 para compararlas) y luego tu CV: Workea generará tu análisis personalizado.</p>';
   setTab('text');
+  document.getElementById('extraOffers').classList.remove('hidden');
 }
 
 function startOfferFlow(){
@@ -1125,7 +1236,9 @@ function startOfferFlow(){
       '<div class="error-box">ℹ️ <span>En el análisis real, por ahora, la oferta debe ingresarse como <b>texto</b> (cópiala completa desde el portal de empleo).</span></div>';
     return;
   }
-  offerPayload = txt;
+  offerPayload = [txt,
+    document.getElementById('offerText2').value.trim(),
+    document.getElementById('offerText3').value.trim()].filter(o=>o.length>40);
   showScreen('scr-cv',2);
 }
 
@@ -1152,7 +1265,7 @@ async function runRealAnalysis(oferta, cv){
     bar.style.width=Math.min(92,parseFloat(bar.style.width)+13)+'%'; },2500);
   try{
     const r = await fetch('/api/analizar',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({oferta,cv,codigo:accessCode})});
+      body:JSON.stringify({ofertas:Array.isArray(oferta)?oferta:[oferta],cv,codigo:accessCode})});
     const data = await r.json();
     clearInterval(iv);
     if(!r.ok || data.error){ throw new Error(data.error||'Error del servidor'); }
@@ -1212,6 +1325,7 @@ function renderResults(d){
       <div class="compat-reading"><p class="kicker">Compatibilidad estimada · lo que significa</p>
         <h3>${esc(d.compatibilidad?.titulo||'')}</h3><p>${esc(d.compatibilidad?.lectura||'')}</p></div></div>
     ${d.observacion?`<div class="note-card" style="margin-top:1rem"><b>Observación sobre la oportunidad:</b> ${esc(d.observacion)}</div>`:''}
+    ${(d.comparacion&&d.comparacion.length>1)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Comparación de tus ofertas: ¿a cuál postular primero?</h3></div>${d.comparacion.map((c,i)=>`<div class="finding ${i===0?'f-green':'f-neutral'}"><b>${i===0?'🥇 ':i===1?'🥈 ':'🥉 '}${esc(c.oferta)} — ${c.porcentaje??''}%</b><p>${esc(c.veredicto)}</p></div>`).join('')}</div>`:''}
     ${group('var(--green)','Fortalezas',d.fortalezas,'f-green')}
     ${group('var(--amber)','Oportunidades de mejora',d.oportunidades,'f-amber')}
     ${group('var(--red)','Brechas',d.brechas,'f-red')}
