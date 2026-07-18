@@ -446,7 +446,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <span class="plan-badge">⭐ RECOMENDADO</span>
         <p class="plan-name">💙 Informe Workea Estratégico</p>
         <p class="plan-goal">¿Qué debo hacer para conseguir una entrevista?</p>
-        <p class="plan-price">$5.990 <span>/ informe</span></p>
+        <p class="plan-price"><span style="text-decoration:line-through;color:var(--faint);font-size:1rem;font-weight:600">$5.990</span> $4.990 <span>/ informe</span></p>
         <ul class="plan-feats">
           <li>Todo lo del Informe Esencial, más:</li>
           <li>Análisis de 1 CV y hasta 3 ofertas laborales, con comparación entre oportunidades</li>
@@ -457,8 +457,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <li class="plus">🎯 Plan de Acción Workea: recomendaciones concretas y priorizadas. No solo sabrás qué cambiar: sabrás qué hacer primero.</li>
         </ul>
         <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> a qué oferta conviene postular primero, qué cambios tienen mayor impacto y cómo aumentar tus posibilidades de ser llamado a entrevista.</p>
-        <a class="btn btn-brand pro-link" href="#">Obtener Informe Estratégico →</a>
-        <p class="plan-note">Resultado inmediato con tu código de acceso</p>
+        <a class="btn btn-brand" href="https://mpago.la/1dKCLUb" target="_blank" rel="noopener">Obtener Informe Estratégico →</a>
+        <p class="plan-note">Precio de lanzamiento · Pago seguro con Mercado Pago. Tras pagar, recibirás tu código de acceso al correo con que pagaste (máx. 12 h).</p>
       </div>
 
       <div class="plan-card">
@@ -474,8 +474,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <li class="plus">🎯 Estrategia Workea: hoja de ruta personalizada elaborada por una especialista en selección, con acciones priorizadas para conseguir entrevistas</li>
         </ul>
         <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> qué cargos tienen mayor compatibilidad contigo, qué habilidades potenciar y dónde vale la pena invertir tu tiempo.</p>
-        <a class="btn btn-primary premium-link" href="#">Obtener Informe Experto →</a>
-        <p class="plan-note">Cada análisis es inmediato · tu Estrategia llega revisada por una persona real</p>
+        <a class="btn btn-primary" href="https://mpago.la/2jD9YJT" target="_blank" rel="noopener">Obtener Informe Experto →</a>
+        <p class="plan-note">Pago seguro con Mercado Pago. Tras pagar, recibirás tu código por correo (máx. 12 h) · tu Estrategia llega revisada por una persona real.</p>
       </div>
 
     </div>
@@ -1011,8 +1011,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('.wa-link').forEach(a=>{a.href=CONTACTO_URL;a.removeAttribute('target');});
   const mk=(asunto,cuerpo)=>'mailto:'+CONTACTO_EMAIL+'?subject='+encodeURIComponent(asunto)+'&body='+encodeURIComponent(cuerpo);
   document.querySelectorAll('.esencial-link').forEach(a=>{a.href=mk('Quiero mi Informe Esencial gratis','¡Hola! Quiero mi Informe Workea Esencial gratuito.\n\nAdjunto:\n1. La oferta laboral que me interesa (texto, link o captura).\n2. Mi CV en PDF.\n\n¡Gracias!');});
-  document.querySelectorAll('.pro-link').forEach(a=>{a.href=mk('Quiero el Informe Estratégico','¡Hola! Quiero contratar el Informe Workea Estratégico ($5.990).\n\nPor favor envíenme los datos de pago. Apenas confirme, quedo atenta/o a mi código de acceso para hacer mi análisis al instante (1 CV y hasta 3 ofertas).\n\n¡Gracias!');});
-  document.querySelectorAll('.premium-link').forEach(a=>{a.href=mk('Quiero el Informe Experto','¡Hola! Quiero contratar el Informe Workea Experto ($14.990 / 30 días).\n\nPor favor envíenme los datos de pago. Apenas confirme, quedo atenta/o a mi código de acceso para comenzar a analizar mis ofertas.\n\n¡Gracias!');});
 });
 
 /* ================= estado ================= */
