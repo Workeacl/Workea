@@ -488,6 +488,9 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
     <div style="max-width:46rem;margin:2.8rem auto 0">
       <h3 style="font-size:1.15rem;margin-bottom:1rem;text-align:center">Preguntas frecuentes</h3>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Puedo analizar una oferta de LinkedIn u otro portal?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">¡Sí! La forma más confiable es <b>copiar y pegar el texto completo de la oferta</b> (cargo, requisitos y responsabilidades): funciona con cualquier portal. Los enlaces directos a veces no se pueden leer porque algunos sitios, como LinkedIn, bloquean el acceso externo. Para el Informe Esencial por correo también puedes enviar una captura de pantalla de la oferta.</p></div></div>
+      </div>
       <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Cómo recibo mi Informe Estratégico?<span class="chev">▾</span></button>
         <div class="q-body"><div class="qb"><p style="margin-top:1rem">Tras confirmar tu pago, recibes por correo tu código de acceso personal. Lo activas en la plataforma, pegas tu CV y hasta 3 ofertas, y en menos de un minuto tienes tu análisis comparado en pantalla, descargable en PDF.</p></div></div>
       </div>
@@ -516,7 +519,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
       </a>
       <p class="footer-tag">Experiencia humana <b>+</b> tecnología inteligente</p>
-      <p>© 2026 Tu Partner Laboral · Prototipo MVP</p>
+      <p>© 2026 Workea · Tu Partner Laboral</p>
     </div>
   </footer>
 </div>
@@ -553,7 +556,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <div id="tab-link" class="tab-panel field">
           <label for="offerUrl">Enlace de la oferta</label>
           <input type="url" id="offerUrl" placeholder="Pega aquí el enlace de la oferta laboral" oninput="validateInput()">
-          <p class="hint">Funciona con portales de empleo y páginas de empresas.</p>
+          <p class="hint">💡 Algunos portales (como LinkedIn) bloquean la lectura de sus enlaces. Si es tu caso, usa la pestaña <b>"Pegar texto"</b>: copia el contenido completo de la oferta y pégalo — es el método más confiable.</p>
         </div>
 
         <div id="tab-text" class="tab-panel field hidden">
