@@ -6,18 +6,24 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Método no permitido' });
   }
 
-  const { oferta, cv, codigo } = req.body || {};
+  const { oferta, ofertas, cv, codigo } = req.body || {};
 
-  // Código de acceso (opcional): si defines WORKEA_CODIGO en Vercel, se exige.
-  const codigoRequerido = process.env.WORKEA_CODIGO;
-  if (codigoRequerido && codigo !== codigoRequerido) {
+  // Códigos de acceso: WORKEA_CODIGO acepta uno o varios separados por coma.
+  // Ej: "ANA-7GK2, PEDRO-9XL4, PILOTO1" — cada cliente puede tener el suyo.
+  const listaCodigos = (process.env.WORKEA_CODIGO || '')
+    .split(',').map(c => c.trim()).filter(Boolean);
+  if (listaCodigos.length && !listaCodigos.includes((codigo || '').trim())) {
     return res.status(401).json({ error: 'Código de acceso inválido' });
   }
 
-  if (!oferta || !cv || oferta.length < 40 || cv.length < 40) {
+  // Normaliza: acepta una oferta (texto) o hasta 3 ofertas (lista)
+  let listaOfertas = Array.isArray(ofertas) ? ofertas : (oferta ? [oferta] : []);
+  listaOfertas = listaOfertas.map(o => String(o || '').trim()).filter(o => o.length >= 40).slice(0, 3);
+
+  if (!listaOfertas.length || !cv || cv.length < 40) {
     return res.status(400).json({ error: 'Falta la oferta o el CV (o son muy breves)' });
   }
-  if (oferta.length > 20000 || cv.length > 20000) {
+  if (listaOfertas.some(o => o.length > 20000) || cv.length > 20000) {
     return res.status(400).json({ error: 'El texto es demasiado largo' });
   }
 
@@ -50,8 +56,10 @@ Responde ÚNICAMENTE con un objeto JSON válido, sin markdown ni texto adicional
  "claves": [{"palabra": "", "estado": "presente|relacionada|no", "nota": ""}],
  "cv": [{"seccion": "", "actual": "", "recomendacion": "", "porque": ""}],
  "entrevista": [{"pregunta": "", "evalua": "", "preparar": ""}],
- "recomendacion": {"nivel": "verde|amarillo|naranjo|rojo", "titulo": "", "detalle": ""}
+ "recomendacion": {"nivel": "verde|amarillo|naranjo|rojo", "titulo": "", "detalle": ""},
+ "comparacion": [{"oferta": "cargo — empresa", "porcentaje": 0, "veredicto": "1-2 líneas: por qué este orden de prioridad"}]
 }
+Si recibes UNA sola oferta, omite "comparacion" (o déjala como lista vacía). Si recibes VARIAS ofertas: incluye "comparacion" ordenada de mayor a menor prioridad de postulación, y desarrolla TODO el análisis detallado sobre la oferta prioritaria, indicando en compatibilidad.titulo a qué oferta corresponde.
 Incluye 3-6 fortalezas, 2-4 oportunidades, 0-3 brechas, 0-3 insuficiente, 8-12 claves, 3-4 recomendaciones de CV y 5-6 preguntas de entrevista. Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`;
 
   try {
@@ -64,11 +72,12 @@ Incluye 3-6 fortalezas, 2-4 oportunidades, 0-3 brechas, 0-3 insuficiente, 8-12 c
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 4000,
+        max_tokens: 5000,
         system,
         messages: [{
           role: 'user',
-          content: `OFERTA LABORAL:\n${oferta}\n\n---\n\nCV DE LA PERSONA:\n${cv}\n\nGenera el análisis Workea en JSON.`
+          content: listaOfertas.map((o, i) => `OFERTA LABORAL ${i + 1}:\n${o}`).join('\n\n---\n\n')
+            + `\n\n---\n\nCV DE LA PERSONA:\n${cv}\n\nGenera el análisis Workea en JSON.`
         }]
       })
     });
