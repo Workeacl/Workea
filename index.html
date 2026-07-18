@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workea · No postules a ciegas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#6c53ee;--cyan:#12cdf0;--grad:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0);
+  --brand-strong:#5138d6;
+  --brand-deep:#0a1430;--navy:#0a1430;--partner-blue:#51608a;
+  --brand-tint:#f0edfe;
+  --brand-tint-2:#ded7fc;
+  --ink:#101b38;
+  --muted:#5a6785;
+  --faint:#8f9ab3;
+  --bg:#f6f8fc;
+  --surface:#ffffff;
+  --line:#e3e6f0;
+  --green:#2f9e6d;   --green-bg:#e9f7f0;  --green-line:#bfe5d2;
+  --amber:#c9930f;   --amber-bg:#fdf6e3;  --amber-line:#f0dfae;
+  --orange:#d2702f;  --orange-bg:#fdf0e5; --orange-line:#f2d4b8;
+  --red:#c65454;     --red-bg:#fdeeee;    --red-line:#f0c9c9;
+  --neutral-bg:#eef0f6; --neutral-line:#dcdfe9;
+  --r:16px;
+  --shadow:0 1px 2px rgba(16,27,56,.05),0 8px 24px rgba(16,27,56,.07);
+  --shadow-lg:0 2px 4px rgba(16,27,56,.06),0 18px 48px rgba(16,27,56,.12);
+  --display:'Bricolage Grotesque',sans-serif;
+  --body:'Instrument Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;letter-spacing:-.01em}
+button{font-family:var(--body);cursor:pointer;border:none;background:none}
+a{color:inherit}
+.hidden{display:none!important}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* ---------- brand ---------- */
+.logo{display:flex;align-items:center;gap:.65rem;text-decoration:none}
+.logo .logo-w{width:46px;height:34px;flex-shrink:0}
+.logo .lt{display:flex;flex-direction:column;line-height:1.05}
+.logo .lt b{font-family:var(--body);font-weight:700;font-size:1.3rem;letter-spacing:-.015em;color:var(--navy)}
+.logo .lt b em{font-style:normal;color:inherit}
+.logo .lt span{font-size:.6rem;color:var(--partner-blue);font-weight:700;letter-spacing:.05em;display:flex;align-items:center;gap:.35rem;white-space:nowrap}
+.logo .lt span::before,.logo .lt span::after{content:"";height:1px;flex:1;min-width:10px;background:var(--partner-blue);opacity:.55}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;gap:.5rem;font-weight:600;font-size:.95rem;padding:.8rem 1.4rem;border-radius:999px;transition:transform .15s,box-shadow .15s,background .15s}
+.btn-primary{background:var(--brand-deep);color:#fff;box-shadow:0 4px 14px rgba(10,20,48,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(10,20,48,.3)}
+.btn-brand{background:var(--grad);color:#fff}
+.btn-brand:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn-ghost{color:var(--brand-deep);background:transparent;border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--brand);background:var(--brand-tint)}
+.btn-link{color:var(--brand-strong);font-weight:600;padding:.5rem .25rem}
+.btn-link:hover{text-decoration:underline}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none!important}
+
+/* ---------- landing ---------- */
+.landing-nav{display:flex;justify-content:space-between;align-items:center;max-width:1120px;margin:0 auto;padding:1.4rem 1.5rem}
+.landing-nav .nav-links{display:flex;gap:1.5rem;align-items:center;font-size:.92rem;color:var(--muted)}
+.landing-nav .nav-links a{text-decoration:none;font-weight:500}
+.landing-nav .nav-links a:hover{color:var(--brand-deep)}
+
+.hero{max-width:1120px;margin:0 auto;padding:3.5rem 1.5rem 4.5rem;display:grid;grid-template-columns:1.05fr .95fr;gap:3.5rem;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand-strong);background:var(--brand-tint);border:1px solid var(--brand-tint-2);padding:.35rem .9rem;border-radius:999px;margin-bottom:1.2rem}
+.hero h1{font-size:clamp(2.2rem,4.6vw,3.4rem);font-weight:800;margin-bottom:1.1rem}
+.hero h1 em{font-style:normal;color:var(--brand-strong);position:relative;white-space:nowrap}
+.hero h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.08em;height:.32em;background:var(--brand-tint-2);z-index:-1;border-radius:4px}
+.hero .sub{font-size:1.15rem;color:var(--muted);max-width:32rem;margin-bottom:1.8rem}
+.hero-ctas{display:flex;gap:.9rem;flex-wrap:wrap;align-items:center}
+.hero-note{margin-top:1rem;font-size:.85rem;color:var(--faint)}
+
+/* mini demo card en hero */
+.demo-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-lg);padding:1.5rem;position:relative}
+.demo-card .dc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;border-bottom:1px dashed var(--line);padding-bottom:1rem;margin-bottom:1rem}
+.demo-card .dc-head h3{font-size:1.05rem}
+.demo-card .dc-head p{font-size:.82rem;color:var(--muted)}
+.dc-badge{font-size:.72rem;font-weight:700;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-line);padding:.3rem .7rem;border-radius:999px;white-space:nowrap}
+.dc-row{display:flex;gap:.7rem;align-items:flex-start;margin-bottom:.8rem;font-size:.88rem}
+.dc-dot{width:10px;height:10px;border-radius:50%;margin-top:.42rem;flex-shrink:0}
+.dc-row p b{font-weight:600}
+.dc-reading{background:var(--brand-tint);border:1px solid var(--brand-tint-2);border-radius:12px;padding:.85rem 1rem;font-size:.85rem;color:var(--brand-deep);margin-top:.4rem}
+.dc-reading b{font-weight:700}
+.demo-float{position:absolute;top:-1.1rem;right:-0.8rem;background:var(--brand-deep);color:#fff;font-size:.75rem;font-weight:600;padding:.45rem .9rem;border-radius:999px;box-shadow:var(--shadow)}
+
+.section{max-width:1120px;margin:0 auto;padding:4rem 1.5rem}
+.section-head{max-width:42rem;margin-bottom:2.5rem}
+.section-head h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;margin-bottom:.7rem}
+.section-head p{color:var(--muted);font-size:1.05rem}
+
+.problem{background:linear-gradient(120deg,#e9fbfe 0%,#eef2fe 45%,#f0edfe 100%);border:1px solid var(--line);color:var(--ink);border-radius:28px;padding:3.5rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin:0 1.5rem}
+@media(min-width:1120px){.problem{margin:0 auto;max-width:1088px}}
+.problem h2{font-size:clamp(1.6rem,3vw,2.2rem);margin-bottom:1rem}
+.problem p{color:var(--muted);font-size:1.02rem;margin-bottom:.9rem}
+.problem .stat-list{display:flex;flex-direction:column;gap:1rem}
+.stat-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:1rem 1.2rem;box-shadow:var(--shadow)}
+.stat-item b{display:block;font-family:var(--display);font-size:1.05rem;margin-bottom:.15rem;color:var(--ink)}
+.stat-item span{font-size:.88rem;color:var(--muted)}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+.step-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:1.8rem;box-shadow:var(--shadow);position:relative;transition:transform .2s,box-shadow .2s}
+.step-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.step-icon{width:48px;height:48px;border-radius:14px;background:var(--brand-tint);display:flex;align-items:center;justify-content:center;margin-bottom:1.1rem;font-size:1.3rem}
+.step-card h3{font-size:1.15rem;margin-bottom:.5rem}
+.step-card p{font-size:.92rem;color:var(--muted)}
+
+.benefits{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem}
+.benefit{display:flex;gap:1rem;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:1.3rem 1.4rem}
+.benefit .b-ico{width:38px;height:38px;flex-shrink:0;border-radius:11px;background:var(--brand-tint);display:flex;align-items:center;justify-content:center}
+.benefit h4{font-size:1rem;margin-bottom:.25rem}
+.benefit p{font-size:.88rem;color:var(--muted)}
+
+.final-cta{text-align:center;padding:4.5rem 1.5rem}
+.final-cta h2{font-size:clamp(1.8rem,3.4vw,2.5rem);margin-bottom:.8rem}
+.final-cta p{color:var(--muted);margin-bottom:1.6rem}
+
+footer{border-top:1px solid var(--line);background:var(--surface)}
+.footer-in{max-width:1120px;margin:0 auto;padding:2.2rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.footer-in p{font-size:.85rem;color:var(--faint)}
+.footer-tag{font-size:.85rem;color:var(--muted)}
+.footer-tag b{color:var(--brand-deep)}
+
+/* ---------- app shell ---------- */
+.app-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.app-header-in{max-width:1060px;margin:0 auto;padding:.9rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.stepper{display:flex;gap:.35rem;align-items:center;flex-wrap:wrap}
+.step-pill{display:flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600;color:var(--faint);padding:.35rem .75rem;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.step-pill .n{width:20px;height:20px;border-radius:50%;background:var(--neutral-bg);color:var(--faint);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700}
+.step-pill.active{color:var(--brand-deep);background:var(--brand-tint);border-color:var(--brand-tint-2)}
+.step-pill.active .n{background:var(--brand);color:#fff}
+.step-pill.done{color:var(--muted)}
+.step-pill.done .n{background:var(--green-bg);color:var(--green)}
+.step-sep{color:var(--line);font-size:.8rem}
+.app-main{max-width:1060px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+.screen{animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.screen-head{max-width:40rem;margin-bottom:2rem}
+.screen-head h2{font-size:clamp(1.5rem,2.8vw,2rem);font-weight:700;margin-bottom:.5rem}
+.screen-head p{color:var(--muted);font-size:1rem}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.6rem}
+.card+.card{margin-top:1.2rem}
+.card h3{font-size:1.1rem;margin-bottom:.9rem}
+
+/* tabs entrada de oferta */
+.tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.tab{font-size:.9rem;font-weight:600;color:var(--muted);padding:.6rem 1.1rem;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);display:flex;align-items:center;gap:.45rem;transition:all .15s}
+.tab:hover{border-color:var(--brand)}
+.tab.active{background:var(--brand-deep);color:#fff;border-color:var(--brand-deep)}
+.field label{display:block;font-size:.88rem;font-weight:600;margin-bottom:.45rem;color:var(--ink)}
+.field input[type=url],.field textarea{width:100%;font-family:var(--body);font-size:.95rem;padding:.85rem 1rem;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);transition:border .15s}
+.field textarea{min-height:180px;resize:vertical;line-height:1.5}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--brand);background:#fff}
+.field .hint{font-size:.8rem;color:var(--faint);margin-top:.4rem}
+.dropzone{border:2px dashed var(--line);border-radius:14px;background:var(--bg);padding:2.2rem 1.5rem;text-align:center;transition:all .15s;cursor:pointer}
+.dropzone:hover{border-color:var(--brand);background:var(--brand-tint)}
+.dropzone .dz-ico{font-size:1.8rem;margin-bottom:.5rem}
+.dropzone p{font-size:.92rem;color:var(--muted)}
+.dropzone p b{color:var(--brand-strong)}
+.dropzone .dz-formats{font-size:.78rem;color:var(--faint);margin-top:.4rem}
+.file-chip{display:inline-flex;align-items:center;gap:.6rem;background:var(--brand-tint);border:1px solid var(--brand-tint-2);color:var(--brand-deep);font-size:.88rem;font-weight:600;padding:.55rem 1rem;border-radius:10px;margin-top:1rem}
+.file-chip button{color:var(--brand-strong);font-weight:700;font-size:1rem;line-height:1}
+.demo-strip{display:flex;align-items:center;justify-content:space-between;gap:1rem;background:var(--brand-tint);border:1px solid var(--brand-tint-2);border-radius:12px;padding:.9rem 1.1rem;margin-top:1.4rem;flex-wrap:wrap}
+.demo-strip p{font-size:.88rem;color:var(--brand-deep)}
+.actions{display:flex;justify-content:flex-end;gap:.8rem;margin-top:1.8rem;flex-wrap:wrap}
+.actions.split{justify-content:space-between}
+.error-box{display:flex;gap:.7rem;align-items:flex-start;background:var(--red-bg);border:1px solid var(--red-line);border-radius:12px;padding:.9rem 1.1rem;margin-top:1rem;font-size:.9rem;color:#8f3d3d}
+
+/* loading */
+.loading-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:5rem 1rem}
+.scanner{width:74px;height:74px;border-radius:20px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:1.6rem}
+.scanner span{font-size:2rem}
+.scanner::after{content:"";position:absolute;left:8%;right:8%;height:3px;background:var(--grad);border-radius:3px;top:12%;animation:scan 1.6s ease-in-out infinite;box-shadow:0 0 12px #1999f1}
+@keyframes scan{0%,100%{top:12%}50%{top:82%}}
+.loading-wrap h3{font-size:1.3rem;margin-bottom:.4rem}
+.loading-msg{color:var(--muted);font-size:.95rem;min-height:1.5rem;transition:opacity .3s}
+.progress-track{width:min(320px,80%);height:6px;background:var(--neutral-bg);border-radius:3px;margin-top:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--grad);border-radius:3px;width:0%;transition:width .5s ease}
+
+/* análisis de oferta */
+.offer-header{display:flex;justify-content:space-between;gap:1.5rem;align-items:flex-start;flex-wrap:wrap}
+.offer-header h3{font-size:1.35rem;margin-bottom:.2rem}
+.offer-header .company{color:var(--muted);font-size:.95rem}
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.9rem;margin-top:1.3rem}
+.meta-item{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:.75rem .95rem}
+.meta-item span{display:block;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:.15rem}
+.meta-item b{font-size:.92rem;font-weight:600}
+.req-cols{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.req-list{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+.req-list li{display:flex;gap:.6rem;align-items:flex-start;font-size:.92rem}
+.req-list .mark{flex-shrink:0;width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;margin-top:.1rem}
+.mark.crit{background:var(--red-bg);color:var(--red)}
+.mark.nice{background:var(--brand-tint);color:var(--brand-strong)}
+.pill-row{display:flex;flex-wrap:wrap;gap:.5rem}
+.pill{font-size:.83rem;font-weight:600;padding:.4rem .85rem;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink)}
+.note-card{background:var(--brand-tint);border:1px solid var(--brand-tint-2);border-radius:12px;padding:1rem 1.2rem;font-size:.92rem;color:var(--brand-deep)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+
+/* comparación */
+.compat-hero{display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:2rem}
+.ring-wrap{position:relative;width:130px;height:130px}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{stroke:var(--neutral-bg)}
+.ring-val{stroke:var(--brand);stroke-linecap:round;transition:stroke-dashoffset 1.2s ease}
+.ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-label b{font-family:var(--display);font-size:1.9rem;font-weight:800;line-height:1}
+.ring-label span{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-top:.2rem}
+.compat-reading .kicker{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin-bottom:.4rem}
+.compat-reading h3{font-size:clamp(1.2rem,2.4vw,1.55rem);margin-bottom:.6rem;font-weight:700}
+.compat-reading p{color:var(--muted);font-size:.98rem}
+
+.finding-group{margin-top:1.6rem}
+.finding-head{display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem}
+.finding-head .fh-dot{width:14px;height:14px;border-radius:50%}
+.finding-head h3{font-size:1.05rem}
+.finding-head .count{font-size:.78rem;font-weight:700;color:var(--muted);background:var(--neutral-bg);padding:.15rem .6rem;border-radius:999px}
+.finding{border-radius:14px;border:1px solid;padding:1.1rem 1.3rem;margin-bottom:.7rem}
+.finding b{display:block;font-weight:700;font-size:.95rem;margin-bottom:.25rem}
+.finding p{font-size:.9rem}
+.finding.f-green{background:var(--green-bg);border-color:var(--green-line)}.finding.f-green b{color:#1c6b47}.finding.f-green p{color:#2e7050}
+.finding.f-amber{background:var(--amber-bg);border-color:var(--amber-line)}.finding.f-amber b{color:#8a6508}.finding.f-amber p{color:#8f6f1c}
+.finding.f-red{background:var(--red-bg);border-color:var(--red-line)}.finding.f-red b{color:#9c3f3f}.finding.f-red p{color:#9c4d4d}
+.finding.f-neutral{background:var(--neutral-bg);border-color:var(--neutral-line)}.finding.f-neutral b{color:#4a5f64}.finding.f-neutral p{color:#5d7378}
+
+/* adaptación cv */
+.adapt-block{margin-bottom:1.4rem}
+.adapt-block h3{display:flex;align-items:center;gap:.6rem;font-size:1.05rem;margin-bottom:1rem}
+.adapt-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.version{border-radius:12px;padding:1rem 1.2rem;font-size:.92rem}
+.version .v-tag{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .6rem;border-radius:999px;margin-bottom:.55rem}
+.v-current{background:var(--bg);border:1px solid var(--line);color:var(--muted)}
+.v-current .v-tag{background:var(--neutral-bg);color:var(--muted)}
+.v-reco{background:var(--brand-tint);border:1px solid var(--brand-tint-2);color:var(--brand-deep)}
+.v-reco .v-tag{background:var(--brand);color:#fff}
+.why{display:flex;gap:.6rem;align-items:flex-start;margin-top:.8rem;font-size:.87rem;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:.75rem 1rem}
+.why b{color:var(--ink);font-weight:700}
+.honesty{display:flex;gap:.8rem;align-items:flex-start;background:var(--amber-bg);border:1px solid var(--amber-line);border-radius:12px;padding:1rem 1.2rem;font-size:.9rem;color:#7d5c10}
+
+/* keywords */
+.kw-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.kw-legend span{display:inline-flex;align-items:center;gap:.45rem;font-size:.85rem;color:var(--muted);font-weight:500}
+.kw-dot{width:11px;height:11px;border-radius:50%}
+.kw-group{margin-bottom:1.3rem}
+.kw-group h4{font-size:.8rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin-bottom:.6rem}
+.kw-chip{display:inline-flex;align-items:center;gap:.5rem;font-size:.87rem;font-weight:600;padding:.45rem .95rem;border-radius:999px;border:1px solid;margin:0 .4rem .5rem 0}
+.kw-chip i{width:9px;height:9px;border-radius:50%;font-style:normal}
+.kw-p{background:var(--green-bg);border-color:var(--green-line);color:#1c6b47}.kw-p i{background:var(--green)}
+.kw-r{background:var(--amber-bg);border-color:var(--amber-line);color:#8a6508}.kw-r i{background:var(--amber)}
+.kw-n{background:var(--neutral-bg);border-color:var(--neutral-line);color:#5d7378}.kw-n i{background:var(--faint)}
+
+/* entrevista */
+.q-cat{font-size:.8rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .7rem}
+.q-item{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:.7rem;overflow:hidden}
+.q-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;gap:1rem;text-align:left;padding:1.05rem 1.3rem;font-size:.96rem;font-weight:600;color:var(--ink)}
+.q-toggle .chev{transition:transform .2s;color:var(--faint);flex-shrink:0}
+.q-item.open .chev{transform:rotate(180deg)}
+.q-body{display:none;padding:0 1.3rem 1.2rem;border-top:1px dashed var(--line)}
+.q-item.open .q-body{display:block}
+.q-body .qb{margin-top:1rem}
+.q-body .qb span{display:block;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:.25rem}
+.q-body .qb p{font-size:.9rem;color:var(--muted)}
+
+/* resumen final */
+.summary-hero{background:var(--brand-deep);color:#fff;border-radius:22px;padding:2.4rem 2.4rem 2rem;box-shadow:var(--shadow-lg)}
+.summary-hero .kicker{font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand);margin-bottom:.5rem}
+.summary-hero h2{font-size:clamp(1.5rem,3vw,2.1rem);margin-bottom:.4rem}
+.summary-hero .sh-sub{color:#9fabd4;font-size:.95rem}
+.verdict{display:flex;gap:1rem;align-items:flex-start;margin-top:1.6rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:1.3rem 1.4rem}
+.verdict .v-emoji{font-size:1.6rem;line-height:1}
+.verdict h3{font-size:1.15rem;margin-bottom:.3rem;color:#ffe9b8}
+.verdict p{font-size:.92rem;color:#ccd4ef}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.4rem}
+.sum-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.3rem;box-shadow:var(--shadow)}
+.sum-card .sc-tag{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.25rem .65rem;border-radius:999px;margin-bottom:.6rem}
+.sum-card p{font-size:.9rem;color:var(--muted)}
+.sc-green{background:var(--green-bg);color:#1c6b47}
+.sc-amber{background:var(--amber-bg);color:#8a6508}
+.sc-red{background:var(--red-bg);color:#9c3f3f}
+.next-steps{margin-top:1.4rem}
+.next-steps ol{margin-left:1.2rem;display:flex;flex-direction:column;gap:.5rem;font-size:.93rem;color:var(--muted)}
+.next-steps b{color:var(--ink)}
+
+
+/* demo + análisis real */
+.demo-banner{display:flex;gap:.6rem;align-items:flex-start;background:var(--amber-bg);border:1px solid var(--amber-line);color:#7d5c10;font-size:.87rem;border-radius:12px;padding:.75rem 1rem;margin-bottom:1.4rem}
+.real-cta{background:var(--grad);border-radius:20px;padding:1.8rem 2rem;color:#fff;margin-top:1.4rem;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;flex-wrap:wrap;box-shadow:var(--shadow-lg)}
+.real-cta h3{font-size:1.25rem;margin-bottom:.35rem;color:#fff}
+.real-cta p{font-size:.92rem;color:rgba(255,255,255,.94);max-width:32rem}
+.btn-wa{background:#fff;color:var(--navy);font-weight:700;white-space:nowrap}
+.btn-wa:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(10,20,48,.25)}
+/* responsive */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:2rem;gap:2.5rem}
+  .problem{grid-template-columns:1fr;padding:2.5rem 1.6rem}
+  .steps{grid-template-columns:1fr}
+  .benefits{grid-template-columns:1fr}
+  .req-cols,.two-col,.adapt-grid{grid-template-columns:1fr}
+  .compat-hero{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .summary-grid{grid-template-columns:1fr}
+  .stepper{display:none}
+  .stepper-mobile{display:block;font-size:.8rem;font-weight:700;color:var(--brand-strong)}
+}
+@media(min-width:901px){.stepper-mobile{display:none}}
+</style>
+</head>
+<body>
+
+<!-- ============ LANDING ============ -->
+<div id="landing">
+  <nav class="landing-nav">
+    <a class="logo" href="#" onclick="return false">
+      <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#beneficios">Beneficios</a>
+      <button class="btn btn-primary" onclick="startApp()">Probar la demo</button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <span class="eyebrow">✦ No postules a ciegas</span>
+      <h1>¿Encontraste una oferta laboral? <em>Entiéndela</em> antes de postular.</h1>
+      <p class="sub">Workea analiza la oferta, la compara con tu experiencia y te muestra qué destacar, qué preparar y cómo presentar tu postulación con estrategia.</p>
+      <div class="hero-ctas">
+        <button class="btn btn-primary" onclick="startApp()">Probar la demo →</button>
+        <a class="btn btn-ghost" href="#como-funciona">Cómo funciona</a>
+      </div>
+      <p class="hero-note">Demo gratis y sin registro · Tu análisis real, en menos de 24 horas</p>
+    </div>
+    <div class="demo-card" aria-label="Ejemplo de análisis Workea">
+      <span class="demo-float">Análisis Workea</span>
+      <div class="dc-head">
+        <div>
+          <h3>Talent Acquisition Specialist IT</h3>
+          <p>NovaTech Solutions · Santiago, híbrido</p>
+        </div>
+        <span class="dc-badge">Compatibilidad 74%</span>
+      </div>
+      <div class="dc-row"><span class="dc-dot" style="background:var(--green)"></span><p><b>Coincide:</b> gestión de ciclo completo de selección y entrevistas por competencias.</p></div>
+      <div class="dc-row"><span class="dc-dot" style="background:var(--amber)"></span><p><b>Mejorable:</b> tu experiencia con perfiles digitales existe, pero no se detalla en el CV.</p></div>
+      <div class="dc-row"><span class="dc-dot" style="background:var(--red)"></span><p><b>No se identifica:</b> manejo de LinkedIn Recruiter.</p></div>
+      <div class="dc-reading"><b>Lectura Workea:</b> postula, pero ajusta tu presentación. Tu experiencia es pertinente; tu CV aún no la comunica del todo.</div>
+    </div>
+  </header>
+
+  <section class="problem" id="problema">
+    <div>
+      <h2>Postular sin entender la oferta es postular a ciegas.</h2>
+      <p>La mayoría de las personas envía el mismo CV a todas las ofertas y espera. El resultado: silencio, dudas y la sensación de que "algo falta".</p>
+      <p>El problema casi nunca es la experiencia. Es que la oferta pide algo específico y el CV cuenta otra historia.</p>
+    </div>
+    <div class="stat-list">
+      <div class="stat-item"><b>"Postulo y nadie responde."</b><span>Sin saber qué filtró tu postulación, no puedes mejorarla.</span></div>
+      <div class="stat-item"><b>"No sé si cumplo con lo que piden."</b><span>Las ofertas mezclan requisitos excluyentes con deseables, sin distinguirlos.</span></div>
+      <div class="stat-item"><b>"Tengo la experiencia, pero no sé cómo mostrarla."</b><span>La experiencia que no se comunica es experiencia que no existe para quien revisa.</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="como-funciona">
+    <div class="section-head">
+      <h2>Cómo funciona</h2>
+      <p>Tres pasos para pasar de "creo que podría servir" a "sé exactamente cómo presentarme".</p>
+    </div>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-icon">🔍</div>
+        <h3>1 · Analiza la oferta</h3>
+        <p>Pega el enlace, el texto o sube una captura. Workea separa lo crítico de lo deseable y te muestra qué busca realmente la empresa.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">⚖️</div>
+        <h3>2 · Compara tu experiencia</h3>
+        <p>Sube tu CV y descubre tus fortalezas, tus oportunidades de mejora y las brechas que conviene revisar antes de postular.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">🎯</div>
+        <h3>3 · Postula con estrategia</h3>
+        <p>Recibe recomendaciones concretas para tu CV y una guía de preparación para la entrevista, basadas en tu experiencia real.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="beneficios" style="padding-top:0">
+    <div class="section-head">
+      <h2>Más que un porcentaje: una lectura completa</h2>
+      <p>Workea no te evalúa. Te ayuda a entender la oportunidad y a tomar una decisión informada.</p>
+    </div>
+    <div class="benefits">
+      <div class="benefit"><div class="b-ico">🧭</div><div><h4>Entiende qué es realmente excluyente</h4><p>Distingue los requisitos que funcionan como filtro de los que solo suman puntos.</p></div></div>
+      <div class="benefit"><div class="b-ico">💬</div><div><h4>Explicaciones, no solo números</h4><p>Cada resultado viene con el porqué: qué coincide, qué falta comunicar y qué preparar.</p></div></div>
+      <div class="benefit"><div class="b-ico">✍️</div><div><h4>Mejora tu CV sin inventar nada</h4><p>Las recomendaciones se basan solo en tu experiencia real. Nada de keyword stuffing.</p></div></div>
+      <div class="benefit"><div class="b-ico">🎤</div><div><h4>Llega preparado a la entrevista</h4><p>Preguntas probables, qué evalúa cada una y qué deberías tener listo para responder.</p></div></div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <h2>Antes de postular, entiende.</h2>
+    <p>Tu próxima postulación puede ser la primera que hagas con estrategia.</p>
+    <button class="btn btn-primary" onclick="startApp()">Probar la demo →</button>
+    <p style="margin-top:1rem;font-size:.92rem"><a class="btn-link wa-link" href="#" target="_blank" rel="noopener">o pide tu análisis real a workea@tupartnerlaboral.cl →</a></p>
+  </section>
+
+  <footer>
+    <div class="footer-in">
+      <a class="logo" href="#" onclick="return false">
+        <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+      </a>
+      <p class="footer-tag">Experiencia humana <b>+</b> tecnología inteligente</p>
+      <p>© 2026 Tu Partner Laboral · Prototipo MVP</p>
+    </div>
+  </footer>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="hidden">
+  <header class="app-header">
+    <div class="app-header-in">
+      <a class="logo" href="#" onclick="goLanding();return false">
+        <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+      </a>
+      <nav class="stepper" id="stepper" aria-label="Progreso del análisis"></nav>
+      <span class="stepper-mobile" id="stepperMobile"></span>
+    </div>
+  </header>
+
+  <main class="app-main">
+
+    <!-- PASO: INGRESO DE OFERTA -->
+    <section class="screen" id="scr-input">
+      <div class="screen-head">
+        <h2>Analiza una oportunidad laboral</h2>
+        <p>Pega la oferta, sube una captura o carga un archivo. Workea te ayudará a entenderla.</p>
+      </div>
+      <div class="demo-banner">🔎<span><b>Estás recorriendo la demo.</b> El análisis que verás usa datos de ejemplo para mostrarte la experiencia. Al final podrás pedir tu análisis real con tu propia oferta y tu CV.</span></div>
+      <div class="card">
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="link" onclick="setTab('link')">🔗 Pegar enlace</button>
+          <button class="tab" data-tab="text" onclick="setTab('text')">📋 Pegar texto</button>
+          <button class="tab" data-tab="file" onclick="setTab('file')">📄 Subir archivo</button>
+          <button class="tab" data-tab="shot" onclick="setTab('shot')">🖼️ Subir captura</button>
+        </div>
+
+        <div id="tab-link" class="tab-panel field">
+          <label for="offerUrl">Enlace de la oferta</label>
+          <input type="url" id="offerUrl" placeholder="Pega aquí el enlace de la oferta laboral" oninput="validateInput()">
+          <p class="hint">Funciona con portales de empleo y páginas de empresas.</p>
+        </div>
+
+        <div id="tab-text" class="tab-panel field hidden">
+          <label for="offerText">Contenido de la oferta</label>
+          <textarea id="offerText" placeholder="Copia y pega aquí el contenido de la oferta" oninput="validateInput()"></textarea>
+          <p class="hint">Incluye el cargo, los requisitos y las responsabilidades para un mejor análisis.</p>
+        </div>
+
+        <div id="tab-file" class="tab-panel hidden">
+          <div class="dropzone" onclick="fakeFile('offer','oferta-talent-acquisition.pdf')" onkeydown="if(event.key==='Enter')fakeFile('offer','oferta-talent-acquisition.pdf')" tabindex="0" role="button">
+            <div class="dz-ico">📄</div>
+            <p>Arrastra el archivo aquí o <b>búscalo en tu equipo</b></p>
+            <p class="dz-formats">PDF · PNG · JPG · máx. 10 MB</p>
+          </div>
+          <div id="offerFileChip"></div>
+        </div>
+
+        <div id="tab-shot" class="tab-panel hidden">
+          <div class="dropzone" onclick="fakeFile('offer','captura-oferta.png')" onkeydown="if(event.key==='Enter')fakeFile('offer','captura-oferta.png')" tabindex="0" role="button">
+            <div class="dz-ico">🖼️</div>
+            <p>Sube una captura de pantalla de la oferta</p>
+            <p class="dz-formats">PNG · JPG · desde tu celular o computador</p>
+          </div>
+          <div id="offerShotChip"></div>
+        </div>
+
+        <div id="inputError"></div>
+
+        <div class="demo-strip">
+          <p><b>¿Quieres ver Workea en acción?</b> Prueba con una oferta real de ejemplo.</p>
+          <button class="btn btn-brand" onclick="useDemoOffer()">Usar oferta de ejemplo</button>
+        </div>
+
+        <div class="demo-strip" id="realStrip" style="background:var(--brand-tint);border-color:var(--brand-tint-2)">
+          <p id="realStripMsg"><b>🔑 ¿Tienes un código de acceso?</b> Actívalo para obtener tu análisis real con IA.</p>
+          <span style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <input type="text" id="codigoInput" placeholder="Código de acceso" style="font-family:var(--body);font-size:.88rem;padding:.55rem .9rem;border:1.5px solid var(--line);border-radius:999px;background:#fff;width:150px">
+            <button class="btn btn-brand" onclick="activarCodigo()">Activar</button>
+          </span>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="btnAnalyze" disabled onclick="startOfferFlow()">Analizar oferta →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOADING -->
+    <section class="screen hidden" id="scr-loading">
+      <div class="loading-wrap">
+        <div class="scanner"><span id="loadIcon">🔍</span></div>
+        <h3 id="loadTitle">Analizando la oferta…</h3>
+        <p class="loading-msg" id="loadMsg">Leyendo el contenido</p>
+        <div class="progress-track"><div class="progress-fill" id="loadBar"></div></div>
+      </div>
+    </section>
+
+    <!-- PASO: ANÁLISIS DE OFERTA -->
+    <section class="screen hidden" id="scr-offer">
+      <div class="screen-head">
+        <h2>Esto es lo que la empresa está buscando</h2>
+        <p>Workea estructuró la oferta para que veas con claridad qué es excluyente, qué suma y qué palabras importan.</p>
+      </div>
+
+      <div class="card">
+        <div class="offer-header">
+          <div>
+            <h3>Talent Acquisition Specialist IT</h3>
+            <p class="company">NovaTech Solutions · Tecnología / SaaS</p>
+          </div>
+          <span class="dc-badge" style="background:var(--brand-tint);color:var(--brand-deep);border-color:var(--brand-tint-2)">Seniority: Semi Senior</span>
+        </div>
+        <div class="meta-grid">
+          <div class="meta-item"><span>Ubicación</span><b>Santiago, Chile</b></div>
+          <div class="meta-item"><span>Modalidad</span><b>Híbrida (3x2)</b></div>
+          <div class="meta-item"><span>Contrato</span><b>Indefinido</b></div>
+          <div class="meta-item"><span>Jornada</span><b>Completa</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Requisitos: qué filtra y qué suma</h3>
+        <div class="req-cols">
+          <div>
+            <p style="font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red);margin-bottom:.7rem">Críticos · probables filtros</p>
+            <ul class="req-list">
+              <li><span class="mark crit">!</span><span>3+ años de experiencia en reclutamiento y selección de ciclo completo.</span></li>
+              <li><span class="mark crit">!</span><span>Experiencia comprobable reclutando <b>perfiles tecnológicos</b> (desarrollo, datos, QA).</span></li>
+              <li><span class="mark crit">!</span><span>Manejo de <b>LinkedIn Recruiter</b> para sourcing activo.</span></li>
+              <li><span class="mark crit">!</span><span>Inglés intermedio-avanzado (entrevistas con equipos globales).</span></li>
+            </ul>
+          </div>
+          <div>
+            <p style="font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-strong);margin-bottom:.7rem">Deseables · suman valor</p>
+            <ul class="req-list">
+              <li><span class="mark nice">+</span><span>Experiencia en startups o empresas SaaS de rápido crecimiento.</span></li>
+              <li><span class="mark nice">+</span><span>Uso de ATS como Greenhouse o Lever.</span></li>
+              <li><span class="mark nice">+</span><span>Sourcing técnico en comunidades (GitHub, Stack Overflow).</span></li>
+              <li><span class="mark nice">+</span><span>Certificaciones en RRHH o Talent Acquisition.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:1.2rem">
+        <div class="card" style="margin-top:0">
+          <h3>Competencias técnicas</h3>
+          <div class="pill-row">
+            <span class="pill">LinkedIn Recruiter</span><span class="pill">Sourcing booleano</span><span class="pill">ATS (Greenhouse / Lever)</span><span class="pill">Entrevistas por competencias</span><span class="pill">Hunting directo</span><span class="pill">Métricas de reclutamiento</span>
+          </div>
+        </div>
+        <div class="card" style="margin-top:0">
+          <h3>Competencias conductuales</h3>
+          <div class="pill-row">
+            <span class="pill">Comunicación con hiring managers</span><span class="pill">Orientación a resultados</span><span class="pill">Autonomía</span><span class="pill">Adaptabilidad</span><span class="pill">Gestión de prioridades</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Experiencia que espera el cargo</h3>
+        <div class="meta-grid" style="margin-top:0">
+          <div class="meta-item"><span>Años</span><b>3 o más</b></div>
+          <div class="meta-item"><span>Tipo</span><b>Ciclo completo de selección</b></div>
+          <div class="meta-item"><span>Industria</span><b>Tecnología (ideal)</b></div>
+          <div class="meta-item"><span>Autonomía</span><b>Media-alta</b></div>
+        </div>
+        <p style="font-size:.92rem;color:var(--muted);margin-top:1rem">Responsabilidades centrales: levantar perfiles con líderes técnicos, buscar candidatos activamente, conducir entrevistas y gestionar el proceso de punta a punta.</p>
+      </div>
+
+      <div class="note-card" style="margin-top:1.2rem">
+        <b>Lectura Workea:</b> esta oferta pesa más el <b>sourcing activo de perfiles IT</b> que la gestión administrativa. Si tu experiencia incluye búsqueda directa de candidatos tecnológicos, ese será tu mejor argumento.
+      </div>
+
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="showScreen('scr-input',1)">← Cambiar oferta</button>
+        <button class="btn btn-primary" onclick="showScreen('scr-cv',2)">Comparar con mi CV →</button>
+      </div>
+    </section>
+
+    <!-- PASO: CARGA DE CV -->
+    <section class="screen hidden" id="scr-cv">
+      <div class="screen-head">
+        <h2>Ahora, cuéntanos de ti</h2>
+        <p>Sube tu CV o pega su contenido. Workea lo comparará con la oferta usando solo la información que entregues: nada se inventa ni se asume.</p>
+      </div>
+      <div class="card">
+        <div class="tabs">
+          <button class="tab active" data-cvtab="file" onclick="setCvTab('file')">📄 Subir CV (PDF o documento)</button>
+          <button class="tab" data-cvtab="text" onclick="setCvTab('text')">📋 Pegar contenido</button>
+        </div>
+        <div id="cvtab-file" class="tab-panel">
+          <div class="dropzone" onclick="fakeFile('cv','CV-Fernanda-Rojas.pdf')" onkeydown="if(event.key==='Enter')fakeFile('cv','CV-Fernanda-Rojas.pdf')" tabindex="0" role="button">
+            <div class="dz-ico">📎</div>
+            <p>Arrastra tu CV aquí o <b>búscalo en tu equipo</b></p>
+            <p class="dz-formats">PDF · DOCX · máx. 10 MB</p>
+          </div>
+          <div id="cvFileChip"></div>
+        </div>
+        <div id="cvtab-text" class="tab-panel field hidden">
+          <label for="cvText">Contenido de tu CV</label>
+          <textarea id="cvText" placeholder="Pega aquí el contenido de tu CV: experiencia, cargos, herramientas, educación…" oninput="validateCv()"></textarea>
+        </div>
+
+        <div class="demo-strip">
+          <p><b>¿Solo estás explorando?</b> Usa un CV de ejemplo para recorrer el análisis completo.</p>
+          <button class="btn btn-brand" onclick="useDemoCv()">Usar CV de ejemplo</button>
+        </div>
+
+        <div class="actions split">
+          <button class="btn btn-ghost" onclick="showScreen('scr-offer',1)">← Volver al análisis</button>
+          <button class="btn btn-primary" id="btnCompare" disabled onclick="startCompare()">Comparar con la oferta →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PASO: COMPARACIÓN -->
+    <section class="screen hidden" id="scr-compare">
+      <div class="screen-head">
+        <h2>Tu experiencia frente a esta oferta</h2>
+        <p>El número es solo un punto de partida. Lo importante es la lectura: qué coincide, qué falta comunicar y qué revisar.</p>
+      </div>
+
+      <div class="compat-hero">
+        <div class="ring-wrap" aria-label="Compatibilidad estimada 74 por ciento">
+          <svg width="130" height="130" viewBox="0 0 130 130">
+            <circle class="ring-bg" cx="65" cy="65" r="56" fill="none" stroke-width="11"/>
+            <circle class="ring-val" id="ringVal" cx="65" cy="65" r="56" fill="none" stroke-width="11" stroke-dasharray="352" stroke-dashoffset="352"/>
+          </svg>
+          <div class="ring-label"><b id="ringNum">0%</b><span>estimada</span></div>
+        </div>
+        <div class="compat-reading">
+          <p class="kicker">Compatibilidad estimada · lo que significa</p>
+          <h3>Tu experiencia presenta una buena alineación con las responsabilidades principales del cargo.</h3>
+          <p>Sin embargo, existen dos requisitos relevantes que no se identifican claramente en tu CV: el manejo de LinkedIn Recruiter y el nivel de inglés. Antes de postular, conviene revisar cómo comunicas tu experiencia con perfiles tecnológicos, que hoy aparece de forma muy general.</p>
+        </div>
+      </div>
+
+      <div class="finding-group">
+        <div class="finding-head"><span class="fh-dot" style="background:var(--green)"></span><h3>Fortalezas</h3><span class="count">3</span></div>
+        <div class="finding f-green"><b>Ciclo completo de selección</b><p>Tu experiencia gestionando procesos desde el levantamiento del perfil hasta la contratación coincide directamente con la responsabilidad central del cargo.</p></div>
+        <div class="finding f-green"><b>Entrevistas por competencias</b><p>Mencionas explícitamente el uso de entrevistas por competencias, una de las metodologías que la oferta solicita.</p></div>
+        <div class="finding f-green"><b>Relación con jefaturas y áreas cliente</b><p>Tu trabajo directo con jefaturas para definir perfiles se relaciona bien con la colaboración con hiring managers que espera el cargo.</p></div>
+      </div>
+
+      <div class="finding-group">
+        <div class="finding-head"><span class="fh-dot" style="background:var(--amber)"></span><h3>Oportunidades de mejora</h3><span class="count">3</span></div>
+        <div class="finding f-amber"><b>Perfiles tecnológicos: existen, pero no se detallan</b><p>Tu CV menciona "perfiles digitales y comerciales", pero no especifica qué tipo de perfiles tecnológicos trabajaste ni con qué herramientas los buscaste. Para esta oferta, ese detalle es clave.</p></div>
+        <div class="finding f-amber"><b>Sourcing sin describir</b><p>Indicas "búsqueda de candidatos", pero no cuentas cómo: canales, estrategias o volumen. La oferta valora especialmente el sourcing activo.</p></div>
+        <div class="finding f-amber"><b>Logros sin resultados visibles</b><p>Tus responsabilidades están claras, pero no aparecen resultados (tiempos de cierre, procesos completados, satisfacción de clientes internos) que respalden tu impacto.</p></div>
+      </div>
+
+      <div class="finding-group">
+        <div class="finding-head"><span class="fh-dot" style="background:var(--red)"></span><h3>Brechas</h3><span class="count">2</span></div>
+        <div class="finding f-red"><b>LinkedIn Recruiter</b><p>Este requisito no se identifica claramente en tu CV. Mencionas LinkedIn como canal, pero no la licencia Recruiter ni sourcing avanzado. Si la has usado, es importante decirlo; si no, considera que es un requisito crítico de la oferta.</p></div>
+        <div class="finding f-red"><b>Nivel de inglés</b><p>Tu CV no menciona idiomas. La oferta pide inglés intermedio-avanzado para entrevistas con equipos globales. Si lo manejas, inclúyelo con su nivel; este dato hoy no puede evaluarse a tu favor.</p></div>
+      </div>
+
+      <div class="finding-group">
+        <div class="finding-head"><span class="fh-dot" style="background:var(--faint)"></span><h3>Información insuficiente</h3><span class="count">2</span></div>
+        <div class="finding f-neutral"><b>Experiencia en industria tecnológica</b><p>Trabajaste en consultoría de RRHH, pero no es claro si tus clientes incluían empresas de tecnología. Con la información disponible, este punto no puede evaluarse.</p></div>
+        <div class="finding f-neutral"><b>Nivel de autonomía</b><p>El CV no permite estimar cuánta autonomía tuviste en tus procesos. La oferta espera autonomía media-alta; vale la pena reflejarlo si fue tu caso.</p></div>
+      </div>
+
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="showScreen('scr-cv',2)">← Volver a mi CV</button>
+        <button class="btn btn-primary" onclick="showScreen('scr-adapt',4)">Potenciar mi CV →</button>
+      </div>
+    </section>
+
+    <!-- PASO: ADAPTACIÓN DEL CV -->
+    <section class="screen hidden" id="scr-adapt">
+      <div class="screen-head">
+        <h2>Potencia tu CV para esta oportunidad</h2>
+        <p>Recomendaciones basadas únicamente en tu experiencia real. Workea no inventa logros, habilidades ni certificaciones.</p>
+      </div>
+
+      <div class="card adapt-block">
+        <h3>🏷️ Titular profesional</h3>
+        <div class="adapt-grid">
+          <div class="version v-current"><span class="v-tag">Tu versión actual</span>Psicóloga organizacional</div>
+          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>Especialista en Reclutamiento y Selección · 4 años en procesos de ciclo completo</div>
+        </div>
+        <div class="why">💡<span><b>Por qué importa:</b> el titular es lo primero que se lee. "Psicóloga organizacional" describe tu formación; el titular recomendado describe la función que la oferta busca, usando solo tu experiencia real.</span></div>
+      </div>
+
+      <div class="card adapt-block">
+        <h3>👤 Perfil profesional</h3>
+        <div class="adapt-grid">
+          <div class="version v-current"><span class="v-tag">Tu versión actual</span>"Profesional con experiencia en recursos humanos y procesos de selección, orientada a las personas y al trabajo en equipo."</div>
+          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>"Especialista en selección con 4 años gestionando procesos de ciclo completo para perfiles profesionales, digitales y comerciales. Experiencia levantando perfiles con jefaturas, conduciendo entrevistas por competencias y gestionando múltiples procesos en paralelo."</div>
+        </div>
+        <div class="why">💡<span><b>Por qué importa:</b> tu versión actual es genérica y podría acompañar cualquier postulación. La recomendada conecta tu experiencia concreta con las responsabilidades centrales de esta oferta.</span></div>
+      </div>
+
+      <div class="card adapt-block">
+        <h3>💼 Experiencia laboral</h3>
+        <div class="adapt-grid">
+          <div class="version v-current"><span class="v-tag">Tu versión actual</span>"Realización de procesos de selección."</div>
+          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>"Gestión integral de procesos de selección para perfiles profesionales, desde el levantamiento del perfil con jefaturas hasta la presentación de candidatos finalistas."</div>
+        </div>
+        <div class="why">💡<span><b>Por qué importa:</b> la nueva redacción comunica mayor nivel de responsabilidad y se relaciona mejor con la experiencia solicitada. Además: ordena tus experiencias poniendo primero los procesos con perfiles digitales, y agrega resultados donde los tengas (n° de procesos, tiempos de cierre).</span></div>
+      </div>
+
+      <div class="card adapt-block">
+        <h3>🛠️ Habilidades</h3>
+        <div class="adapt-grid">
+          <div class="version v-current"><span class="v-tag">Tu versión actual</span>Trabajo en equipo · Comunicación · Office · LinkedIn</div>
+          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>Entrevistas por competencias · Levantamiento de perfiles · Búsqueda activa en LinkedIn · Gestión de ATS interno · Comunicación con jefaturas</div>
+        </div>
+        <div class="why">💡<span><b>Por qué importa:</b> las competencias que la oferta valora ya están en tu experiencia, pero hoy no son visibles como habilidades. Nómbralas tal como las ejerciste, sin agregar herramientas que no hayas usado.</span></div>
+      </div>
+
+      <div class="honesty">⚠️<span><b>Un principio importante:</b> no agregues LinkedIn Recruiter, inglés ni experiencia en tecnología si no los tienes. Un CV honesto y bien comunicado siempre rinde más que uno inflado: las brechas reales se conversan en la entrevista, no se ocultan.</span></div>
+
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="showScreen('scr-compare',3)">← Volver a la comparación</button>
+        <button class="btn btn-primary" onclick="showScreen('scr-keywords',4)">Ver las claves de la oferta →</button>
+      </div>
+    </section>
+
+    <!-- PASO: PALABRAS CLAVE -->
+    <section class="screen hidden" id="scr-keywords">
+      <div class="screen-head">
+        <h2>Las claves de esta oferta</h2>
+        <p>Los términos que probablemente busca quien revise tu postulación, y cómo aparecen (o no) en tu CV.</p>
+      </div>
+
+      <div class="card">
+        <div class="kw-legend">
+          <span><i class="kw-dot" style="background:var(--green)"></i> Presente: aparece claramente en tu CV</span>
+          <span><i class="kw-dot" style="background:var(--amber)"></i> Relacionada: tienes experiencia similar con otro nombre</span>
+          <span><i class="kw-dot" style="background:var(--faint)"></i> No identificada: no aparece en tu CV</span>
+        </div>
+
+        <div class="kw-group"><h4>Funciones</h4>
+          <span class="kw-chip kw-p"><i></i>Selección de personal</span>
+          <span class="kw-chip kw-p"><i></i>Entrevistas por competencias</span>
+          <span class="kw-chip kw-r"><i></i>Talent Acquisition</span>
+          <span class="kw-chip kw-r"><i></i>Hunting</span>
+        </div>
+        <div class="kw-group"><h4>Herramientas</h4>
+          <span class="kw-chip kw-p"><i></i>LinkedIn</span>
+          <span class="kw-chip kw-r"><i></i>ATS</span>
+          <span class="kw-chip kw-n"><i></i>LinkedIn Recruiter</span>
+          <span class="kw-chip kw-n"><i></i>Greenhouse / Lever</span>
+        </div>
+        <div class="kw-group"><h4>Competencias técnicas</h4>
+          <span class="kw-chip kw-p"><i></i>Levantamiento de perfiles</span>
+          <span class="kw-chip kw-r"><i></i>Sourcing</span>
+          <span class="kw-chip kw-n"><i></i>Búsqueda booleana</span>
+        </div>
+        <div class="kw-group"><h4>Industria y seniority</h4>
+          <span class="kw-chip kw-p"><i></i>Consultoría RRHH</span>
+          <span class="kw-chip kw-r"><i></i>Semi Senior</span>
+          <span class="kw-chip kw-n"><i></i>Perfiles IT</span>
+          <span class="kw-chip kw-n"><i></i>SaaS / startup</span>
+        </div>
+        <div class="kw-group"><h4>Competencias conductuales</h4>
+          <span class="kw-chip kw-p"><i></i>Comunicación</span>
+          <span class="kw-chip kw-r"><i></i>Orientación a resultados</span>
+          <span class="kw-chip kw-n"><i></i>Inglés</span>
+        </div>
+
+        <div class="note-card"><b>Importante:</b> las palabras "relacionadas" puedes incorporarlas usando el término exacto de la oferta, porque describen experiencia que ya tienes. Las "no identificadas" solo agrégalas si realmente corresponden a tu experiencia.</div>
+      </div>
+
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="showScreen('scr-adapt',4)">← Volver a mi CV</button>
+        <button class="btn btn-primary" onclick="showScreen('scr-interview',5)">Prepararme para la entrevista →</button>
+      </div>
+    </section>
+
+    <!-- PASO: ENTREVISTA -->
+    <section class="screen hidden" id="scr-interview">
+      <div class="screen-head">
+        <h2>Prepárate para la entrevista</h2>
+        <p>Seis preguntas probables para este cargo, qué evalúa cada una y qué te conviene preparar. Toca cada pregunta para ver el detalle.</p>
+      </div>
+
+      <p class="q-cat">Sobre tu experiencia</p>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"Cuéntame sobre tu experiencia trabajando con perfiles tecnológicos."<span class="chev">▾</span></button>
+        <div class="q-body">
+          <div class="qb"><span>Qué está evaluando</span><p>Tu nivel de exposición real a perfiles IT y tu capacidad para explicar tu experiencia de manera concreta, no genérica.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Dos ejemplos específicos: qué perfil buscabas, cómo lo encontraste, qué fue lo difícil y cómo terminó el proceso. Si tu experiencia con perfiles digitales fue parcial, dilo con claridad y muestra lo aprendido.</p></div>
+        </div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"Descríbeme un proceso de selección que hayas gestionado de principio a fin."<span class="chev">▾</span></button>
+        <div class="q-body">
+          <div class="qb"><span>Qué está evaluando</span><p>Si realmente manejas el ciclo completo o solo participaste en etapas. Buscan autonomía y orden metodológico.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Un caso con estructura: levantamiento del perfil → estrategia de búsqueda → filtro → entrevistas → presentación de finalistas → cierre. Incluye tiempos y tu rol en cada etapa.</p></div>
+        </div>
+      </div>
+
+      <p class="q-cat">Técnicas</p>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"¿Cómo haces sourcing cuando el perfil es difícil de encontrar?"<span class="chev">▾</span></button>
+        <div class="q-body">
+          <div class="qb"><span>Qué está evaluando</span><p>Tu caja de herramientas de búsqueda activa: canales, criterios y persistencia. Es el corazón técnico de este cargo.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Describe tu método real: cómo defines criterios, dónde buscas, cómo contactas. Si no has usado LinkedIn Recruiter, prepárate para explicar cómo lograbas resultados con las herramientas que sí usaste y tu disposición a aprenderla.</p></div>
+        </div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"¿Qué métricas usas para evaluar un proceso de selección?"<span class="chev">▾</span></button>
+        <div class="q-body">
+          <div class="qb"><span>Qué está evaluando</span><p>Tu orientación a resultados y si gestionas con datos: tiempo de cierre, conversión por etapa, calidad de contratación.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Recupera números reales de tus procesos: cuántos gestionabas en paralelo, tiempos promedio de cierre, tasa de aceptación de ofertas. Si no medías formalmente, prepara estimaciones honestas.</p></div>
+        </div>
+      </div>
+
+      <p class="q-cat">Conductuales</p>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"Cuéntame de una vez en que un hiring manager no estaba de acuerdo contigo."<span class="chev">▾</span></button>
+        <div class="q-body">
+          <div class="qb"><span>Qué está evaluando</span><p>Tu comunicación con jefaturas y tu capacidad de influir con argumentos, una competencia central del cargo.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Un caso real con formato STAR: situación, qué propusiste, cómo manejaste la diferencia y qué resultado hubo. Evita casos donde "simplemente cediste".</p></div>
+        </div>
+      </div>
+
+      <p class="q-cat">Sobre el cargo</p>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"¿Por qué quieres moverte de consultoría a una empresa de tecnología?"<span class="chev">▾</span></button>
+        <div class="q-body">
+          <div class="qb"><span>Qué está evaluando</span><p>Tu motivación real y si entiendes las diferencias entre reclutar como consultora externa y hacerlo desde dentro de una empresa tech.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Una respuesta que conecte tu experiencia (variedad de procesos, presión por resultados) con lo que buscas ahora: profundidad en un solo negocio, cercanía con los equipos y especialización en perfiles IT.</p></div>
+        </div>
+      </div>
+
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="showScreen('scr-keywords',4)">← Volver a las claves</button>
+        <button class="btn btn-primary" onclick="showScreen('scr-summary',6)">Ver mi resultado final →</button>
+      </div>
+    </section>
+
+    <!-- PASO: RESUMEN -->
+    <section class="screen hidden" id="scr-summary">
+      <div class="summary-hero">
+        <p class="kicker">Tu análisis Workea</p>
+        <h2>Talent Acquisition Specialist IT</h2>
+        <p class="sh-sub">NovaTech Solutions · Compatibilidad estimada: <b style="color:#fff">74%</b></p>
+        <div class="verdict">
+          <span class="v-emoji">🟡</span>
+          <div>
+            <h3>Postula, pero ajusta tu presentación</h3>
+            <p>Tu experiencia es pertinente para este cargo, pero tu CV todavía no comunica bien tu encaje. Antes de enviar tu postulación, aplica las recomendaciones de Workea: detalla tu experiencia con perfiles digitales, describe cómo haces sourcing y aclara tu nivel de inglés. La decisión final es tuya; estos ajustes la hacen mucho más sólida.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="sum-card"><span class="sc-tag sc-green">● Tu principal fortaleza</span><p>Tu gestión de procesos de selección de ciclo completo coincide con las responsabilidades centrales del cargo.</p></div>
+        <div class="sum-card"><span class="sc-tag sc-amber">● Tu principal oportunidad</span><p>Tu experiencia relacionada con perfiles digitales y sourcing existe, pero no está suficientemente visible en tu CV.</p></div>
+        <div class="sum-card"><span class="sc-tag sc-red">● Tu principal brecha</span><p>No se identifica claramente el manejo de LinkedIn Recruiter ni tu nivel de inglés, dos requisitos críticos de la oferta.</p></div>
+      </div>
+
+      <div class="card next-steps">
+        <h3>Antes de postular</h3>
+        <ol>
+          <li><b>Ajusta tu CV</b> con las recomendaciones de la sección "Potencia tu CV".</li>
+          <li><b>Incorpora los términos "relacionados"</b> de la oferta que ya describen tu experiencia real.</li>
+          <li><b>Prepara tus respuestas</b> para las preguntas probables de entrevista, especialmente sobre sourcing y perfiles IT.</li>
+          <li><b>Sé transparente</b> con las brechas: es mejor conversarlas que ocultarlas.</li>
+        </ol>
+      </div>
+
+      <div class="real-cta">
+        <div>
+          <h3>¿Quieres tu análisis real? 💬</h3>
+          <p>Este fue un ejemplo. Envíanos la oferta que te interesa y tu CV a <b>workea@tupartnerlaboral.cl</b>, y en menos de 24 horas recibirás tu análisis Workea completo, revisado por especialistas en selección.</p>
+        </div>
+        <a class="btn btn-wa wa-link" href="#" target="_blank" rel="noopener">Pedir mi análisis real →</a>
+      </div>
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="showScreen('scr-compare',3)">Ver análisis completo</button>
+        <button class="btn btn-ghost" onclick="resetApp()">Analizar otra oferta</button>
+      </div>
+    </section>
+
+    <!-- RESULTADOS REALES (modo IA) -->
+    <section class="screen hidden" id="scr-results">
+      <div id="resultsMount"></div>
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="resetApp()">Analizar otra oferta</button>
+        <button class="btn btn-primary" onclick="window.print()">Imprimir / guardar PDF</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ===== CORREO DE CONTACTO WORKEA ===== */
+const CONTACTO_EMAIL = 'workea@tupartnerlaboral.cl';
+const CONTACTO_URL = 'mailto:' + CONTACTO_EMAIL
+  + '?subject=' + encodeURIComponent('Quiero mi análisis Workea')
+  + '&body=' + encodeURIComponent('¡Hola! Vengo de workea.vercel.app y quiero mi análisis real.\n\nAdjunto en este correo:\n1. La oferta laboral que me interesa (texto, link o captura).\n2. Mi CV en PDF.\n\n¡Gracias!');
+document.addEventListener('DOMContentLoaded',()=>{ document.querySelectorAll('.wa-link').forEach(a=>{a.href=CONTACTO_URL;a.removeAttribute('target');}); });
+
+/* ================= estado ================= */
+const state = { offerReady:false, cvReady:false, tab:'link', cvTab:'file' };
+
+const STEPS = [
+  {id:'scr-input', label:'Oferta'},
+  {id:'scr-offer', label:'Análisis'},
+  {id:'scr-cv', label:'Tu CV'},
+  {id:'scr-compare', label:'Comparación'},
+  {id:'scr-adapt', label:'Tu postulación'},
+  {id:'scr-interview', label:'Entrevista'},
+  {id:'scr-summary', label:'Resultado'}
+];
+
+/* ================= navegación ================= */
+function startApp(){
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  window.scrollTo(0,0);
+  renderStepper(0);
+}
+function goLanding(){
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('landing').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+function showScreen(id, stepIdx){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  const el = document.getElementById(id);
+  el.classList.remove('hidden');
+  el.style.animation='none'; void el.offsetWidth; el.style.animation='';
+  renderStepper(stepIdx);
+  window.scrollTo({top:0});
+  if(id==='scr-compare') animateRing(74);
+}
+function renderStepper(activeIdx){
+  const wrap = document.getElementById('stepper');
+  wrap.innerHTML = STEPS.map((s,i)=>{
+    const cls = i<activeIdx?'done':(i===activeIdx?'active':'');
+    const n = i<activeIdx?'✓':(i+1);
+    return `<span class="step-pill ${cls}"><span class="n">${n}</span>${s.label}</span>`;
+  }).join('<span class="step-sep">›</span>');
+  document.getElementById('stepperMobile').textContent = `Paso ${activeIdx+1} de ${STEPS.length} · ${STEPS[activeIdx].label}`;
+}
+function resetApp(){
+  state.offerReady=false; state.cvReady=false;
+  document.getElementById('offerUrl').value='';
+  document.getElementById('offerText').value='';
+  document.getElementById('cvText').value='';
+  ['offerFileChip','offerShotChip','cvFileChip','inputError'].forEach(id=>document.getElementById(id).innerHTML='');
+  document.getElementById('btnAnalyze').disabled=true;
+  document.getElementById('btnCompare').disabled=true;
+  showScreen('scr-input',0);
+}
+
+/* ================= ingreso de oferta ================= */
+function setTab(t){
+  state.tab=t;
+  document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+  ['link','text','file','shot'].forEach(x=>document.getElementById('tab-'+x).classList.toggle('hidden',x!==t));
+  validateInput();
+}
+function validateInput(){
+  const url = document.getElementById('offerUrl').value.trim();
+  const txt = document.getElementById('offerText').value.trim();
+  let ok=false;
+  if(state.tab==='link') ok = url.length>8;
+  if(state.tab==='text') ok = txt.length>40;
+  if(state.tab==='file') ok = !!document.querySelector('#offerFileChip .file-chip');
+  if(state.tab==='shot') ok = !!document.querySelector('#offerShotChip .file-chip');
+  state.offerReady=ok;
+  document.getElementById('btnAnalyze').disabled=!ok;
+  const err=document.getElementById('inputError');
+  if(state.tab==='text' && txt.length>0 && txt.length<=40){
+    err.innerHTML = `<div class="error-box">⚠️ <span>El texto es muy breve para analizarlo bien. Incluye el cargo, los requisitos y las responsabilidades de la oferta.</span></div>`;
+  } else { err.innerHTML=''; }
+}
+function fakeFile(kind,name){
+  const target = kind==='cv' ? 'cvFileChip' : (state.tab==='shot'?'offerShotChip':'offerFileChip');
+  document.getElementById(target).innerHTML =
+    `<span class="file-chip">📎 ${name} <button aria-label="Quitar archivo" onclick="removeFile('${target}','${kind}');event.stopPropagation()">×</button></span>`;
+  if(kind==='cv'){ validateCv(); } else { validateInput(); }
+}
+function removeFile(target,kind){
+  document.getElementById(target).innerHTML='';
+  if(kind==='cv'){ validateCv(); } else { validateInput(); }
+}
+function useDemoOffer(){
+  setTab('text');
+  document.getElementById('offerText').value =
+`Talent Acquisition Specialist IT — NovaTech Solutions (Santiago, híbrido)
+
+Buscamos un/a especialista en atracción de talento para liderar procesos de selección de perfiles tecnológicos (desarrollo, datos, QA) de punta a punta.
+
+Requisitos: 3+ años en reclutamiento y selección de ciclo completo; experiencia comprobable con perfiles IT; manejo de LinkedIn Recruiter; inglés intermedio-avanzado.
+
+Deseable: experiencia en startups o SaaS; uso de ATS (Greenhouse/Lever); sourcing técnico en comunidades; certificaciones en RRHH.
+
+Responsabilidades: levantar perfiles con líderes técnicos, sourcing activo, entrevistas por competencias, gestión de métricas del proceso y experiencia de candidato.
+
+Contrato indefinido · Jornada completa · Modalidad híbrida 3x2.`;
+  validateInput();
+}
+
+/* ================= carga de CV ================= */
+function setCvTab(t){
+  state.cvTab=t;
+  document.querySelectorAll('[data-cvtab]').forEach(b=>b.classList.toggle('active',b.dataset.cvtab===t));
+  ['file','text'].forEach(x=>document.getElementById('cvtab-'+x).classList.toggle('hidden',x!==t));
+  validateCv();
+}
+function validateCv(){
+  const txt = document.getElementById('cvText').value.trim();
+  let ok=false;
+  if(state.cvTab==='file') ok = !!document.querySelector('#cvFileChip .file-chip');
+  if(state.cvTab==='text') ok = txt.length>40;
+  state.cvReady=ok;
+  document.getElementById('btnCompare').disabled=!ok;
+}
+function useDemoCv(){
+  setCvTab('text');
+  document.getElementById('cvText').value =
+`Fernanda Rojas — Psicóloga organizacional
+
+Experiencia:
+Consultora de Selección, People First Consultores (2022–hoy)
+- Realización de procesos de selección para clientes de distintas industrias.
+- Levantamiento de perfiles con jefaturas y áreas cliente.
+- Entrevistas por competencias y elaboración de informes.
+- Búsqueda de candidatos para perfiles profesionales, digitales y comerciales.
+- Gestión de procesos en ATS interno de la consultora.
+
+Analista de RRHH, Retail Andes (2021–2022)
+- Apoyo en reclutamiento masivo y selección de mandos medios.
+
+Educación: Psicología, Universidad de Chile (2020).
+Habilidades: trabajo en equipo, comunicación, Office, LinkedIn.`;
+  validateCv();
+}
+
+/* ================= loading simulado ================= */
+function runLoading(opts, done){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById('scr-loading').classList.remove('hidden');
+  renderStepper(opts.step);
+  window.scrollTo({top:0});
+  document.getElementById('loadIcon').textContent = opts.icon;
+  document.getElementById('loadTitle').textContent = opts.title;
+  const msgEl = document.getElementById('loadMsg');
+  const bar = document.getElementById('loadBar');
+  bar.style.width='0%';
+  let i=0;
+  msgEl.textContent = opts.msgs[0];
+  bar.style.width='18%';
+  const iv = setInterval(()=>{
+    i++;
+    if(i<opts.msgs.length){
+      msgEl.style.opacity=0;
+      setTimeout(()=>{ msgEl.textContent=opts.msgs[i]; msgEl.style.opacity=1; },250);
+      bar.style.width = (18 + (i/(opts.msgs.length))*75) + '%';
+    } else {
+      clearInterval(iv);
+      bar.style.width='100%';
+      setTimeout(done, 500);
+    }
+  }, 1100);
+}
+function runOfferAnalysis(){
+  runLoading({
+    step:1, icon:'🔍', title:'Analizando la oferta…',
+    msgs:['Leyendo el contenido de la oferta','Identificando requisitos críticos y deseables','Detectando competencias y palabras clave','Preparando tu análisis']
+  }, ()=> showScreen('scr-offer',1));
+}
+function runComparison(){
+  runLoading({
+    step:3, icon:'⚖️', title:'Comparando tu experiencia con la oferta…',
+    msgs:['Leyendo tu experiencia laboral','Buscando coincidencias con los requisitos','Identificando experiencia relacionada','Detectando posibles brechas','Redactando tu lectura personalizada']
+  }, ()=> showScreen('scr-compare',3));
+}
+
+/* ================= interacciones ================= */
+function animateRing(pct){
+  const circ = 2*Math.PI*56;
+  const ring = document.getElementById('ringVal');
+  const num = document.getElementById('ringNum');
+  ring.style.strokeDasharray = circ;
+  ring.style.strokeDashoffset = circ;
+  requestAnimationFrame(()=>{ setTimeout(()=>{
+    ring.style.strokeDashoffset = circ*(1-pct/100);
+  },100); });
+  let cur=0;
+  const iv=setInterval(()=>{
+    cur+=2; if(cur>=pct){cur=pct;clearInterval(iv);}
+    num.textContent=cur+'%';
+  },26);
+}
+function toggleQ(btn){ btn.parentElement.classList.toggle('open'); }
+
+/* ================= MODO ANÁLISIS REAL (IA) ================= */
+let realMode = false, accessCode = '', offerPayload = '';
+
+function activarCodigo(){
+  const v = document.getElementById('codigoInput').value.trim();
+  if(!v){ return; }
+  accessCode = v; realMode = true;
+  document.getElementById('realStrip').innerHTML =
+    '<p><b>✅ Análisis real activado.</b> Pega la oferta como texto y luego tu CV: la IA de Workea generará tu análisis personalizado.</p>';
+  setTab('text');
+}
+
+function startOfferFlow(){
+  if(!realMode){ runOfferAnalysis(); return; }
+  const txt = document.getElementById('offerText').value.trim();
+  if(state.tab!=='text' || txt.length<=40){
+    setTab('text');
+    document.getElementById('inputError').innerHTML =
+      '<div class="error-box">ℹ️ <span>En el análisis real, por ahora, la oferta debe ingresarse como <b>texto</b> (cópiala completa desde el portal de empleo).</span></div>';
+    return;
+  }
+  offerPayload = txt;
+  showScreen('scr-cv',2);
+}
+
+function startCompare(){
+  if(!realMode){ runComparison(); return; }
+  const cv = document.getElementById('cvText').value.trim();
+  if(state.cvTab!=='text' || cv.length<=40){
+    setCvTab('text');
+    return;
+  }
+  runRealAnalysis(offerPayload, cv);
+}
+
+async function runRealAnalysis(oferta, cv){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById('scr-loading').classList.remove('hidden');
+  renderStepper(3); window.scrollTo({top:0});
+  document.getElementById('loadIcon').textContent='🤖';
+  document.getElementById('loadTitle').textContent='Generando tu análisis real…';
+  const msgs = ['Leyendo la oferta y tu CV','Identificando requisitos críticos','Comparando tu experiencia','Detectando fortalezas y brechas','Redactando recomendaciones','Preparando tu guía de entrevista'];
+  const msgEl=document.getElementById('loadMsg'), bar=document.getElementById('loadBar');
+  let i=0; msgEl.textContent=msgs[0]; bar.style.width='10%';
+  const iv=setInterval(()=>{ i=(i+1)%msgs.length; msgEl.textContent=msgs[i];
+    bar.style.width=Math.min(92,parseFloat(bar.style.width)+13)+'%'; },2500);
+  try{
+    const r = await fetch('/api/analizar',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({oferta,cv,codigo:accessCode})});
+    const data = await r.json();
+    clearInterval(iv);
+    if(!r.ok || data.error){ throw new Error(data.error||'Error del servidor'); }
+    bar.style.width='100%';
+    setTimeout(()=>{ renderResults(data); },400);
+  }catch(e){
+    clearInterval(iv);
+    document.getElementById('scr-loading').classList.add('hidden');
+    const cvScr=document.getElementById('scr-cv'); cvScr.classList.remove('hidden');
+    renderStepper(2);
+    alert('No pudimos generar el análisis: '+e.message+'\n\nRevisa tu código de acceso o inténtalo de nuevo en unos minutos.');
+  }
+}
+
+function esc(s){ return String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function renderResults(d){
+  const NIVEL = {verde:['🟢','f-green'],amarillo:['🟡','f-amber'],naranjo:['🟠','f-amber'],rojo:['🔴','f-red']};
+  const findings=(arr,cls)=> (arr||[]).map(f=>`<div class="finding ${cls}"><b>${esc(f.titulo)}</b><p>${esc(f.detalle)}</p></div>`).join('');
+  const group=(color,titulo,arr,cls)=> (arr&&arr.length)?`
+    <div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:${color}"></span><h3>${titulo}</h3><span class="count">${arr.length}</span></div>${findings(arr,cls)}</div>`:'';
+  const KWCLS={presente:'kw-p',relacionada:'kw-r',no:'kw-n'};
+  const claves=(d.claves||[]).map(k=>`<span class="kw-chip ${KWCLS[k.estado]||'kw-n'}" title="${esc(k.nota||'')}"><i></i>${esc(k.palabra)}</span>`).join(' ');
+  const cvRecs=(d.cv||[]).map(c=>`
+    <div class="card adapt-block"><h3>✍️ ${esc(c.seccion)}</h3>
+      <div class="adapt-grid">
+        <div class="version v-current"><span class="v-tag">Tu versión actual</span>${esc(c.actual)}</div>
+        <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>${esc(c.recomendacion)}</div>
+      </div>
+      <div class="why">💡<span><b>Por qué importa:</b> ${esc(c.porque)}</span></div>
+    </div>`).join('');
+  const qs=(d.entrevista||[]).map((q,i)=>`
+    <div class="q-item ${i===0?'open':''}"><button class="q-toggle" onclick="toggleQ(this)">${esc(q.pregunta)}<span class="chev">▾</span></button>
+      <div class="q-body">
+        <div class="qb"><span>Qué está evaluando</span><p>${esc(q.evalua)}</p></div>
+        <div class="qb"><span>Qué deberías preparar</span><p>${esc(q.preparar)}</p></div>
+      </div>
+    </div>`).join('');
+  const [emo] = NIVEL[(d.recomendacion||{}).nivel]||['🟡'];
+  const info=d.info||{};
+  const metas=[['Empresa',info.empresa],['Ubicación',info.ubicacion],['Modalidad',info.modalidad],['Seniority',info.seniority]]
+    .filter(m=>m[1]).map(m=>`<div class="meta-item"><span>${m[0]}</span><b>${esc(m[1])}</b></div>`).join('');
+  const circ=2*Math.PI*56, pct=Math.max(0,Math.min(100,d.compatibilidad?.porcentaje??0));
+
+  document.getElementById('resultsMount').innerHTML = `
+    <div class="screen-head"><h2>Tu análisis Workea</h2>
+      <p>Generado con IA a partir de tu oferta y tu CV. Léelo completo: el número importa menos que la lectura.</p></div>
+    <div class="card"><div class="offer-header"><div><h3>${esc(info.cargo||'Oportunidad analizada')}</h3>
+      <p class="company">${esc(info.empresa||'')}</p></div></div>
+      <div class="meta-grid">${metas}</div></div>
+    <div class="compat-hero" style="margin-top:1.2rem">
+      <div class="ring-wrap"><svg width="130" height="130" viewBox="0 0 130 130">
+        <circle class="ring-bg" cx="65" cy="65" r="56" fill="none" stroke-width="11"/>
+        <circle class="ring-val" cx="65" cy="65" r="56" fill="none" stroke-width="11"
+          stroke-dasharray="${circ}" stroke-dashoffset="${circ*(1-pct/100)}"/></svg>
+        <div class="ring-label"><b>${pct}%</b><span>estimada</span></div></div>
+      <div class="compat-reading"><p class="kicker">Compatibilidad estimada · lo que significa</p>
+        <h3>${esc(d.compatibilidad?.titulo||'')}</h3><p>${esc(d.compatibilidad?.lectura||'')}</p></div></div>
+    ${d.observacion?`<div class="note-card" style="margin-top:1rem"><b>Observación sobre la oportunidad:</b> ${esc(d.observacion)}</div>`:''}
+    ${group('var(--green)','Fortalezas',d.fortalezas,'f-green')}
+    ${group('var(--amber)','Oportunidades de mejora',d.oportunidades,'f-amber')}
+    ${group('var(--red)','Brechas',d.brechas,'f-red')}
+    ${group('var(--faint)','Información insuficiente',d.insuficiente,'f-neutral')}
+    <div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Las claves de esta oferta</h3></div>
+      <div class="card"><div class="kw-legend">
+        <span><i class="kw-dot" style="background:var(--green)"></i> Presente</span>
+        <span><i class="kw-dot" style="background:var(--amber)"></i> Relacionada</span>
+        <span><i class="kw-dot" style="background:var(--faint)"></i> No identificada</span></div>${claves}</div></div>
+    <div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Potencia tu CV</h3></div>${cvRecs}</div>
+    <div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Prepárate para la entrevista</h3></div>${qs}</div>
+    <div class="summary-hero" style="margin-top:1.6rem"><p class="kicker">Recomendación Workea</p>
+      <div class="verdict" style="margin-top:.6rem"><span class="v-emoji">${emo}</span>
+        <div><h3>${esc(d.recomendacion?.titulo||'')}</h3><p>${esc(d.recomendacion?.detalle||'')}</p></div></div></div>`;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById('scr-results').classList.remove('hidden');
+  renderStepper(6); window.scrollTo({top:0});
+}
+
+</script>
+</body>
+</html>
