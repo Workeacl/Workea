@@ -311,6 +311,18 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 .real-cta p{font-size:.92rem;color:rgba(255,255,255,.94);max-width:32rem}
 .btn-wa{background:#fff;color:var(--navy);font-weight:700;white-space:nowrap}
 .btn-wa:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(10,20,48,.25)}
+
+/* impresión del informe */
+.print-brand{display:none}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .app-header,.actions,.demo-strip,.demo-banner,#inputError,#cvMsg{display:none!important}
+  body{background:#fff}
+  .print-brand{display:flex!important;align-items:flex-end;justify-content:space-between;border-bottom:3px solid #6c53ee;padding-bottom:.6rem;margin-bottom:1.4rem}
+  .card,.compat-hero,.finding,.q-item,.sum-card{box-shadow:none!important;break-inside:avoid}
+  .q-body{display:block!important}
+  .app-main{padding-top:0}
+}
 /* responsive */
 @media(max-width:900px){
   .hero{grid-template-columns:1fr;padding-top:2rem;gap:2.5rem}
@@ -438,8 +450,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <li>Recomendación final: postula, ajusta antes, o esta oferta probablemente no es tu mejor opción</li>
         </ul>
         <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> si realmente calzas con el cargo, qué podría dejarte fuera del proceso y si vale la pena postular.</p>
-        <button class="btn btn-ghost" onclick="startApp()">Comenzar gratis</button>
-        <p class="plan-note"><a class="btn-link esencial-link" href="#" style="font-size:.8rem">Solicita tu Informe Esencial con tus datos →</a></p>
+        <button class="btn btn-ghost" onclick="startEsencial()">Comenzar gratis</button>
+        <p class="plan-note">1 informe gratis por persona · resultado al instante · <a class="btn-link esencial-link" href="#" style="font-size:.78rem">o solicítalo por correo</a></p>
       </div>
 
       <div class="plan-card featured">
@@ -458,7 +470,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         </ul>
         <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> a qué oferta conviene postular primero, qué cambios tienen mayor impacto y cómo aumentar tus posibilidades de ser llamado a entrevista.</p>
         <a class="btn btn-brand" href="https://mpago.la/1dKCLUb" target="_blank" rel="noopener">Obtener Informe Estratégico →</a>
-        <p class="plan-note">Precio de lanzamiento · Pago seguro con Mercado Pago. Tras pagar, recibirás tu código de acceso al correo con que pagaste (máx. 12 h).</p>
+        <p class="plan-note">Precio de lanzamiento · Pago seguro con Mercado Pago<br><b>Paso 2:</b> tras pagar, <a class="btn-link" href="https://forms.gle/iKFcMQFyo7LMbELd7" target="_blank" rel="noopener">activa tu acceso aquí →</a> y recibe tu código al instante</p>
       </div>
 
       <div class="plan-card">
@@ -475,7 +487,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         </ul>
         <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> qué cargos tienen mayor compatibilidad contigo, qué habilidades potenciar y dónde vale la pena invertir tu tiempo.</p>
         <a class="btn btn-primary" href="https://mpago.la/2jD9YJT" target="_blank" rel="noopener">Obtener Informe Experto →</a>
-        <p class="plan-note">Pago seguro con Mercado Pago. Tras pagar, recibirás tu código por correo (máx. 12 h) · tu Estrategia llega revisada por una persona real.</p>
+        <p class="plan-note">Pago seguro con Mercado Pago · tu Estrategia llega revisada por una persona real<br><b>Paso 2:</b> tras pagar, <a class="btn-link" href="https://forms.gle/iKFcMQFyo7LMbELd7" target="_blank" rel="noopener">activa tu acceso aquí →</a> y recibe tu código al instante</p>
       </div>
 
     </div>
@@ -492,10 +504,13 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <div class="q-body"><div class="qb"><p style="margin-top:1rem">¡Sí! La forma más confiable es <b>copiar y pegar el texto completo de la oferta</b> (cargo, requisitos y responsabilidades): funciona con cualquier portal. Los enlaces directos a veces no se pueden leer porque algunos sitios, como LinkedIn, bloquean el acceso externo. Para el Informe Esencial por correo también puedes enviar una captura de pantalla de la oferta.</p></div></div>
       </div>
       <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Cómo recibo mi Informe Estratégico?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Tras confirmar tu pago, recibes por correo tu código de acceso personal. Lo activas en la plataforma, pegas tu CV y hasta 3 ofertas, y en menos de un minuto tienes tu análisis comparado en pantalla, descargable en PDF.</p></div></div>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Tras pagar, completa el formulario <a class="btn-link" href="https://forms.gle/iKFcMQFyo7LMbELd7" target="_blank" rel="noopener">"Activa tu acceso"</a> (también está junto a cada botón de pago) y recibirás tu código personal por correo en menos de un minuto. Lo activas en la plataforma, pegas tu CV y hasta 3 ofertas, y tienes tu análisis en pantalla, descargable en PDF.</p></div></div>
       </div>
       <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué hace diferente al Informe Experto?<span class="chev">▾</span></button>
         <div class="q-body"><div class="qb"><p style="margin-top:1rem">No analiza solo una oferta: analiza tu búsqueda completa. Analizas hasta 10 ofertas durante 30 días y, al cierre, una especialista en selección con más de 5 años reclutando revisa tus patrones y elabora tu Estrategia Workea: dónde invertir tu tiempo, qué potenciar y cómo aumentar tus entrevistas. Criterio profesional, no solo más texto.</p></div></div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Pagué desde la cuenta de otra persona?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">No hay problema: tu código se envía al correo que TÚ indiques en el formulario de activación, pagues desde la cuenta que pagues. Solo incluye el número de operación o el correo de la cuenta con que se pagó, para que podamos validar la compra.</p></div></div>
       </div>
       <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Tengo que suscribirme?<span class="chev">▾</span></button>
         <div class="q-body"><div class="qb"><p style="margin-top:1rem">No. El Esencial es gratis, el Estratégico se paga por informe y el Experto es un pago único que cubre 30 días. Sin mensualidades ni renovaciones automáticas.</p></div></div>
@@ -503,6 +518,16 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué pasa con mi CV y mis datos?<span class="chev">▾</span></button>
         <div class="q-body"><div class="qb"><p style="margin-top:1rem">Tu información se usa únicamente para generar tu análisis. No se comparte con empresas ni reclutadores, y puedes pedir su eliminación cuando quieras escribiendo a workea@tupartnerlaboral.cl.</p></div></div>
       </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="problem" style="grid-template-columns:1.2fr auto;align-items:center">
+      <div>
+        <h2 style="font-size:clamp(1.3rem,2.6vw,1.7rem)">¿Necesitas más que un análisis?</h2>
+        <p style="margin-bottom:0">Detrás de Workea está <b>Tu Partner Laboral</b>: asesorías personalizadas de empleabilidad, armado y optimización de CV, preparación de entrevistas y acompañamiento en tu búsqueda, con una especialista en selección.</p>
+      </div>
+      <a class="btn btn-primary" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener">Conocer las asesorías →</a>
     </div>
   </section>
 
@@ -518,7 +543,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <a class="logo" href="#" onclick="return false">
         <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
       </a>
-      <p class="footer-tag">Experiencia humana <b>+</b> tecnología inteligente</p>
+      <p class="footer-tag">Experiencia humana <b>+</b> tecnología inteligente · <a class="btn-link" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener" style="font-size:.85rem">Asesorías Tu Partner Laboral</a></p>
       <p>© 2026 Workea · Tu Partner Laboral</p>
     </div>
   </footer>
@@ -572,16 +597,16 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         </div>
 
         <div id="tab-file" class="tab-panel hidden">
-          <div class="dropzone" onclick="fakeFile('offer','oferta-marketing-digital.pdf')" onkeydown="if(event.key==='Enter')fakeFile('offer','oferta-marketing-digital.pdf')" tabindex="0" role="button">
+          <div class="dropzone" onclick="pickFile('offer')" onkeydown="if(event.key==='Enter')pickFile('offer')" tabindex="0" role="button">
             <div class="dz-ico">📄</div>
             <p>Arrastra el archivo aquí o <b>búscalo en tu equipo</b></p>
-            <p class="dz-formats">PDF · PNG · JPG · máx. 10 MB</p>
+            <p class="dz-formats">PDF con texto · si es Word o imagen, usa "Pegar texto"</p>
           </div>
           <div id="offerFileChip"></div>
         </div>
 
         <div id="tab-shot" class="tab-panel hidden">
-          <div class="dropzone" onclick="fakeFile('offer','captura-oferta.png')" onkeydown="if(event.key==='Enter')fakeFile('offer','captura-oferta.png')" tabindex="0" role="button">
+          <div class="dropzone" onclick="shotInfo()" onkeydown="if(event.key==='Enter')shotInfo()" tabindex="0" role="button">
             <div class="dz-ico">🖼️</div>
             <p>Sube una captura de pantalla de la oferta</p>
             <p class="dz-formats">PNG · JPG · desde tu celular o computador</p>
@@ -715,10 +740,10 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <button class="tab" data-cvtab="text" onclick="setCvTab('text')">📋 Pegar contenido</button>
         </div>
         <div id="cvtab-file" class="tab-panel">
-          <div class="dropzone" onclick="fakeFile('cv','CV-Camila-Torres.pdf')" onkeydown="if(event.key==='Enter')fakeFile('cv','CV-Camila-Torres.pdf')" tabindex="0" role="button">
+          <div class="dropzone" onclick="pickFile('cv')" onkeydown="if(event.key==='Enter')pickFile('cv')" tabindex="0" role="button">
             <div class="dz-ico">📎</div>
             <p>Arrastra tu CV aquí o <b>búscalo en tu equipo</b></p>
-            <p class="dz-formats">PDF · DOCX · máx. 10 MB</p>
+            <p class="dz-formats">PDF con texto · si es Word, usa "Pegar contenido"</p>
           </div>
           <div id="cvFileChip"></div>
         </div>
@@ -726,6 +751,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <label for="cvText">Contenido de tu CV</label>
           <textarea id="cvText" placeholder="Pega aquí el contenido de tu CV: experiencia, cargos, herramientas, educación…" oninput="validateCv()"></textarea>
         </div>
+
+        <div id="cvMsg"></div>
 
         <div class="demo-strip">
           <p><b>¿Solo estás explorando?</b> Usa un CV de ejemplo para recorrer el análisis completo.</p>
@@ -984,7 +1011,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <h3>¿Quieres tu análisis real? 💬</h3>
           <p>Este fue un ejemplo. Solicita gratis tu Informe Esencial con tu propia oferta y tu CV, o revisa los planes Estratégico y Experto para un análisis en profundidad.</p>
         </div>
-        <a class="btn btn-wa esencial-link" href="#">Pedir mi Informe Esencial gratis →</a>
+        <button class="btn btn-wa" onclick="startEsencial()">Obtener mi Informe Esencial gratis →</button>
       </div>
       <div class="actions split">
         <button class="btn btn-ghost" onclick="showScreen('scr-compare',3)">Ver análisis completo</button>
@@ -994,17 +1021,108 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
     <!-- RESULTADOS REALES (modo IA) -->
     <section class="screen hidden" id="scr-results">
+      <div class="print-brand">
+        <span style="display:flex;align-items:center;gap:.6rem">
+          <svg width="40" height="30" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgp" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgp)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span style="display:flex;flex-direction:column;line-height:1.05">
+            <b style="font-family:var(--body);font-weight:700;font-size:1.35rem;color:var(--navy);letter-spacing:-.015em">workea</b>
+            <span style="font-size:.6rem;color:var(--partner-blue);font-weight:700">by Tu Partner Laboral</span>
+          </span>
+        </span>
+        <span style="font-size:.72rem;color:var(--faint)">Informe Workea · No postules a ciegas · workea.vercel.app</span>
+      </div>
       <div id="resultsMount"></div>
       <div class="actions split">
         <button class="btn btn-ghost" onclick="resetApp()">Analizar otra oferta</button>
-        <button class="btn btn-primary" onclick="window.print()">Imprimir / guardar PDF</button>
+        <button class="btn btn-primary" onclick="printResults()">Descargar mi informe (PDF)</button>
       </div>
     </section>
 
   </main>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
+if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}
+
+async function extractPdfText(file){
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data:buf}).promise;
+  const out = [];
+  for(let p=1;p<=pdf.numPages;p++){
+    const page = await pdf.getPage(p);
+    const tc = await page.getTextContent();
+    out.push(tc.items.map(i=>i.str).join(' '));
+  }
+  return out.join('\n\n');
+}
+function pickFile(kind){
+  const inp = document.createElement('input');
+  inp.type='file'; inp.accept='.pdf';
+  inp.onchange = async ()=>{
+    const f = inp.files[0]; if(!f) return;
+    const msg = kind==='cv' ? document.getElementById('cvMsg') : document.getElementById('inputError');
+    if(!/\.pdf$/i.test(f.name)){
+      msg.innerHTML = '<div class="error-box">ℹ️ <span>Por ahora leemos archivos <b>PDF</b>. Si tu documento es Word o una imagen, copia y pega su texto.</span></div>';
+      return;
+    }
+    msg.innerHTML = '<div class="error-box" style="background:var(--brand-tint);border-color:var(--brand-tint-2);color:var(--brand-deep)">📄 <span>Leyendo tu archivo…</span></div>';
+    try{
+      const txt = (await extractPdfText(f)).trim();
+      if(txt.length < 40){
+        msg.innerHTML = '<div class="error-box">ℹ️ <span>Este PDF no contiene texto legible (puede ser un documento escaneado). Copia y pega el texto directamente.</span></div>';
+        return;
+      }
+      if(kind==='cv'){
+        setCvTab('text');
+        document.getElementById('cvText').value = txt; validateCv();
+      } else {
+        setTab('text');
+        document.getElementById('offerText').value = txt; validateInput();
+      }
+      msg.innerHTML = '<div class="error-box" style="background:var(--green-bg);border-color:var(--green-line);color:#1c6b47">✅ <span>Leímos <b>'+f.name.replace(/[<>&"]/g,'')+'</b>. Revisa el texto extraído y continúa.</span></div>';
+    }catch(e){
+      msg.innerHTML = '<div class="error-box">⚠️ <span>No pudimos leer el archivo. Copia y pega el texto directamente.</span></div>';
+    }
+  };
+  inp.click();
+}
+function shotInfo(){
+  if(realMode){ pickShot(); return; }
+  setTab('text');
+  document.getElementById('inputError').innerHTML =
+    '<div class="error-box" style="background:var(--brand-tint);border-color:var(--brand-tint-2);color:var(--brand-deep)">🖼️ <span>En la demo las capturas no se procesan. En los informes reales (Esencial, Estratégico y Experto) sí puedes subir capturas de la oferta.</span></div>';
+}
+let realShots = [];
+function fileToResizedBase64(file){
+  return new Promise((res,rej)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const max = 1600; let w = img.width, hh = img.height;
+      if(Math.max(w,hh) > max){ const k = max/Math.max(w,hh); w = Math.round(w*k); hh = Math.round(hh*k); }
+      const c = document.createElement('canvas'); c.width = w; c.height = hh;
+      c.getContext('2d').drawImage(img, 0, 0, w, hh);
+      res({ data: c.toDataURL('image/jpeg', 0.82).split(',')[1], media_type: 'image/jpeg' });
+    };
+    img.onerror = rej;
+    img.src = URL.createObjectURL(file);
+  });
+}
+function pickShot(){
+  if(realShots.length >= 2){ alert('Máximo 2 capturas por oferta. Si la oferta es más larga, pega el texto.'); return; }
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async ()=>{
+    const f = inp.files[0]; if(!f) return;
+    try{ realShots.push(await fileToResizedBase64(f)); renderShotChips(); validateInput(); }
+    catch(e){ alert('No pudimos leer la imagen. Intenta con otra o pega el texto.'); }
+  };
+  inp.click();
+}
+function renderShotChips(){
+  document.getElementById('offerShotChip').innerHTML = realShots.map((s,i)=>
+    `<span class="file-chip">🖼️ Captura ${i+1} <button aria-label="Quitar" onclick="realShots.splice(${i},1);renderShotChips();validateInput()">×</button></span>`).join(' ');
+}
+
 /* ===== CORREO DE CONTACTO WORKEA ===== */
 const CONTACTO_EMAIL = 'workea@tupartnerlaboral.cl';
 const CONTACTO_URL = 'mailto:' + CONTACTO_EMAIL
@@ -1080,6 +1198,11 @@ function setTab(t){
 function validateInput(){
   const url = document.getElementById('offerUrl').value.trim();
   const txt = document.getElementById('offerText').value.trim();
+  if(realMode){
+    state.offerReady = (txt.length > 40) || realShots.length > 0;
+    document.getElementById('btnAnalyze').disabled = !state.offerReady;
+    return;
+  }
   let ok=false;
   if(state.tab==='link') ok = url.length>8;
   if(state.tab==='text') ok = txt.length>40;
@@ -1214,32 +1337,56 @@ function animateRing(pct){
   },26);
 }
 function toggleQ(btn){ btn.parentElement.classList.toggle('open'); }
+function printResults(){
+  const el = document.querySelector('#resultsMount .offer-header h3');
+  const cargo = el ? el.textContent.trim() : 'analisis';
+  const titulo = document.title;
+  document.title = ('Informe-Workea-'+cargo).replace(/\s+/g,'-').replace(/[^\wáéíóúñÁÉÍÓÚÑ\-]/g,'');
+  window.print();
+  setTimeout(()=>{ document.title = titulo; }, 800);
+}
 
 /* ================= MODO ANÁLISIS REAL (IA) ================= */
-let realMode = false, accessCode = '', offerPayload = '';
+let realMode = false, accessCode = '', offerPayload = null, modoPlan = 'completo';
 
 function activarCodigo(){
   const v = document.getElementById('codigoInput').value.trim();
   if(!v){ return; }
-  accessCode = v; realMode = true;
+  accessCode = v; realMode = true; modoPlan = 'completo';
   document.getElementById('realStrip').innerHTML =
-    '<p><b>✅ Análisis real activado.</b> Pega tu oferta (o hasta 3 para compararlas) y luego tu CV: Workea generará tu análisis personalizado.</p>';
+    '<p><b>✅ Análisis real activado.</b> Pega el texto de tu oferta, sube su PDF o una captura (hasta 3 ofertas para compararlas), y luego tu CV.</p>';
+  document.querySelector('[data-tab="link"]').classList.add('hidden');
   setTab('text');
   document.getElementById('extraOffers').classList.remove('hidden');
 }
 
-function startOfferFlow(){
-  if(!realMode){ runOfferAnalysis(); return; }
-  const txt = document.getElementById('offerText').value.trim();
-  if(state.tab!=='text' || txt.length<=40){
-    setTab('text');
+function startEsencial(){
+  if(localStorage.getItem('workea_esencial_usado')){
+    startApp(); showScreen('scr-input',0);
     document.getElementById('inputError').innerHTML =
-      '<div class="error-box">ℹ️ <span>En el análisis real, por ahora, la oferta debe ingresarse como <b>texto</b> (cópiala completa desde el portal de empleo).</span></div>';
+      '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tu Informe Esencial gratis en este dispositivo. Para tu siguiente análisis, el <b>Informe Estratégico</b> te entrega el plan de acción completo al instante.</span></div>';
     return;
   }
-  offerPayload = [txt,
+  realMode = true; modoPlan = 'esencial'; accessCode = '';
+  startApp(); showScreen('scr-input',0);
+  document.getElementById('realStrip').innerHTML =
+    '<p><b>🩵 Informe Esencial gratis activado.</b> Pega el texto de tu oferta, sube su PDF o una captura — y luego tu CV. Recibirás tu orientación al instante (1 informe gratis por persona).</p>';
+  document.querySelector('[data-tab="link"]').classList.add('hidden');
+  setTab('text');
+}
+
+function startOfferFlow(){
+  if(!realMode){ runOfferAnalysis(); return; }
+  let textos = [document.getElementById('offerText').value.trim(),
     document.getElementById('offerText2').value.trim(),
     document.getElementById('offerText3').value.trim()].filter(o=>o.length>40);
+  if(modoPlan==='esencial') textos = textos.slice(0,1);
+  if(!textos.length && !realShots.length){
+    document.getElementById('inputError').innerHTML =
+      '<div class="error-box">ℹ️ <span>Pega el texto de la oferta, sube su PDF o una captura para continuar.</span></div>';
+    return;
+  }
+  offerPayload = { ofertas: textos, imagenes: realShots.slice(0,2) };
   showScreen('scr-cv',2);
 }
 
@@ -1266,11 +1413,12 @@ async function runRealAnalysis(oferta, cv){
     bar.style.width=Math.min(92,parseFloat(bar.style.width)+13)+'%'; },2500);
   try{
     const r = await fetch('/api/analizar',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ofertas:Array.isArray(oferta)?oferta:[oferta],cv,codigo:accessCode})});
+      body:JSON.stringify({ofertas:oferta.ofertas||[],imagenes:oferta.imagenes||[],cv,codigo:accessCode,modo:modoPlan})});
     const data = await r.json();
     clearInterval(iv);
     if(!r.ok || data.error){ throw new Error(data.error||'Error del servidor'); }
     bar.style.width='100%';
+    if(modoPlan==='esencial'){ try{ localStorage.setItem('workea_esencial_usado','1'); }catch(e){} }
     setTimeout(()=>{ renderResults(data); },400);
   }catch(e){
     clearInterval(iv);
@@ -1326,21 +1474,23 @@ function renderResults(d){
       <div class="compat-reading"><p class="kicker">Compatibilidad estimada · lo que significa</p>
         <h3>${esc(d.compatibilidad?.titulo||'')}</h3><p>${esc(d.compatibilidad?.lectura||'')}</p></div></div>
     ${d.observacion?`<div class="note-card" style="margin-top:1rem"><b>Observación sobre la oportunidad:</b> ${esc(d.observacion)}</div>`:''}
-    ${(d.comparacion&&d.comparacion.length>1)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Comparación de tus ofertas: ¿a cuál postular primero?</h3></div>${d.comparacion.map((c,i)=>`<div class="finding ${i===0?'f-green':'f-neutral'}"><b>${i===0?'🥇 ':i===1?'🥈 ':'🥉 '}${esc(c.oferta)} — ${c.porcentaje??''}%</b><p>${esc(c.veredicto)}</p></div>`).join('')}</div>`:''}
+    ${''}${(d.comparacion&&d.comparacion.length>1)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Comparación de tus ofertas: ¿a cuál postular primero?</h3></div>${d.comparacion.map((c,i)=>`<div class="finding ${i===0?'f-green':'f-neutral'}"><b>${i===0?'🥇 ':i===1?'🥈 ':'🥉 '}${esc(c.oferta)} — ${c.porcentaje??''}%</b><p>${esc(c.veredicto)}</p></div>`).join('')}</div>`:''}
     ${group('var(--green)','Fortalezas',d.fortalezas,'f-green')}
     ${group('var(--amber)','Oportunidades de mejora',d.oportunidades,'f-amber')}
     ${group('var(--red)','Brechas',d.brechas,'f-red')}
     ${group('var(--faint)','Información insuficiente',d.insuficiente,'f-neutral')}
-    <div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Las claves de esta oferta</h3></div>
+    ${(d.claves&&d.claves.length)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Las claves de esta oferta</h3></div>
       <div class="card"><div class="kw-legend">
         <span><i class="kw-dot" style="background:var(--green)"></i> Presente</span>
         <span><i class="kw-dot" style="background:var(--amber)"></i> Relacionada</span>
-        <span><i class="kw-dot" style="background:var(--faint)"></i> No identificada</span></div>${claves}</div></div>
-    <div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Potencia tu CV</h3></div>${cvRecs}</div>
-    <div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Prepárate para la entrevista</h3></div>${qs}</div>
+        <span><i class="kw-dot" style="background:var(--faint)"></i> No identificada</span></div>${claves}</div></div>`:''}
+    ${(d.cv&&d.cv.length)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Potencia tu CV</h3></div>${cvRecs}</div>`:''}
+    ${(d.entrevista&&d.entrevista.length)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Prepárate para la entrevista</h3></div>${qs}</div>`:''}
     <div class="summary-hero" style="margin-top:1.6rem"><p class="kicker">Recomendación Workea</p>
       <div class="verdict" style="margin-top:.6rem"><span class="v-emoji">${emo}</span>
-        <div><h3>${esc(d.recomendacion?.titulo||'')}</h3><p>${esc(d.recomendacion?.detalle||'')}</p></div></div></div>`;
+        <div><h3>${esc(d.recomendacion?.titulo||'')}</h3><p>${esc(d.recomendacion?.detalle||'')}</p></div></div></div>
+    ${modoPlan!=='esencial'?`<p style="text-align:center;font-size:.88rem;color:var(--muted);margin-top:1.6rem">¿Quieres acompañamiento personalizado para tu búsqueda? Conoce las <a class="btn-link" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener">asesorías de Tu Partner Laboral →</a></p>`:''}
+    ${modoPlan==='esencial'?`<div class="real-cta"><div><h3>Este fue tu Informe Esencial 🩵</h3><p>Ya sabes si vale la pena postular. El <b>Informe Estratégico</b> ($4.990) agrega el análisis detallado, las palabras clave, las recomendaciones para tu CV, tu preparación de entrevista y el plan de acción priorizado — al instante.</p></div><a class="btn btn-wa" href="https://mpago.la/1dKCLUb" target="_blank" rel="noopener">Obtener Informe Estratégico →</a></div>`:''}`;
   document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
   document.getElementById('scr-results').classList.remove('hidden');
   renderStepper(6); window.scrollTo({top:0});
