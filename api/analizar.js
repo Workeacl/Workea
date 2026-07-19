@@ -6,22 +6,33 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Método no permitido' });
   }
 
-  const { oferta, ofertas, cv, codigo } = req.body || {};
+  const { oferta, ofertas, imagenes, cv, codigo, modo } = req.body || {};
+  const esencial = modo === 'esencial';
 
   // Códigos de acceso: WORKEA_CODIGO acepta uno o varios separados por coma.
   // Ej: "ANA-7GK2, PEDRO-9XL4, PILOTO1" — cada cliente puede tener el suyo.
-  const listaCodigos = (process.env.WORKEA_CODIGO || '')
-    .split(',').map(c => c.trim()).filter(Boolean);
-  if (listaCodigos.length && !listaCodigos.includes((codigo || '').trim())) {
-    return res.status(401).json({ error: 'Código de acceso inválido' });
+  // El Informe Esencial (gratuito, versión resumida) no exige código.
+  if (!esencial) {
+    const listaCodigos = (process.env.WORKEA_CODIGO || '')
+      .split(',').map(c => c.trim()).filter(Boolean);
+    if (listaCodigos.length && !listaCodigos.includes((codigo || '').trim())) {
+      return res.status(401).json({ error: 'Código de acceso inválido' });
+    }
   }
 
-  // Normaliza: acepta una oferta (texto) o hasta 3 ofertas (lista)
+  // Ofertas en texto (hasta 3; esencial: 1)
   let listaOfertas = Array.isArray(ofertas) ? ofertas : (oferta ? [oferta] : []);
-  listaOfertas = listaOfertas.map(o => String(o || '').trim()).filter(o => o.length >= 40).slice(0, 3);
+  listaOfertas = listaOfertas.map(o => String(o || '').trim()).filter(o => o.length >= 40)
+    .slice(0, esencial ? 1 : 3);
 
-  if (!listaOfertas.length || !cv || cv.length < 40) {
-    return res.status(400).json({ error: 'Falta la oferta o el CV (o son muy breves)' });
+  // Ofertas en imagen/captura (hasta 2)
+  let listaImagenes = Array.isArray(imagenes) ? imagenes.slice(0, 2) : [];
+  listaImagenes = listaImagenes.filter(im => im && typeof im.data === 'string'
+    && im.data.length > 100 && im.data.length < 3000000
+    && typeof im.media_type === 'string' && im.media_type.startsWith('image/'));
+
+  if ((!listaOfertas.length && !listaImagenes.length) || !cv || cv.length < 40) {
+    return res.status(400).json({ error: 'Falta la oferta (texto o captura) o el CV' });
   }
   if (listaOfertas.some(o => o.length > 20000) || cv.length > 20000) {
     return res.status(400).json({ error: 'El texto es demasiado largo' });
@@ -59,6 +70,7 @@ Responde ÚNICAMENTE con un objeto JSON válido, sin markdown ni texto adicional
  "recomendacion": {"nivel": "verde|amarillo|naranjo|rojo", "titulo": "", "detalle": ""},
  "comparacion": [{"oferta": "cargo — empresa", "porcentaje": 0, "veredicto": "1-2 líneas: por qué este orden de prioridad"}]
 }
+MODO ESENCIAL (si se te indica): genera solo la orientación inicial. Incluye únicamente: info, compatibilidad, fortalezas (máx 3), oportunidades (máx 2), brechas (máx 2) y recomendacion. Deja claves, cv, entrevista, insuficiente y comparacion como listas vacías. Sé breve y directo.
 Si recibes UNA sola oferta, omite "comparacion" (o déjala como lista vacía). Si recibes VARIAS ofertas: incluye "comparacion" ordenada de mayor a menor prioridad de postulación, y desarrolla TODO el análisis detallado sobre la oferta prioritaria, indicando en compatibilidad.titulo a qué oferta corresponde.
 Incluye 3-6 fortalezas, 2-4 oportunidades, 0-3 brechas, 0-3 insuficiente, 8-12 claves, 3-4 recomendaciones de CV y 5-6 preguntas de entrevista. Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`;
 
@@ -72,12 +84,16 @@ Incluye 3-6 fortalezas, 2-4 oportunidades, 0-3 brechas, 0-3 insuficiente, 8-12 c
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 5000,
+        max_tokens: esencial ? 1600 : 5000,
         system,
         messages: [{
           role: 'user',
-          content: listaOfertas.map((o, i) => `OFERTA LABORAL ${i + 1}:\n${o}`).join('\n\n---\n\n')
-            + `\n\n---\n\nCV DE LA PERSONA:\n${cv}\n\nGenera el análisis Workea en JSON.`
+          content: [
+            ...listaImagenes.map(im => ({ type: 'image', source: { type: 'base64', media_type: im.media_type, data: im.data } })),
+            ...(listaImagenes.length ? [{ type: 'text', text: 'Las imágenes anteriores son capturas de la oferta laboral: léelas como una oferta.' }] : []),
+            ...listaOfertas.map((o, i) => ({ type: 'text', text: `OFERTA LABORAL ${i + 1}:\n${o}` })),
+            { type: 'text', text: (esencial ? 'MODO ESENCIAL.\n\n' : '') + `CV DE LA PERSONA:\n${cv}\n\nGenera el análisis Workea en JSON.` }
+          ]
         }]
       })
     });
