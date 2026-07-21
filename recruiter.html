@@ -407,61 +407,16 @@ async function runRecruiter(){
   else if(fileData?.tipo==='texto') texto=fileData.contenido;
   else if(fileData?.tipo==='imagen') imagenes=[{data:fileData.data,media_type:fileData.media_type}];
 
-  const system=`Eres el motor de Workea Recruiter, una herramienta interna para una especialista en reclutamiento y selección de perfiles tecnológicos y digitales. Tu tarea: analizar un descriptor de cargo (puede ser formal o informal, incluso apuntes desordenados) y generar una estrategia completa de búsqueda y atracción de talento para el país indicado.
-
-Responde ÚNICAMENTE con un objeto JSON válido, sin markdown ni texto adicional:
-{
-  "cargo": "nombre del cargo inferido",
-  "empresa": "nombre de la empresa si aparece, o ''",
-  "pais": "país del proceso",
-  "seniority": "Junior|Semi Senior|Senior|Lead|Manager|otro",
-  "entendimiento": "explicación del rol en 3-4 líneas simples, sin tecnicismos. Qué hace esta persona, en qué contexto, qué impacto tiene.",
-  "criticos": [{"requisito": "", "nota": "por qué es crítico"}],
-  "deseables": [{"requisito": ""}],
-  "competencias_tecnicas": [""],
-  "competencias_conductuales": [""],
-  "palabras_clave": {
-    "titulos_principales": [""],
-    "titulos_alternativos": [""],
-    "terminos_tecnicos": [""],
-    "booleana_sugerida": "ejemplo de búsqueda booleana lista para usar en LinkedIn"
-  },
-  "donde_buscar": {
-    "empresas": [{"nombre": "", "razon": "por qué suelen estar aquí"}],
-    "sectores_afines": [""],
-    "comunidades": [""],
-    "plataformas": [""]
-  },
-  "benchmark_salarial": {
-    "rango_min": 0,
-    "rango_max": 0,
-    "moneda": "CLP|COP|ARS|MXN|PEN|USD",
-    "fuente_referencial": "plataforma o encuesta consultada",
-    "lectura": "¿el salario propuesto (si lo hay) está bajo, alineado o sobre el mercado? Si no hay salario, recomienda el rango",
-    "argumento_cliente": "qué decirle al cliente si el salario es bajo o no está definido"
-  },
-  "preguntas_entrevista": [
-    {
-      "pregunta": "",
-      "tipo": "técnica|competencia|situacional",
-      "que_evalua": "",
-      "respuesta_ideal": "qué debería responder un buen candidato"
-    }
-  ],
-  "alertas": ["señales de alerta del descriptor: requisitos contradictorios, expectativas irreales, cosas que el cliente no dice pero implica"],
-  "estrategia_resumen": "párrafo de 3-4 líneas con la recomendación estratégica general: dónde poner el foco, qué va a ser difícil y cómo abordarlo"
-}
-
-Incluye 3-5 críticos, 2-4 deseables, 5-8 palabras clave principales, 3-5 alternativas, 5-8 empresas donde buscar, benchmark salarial con rango en la moneda local del país indicado, y 5-6 preguntas de entrevista (mix de técnicas y por competencias). Si el descriptor es informal o incompleto, infiere lo que puedas con criterio experto y marca las inferencias en las alertas.`;
+  if(!texto && !imagenes.length){
+    clearInterval(iv);
+    showScreen('scr-input');
+    document.getElementById('inputMsg').innerHTML='<div class="error-box">ℹ️ <span>No se encontró contenido para analizar. Pega el texto del descriptor o sube un archivo.</span></div>';
+    return;
+  }
 
   try{
-    const content=[
-      ...imagenes.map(im=>({type:'image',source:{type:'base64',media_type:im.media_type,data:im.data}})),
-      ...(imagenes.length?[{type:'text',text:'La imagen anterior es el descriptor del cargo.'}]:[]),
-      {type:'text',text:`DESCRIPTOR DEL CARGO:\n${texto}\n\nPAÍS DEL PROCESO: ${pais}\n\nGenera la estrategia de búsqueda en JSON.`}
-    ];
-    const r=await fetch('/api/analizar',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({modo:'recruiter',texto,imagenes,pais,codigo:REC_CODIGO})});
+    const r=await fetch('/api/recruiter',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({texto,imagenes,pais,codigo:REC_CODIGO})});
     const raw=await r.json();
     if(!r.ok||raw.error) throw new Error(raw.error||'Error del servidor');
     clearInterval(iv); bar.style.width='100%';
