@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/recruiter.js": {
+      "maxDuration": 30
+    },
+    "api/analizar.js": {
+      "maxDuration": 30
+    }
+  }
+}
