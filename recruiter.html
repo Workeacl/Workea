@@ -63,6 +63,7 @@ a{color:inherit;text-decoration:none}
 
 /* pantalla de ingreso */
 .screen{animation:fadeUp .3s ease both}
+.screen.hidden{display:none!important}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .screen-head{margin-bottom:1.8rem}
 .screen-head h2{font-size:clamp(1.4rem,2.6vw,1.9rem);font-weight:700;margin-bottom:.4rem}
@@ -98,7 +99,8 @@ a{color:inherit;text-decoration:none}
 .loading-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:5rem 1rem}
 .scanner{width:74px;height:74px;border-radius:20px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:1.6rem}
 .scanner span{font-size:2rem}
-.scanner::after{content:"";position:absolute;left:8%;right:8%;height:3px;background:var(--brand);border-radius:3px;top:12%;animation:scan 1.6s ease-in-out infinite;box-shadow:0 0 12px var(--brand)}
+.scanner::after{content:"";position:absolute;left:8%;right:8%;height:3px;background:var(--brand);border-radius:3px;top:12%;animation:none;box-shadow:0 0 12px var(--brand)}
+#scr-loading:not(.hidden) .scanner::after{animation:scan 1.6s ease-in-out infinite}
 @keyframes scan{0%,100%{top:12%}50%{top:82%}}
 .loading-wrap h3{font-size:1.3rem;margin-bottom:.4rem}
 .loading-msg{color:var(--muted);font-size:.95rem;min-height:1.5rem}
@@ -187,15 +189,16 @@ a{color:inherit;text-decoration:none}
 
   <!-- INGRESO DE DESCRIPTOR -->
   <div id="scr-input" class="screen hidden">
+    <div id="accessConfirm"></div>
     <div class="screen-head">
       <h2>Analiza un descriptor de cargo</h2>
       <p>Pega el texto, sube el PDF o una captura. Funciona con descriptores formales, correos de clientes y apuntes de reunión.</p>
     </div>
     <div class="card">
       <div class="tabs">
-        <button class="tab active" onclick="setTab('text')">📋 Pegar texto o apuntes</button>
+        <button class="tab active" onclick="setTab('text')">📋 Pegar texto</button>
         <button class="tab" onclick="setTab('pdf')">📄 Subir PDF</button>
-        <button class="tab" onclick="setTab('shot')">🖼️ Subir captura</button>
+        <button class="tab" onclick="setTab('shot')">🖼️ Subir captura de pantalla</button>
       </div>
 
       <div id="tab-text" class="field">
@@ -228,16 +231,17 @@ a{color:inherit;text-decoration:none}
       <div class="field">
         <label>¿Para qué país es este proceso?</label>
         <div class="pais-grid">
-          <button class="pais-btn" onclick="selectPais('Chile', this)">🇨🇱 Chile</button>
-          <button class="pais-btn" onclick="selectPais('Colombia', this)">🇨🇴 Colombia</button>
-          <button class="pais-btn" onclick="selectPais('Argentina', this)">🇦🇷 Argentina</button>
-          <button class="pais-btn" onclick="selectPais('México', this)">🇲🇽 México</button>
-          <button class="pais-btn" onclick="selectPais('Perú', this)">🇵🇪 Perú</button>
-          <button class="pais-btn" onclick="selectPais('Otro', this)">🌎 Otro</button>
+          <button class="pais-btn" onclick="selectPais('Chile', this)">Chile</button>
+          <button class="pais-btn" onclick="selectPais('Colombia', this)">Colombia</button>
+          <button class="pais-btn" onclick="selectPais('Argentina', this)">Argentina</button>
+          <button class="pais-btn" onclick="selectPais('México', this)">México</button>
+          <button class="pais-btn" onclick="selectPais('Perú', this)">Perú</button>
+          <button class="pais-btn" onclick="selectPais('Otro', this)">Otro país</button>
         </div>
         <div class="pais-otro hidden field" id="paisOtro" style="margin-top:.7rem">
-          <input type="text" id="paisOtroInput" placeholder="¿Cuál país?" oninput="validateInput()">
+          <input type="text" id="paisOtroInput" placeholder="Escribe el país del proceso" oninput="selectPaisOtro()">
         </div>
+        <p style="font-size:.78rem;color:var(--faint);margin-top:.5rem">Si el país no está en la lista, haz clic en "Otro país" y escríbelo.</p>
       </div>
     </div>
 
@@ -283,6 +287,9 @@ function checkAccess(){
   if(v === REC_CODIGO){
     document.getElementById('scr-access').classList.add('hidden');
     showScreen('scr-input');
+    // Mostrar confirmación de acceso en la pantalla de ingreso
+    document.getElementById('accessConfirm').innerHTML =
+      '<div style="display:flex;align-items:center;gap:.6rem;background:var(--green-bg);border:1px solid var(--green-ln);border-radius:12px;padding:.75rem 1.1rem;margin-bottom:1.2rem;font-size:.9rem;color:#1c6b47"><span>✅</span><span><b>Sesión iniciada.</b> Ingresa el descriptor del cargo para generar tu estrategia.</span></div>';
   } else {
     document.getElementById('accessError').innerHTML =
       '<div class="error-box">⚠️ <span>Código incorrecto. Si no lo recuerdas, escríbete desde workea@tupartnerlaboral.cl.</span></div>';
@@ -302,6 +309,12 @@ function setTab(t){
 }
 
 /* ===== PAÍS ===== */
+function selectPaisOtro(){
+  const v = document.getElementById('paisOtroInput').value.trim();
+  if(v) pais = v;
+  validateInput();
+}
+
 function selectPais(p, btn){
   document.querySelectorAll('.pais-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
