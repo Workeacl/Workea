@@ -290,7 +290,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
 
 /* planes */
-.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;align-items:stretch}
+.plans-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.3rem;align-items:stretch}
 .plan-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:1.9rem 1.7rem;display:flex;flex-direction:column;box-shadow:var(--shadow);position:relative}
 .plan-card.featured{border:2px solid transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--grad) border-box;box-shadow:var(--shadow-lg)}
 .plan-badge{position:absolute;top:-.85rem;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.07em;padding:.32rem .95rem;border-radius:999px;white-space:nowrap}
@@ -337,6 +337,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   .stepper-mobile{display:block;font-size:.8rem;font-weight:700;color:var(--brand-strong)}
 }
 @media(min-width:901px){.stepper-mobile{display:none}}
+@media(max-width:900px){.plans-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:540px){.plans-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -455,8 +456,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
       <div class="plan-card featured">
         <span class="plan-badge">🚀 ACCESO ANTICIPADO</span>
-        <p class="plan-name">💙 Informe Workea Estratégico</p>
-        <p class="plan-goal">¿Qué debo hacer para conseguir una entrevista?</p>
+        <p class="plan-name">💙 Informe Workea Match</p>
+        <p class="plan-goal">¿Qué tan bien calzo con esta oportunidad?</p>
         <p class="plan-price"><span style="text-decoration:line-through;color:var(--faint);font-size:1rem;font-weight:600">$4.990</span> $2.990 <span>/ informe</span></p>
         <ul class="plan-feats">
           <li>Todo lo del Informe Esencial, más:</li>
@@ -468,7 +469,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <li class="plus">🎯 Plan de Acción Workea: recomendaciones concretas y priorizadas. No solo sabrás qué cambiar: sabrás qué hacer primero.</li>
         </ul>
         <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> a qué oferta conviene postular primero, qué cambios tienen mayor impacto y cómo aumentar tus posibilidades de ser llamado a entrevista.</p>
-        <a class="btn btn-brand" href="https://mpago.la/2yvY447" target="_blank" rel="noopener">Obtener Informe Estratégico →</a>
+        <a class="btn btn-brand" href="https://mpago.la/2yvY447" target="_blank" rel="noopener">Obtener Informe Workea Match →</a>
         <p class="plan-note">7 días de acceso · Precio de acceso anticipado · Pago seguro con Mercado Pago<br>Tras pagar, serás redirigida/o automáticamente al formulario de activación de tu código 🔑</p>
       </div>
 
@@ -478,7 +479,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <p class="plan-goal">¿Cuál es mi mejor estrategia para encontrar trabajo?</p>
         <p class="plan-price" style="color:var(--faint);font-size:1.1rem">Precio por confirmar</p>
         <ul class="plan-feats">
-          <li>Todo lo del Informe Estratégico, más:</li>
+          <li>Todo lo del Informe Workea Match, más:</li>
           <li>30 días de acceso ilimitado para analizar todas las ofertas que necesites</li>
           <li>📊 Insights Workea: habilidades más pedidas en tus ofertas, requisitos que se repiten, qué está limitando tus posibilidades</li>
           <li>Fortalezas que hoy no estás comunicando</li>
@@ -490,6 +491,22 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <p class="plan-note">Lo estamos afinando junto a los primeros usuarios. Únete a la lista de espera y sé de las primeras personas en acceder.</p>
       </div>
 
+      <div class="plan-card">
+        <p class="plan-name">🔵 Workea Profile Check</p>
+        <p class="plan-goal">¿Qué tan optimizado está tu perfil de LinkedIn?</p>
+        <p class="plan-price">$2.990 <span>/ análisis</span></p>
+        <ul class="plan-feats">
+          <li>Score general de optimización (0-100%)</li>
+          <li>Análisis del titular, "Acerca de" y experiencia</li>
+          <li>Palabras clave detectadas en tu perfil</li>
+          <li>Coherencia general del perfil</li>
+          <li class="plus">🏆 Tus 3 prioridades concretas de mejora</li>
+        </ul>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> cómo te ve un reclutador, qué está comunicando tu perfil y qué cambiar primero.</p>
+        <a class="btn btn-brand" href="https://mpago.la/2pt7YtA" target="_blank" rel="noopener">Obtener Profile Check →</a>
+        <p class="plan-note">Pago seguro con Mercado Pago · resultado al instante con tu código</p>
+      </div>
+
     </div>
 
     <div class="kw-legend" style="justify-content:center;margin-top:1.6rem;gap:1.6rem">
@@ -499,26 +516,38 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     </div>
 
     <div style="max-width:46rem;margin:2.8rem auto 0">
-      <h3 style="font-size:1.15rem;margin-bottom:1rem;text-align:center">Preguntas frecuentes</h3>
+      <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1.2rem;text-align:center">Preguntas frecuentes</h3>
+
+      <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .6rem">Sobre los pagos y el acceso</p>
+
       <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué pasa justo después de pagar?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Mercado Pago te redirigirá automáticamente al formulario de activación de Workea. Completa tus datos (nombre, correo y el número de tu comprobante de pago) y en menos de 1 minuto recibirás tu código de acceso personal por correo. Si por algún motivo cerraste la ventana antes de completar el formulario, escríbenos a workea@tupartnerlaboral.cl con tu comprobante de pago y te enviamos el acceso de inmediato.</p></div></div>
-      </div>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Puedo analizar una oferta de LinkedIn u otro portal?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem">¡Sí! La forma más confiable es <b>copiar y pegar el texto completo de la oferta</b> (cargo, requisitos y responsabilidades): funciona con cualquier portal. Los enlaces directos a veces no se pueden leer porque algunos sitios, como LinkedIn, bloquean el acceso externo. También puedes subir una captura de pantalla de la oferta directamente en la plataforma.</p></div></div>
-      </div>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Cómo recibo mi Informe Estratégico?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem"><p style="margin-top:1rem">Tras confirmar tu pago, recibirás por correo tu código personal con las instrucciones de acceso. Lo activas en la plataforma y tienes 7 días para analizar todas las ofertas que quieras — una por una o hasta 3 comparadas a la vez. Cada informe queda disponible en pantalla para descargar en PDF.</p></div></div>
-      </div>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué hace diferente al Informe Experto?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem"><b>Disponible próximamente</b> (lo estamos afinando junto a los primeros usuarios). Incluirá 30 días de acceso ilimitado para analizar todas tus ofertas, más una Estrategia Workea elaborada por una especialista en selección al cierre del período. Analizas hasta 10 ofertas durante 30 días y, al cierre, una especialista en selección y empleabilidad revisa tus patrones y elabora tu Estrategia Workea: dónde invertir tu tiempo, qué potenciar y cómo aumentar tus entrevistas. Criterio profesional, no solo más texto.</p></div></div>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Mercado Pago te redirigirá automáticamente al formulario de activación de Workea. Completa tus datos (nombre, correo y número de comprobante) y en menos de 1 minuto recibirás tu código personal por correo. Si cerraste la ventana antes de completar el formulario, escríbenos a workea@tupartnerlaboral.cl con tu comprobante y te enviamos el acceso de inmediato.</p></div></div>
       </div>
       <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Pagué desde la cuenta de otra persona?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem">No hay problema: tu código se envía al correo que TÚ indiques en el formulario de activación, pagues desde la cuenta que pagues. Solo incluye el número de operación o el correo de la cuenta con que se pagó, para que podamos validar la compra.</p></div></div>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">No hay problema: tu código se envía al correo que TÚ indiques en el formulario de activación, pagues desde la cuenta que pagues. Solo incluye el número de operación o el correo de la cuenta con que se pagó para que podamos validar la compra.</p></div></div>
       </div>
       <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Tengo que suscribirme?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem">No. El Esencial es gratis. El Estratégico es un pago único que activa 7 días de acceso ilimitado para analizar todas las ofertas que quieras. El Experto (próximamente) cubrirá 30 días de acceso con Estrategia incluida, con un precio que se confirmará al lanzar. Sin mensualidades ni renovaciones automáticas.</p></div></div>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">No. Cada producto de Workea es un pago único, sin mensualidades ni renovaciones automáticas: el Esencial es gratis; el Workea Match activa 7 días de acceso ilimitado; el Workea Profile Check entrega tu diagnóstico al instante; y el Informe Workea Experto (próximamente) cubrirá 30 días con Estrategia incluida.</p></div></div>
       </div>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué pasa con mi CV y mis datos?<span class="chev">▾</span></button>
+
+      <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .6rem">Sobre los análisis</p>
+
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Cómo recibo mi Informe Workea Match?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Tras confirmar tu pago, recibirás tu código personal por correo. Lo activas en la plataforma y tienes 7 días para analizar todas las ofertas que quieras — una por una o hasta 3 comparadas a la vez. Cada informe queda disponible en pantalla para descargar en PDF.</p></div></div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Puedo analizar una oferta de LinkedIn u otro portal?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">¡Sí! La forma más confiable es <b>copiar y pegar el texto completo de la oferta</b> (cargo, requisitos y responsabilidades): funciona con cualquier portal. Los enlaces directos a veces no se pueden leer porque algunos sitios como LinkedIn bloquean el acceso externo. También puedes subir el PDF de la oferta o una captura de pantalla directamente en la plataforma.</p></div></div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué hace diferente el Informe Workea Experto?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem"><b>Disponible próximamente.</b> Incluirá 30 días de acceso ilimitado para analizar todas tus ofertas, más una Estrategia Workea elaborada por una especialista en selección al cierre del período: dónde invertir tu tiempo, qué potenciar y cómo aumentar tus posibilidades de conseguir entrevistas. Criterio profesional, no solo más texto.</p></div></div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Para qué sirve el Workea Profile Check?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">El Workea Profile Check analiza tu perfil de LinkedIn de forma independiente — sin necesitar una oferta específica. Recibirás un score de optimización, el análisis de tu titular, sección "Acerca de" y experiencia, las palabras clave detectadas y tus 3 prioridades concretas de mejora. Es el paso natural después de optimizar tu postulación: asegurarte de que tu LinkedIn comunica lo mismo.</p></div></div>
+      </div>
+
+      <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .6rem">Sobre tus datos</p>
+
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué pasa con mi CV, mi perfil y mis datos?<span class="chev">▾</span></button>
         <div class="q-body"><div class="qb"><p style="margin-top:1rem">Tu información se usa únicamente para generar tu análisis. No se comparte con empresas ni reclutadores, y puedes pedir su eliminación cuando quieras escribiendo a workea@tupartnerlaboral.cl.</p></div></div>
       </div>
     </div>
@@ -1368,7 +1397,7 @@ function startEsencial(){
   if(localStorage.getItem('workea_esencial_usado')){
     startApp(); showScreen('scr-input',0);
     document.getElementById('inputError').innerHTML =
-      '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tu Informe Esencial gratis en este dispositivo. Para tu siguiente análisis, el <b>Informe Estratégico</b> te entrega el plan de acción completo al instante.</span></div>';
+      '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tu Informe Esencial gratis en este dispositivo. Para tu siguiente análisis, el <b>Workea Match</b> te entrega el plan de acción completo al instante.</span></div>';
     return;
   }
   realMode = true; modoPlan = 'esencial'; accessCode = '';
@@ -1493,8 +1522,8 @@ function renderResults(d){
     <div class="summary-hero" style="margin-top:1.6rem"><p class="kicker">Recomendación Workea</p>
       <div class="verdict" style="margin-top:.6rem"><span class="v-emoji">${emo}</span>
         <div><h3>${esc(d.recomendacion?.titulo||'')}</h3><p>${esc(d.recomendacion?.detalle||'')}</p></div></div></div>
-    ${modoPlan!=='esencial'?`<p style="text-align:center;font-size:.88rem;color:var(--muted);margin-top:1.6rem">¿Quieres acompañamiento personalizado para tu búsqueda? Conoce las <a class="btn-link" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener">asesorías de Tu Partner Laboral →</a></p>`:''}
-    ${modoPlan==='esencial'?`<div class="real-cta"><div><h3>Este fue tu Informe Esencial 🩵</h3><p>Ya sabes si vale la pena postular. El <b>Informe Estratégico</b> ($2.990, precio de acceso anticipado) te da 7 días de acceso ilimitado y agrega el análisis detallado, las palabras clave, las recomendaciones para tu CV, tu preparación de entrevista y el plan de acción priorizado — al instante.</p></div><a class="btn btn-wa" href="https://mpago.la/2yvY447" target="_blank" rel="noopener">Obtener Informe Estratégico →</a></div>`:''}`;
+    ${modoPlan!=='esencial'?`<div class="real-cta" style="margin-top:1.4rem"><div><h3>¿Tu LinkedIn refleja todo esto? 🔵</h3><p>Acabas de analizar tu postulación. Ahora descubre si tu perfil de LinkedIn comunica lo mismo que tu CV — antes de que lo vea el reclutador.</p></div><a class="btn btn-brand" href="https://mpago.la/2pt7YtA" target="_blank" rel="noopener">Obtener Workea Profile Check →</a></div><p style="text-align:center;font-size:.85rem;color:var(--muted);margin-top:1rem">¿Quieres acompañamiento personalizado? Conoce las <a class="btn-link" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener">asesorías de Tu Partner Laboral →</a></p>`:''}
+    ${modoPlan==='esencial'?`<div class="real-cta"><div><h3>Este fue tu Informe Esencial 🩵</h3><p>Ya sabes si vale la pena postular. El <b>Workea Match</b> ($2.990, precio de acceso anticipado) te da 7 días de acceso ilimitado y agrega el análisis detallado, las palabras clave, las recomendaciones para tu CV, tu preparación de entrevista y el plan de acción priorizado — al instante.</p></div><a class="btn btn-wa" href="https://mpago.la/2yvY447" target="_blank" rel="noopener">Obtener Informe Workea Match →</a></div>`:''}`;
   document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
   document.getElementById('scr-results').classList.remove('hidden');
   renderStepper(6); window.scrollTo({top:0});
