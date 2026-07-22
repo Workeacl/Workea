@@ -1370,6 +1370,31 @@ function animateRing(pct){
   },26);
 }
 function toggleQ(btn){ btn.parentElement.classList.toggle('open'); }
+function enviarInforme(){
+  const mount = document.getElementById('resultsMount');
+  if(!mount) return;
+  // Recopilar el texto del informe
+  const cargo = mount.querySelector('.offer-header h3')?.textContent || 'Cargo analizado';
+  const empresa = mount.querySelector('.company')?.textContent || '';
+  const compat = mount.querySelector('.ring-num')?.textContent || '';
+  const fortalezas = [...mount.querySelectorAll('.finding.f-green b')].map(b=>b.textContent).join(', ');
+  const brechas = [...mount.querySelectorAll('.finding.f-red b')].map(b=>b.textContent).join(', ');
+  const veredicto = mount.querySelector('.verdict h3')?.textContent || '';
+
+  const asunto = encodeURIComponent('Informe Workea — ' + cargo + (empresa ? ' · ' + empresa : ''));
+  const cuerpo = encodeURIComponent(
+    'Hola, te envío mi informe Workea para revisión profesional.\n\n' +
+    'CARGO: ' + cargo + '\n' +
+    (empresa ? 'EMPRESA: ' + empresa + '\n' : '') +
+    'COMPATIBILIDAD: ' + compat + '\n' +
+    'FORTALEZAS: ' + fortalezas + '\n' +
+    'BRECHAS: ' + brechas + '\n' +
+    'VEREDICTO: ' + veredicto + '\n\n' +
+    'Adjunto también el PDF descargado desde la plataforma.'
+  );
+  window.location.href = 'mailto:workea@tupartnerlaboral.cl?subject=' + asunto + '&body=' + cuerpo;
+}
+
 function printResults(){
   const el = document.querySelector('#resultsMount .offer-header h3');
   const cargo = el ? el.textContent.trim() : 'analisis';
@@ -1523,6 +1548,13 @@ function renderResults(d){
       <div class="verdict" style="margin-top:.6rem"><span class="v-emoji">${emo}</span>
         <div><h3>${esc(d.recomendacion?.titulo||'')}</h3><p>${esc(d.recomendacion?.detalle||'')}</p></div></div></div>
     ${modoPlan!=='esencial'?`<div class="real-cta" style="margin-top:1.4rem"><div><h3>¿Tu LinkedIn refleja todo esto? 🔵</h3><p>Acabas de analizar tu postulación. Ahora descubre si tu perfil de LinkedIn comunica lo mismo que tu CV — antes de que lo vea el reclutador.</p></div><a class="btn btn-brand" href="https://mpago.la/2pt7YtA" target="_blank" rel="noopener">Obtener Workea Profile Check →</a></div><p style="text-align:center;font-size:.85rem;color:var(--muted);margin-top:1rem">¿Quieres acompañamiento personalizado? Conoce las <a class="btn-link" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener">asesorías de Tu Partner Laboral →</a></p>`:''}
+    ${(modoPlan!=='esencial' && accessCode.toUpperCase().startsWith('EXP-'))?`<div class="note-card" style="margin-top:1.4rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+      <div>
+        <b>📩 Enviar mi informe a Workea</b>
+        <p style="font-size:.85rem;margin-top:.2rem;color:var(--muted)">Como parte de tu Informe Workea Experto, envíanos tu informe con un clic — es importante para que podamos preparar tu Estrategia Workea personalizada al cierre de tu período.</p>
+      </div>
+      <button class="btn btn-ghost" onclick="enviarInforme()" style="white-space:nowrap;flex-shrink:0">Enviar mi informe →</button>
+    </div>`:''}
     ${modoPlan==='esencial'?`<div class="real-cta"><div><h3>Este fue tu Informe Esencial 🩵</h3><p>Ya sabes si vale la pena postular. El <b>Workea Match</b> ($2.990, precio de acceso anticipado) te da 7 días de acceso ilimitado y agrega el análisis detallado, las palabras clave, las recomendaciones para tu CV, tu preparación de entrevista y el plan de acción priorizado — al instante.</p></div><a class="btn btn-wa" href="https://mpago.la/2yvY447" target="_blank" rel="noopener">Obtener Informe Workea Match →</a></div>`:''}`;
   document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
   document.getElementById('scr-results').classList.remove('hidden');
