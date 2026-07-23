@@ -1074,8 +1074,35 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}
+
+/* Supabase: guardado de historial (silencioso, no bloquea nada) */
+let _sb = null;
+try {
+  _sb = supabase.createClient('https://pqelcrlxarendwearcwl.supabase.co','sb_publishable_A7q5busm8Pms9sW8L03L3w_WQpVqgze');
+} catch(e) {}
+
+async function guardarEnHistorial(d){
+  if(!_sb || modoPlan==='esencial' || !realMode) return;
+  try {
+    const { data: { session } } = await _sb.auth.getSession();
+    if(!session?.user) return;
+    const cargoTxt = (d.ofertas&&d.ofertas[0]&&(d.ofertas[0].cargo||d.ofertas[0].puesto)) || d.cargo || d.puesto || 'Cargo analizado';
+    const empresaTxt = (d.ofertas&&d.ofertas[0]&&d.ofertas[0].empresa) || d.empresa || '';
+    const compat = (d.ofertas&&d.ofertas[0]&&(d.ofertas[0].compatibilidad||d.ofertas[0].match)) || d.compatibilidad || d.match || 0;
+    const vered = (d.ofertas&&d.ofertas[0]&&d.ofertas[0].veredicto) || (d.veredicto&&(d.veredicto.titulo||d.veredicto)) || '';
+    await _sb.from('analisis').insert({
+      usuario: session.user.id,
+      cargo: String(cargoTxt).substring(0,200),
+      empresa: String(empresaTxt).substring(0,200),
+      compatibilidad: Number(compat)||0,
+      veredicto: String(vered).substring(0,120),
+      datos: d
+    });
+  } catch(e) { /* silencioso */ }
+}
 
 async function extractPdfText(file){
   const buf = await file.arrayBuffer();
@@ -1491,6 +1518,7 @@ async function runRealAnalysis(oferta, cv){
 function esc(s){ return String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 function renderResults(d){
+  guardarEnHistorial(d);
   const NIVEL = {verde:['🟢','f-green'],amarillo:['🟡','f-amber'],naranjo:['🟠','f-amber'],rojo:['🔴','f-red']};
   const findings=(arr,cls)=> (arr||[]).map(f=>`<div class="finding ${cls}"><b>${esc(f.titulo)}</b><p>${esc(f.detalle)}</p></div>`).join('');
   const group=(color,titulo,arr,cls)=> (arr&&arr.length)?`
