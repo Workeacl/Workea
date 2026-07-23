@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Workea · Tu historial de análisis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#6c53ee;--cyan:#12cdf0;--grad:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0);
+  --brand-strong:#5138d6;--navy:#0a1430;--partner-blue:#51608a;
+  --brand-tint:#f0edfe;--brand-tint-2:#ded7fc;
+  --ink:#101b38;--muted:#5a6785;--faint:#8f9ab3;
+  --bg:#f6f8fc;--surface:#ffffff;--line:#e3e6f0;
+  --green:#2f9e6d;--green-bg:#e9f7f0;--green-ln:#bfe5d2;
+  --amber:#8a6508;--amber-bg:#fdf6e3;--amber-ln:#f0dfae;
+  --red:#9c3f3f;--red-bg:#fdeeee;--red-ln:#f0c9c9;
+  --gray-bg:#eef0f6;--gray-ln:#d9dfe9;
+  --shadow:0 1px 2px rgba(16,27,56,.05),0 8px 24px rgba(16,27,56,.07);
+  --shadow-lg:0 2px 4px rgba(16,27,56,.06),0 18px 48px rgba(16,27,56,.12);
+  --r:14px;--display:'Bricolage Grotesque',sans-serif;--body:'Instrument Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;letter-spacing:-.01em}
+button{font-family:var(--body);cursor:pointer;border:none;background:none}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+
+.app-header{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.app-header-in{max-width:1060px;margin:0 auto;padding:.85rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.logo{display:flex;align-items:center;gap:.6rem}
+.logo-w{width:38px;height:28px;flex-shrink:0}
+.logo .lt{display:flex;flex-direction:column;line-height:1.05}
+.logo .lt b{font-weight:700;font-size:1.2rem;letter-spacing:-.015em;color:var(--navy)}
+.logo .lt b em{font-style:normal;color:inherit}
+.logo .lt span{font-size:.58rem;color:var(--partner-blue);font-weight:700;letter-spacing:.05em;display:block;margin-top:.1rem}
+.user-chip{display:flex;align-items:center;gap:.6rem;font-size:.85rem;color:var(--muted)}
+.user-chip .avatar{width:34px;height:34px;border-radius:50%;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}
+.user-chip button{font-size:.78rem;color:var(--faint);text-decoration:underline}
+
+.main{max-width:1060px;margin:0 auto;padding:2.2rem 1.5rem 5rem}
+.screen{animation:fadeUp .3s ease both}
+.screen.hidden{display:none!important}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-weight:600;font-size:.93rem;padding:.78rem 1.5rem;border-radius:999px;transition:transform .15s,box-shadow .15s;cursor:pointer;border:none}
+.btn-primary{background:var(--navy);color:#fff;box-shadow:0 4px 14px rgba(10,20,48,.25)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-brand{background:var(--grad);color:#fff}
+.btn-brand:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn-ghost{color:var(--navy);background:transparent;border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--brand);background:var(--brand-tint)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none!important}
+.error-box{display:flex;gap:.7rem;align-items:flex-start;background:var(--red-bg);border:1px solid var(--red-ln);border-radius:12px;padding:.9rem 1.1rem;margin-top:1rem;font-size:.9rem;color:#8f3d3d}
+.ok-box{background:var(--green-bg);border:1px solid var(--green-ln);border-radius:12px;padding:.9rem 1.1rem;margin-top:1rem;font-size:.9rem;color:#1c6b47}
+
+/* acceso */
+.access-hero{max-width:430px;margin:3rem auto;text-align:center}
+.access-hero .big-logo{width:64px;height:48px;margin:0 auto 1.2rem}
+.access-hero h1{font-size:1.7rem;margin-bottom:.4rem}
+.access-hero>p{color:var(--muted);margin-bottom:2rem}
+.access-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-lg);padding:1.8rem;text-align:left}
+.access-card label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.4rem}
+.access-card input{width:100%;font-family:var(--body);font-size:.95rem;padding:.85rem 1rem;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+.access-card input:focus{outline:none;border-color:var(--brand);background:#fff}
+.divider{display:flex;align-items:center;gap:1rem;margin:1.4rem 0;color:var(--faint);font-size:.78rem;font-weight:600}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* dashboard */
+.dash-grid{display:grid;grid-template-columns:1fr 300px;gap:1.4rem;align-items:start}
+.dash-head{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:1.4rem;flex-wrap:wrap}
+.dash-head h1{font-size:clamp(1.4rem,2.8vw,1.9rem)}
+.dash-head p{color:var(--muted);font-size:.92rem}
+.hist-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.2rem 1.4rem;display:grid;grid-template-columns:auto 1fr auto;gap:1.2rem;align-items:center;margin-bottom:.9rem;transition:transform .15s,box-shadow .15s;cursor:pointer}
+.hist-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.mini-ring{position:relative;width:62px;height:62px;flex-shrink:0}
+.mini-ring svg{transform:rotate(-90deg)}
+.mr-bg{stroke:var(--gray-bg)}
+.mr-val{stroke-linecap:round;stroke-dasharray:151}
+.mr-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:.95rem}
+.hist-info h3{font-size:1rem;font-weight:700;margin-bottom:.1rem}
+.hist-info .empresa{font-size:.85rem;color:var(--muted)}
+.hist-info .fecha{font-size:.76rem;color:var(--faint);margin-top:.25rem}
+.verdict-pill{font-size:.76rem;font-weight:700;padding:.32rem .8rem;border-radius:999px;white-space:nowrap}
+.vp-green{background:var(--green-bg);color:var(--green)}
+.vp-amber{background:var(--amber-bg);color:var(--amber)}
+.vp-red{background:var(--red-bg);color:var(--red)}
+.empty-state{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r);padding:2.5rem;text-align:center;color:var(--muted)}
+.side-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.4rem;margin-bottom:1.2rem}
+.side-card h3{font-size:.92rem;font-weight:700;margin-bottom:.9rem}
+.plan-box{background:var(--navy);border-radius:14px;padding:1.2rem;color:#fff;margin-bottom:1rem}
+.plan-box.gray{background:var(--gray-bg)}
+.plan-box .pb-name{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);margin-bottom:.25rem}
+.plan-box.gray .pb-name{color:var(--faint)}
+.plan-box .pb-plan{font-family:var(--display);font-size:1.15rem;font-weight:800;margin-bottom:.7rem}
+.plan-box.gray .pb-plan{color:var(--muted)}
+.days-track{height:7px;background:rgba(255,255,255,.15);border-radius:4px;overflow:hidden;margin-bottom:.4rem}
+.plan-box.gray .days-track{background:var(--gray-ln)}
+.days-fill{height:100%;background:var(--grad);border-radius:4px}
+.plan-box .pb-days{font-size:.8rem;color:#a5bde6}
+.plan-box.gray .pb-days{color:var(--faint)}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:.55rem 0;border-bottom:1px dashed var(--line);font-size:.88rem}
+.stat-row:last-child{border-bottom:none}
+.stat-row .sv{font-family:var(--display);font-weight:800;font-size:1.05rem}
+
+/* bloqueado */
+.locked-overlay{position:relative}
+.locked-overlay .hist-card{filter:blur(3px);pointer-events:none;user-select:none}
+.locked-msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,rgba(246,248,252,.3),rgba(246,248,252,.95) 55%);border-radius:var(--r);padding:2rem;z-index:5}
+.locked-msg .lock-ico{font-size:2rem;margin-bottom:.6rem}
+.locked-msg h3{font-size:1.15rem;margin-bottom:.35rem}
+.locked-msg p{font-size:.9rem;color:var(--muted);max-width:26rem;margin-bottom:1.2rem}
+
+/* admin */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.6rem}
+.kpi-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.2rem 1.3rem}
+.kpi-card .kv{font-family:var(--display);font-size:1.7rem;font-weight:800;line-height:1.1}
+.kpi-card .kl{font-size:.78rem;color:var(--muted);font-weight:600;margin-top:.2rem}
+.admin-table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-bottom:1.6rem}
+.admin-table-wrap h3{font-size:.95rem;font-weight:700;padding:1.1rem 1.3rem;border-bottom:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{text-align:left;padding:.7rem 1.3rem;background:var(--bg);color:var(--faint);font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+td{padding:.8rem 1.3rem;border-top:1px solid var(--line)}
+.tag-mini{font-size:.72rem;font-weight:700;padding:.22rem .6rem;border-radius:999px}
+.tm-green{background:var(--green-bg);color:var(--green)}
+.tm-amber{background:var(--amber-bg);color:var(--amber)}
+.tm-gray{background:var(--gray-bg);color:var(--muted)}
+.tm-brand{background:var(--brand-tint);color:var(--brand-strong)}
+.admin-toggle{margin-bottom:1.4rem;display:flex;gap:.6rem}
+
+/* detalle informe */
+.detail-back{margin-bottom:1.2rem}
+#detalleMount{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.8rem}
+
+@media(max-width:860px){
+  .dash-grid{grid-template-columns:1fr}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){
+  .hist-card{grid-template-columns:auto 1fr}
+  .verdict-pill{grid-column:2;justify-self:start}
+  .kpi-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-in">
+    <a class="logo" href="/">
+      <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true">
+        <defs><linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/>
+        </linearGradient></defs>
+        <path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wg)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+    </a>
+    <div class="user-chip hidden" id="userChip">
+      <span id="userMail"></span>
+      <div class="avatar" id="userAvatar">·</div>
+      <button onclick="salir()">Salir</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+<!-- ============ ACCESO ============ -->
+<div id="scr-acceso" class="screen">
+  <div class="access-hero">
+    <svg class="big-logo" viewBox="0 0 100 74" aria-hidden="true">
+      <defs><linearGradient id="wg2" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/>
+      </linearGradient></defs>
+      <path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wg2)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h1>Mi Workea</h1>
+    <p>Accede a tu historial de análisis y administra tu plan.</p>
+
+    <div class="access-card">
+      <label for="mailInput">Tu correo</label>
+      <input type="email" id="mailInput" placeholder="tucorreo@ejemplo.cl" onkeydown="if(event.key==='Enter')enviarMagic()">
+      <button class="btn btn-primary" style="width:100%;margin-top:1rem" id="btnMagic" onclick="enviarMagic()">Enviarme link de acceso →</button>
+      <div id="magicMsg"></div>
+
+      <div class="divider">¿tienes un código nuevo?</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:.8rem">Primero entra con tu correo (arriba). Una vez dentro podrás canjear tu código WK o EXP.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DASHBOARD ============ -->
+<div id="scr-dash" class="screen hidden">
+  <div class="dash-head">
+    <div>
+      <h1 id="dashSaludo">Hola 👋</h1>
+      <p>Tus análisis guardados y el estado de tu plan.</p>
+    </div>
+    <a class="btn btn-brand" href="/">+ Analizar nueva oferta</a>
+  </div>
+
+  <div class="dash-grid">
+    <div>
+      <div id="histWrap"></div>
+    </div>
+    <div>
+      <div id="planBox"></div>
+
+      <div class="side-card" id="canjeCard">
+        <h3>🔑 Canjear un código</h3>
+        <input type="text" id="canjeInput" placeholder="WK-XXXX-XXXX" style="width:100%;font-family:var(--body);font-size:.9rem;padding:.75rem .9rem;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);text-transform:uppercase">
+        <button class="btn btn-ghost" style="width:100%;margin-top:.7rem" onclick="canjearCodigo()">Canjear →</button>
+        <div id="canjeMsg"></div>
+      </div>
+
+      <div class="side-card" id="statsCard"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DETALLE DE UN INFORME ============ -->
+<div id="scr-detalle" class="screen hidden">
+  <button class="btn btn-ghost detail-back" onclick="showScreen('scr-dash')">← Volver a mis análisis</button>
+  <div id="detalleMount"></div>
+</div>
+
+<!-- ============ ADMIN ============ -->
+<div id="scr-admin" class="screen hidden">
+  <div class="dash-head">
+    <div>
+      <h1>Panel Workea 🎛️</h1>
+      <p>Vista general del negocio — solo visible para ti.</p>
+    </div>
+    <button class="btn btn-ghost" onclick="showScreen('scr-dash')">← Mi cuenta</button>
+  </div>
+  <div class="kpi-grid" id="adminKpis"></div>
+  <div class="admin-table-wrap">
+    <h3>👥 Usuarios</h3>
+    <div style="overflow-x:auto" id="adminUsuarios"></div>
+  </div>
+  <div class="admin-table-wrap">
+    <h3>🔑 Códigos</h3>
+    <div style="overflow-x:auto" id="adminCodigos"></div>
+  </div>
+</div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ===== CONFIG ===== */
+const SB_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
+const SB_KEY = 'sb_publishable_A7q5busm8Pms9sW8L03L3w_WQpVqgze';
+const ADMIN_EMAIL = 'workea@tupartnerlaboral.cl';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+let usuario = null;
+let perfil = null;
+
+/* ===== PANTALLAS ===== */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo({top:0});
+}
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* ===== AUTH ===== */
+async function enviarMagic(){
+  const correo = document.getElementById('mailInput').value.trim().toLowerCase();
+  const msg = document.getElementById('magicMsg');
+  if(!correo || !correo.includes('@')){
+    msg.innerHTML = '<div class="error-box">⚠️ Escribe un correo válido.</div>'; return;
+  }
+  document.getElementById('btnMagic').disabled = true;
+  msg.innerHTML = '<div style="color:var(--muted);font-size:.88rem;padding:.6rem 0">⏳ Enviando link…</div>';
+  const { error } = await sb.auth.signInWithOtp({
+    email: correo,
+    options: { emailRedirectTo: window.location.origin + '/cuenta.html' }
+  });
+  document.getElementById('btnMagic').disabled = false;
+  if(error){
+    msg.innerHTML = '<div class="error-box">⚠️ ' + esc(error.message) + '</div>';
+  } else {
+    msg.innerHTML = '<div class="ok-box">✉️ <b>Revisa tu correo.</b> Te enviamos un link de acceso — ábrelo y entras directo, sin contraseñas.</div>';
+  }
+}
+
+async function salir(){
+  await sb.auth.signOut();
+  window.location.reload();
+}
+
+/* ===== CARGA DE SESIÓN ===== */
+sb.auth.onAuthStateChange(async (event, session) => {
+  if(session?.user){
+    usuario = session.user;
+    await cargarCuenta();
+  }
+});
+
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if(session?.user){ usuario = session.user; await cargarCuenta(); }
+})();
+
+async function cargarCuenta(){
+  // Chip de usuario
+  document.getElementById('userChip').classList.remove('hidden');
+  document.getElementById('userMail').textContent = usuario.email;
+  document.getElementById('userAvatar').textContent = (usuario.email[0]||'·').toUpperCase();
+
+  // Cargar o crear perfil
+  let { data: p } = await sb.from('perfiles').select('*').eq('id', usuario.id).maybeSingle();
+  if(!p){
+    const nuevo = { id: usuario.id, correo: usuario.email, plan: 'esencial' };
+    await sb.from('perfiles').insert(nuevo);
+    p = nuevo;
+  }
+  perfil = p;
+
+  const nombre = p.nombre || usuario.email.split('@')[0];
+  document.getElementById('dashSaludo').textContent = 'Hola, ' + nombre + ' 👋';
+
+  await renderPlan();
+  await renderHistorial();
+
+  // Admin
+  if(usuario.email === ADMIN_EMAIL){
+    document.getElementById('dashSaludo').insertAdjacentHTML('afterend',
+      '<button class="btn btn-ghost" style="margin-top:.6rem;font-size:.82rem;padding:.5rem 1rem" onclick="abrirAdmin()">🎛️ Abrir panel de administración</button>');
+  }
+
+  showScreen('scr-dash');
+}
+
+/* ===== PLAN ===== */
+function planActivo(){
+  if(!perfil?.plan_vence) return perfil?.plan !== 'esencial' ? false : null;
+  return new Date(perfil.plan_vence) > new Date();
+}
+
+async function renderPlan(){
+  const box = document.getElementById('planBox');
+  const nombrePlan = { esencial:'🩵 Esencial', match:'💙 Informe Workea Match', experto:'💜 Informe Workea Experto' }[perfil.plan] || perfil.plan;
+
+  if(perfil.plan === 'esencial'){
+    box.innerHTML = `<div class="plan-box gray">
+      <p class="pb-name">Tu plan</p>
+      <p class="pb-plan">🩵 Esencial</p>
+      <p class="pb-days">Canjea un código para activar tu acceso completo y guardar tu historial.</p>
+    </div>`;
+    return;
+  }
+
+  const vence = new Date(perfil.plan_vence);
+  const activo = vence > new Date();
+  const dias = Math.max(0, Math.ceil((vence - new Date())/(1000*60*60*24)));
+  const total = perfil.plan === 'experto' ? 30 : 7;
+  const pct = Math.min(100, Math.round(dias/total*100));
+  const fmt = vence.toLocaleDateString('es-CL',{day:'numeric',month:'long'});
+
+  if(activo){
+    box.innerHTML = `<div class="plan-box">
+      <p class="pb-name">Tu plan activo</p>
+      <p class="pb-plan">${nombrePlan}</p>
+      <div class="days-track"><div class="days-fill" style="width:${pct}%"></div></div>
+      <p class="pb-days">${dias} de ${total} días restantes · vence el ${fmt}</p>
+    </div>`;
+  } else {
+    box.innerHTML = `<div class="plan-box gray">
+      <p class="pb-name">Tu plan</p>
+      <p class="pb-plan">${nombrePlan}</p>
+      <div class="days-track"><div class="days-fill" style="width:100%;background:var(--faint)"></div></div>
+      <p class="pb-days">Vencido el ${fmt}</p>
+    </div>
+    <a class="btn btn-brand" style="width:100%" href="/#planes">Reactivar mi acceso →</a>`;
+  }
+}
+
+/* ===== HISTORIAL ===== */
+function ringColor(v){ return v>=70?'#2f9e6d':(v>=50?'#c9a227':'#9c3f3f'); }
+function ringTextColor(v){ return v>=70?'#2f9e6d':(v>=50?'#8a6508':'#9c3f3f'); }
+function verdictClass(v){
+  const t=(v||'').toLowerCase();
+  if(t.includes('confianza')||t.includes('postula')&&!t.includes('estrategia')&&!t.includes('ajusta')) return 'vp-green';
+  if(t.includes('estrategia')||t.includes('ajusta')) return 'vp-amber';
+  return 'vp-red';
+}
+
+let analisisCache = [];
+
+async function renderHistorial(){
+  const wrap = document.getElementById('histWrap');
+  const { data: rows, error } = await sb.from('analisis')
+    .select('*').eq('usuario', usuario.id).order('creado',{ascending:false});
+
+  if(error){ wrap.innerHTML = '<div class="error-box">⚠️ No pudimos cargar tu historial.</div>'; return; }
+  analisisCache = rows||[];
+
+  // Stats
+  const stats = document.getElementById('statsCard');
+  if(analisisCache.length){
+    const prom = Math.round(analisisCache.reduce((a,r)=>a+(r.compatibilidad||0),0)/analisisCache.length);
+    stats.innerHTML = `<h3>📊 Tu actividad</h3>
+      <div class="stat-row"><span>Análisis guardados</span><span class="sv">${analisisCache.length}</span></div>
+      <div class="stat-row"><span>Match promedio</span><span class="sv" style="color:${ringTextColor(prom)}">${prom}%</span></div>`;
+  } else { stats.innerHTML = ''; }
+
+  if(!analisisCache.length){
+    wrap.innerHTML = `<div class="empty-state">
+      <p style="font-size:1.6rem;margin-bottom:.5rem">📭</p>
+      <p><b>Aún no tienes análisis guardados.</b></p>
+      <p style="font-size:.88rem;margin-top:.3rem">Cuando analices una oferta con tu plan activo, tu informe quedará guardado aquí automáticamente.</p>
+      <a class="btn btn-brand" style="margin-top:1.2rem" href="/">Analizar mi primera oferta →</a>
+    </div>`;
+    return;
+  }
+
+  const activo = planActivo();
+  const cards = analisisCache.map((r,i)=>{
+    const v = Math.max(0,Math.min(100,r.compatibilidad||0));
+    const offset = 151*(1-v/100);
+    const fecha = new Date(r.creado).toLocaleDateString('es-CL',{day:'numeric',month:'long'});
+    return `<div class="hist-card" onclick="verDetalle(${i})">
+      <div class="mini-ring">
+        <svg width="62" height="62" viewBox="0 0 62 62">
+          <circle class="mr-bg" cx="31" cy="31" r="24" fill="none" stroke-width="6"/>
+          <circle class="mr-val" cx="31" cy="31" r="24" fill="none" stroke-width="6" stroke="${ringColor(v)}" stroke-dashoffset="${offset}"/>
+        </svg>
+        <span class="mr-label" style="color:${ringTextColor(v)}">${v}%</span>
+      </div>
+      <div class="hist-info">
+        <h3>${esc(r.cargo||'Cargo analizado')}</h3>
+        <p class="empresa">${esc(r.empresa||'')}</p>
+        <p class="fecha">Analizado el ${fecha}</p>
+      </div>
+      <span class="verdict-pill ${verdictClass(r.veredicto)}">${esc(r.veredicto||'')}</span>
+    </div>`;
+  }).join('');
+
+  if(activo === false){
+    wrap.innerHTML = `<div class="locked-overlay">${cards}
+      <div class="locked-msg">
+        <span class="lock-ico">🔒</span>
+        <h3>Tu plan venció</h3>
+        <p>Tus ${analisisCache.length} análisis siguen guardados y esperándote. Reactiva tu acceso para volver a verlos y seguir analizando ofertas.</p>
+        <a class="btn btn-brand" href="/#planes">Reactivar mi acceso · $2.990 →</a>
+        <p style="font-size:.78rem;color:var(--faint);margin-top:.8rem">Tus informes no se borran: quedan asociados a tu cuenta.</p>
+      </div></div>`;
+  } else {
+    wrap.innerHTML = cards;
+  }
+}
+
+/* ===== DETALLE ===== */
+function verDetalle(i){
+  if(planActivo() === false) return;
+  const r = analisisCache[i];
+  if(!r) return;
+  const d = r.datos || {};
+  const v = r.compatibilidad||0;
+  document.getElementById('detalleMount').innerHTML = `
+    <h2 style="margin-bottom:.3rem">${esc(r.cargo||'')}</h2>
+    <p style="color:var(--muted);margin-bottom:1.2rem">${esc(r.empresa||'')} · ${esc(r.veredicto||'')} · ${v}% de compatibilidad</p>
+    <pre style="white-space:pre-wrap;font-family:var(--body);font-size:.9rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:1.2rem;max-height:70vh;overflow:auto">${esc(JSON.stringify(d,null,2))}</pre>
+    <p style="font-size:.8rem;color:var(--faint);margin-top:.8rem">Vista técnica del informe guardado. En la próxima versión se mostrará con el diseño completo del informe original.</p>`;
+  showScreen('scr-detalle');
+}
+
+/* ===== CANJE DE CÓDIGO ===== */
+async function canjearCodigo(){
+  const codigo = document.getElementById('canjeInput').value.trim().toUpperCase();
+  const msg = document.getElementById('canjeMsg');
+  if(!codigo){ msg.innerHTML='<div class="error-box">⚠️ Escribe tu código.</div>'; return; }
+
+  msg.innerHTML = '<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0">⏳ Verificando…</div>';
+
+  const { data: c } = await sb.from('codigos').select('*').eq('codigo', codigo).maybeSingle();
+  if(!c){ msg.innerHTML='<div class="error-box">⚠️ Código no encontrado. Revisa que esté bien escrito.</div>'; return; }
+  if(c.estado !== 'libre'){ msg.innerHTML='<div class="error-box">⚠️ Este código ya fue usado.</div>'; return; }
+
+  const dias = c.plan === 'experto' ? 30 : 7;
+  const vence = new Date(Date.now() + dias*24*60*60*1000);
+
+  const { error: e1 } = await sb.from('codigos').update({
+    estado:'usado', usado_por: usuario.id, usado_correo: usuario.email,
+    usado_fecha: new Date().toISOString(), vence: vence.toISOString()
+  }).eq('codigo', codigo).eq('estado','libre');
+
+  if(e1){ msg.innerHTML='<div class="error-box">⚠️ No se pudo canjear. Intenta de nuevo.</div>'; return; }
+
+  const { error: e2 } = await sb.from('perfiles').update({
+    plan: c.plan, plan_vence: vence.toISOString()
+  }).eq('id', usuario.id);
+
+  if(e2){ msg.innerHTML='<div class="error-box">⚠️ Código canjeado pero hubo un error activando el plan. Escríbenos.</div>'; return; }
+
+  perfil.plan = c.plan; perfil.plan_vence = vence.toISOString();
+  msg.innerHTML = '<div class="ok-box">✅ <b>¡Código canjeado!</b> Tu plan quedó activo por ' + dias + ' días.</div>';
+  document.getElementById('canjeInput').value='';
+  await renderPlan();
+  await renderHistorial();
+}
+
+/* ===== ADMIN ===== */
+async function abrirAdmin(){
+  showScreen('scr-admin');
+
+  const [{ data: perfiles }, { data: codigos }, { data: analisis }] = await Promise.all([
+    sb.from('perfiles').select('*').order('creado',{ascending:false}),
+    sb.from('codigos').select('*').order('creado',{ascending:false}),
+    sb.from('analisis').select('id,usuario,creado')
+  ]);
+
+  const activos = (perfiles||[]).filter(p=>p.plan!=='esencial' && p.plan_vence && new Date(p.plan_vence)>new Date());
+  const libres = (codigos||[]).filter(c=>c.estado==='libre');
+
+  document.getElementById('adminKpis').innerHTML = `
+    <div class="kpi-card"><p class="kv">${(perfiles||[]).length}</p><p class="kl">Usuarios registrados</p></div>
+    <div class="kpi-card"><p class="kv">${activos.length}</p><p class="kl">Planes activos</p></div>
+    <div class="kpi-card"><p class="kv">${(analisis||[]).length}</p><p class="kl">Análisis guardados</p></div>
+    <div class="kpi-card"><p class="kv">${libres.length}</p><p class="kl">Códigos libres</p></div>`;
+
+  const conteo = {};
+  (analisis||[]).forEach(a=>{ conteo[a.usuario]=(conteo[a.usuario]||0)+1; });
+
+  document.getElementById('adminUsuarios').innerHTML = `<table>
+    <tr><th>Correo</th><th>Plan</th><th>Análisis</th><th>Vence</th><th>Estado</th></tr>
+    ${(perfiles||[]).map(p=>{
+      const activo = p.plan!=='esencial' && p.plan_vence && new Date(p.plan_vence)>new Date();
+      const vence = p.plan_vence ? new Date(p.plan_vence).toLocaleDateString('es-CL',{day:'numeric',month:'short'}) : '—';
+      return `<tr><td>${esc(p.correo||'')}</td><td>${esc(p.plan||'')}</td><td>${conteo[p.id]||0}</td><td>${vence}</td>
+        <td><span class="tag-mini ${activo?'tm-green':(p.plan==='esencial'?'tm-gray':'tm-amber')}">${activo?'Activo':(p.plan==='esencial'?'Esencial':'Vencido')}</span></td></tr>`;
+    }).join('')}</table>`;
+
+  document.getElementById('adminCodigos').innerHTML = `<table>
+    <tr><th>Código</th><th>Plan</th><th>Estado</th><th>Canjeado por</th><th>Vence</th></tr>
+    ${(codigos||[]).map(c=>{
+      const vence = c.vence ? new Date(c.vence).toLocaleDateString('es-CL',{day:'numeric',month:'short'}) : '—';
+      return `<tr><td><b>${esc(c.codigo)}</b></td><td>${esc(c.plan)}</td>
+        <td><span class="tag-mini ${c.estado==='libre'?'tm-green':'tm-amber'}">${c.estado==='libre'?'Libre':'Usado'}</span></td>
+        <td>${esc(c.usado_correo||'—')}</td><td>${vence}</td></tr>`;
+    }).join('')}</table>`;
+}
+</script>
+</body>
+</html>
