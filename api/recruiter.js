@@ -1,4 +1,5 @@
 // api/recruiter.js — Workea Recruiter (herramienta interna)
+// Usa Anthropic tool use para garantizar JSON valido sin parseo manual
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Metodo no permitido' });
@@ -19,112 +20,121 @@ export default async function handler(req, res) {
   if (!textoRec && !listaImagenes.length) {
     return res.status(400).json({ error: 'Falta el descriptor del cargo' });
   }
-
   const paisStr = String(pais || 'Chile').trim();
 
-  // Prompt dividido en partes para evitar errores de sintaxis
-  const systemParts = [
-    'Eres un experto en reclutamiento de perfiles tecnologicos y digitales en Latinoamerica.',
-    'Analiza el descriptor de cargo (puede ser formal, un correo o apuntes desordenados) y genera una estrategia de busqueda para el pais indicado.',
-    'IMPORTANTE: Responde UNICAMENTE con JSON valido. Sin markdown, sin texto adicional, sin explicaciones.',
-    'El JSON debe tener exactamente esta estructura:',
-    '{"cargo":"string","empresa":"string","pais":"string","seniority":"string",',
-    '"entendimiento":"string con descripcion simple en 3 lineas",',
-    '"criticos":[{"requisito":"string","nota":"string"}],',
-    '"deseables":[{"requisito":"string"}],',
-    '"competencias_tecnicas":["string"],',
-    '"competencias_conductuales":["string"],',
-    '"palabras_clave":{"titulos_principales":["string"],"titulos_alternativos":["string"],"terminos_tecnicos":["string"],"booleana_sugerida":"string"},',
-    '"donde_buscar":{"empresas":[{"nombre":"string","razon":"string"}],"sectores_afines":["string"],"comunidades":["string"],"plataformas":["string"]},',
-    '"benchmark_salarial":{"rango_min":0,"rango_max":0,"moneda":"string","fuente_referencial":"string","lectura":"string","argumento_cliente":"string"},',
-    '"preguntas_entrevista":[{"pregunta":"string","tipo":"string","que_evalua":"string","respuesta_ideal":"string"}],',
-    '"alertas":["string"],',
-    '"estrategia_resumen":"string"}',
-    'Usa solo comillas dobles. No incluyas saltos de linea dentro de los valores string. Maximo 4 criticos, 3 deseables, 5 titulos, 3 alternativos, 5 empresas, 4 preguntas.'
-  ];
-  const system = systemParts.join(' ');
+  const system = 'Eres un experto en reclutamiento de perfiles tecnologicos y digitales en Latinoamerica. ' +
+    'Analiza el descriptor de cargo (puede ser formal, un correo o apuntes desordenados) y genera una estrategia de busqueda completa para el pais indicado, usando la herramienta generar_estrategia. ' +
+    'Si el descriptor es informal o incompleto, infiere lo que puedas con criterio experto de reclutadora y marca las inferencias en alertas.';
 
-  const textoPrincipal = 'DESCRIPTOR DEL CARGO:\n' + textoRec + '\n\nPAIS: ' + paisStr + '\n\nResponde solo con el JSON, sin texto adicional.';
+  const tool = {
+    name: 'generar_estrategia',
+    description: 'Genera la estrategia de busqueda y atraccion de talento para el cargo analizado',
+    input_schema: {
+      type: 'object',
+      properties: {
+        cargo: { type: 'string' },
+        empresa: { type: 'string', description: 'Nombre de la empresa si aparece, string vacio si no' },
+        pais: { type: 'string' },
+        seniority: { type: 'string', enum: ['Junior', 'Semi Senior', 'Senior', 'Lead', 'Manager'] },
+        entendimiento: { type: 'string', description: 'Explicacion del rol en 3-4 lineas simples, sin tecnicismos' },
+        criticos: {
+          type: 'array', description: '3-4 requisitos criticos (excluyentes)',
+          items: { type: 'object', properties: { requisito: { type: 'string' }, nota: { type: 'string', description: 'por que es critico' } }, required: ['requisito', 'nota'] }
+        },
+        deseables: {
+          type: 'array', description: '2-3 requisitos deseables (no excluyentes)',
+          items: { type: 'object', properties: { requisito: { type: 'string' } }, required: ['requisito'] }
+        },
+        competencias_tecnicas: { type: 'array', items: { type: 'string' } },
+        competencias_conductuales: { type: 'array', items: { type: 'string' } },
+        palabras_clave: {
+          type: 'object',
+          properties: {
+            titulos_principales: { type: 'array', items: { type: 'string' }, description: '4-5 titulos exactos del cargo' },
+            titulos_alternativos: { type: 'array', items: { type: 'string' }, description: '3 titulos alternativos con perfil similar' },
+            terminos_tecnicos: { type: 'array', items: { type: 'string' } },
+            booleana_sugerida: { type: 'string', description: 'busqueda booleana lista para usar en LinkedIn Recruiter' }
+          },
+          required: ['titulos_principales', 'titulos_alternativos', 'terminos_tecnicos', 'booleana_sugerida']
+        },
+        donde_buscar: {
+          type: 'object',
+          properties: {
+            empresas: {
+              type: 'array', description: '5 empresas donde suelen estar estos perfiles',
+              items: { type: 'object', properties: { nombre: { type: 'string' }, razon: { type: 'string' } }, required: ['nombre', 'razon'] }
+            },
+            sectores_afines: { type: 'array', items: { type: 'string' } },
+            comunidades: { type: 'array', items: { type: 'string' } },
+            plataformas: { type: 'array', items: { type: 'string' } }
+          },
+          required: ['empresas', 'sectores_afines', 'comunidades', 'plataformas']
+        },
+        benchmark_salarial: {
+          type: 'object',
+          properties: {
+            rango_min: { type: 'integer' },
+            rango_max: { type: 'integer' },
+            moneda: { type: 'string', description: 'CLP, COP, ARS, MXN, PEN o USD segun el pais' },
+            fuente_referencial: { type: 'string' },
+            lectura: { type: 'string', description: 'si hay salario propuesto: bajo, alineado o sobre mercado. Si no hay: rango sugerido' },
+            argumento_cliente: { type: 'string' }
+          },
+          required: ['rango_min', 'rango_max', 'moneda', 'fuente_referencial', 'lectura', 'argumento_cliente']
+        },
+        preguntas_entrevista: {
+          type: 'array', description: '4 preguntas, mix de tecnicas y por competencias',
+          items: {
+            type: 'object',
+            properties: {
+              pregunta: { type: 'string' },
+              tipo: { type: 'string', enum: ['tecnica', 'competencia', 'situacional'] },
+              que_evalua: { type: 'string' },
+              respuesta_ideal: { type: 'string' }
+            },
+            required: ['pregunta', 'tipo', 'que_evalua', 'respuesta_ideal']
+          }
+        },
+        alertas: { type: 'array', items: { type: 'string' }, description: 'senales de alerta del descriptor: requisitos contradictorios, expectativas irreales, inferencias hechas' },
+        estrategia_resumen: { type: 'string', description: '3-4 lineas con el foco recomendado, que va a ser dificil y como abordarlo' }
+      },
+      required: ['cargo', 'empresa', 'pais', 'seniority', 'entendimiento', 'criticos', 'deseables', 'competencias_tecnicas', 'competencias_conductuales', 'palabras_clave', 'donde_buscar', 'benchmark_salarial', 'preguntas_entrevista', 'alertas', 'estrategia_resumen']
+    }
+  };
 
   try {
     const content = [
-      ...listaImagenes.map(im => ({
-        type: 'image',
-        source: { type: 'base64', media_type: im.media_type, data: im.data }
-      })),
+      ...listaImagenes.map(im => ({ type: 'image', source: { type: 'base64', media_type: im.media_type, data: im.data } })),
       ...(listaImagenes.length ? [{ type: 'text', text: 'La imagen es el descriptor del cargo.' }] : []),
-      { type: 'text', text: textoPrincipal }
+      { type: 'text', text: 'DESCRIPTOR DEL CARGO:\n' + textoRec + '\n\nPAIS: ' + paisStr }
     ];
 
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 2500,
+        max_tokens: 4000,
         system,
+        tools: [tool],
+        tool_choice: { type: 'tool', name: 'generar_estrategia' },
         messages: [{ role: 'user', content }]
       })
     });
 
     const data = await r.json();
     if (!r.ok) {
-      console.error('Anthropic error:', JSON.stringify(data).substring(0, 200));
+      console.error('Anthropic error:', JSON.stringify(data).substring(0, 300));
       return res.status(502).json({ error: 'Error del servicio: ' + (data.error?.message || 'desconocido') });
     }
 
-    const txt = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
-    
-    // Parser robusto con múltiples intentos
-    let jsonStr = txt.replace(/```json|```/g, '').trim();
-    const start = jsonStr.indexOf('{');
-    const end = jsonStr.lastIndexOf('}');
-    if (start === -1 || end === -1) {
-      console.error('No se encontro JSON en:', jsonStr.substring(0, 200));
+    const toolUse = (data.content || []).find(b => b.type === 'tool_use');
+    if (!toolUse || !toolUse.input) {
+      console.error('Sin tool_use en respuesta:', JSON.stringify(data).substring(0, 300));
       return res.status(500).json({ error: 'Respuesta inesperada. Intenta de nuevo.' });
     }
-    jsonStr = jsonStr.slice(start, end + 1);
 
-    // Intento 1: parse directo
-    try {
-      return res.status(200).json(JSON.parse(jsonStr));
-    } catch(e1) {
-      // Intento 2: limpiar caracteres problemáticos
-      try {
-        const clean = jsonStr
-          .replace(/[\u0000-\u001F\u007F]/g, ' ')
-          .replace(/\n/g, ' ')
-          .replace(/\r/g, ' ')
-          .replace(/\t/g, ' ');
-        return res.status(200).json(JSON.parse(clean));
-      } catch(e2) {
-        // Intento 3: extraer campos básicos con regex como fallback
-        console.error('JSON parse fallback. Error:', e2.message);
-        const get = (key) => {
-          const m = jsonStr.match(new RegExp('"' + key + '"\\s*:\\s*"([^"]*)"'));
-          return m ? m[1] : '';
-        };
-        return res.status(200).json({
-          cargo: get('cargo') || 'Cargo analizado',
-          empresa: get('empresa') || '',
-          pais: get('pais') || paisStr,
-          seniority: get('seniority') || '',
-          entendimiento: get('entendimiento') || 'El análisis tuvo un error de formato. Intenta con un descriptor más corto o simplificado.',
-          criticos: [], deseables: [],
-          competencias_tecnicas: [], competencias_conductuales: [],
-          palabras_clave: { titulos_principales: [], titulos_alternativos: [], terminos_tecnicos: [], booleana_sugerida: '' },
-          donde_buscar: { empresas: [], sectores_afines: [], comunidades: [], plataformas: [] },
-          benchmark_salarial: { rango_min: 0, rango_max: 0, moneda: '', fuente_referencial: '', lectura: '', argumento_cliente: '' },
-          preguntas_entrevista: [],
-          alertas: ['El análisis completo no pudo procesarse. Intenta con un descriptor más corto.'],
-          estrategia_resumen: get('estrategia_resumen') || 'Intenta de nuevo con un descriptor más corto.'
-        });
-      }
-    }
+    return res.status(200).json(toolUse.input);
   } catch(e) {
     console.error('Recruiter error:', e.message);
     return res.status(500).json({ error: 'Error interno: ' + e.message });
