@@ -1,9 +1,9 @@
 {
   "functions": {
     "api/analizar.js": { "maxDuration": 30 },
-    "api/recruiter.js": { "maxDuration": 30 },
+    "api/recruiter.js": { "maxDuration": 60 },
     "api/cv-check.js": { "maxDuration": 30 },
     "api/profile.js": { "maxDuration": 30 },
-    "api/career.js": { "maxDuration": 30 }
+    "api/career.js": { "maxDuration": 60 }
   }
 }
