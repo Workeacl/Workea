@@ -161,6 +161,14 @@ a{color:inherit;text-decoration:none}
   .res-card.full{grid-column:1}
   .pais-grid{grid-template-columns:1fr 1fr}
 }
+.print-brand{display:none}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .app-header,.actions{display:none!important}
+  body{background:#fff}
+  .print-brand{display:flex!important;align-items:flex-end;justify-content:space-between;border-bottom:3px solid #6c53ee;padding-bottom:.6rem;margin-bottom:1.4rem}
+  .result-header,.res-card{box-shadow:none!important;break-inside:avoid}
+}
 </style>
 </head>
 <body>
@@ -284,6 +292,16 @@ a{color:inherit;text-decoration:none}
 
   <!-- RESULTADOS -->
   <div id="scr-results" class="screen hidden">
+    <div class="print-brand">
+      <span style="display:flex;align-items:center;gap:.6rem">
+        <svg width="40" height="30" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgp" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgp)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="display:flex;flex-direction:column;line-height:1.05">
+          <b style="font-family:var(--body);font-weight:700;font-size:1.35rem;color:var(--navy);letter-spacing:-.015em">workea</b>
+          <span style="font-size:.6rem;color:var(--partner-blue);font-weight:700">by Tu Partner Laboral</span>
+        </span>
+      </span>
+      <span style="font-size:.72rem;color:var(--faint)">Workea Recruiter · Estrategia de búsqueda</span>
+    </div>
     <div id="resultsMount"></div>
     <div class="actions split" style="margin-top:1.4rem">
       <button class="btn btn-ghost" onclick="showScreen('scr-input')">← Analizar otro cargo</button>
@@ -310,9 +328,22 @@ a{color:inherit;text-decoration:none}
           <button class="btn-link" onclick="clearDC()" style="font-size:.82rem;margin-left:.5rem;color:var(--brand-strong)">Cambiar</button>
         </div>
         <div id="dc-input">
-          <div class="field">
+          <div class="tabs" id="dc-tabs">
+            <button class="tab active" onclick="setDCTab('text')">📋 Pegar texto</button>
+            <button class="tab" onclick="setDCTab('pdf')">📄 Subir PDF</button>
+          </div>
+          <div id="dctab-text" class="field">
             <label for="dcText">Pega el descriptor del cargo</label>
             <textarea id="dcText" style="min-height:100px" placeholder="Cargo, requisitos y responsabilidades..." oninput="validateCVCheck()"></textarea>
+          </div>
+          <div id="dctab-pdf" class="hidden">
+            <div class="dropzone" onclick="pickDCFile()" tabindex="0" role="button">
+              <div class="dz-ico">📄</div>
+              <p>Sube el descriptor en PDF o <b>búscalo en tu equipo</b></p>
+              <p class="dz-hint">PDF con texto · máx. 10 MB</p>
+            </div>
+            <div id="dcFileChip"></div>
+            <div id="dcFileMsg"></div>
           </div>
         </div>
       </div>
@@ -681,6 +712,35 @@ function clearDC(){
   validateCVCheck();
 }
 
+/* ===== DESCRIPTOR (Pestaña 2) texto/PDF ===== */
+let dcTab = 'text', dcFileData = null;
+
+function setDCTab(t){
+  dcTab = t; dcFileData = null;
+  document.querySelectorAll('#dc-tabs .tab').forEach((b,i)=>b.classList.toggle('active',i===(t==='text'?0:1)));
+  document.getElementById('dctab-text').classList.toggle('hidden', t!=='text');
+  document.getElementById('dctab-pdf').classList.toggle('hidden', t!=='pdf');
+  validateCVCheck();
+}
+
+function pickDCFile(){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='.pdf';
+  inp.onchange=async()=>{
+    const f=inp.files[0]; if(!f) return;
+    const msg=document.getElementById('dcFileMsg');
+    msg.innerHTML='<div style="color:var(--muted);font-size:.88rem;padding:.5rem 0">📄 Leyendo PDF…</div>';
+    try{
+      const txt=(await extractPdfText(f)).trim();
+      if(txt.length<30){ msg.innerHTML='<div class="error-box">ℹ️ PDF sin texto legible. Usa "Pegar texto".</div>'; return; }
+      dcFileData={contenido:txt};
+      document.getElementById('dcFileChip').innerHTML=`<span class="file-chip">📎 ${f.name.replace(/[<>&]/g,'')} <button onclick="dcFileData=null;document.getElementById('dcFileChip').innerHTML='';validateCVCheck()">×</button></span>`;
+      msg.innerHTML='<div style="color:var(--green);font-size:.88rem;padding:.5rem 0">✅ PDF leído</div>';
+      validateCVCheck();
+    }catch(e){ msg.innerHTML='<div class="error-box">⚠️ No pudimos leer el PDF.</div>'; }
+  };
+  inp.click();
+}
+
 /* ===== CV CHECK ===== */
 let cvTab = 'text', cvFileData = null;
 
@@ -693,7 +753,7 @@ function setCVTab(t){
 }
 
 function validateCVCheck(){
-  const dc = descriptorGuardado || document.getElementById('dcText').value.trim();
+  const dc = descriptorGuardado || (dcTab==='text' ? document.getElementById('dcText').value.trim() : (dcFileData?.contenido||''));
   const cv = cvTab==='text' ? document.getElementById('candidatoCVText').value.trim() : (cvFileData?.contenido||'');
   const nombre = document.getElementById('candidatoNombre').value.trim();
   document.getElementById('btnCVCheck').disabled = !(dc.length>30 && cv.length>30 && nombre.length>1);
@@ -718,7 +778,7 @@ async function pickCVFile(){
 }
 
 async function runCVCheck(){
-  const dc = descriptorGuardado || document.getElementById('dcText').value.trim();
+  const dc = descriptorGuardado || (dcTab==='text' ? document.getElementById('dcText').value.trim() : (dcFileData?.contenido||''));
   const cv = cvTab==='text' ? document.getElementById('candidatoCVText').value.trim() : (cvFileData?.contenido||'');
   const nombre = document.getElementById('candidatoNombre').value.trim();
 
