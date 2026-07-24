@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /recruiter.html
+Disallow: /cuenta.html
+Disallow: /career.html
+Disallow: /profile.html
+
+Sitemap: https://workea.cl/sitemap.xml
