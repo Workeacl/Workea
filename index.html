@@ -35,7 +35,7 @@ html{scroll-behavior:smooth}
 body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
 h1,h2,h3,h4{font-family:var(--display);line-height:1.15;letter-spacing:-.01em}
 button{font-family:var(--body);cursor:pointer;border:none;background:none}
-a{color:inherit}
+a{color:inherit;text-decoration:none}
 .hidden{display:none!important}
 :focus-visible{outline:3px solid var(--brand);outline-offset:2px;border-radius:6px}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
@@ -303,7 +303,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 .plan-feats li::before{content:"✓";color:var(--green);font-weight:800;flex-shrink:0}
 .plan-feats li.plus::before{content:"★";color:var(--brand-strong)}
 .plan-note{font-size:.78rem;color:var(--faint);margin-top:.9rem;text-align:center}
-.plan-card .btn{justify-content:center}
+.plan-card .btn{justify-content:center;width:100%;font-size:.86rem;padding:.7rem 1rem}
 /* demo + análisis real */
 .demo-banner{display:flex;gap:.6rem;align-items:flex-start;background:var(--amber-bg);border:1px solid var(--amber-line);color:#7d5c10;font-size:.87rem;border-radius:12px;padding:.75rem 1rem;margin-bottom:1.4rem}
 .real-cta{background:var(--grad);border-radius:20px;padding:1.8rem 2rem;color:#fff;margin-top:1.4rem;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;flex-wrap:wrap;box-shadow:var(--shadow-lg)}
@@ -337,7 +337,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   .stepper-mobile{display:block;font-size:.8rem;font-weight:700;color:var(--brand-strong)}
 }
 @media(min-width:901px){.stepper-mobile{display:none}}
-@media(max-width:900px){.plans-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:540px){.plans-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.plans-grid{grid-template-columns:repeat(2,1fr)}#metodologia>div{grid-template-columns:1fr!important;text-align:left}}@media(max-width:540px){.plans-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -429,6 +429,19 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <div class="benefit"><div class="b-ico">💬</div><div><h4>Explicaciones, no solo números</h4><p>Cada resultado viene con el porqué: qué coincide, qué falta comunicar y qué preparar.</p></div></div>
       <div class="benefit"><div class="b-ico">✍️</div><div><h4>Mejora tu CV sin inventar nada</h4><p>Las recomendaciones se basan solo en tu experiencia real. Nada de keyword stuffing.</p></div></div>
       <div class="benefit"><div class="b-ico">🎤</div><div><h4>Llega preparado a la entrevista</h4><p>Preguntas probables, qué evalúa cada una y qué deberías tener listo para responder.</p></div></div>
+    </div>
+  </section>
+
+  <!-- MIRADA PROFESIONAL -->
+  <section class="section" id="metodologia" style="padding-top:0">
+    <div style="background:var(--navy);border-radius:22px;padding:2.6rem 2.4rem;box-shadow:var(--shadow-lg);display:grid;grid-template-columns:auto 1fr;gap:2.2rem;align-items:center">
+      <div style="width:76px;height:76px;border-radius:20px;background:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0);display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0">👩‍💼</div>
+      <div>
+        <p style="font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:.5rem">La metodología detrás de Workea</p>
+        <h2 style="font-size:clamp(1.25rem,2.6vw,1.7rem);color:#fff;margin-bottom:.8rem">Workea analiza como analiza una reclutadora — porque fue creada por una.</h2>
+        <p style="font-size:.95rem;color:#c9d6ef;line-height:1.7;margin-bottom:.8rem">Detrás de cada informe está la metodología de una <b style="color:#fff">psicóloga laboral especialista en selección</b>, con experiencia real revisando CVs, levantando perfiles y entrevistando candidatos. Workea lee cada oferta como se lee en un proceso de selección de verdad: distinguiendo lo que filtra de lo que suma, lo que la empresa dice de lo que realmente busca.</p>
+        <p style="font-size:.9rem;color:#a5bde6">No es una respuesta genérica: es criterio profesional convertido en herramienta, disponible cada vez que lo necesites.</p>
+      </div>
     </div>
   </section>
 
