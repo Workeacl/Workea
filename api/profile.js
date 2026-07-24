@@ -22,9 +22,13 @@ export default async function handler(req, res) {
 
   const system = 'Eres un experto en optimizacion de perfiles de LinkedIn con enfoque en el mercado latinoamericano. ' +
     'Analiza el perfil de LinkedIn proporcionado y genera un diagnostico claro, honesto y accionable usando la herramienta generar_analisis. ' +
+    'IMPORTANTE: TODOS los campos de texto deben tener contenido sustancioso y especifico al perfil analizado — nunca dejes un campo vacio o generico. ' +
+    'analisis debe explicar QUE dice esa seccion del perfil hoy, con al menos 1-2 frases concretas. ' +
+    'sugerencias debe tener al menos 2 sugerencias especificas y accionables. ' +
+    'palabras_clave.encontradas debe listar entre 3 y 8 terminos que SI aparecen en el texto del perfil (si el perfil menciona un rubro, herramienta o rol, esas son palabras clave). Solo dejar vacio si el perfil es extremadamente breve. ' +
+    'top_oportunidades debe tener exactamente 3 elementos, especificos y accionables, no genericos. ' +
     'El score va de 0 a 100. Verde=bien encaminado, amarillo=puede mejorar, rojo=requiere atencion. ' +
-    'Se honesto pero constructivo. Las palabras clave encontradas deben ser terminos relevantes que realmente aparecen en el perfil. ' +
-    'Las top_oportunidades deben ser especificas y accionables, no genericas.';
+    'Se honesta pero constructiva, como si fueras una reclutadora dando feedback directo.';
 
   const tool = {
     name: 'generar_analisis',
@@ -47,8 +51,8 @@ export default async function handler(req, res) {
           type: 'object',
           properties: {
             estado: { type: 'string', enum: ['verde', 'amarillo', 'rojo'] },
-            analisis: { type: 'string' },
-            sugerencias: { type: 'array', items: { type: 'string' } }
+            analisis: { type: 'string', description: 'Explica que comunica el titular ACTUAL del perfil, citando o parafraseando su contenido real. Minimo 1-2 frases.' },
+            sugerencias: { type: 'array', items: { type: 'string' }, description: 'Al menos 2 sugerencias concretas y accionables para mejorar el titular' }
           },
           required: ['estado', 'analisis', 'sugerencias']
         },
@@ -56,8 +60,8 @@ export default async function handler(req, res) {
           type: 'object',
           properties: {
             estado: { type: 'string', enum: ['verde', 'amarillo', 'rojo'] },
-            analisis: { type: 'string' },
-            recomendacion: { type: 'string' }
+            analisis: { type: 'string', description: 'Evalua el contenido real de la seccion Acerca de del perfil, con al menos 1-2 frases especificas' },
+            recomendacion: { type: 'string', description: 'Una recomendacion concreta de que mejorar en esta seccion' }
           },
           required: ['estado', 'analisis', 'recomendacion']
         },
@@ -65,16 +69,16 @@ export default async function handler(req, res) {
           type: 'object',
           properties: {
             estado: { type: 'string', enum: ['verde', 'amarillo', 'rojo'] },
-            analisis: { type: 'string' },
-            oportunidad: { type: 'string' }
+            analisis: { type: 'string', description: 'Como esta presentada la experiencia laboral en el perfil, con al menos 1-2 frases especificas' },
+            oportunidad: { type: 'string', description: 'Que falta o podria mejorar en la presentacion de la experiencia' }
           },
           required: ['estado', 'analisis', 'oportunidad']
         },
         palabras_clave: {
           type: 'object',
           properties: {
-            encontradas: { type: 'array', items: { type: 'string' } },
-            oportunidad: { type: 'string' }
+            encontradas: { type: 'array', items: { type: 'string' }, description: 'Entre 3 y 8 terminos, roles, herramientas o rubros que SI aparecen mencionados en el perfil' },
+            oportunidad: { type: 'string', description: 'Descripcion general de que tipo de palabras clave adicionales convendria incorporar' }
           },
           required: ['encontradas', 'oportunidad']
         },
@@ -82,11 +86,11 @@ export default async function handler(req, res) {
           type: 'object',
           properties: {
             estado: { type: 'string', enum: ['verde', 'amarillo', 'rojo'] },
-            descripcion: { type: 'string' }
+            descripcion: { type: 'string', description: 'Si el perfil cuenta una historia coherente entre titular, acerca de y experiencia, o hay inconsistencias especificas' }
           },
           required: ['estado', 'descripcion']
         },
-        top_oportunidades: { type: 'array', items: { type: 'string' } }
+        top_oportunidades: { type: 'array', items: { type: 'string' }, description: 'Exactamente 3 oportunidades de mejora especificas y accionables, en orden de prioridad' }
       },
       required: ['score', 'titulo', 'resumen_general', 'primera_impresion', 'titular', 'acerca_de', 'experiencia', 'palabras_clave', 'coherencia', 'top_oportunidades']
     }
@@ -101,8 +105,8 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1800,
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2500,
         system,
         tools: [tool],
         tool_choice: { type: 'tool', name: 'generar_analisis' },
