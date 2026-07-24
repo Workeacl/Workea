@@ -6,8 +6,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Método no permitido' });
   }
 
-  const { oferta, ofertas, imagenes, cv, codigo, modo } = req.body || {};
+  const { oferta, ofertas, imagenes, cv, codigo, modo, texto, pais } = req.body || {};
   const esencial = modo === 'esencial';
+  const recruiter = modo === 'recruiter';
 
   // Códigos de acceso: WORKEA_CODIGO acepta uno o varios separados por coma.
   // Ej: "ANA-7GK2, PEDRO-9XL4, PILOTO1" — cada cliente puede tener el suyo.
@@ -15,8 +16,16 @@ export default async function handler(req, res) {
   if (!esencial) {
     const listaCodigos = (process.env.WORKEA_CODIGO || '')
       .split(',').map(c => c.trim()).filter(Boolean);
-    if (listaCodigos.length && !listaCodigos.includes((codigo || '').trim())) {
+    const codigoLimpio = (codigo || '').trim();
+    if (listaCodigos.length && !listaCodigos.includes(codigoLimpio)) {
       return res.status(401).json({ error: 'Código de acceso inválido' });
+    }
+    // Restricción de prefijo: Match solo acepta el código maestro, WK- o EXP-
+    const esMaestro = codigoLimpio.toUpperCase() === 'WORKEA2026';
+    const esWK = codigoLimpio.toUpperCase().startsWith('WK-');
+    const esEXP = codigoLimpio.toUpperCase().startsWith('EXP-');
+    if (!esMaestro && !esWK && !esEXP) {
+      return res.status(401).json({ error: 'Este código no corresponde a Workea Match' });
     }
   }
 
