@@ -298,6 +298,15 @@ a{color:inherit;text-decoration:none}
       </div>
       <div class="form-body">
         <div class="field">
+          <label>¿Qué buscas con tu ruta profesional?</label>
+          <div class="prio-grid" style="grid-template-columns:1fr 1fr 1fr">
+            <button class="prio-btn" data-q0="Crecer en mi área actual" onclick="pick(this,'q0')">📈 Crecer en mi área</button>
+            <button class="prio-btn" data-q0="Cambiar de área o industria" onclick="pick(this,'q0')">🔄 Cambiar de rumbo</button>
+            <button class="prio-btn" data-q0="Aún no lo sé, quiero explorar" onclick="pick(this,'q0')">🧭 Explorar opciones</button>
+          </div>
+          <p class="hint">Esto ajusta todo tu informe — si buscas crecer, mostraremos el mejor camino desde donde estás; si buscas cambiar, nos enfocamos en qué de tu experiencia es transferible.</p>
+        </div>
+        <div class="field">
           <label>¿Cuál es tu cargo actual?</label>
           <input type="text" id="q1" placeholder="Ej: Analista de Selección">
         </div>
@@ -394,7 +403,7 @@ if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudf
 
 const CAREER_CODIGO = 'WORKEA2026';
 let tab='text', fileData=null;
-const respuestas = { q4:'', q6:[], q7:'', q8:'' };
+const respuestas = { q0:'', q4:'', q6:[], q7:'', q8:'' };
 
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
@@ -487,6 +496,7 @@ async function runCareer(){
 
   const cv = tab==='text' ? document.getElementById('cvText').value.trim() : (fileData?.contenido||'');
   const contexto = {
+    orientacion: respuestas.q0,
     cargo_actual: document.getElementById('q1').value.trim(),
     cargo_ideal: document.getElementById('q2').value.trim(),
     industria: document.getElementById('q3').value.trim(),
