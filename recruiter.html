@@ -45,7 +45,7 @@ a{color:inherit;text-decoration:none}
 .logo-w{width:40px;height:30px;flex-shrink:0}
 .logo .lt{display:flex;flex-direction:column;line-height:1.05}
 .logo .lt b{font-family:var(--body);font-weight:700;font-size:1.25rem;letter-spacing:-.015em;color:var(--navy)}
-.logo .lt b em{font-style:normal;color:var(--brand)}
+.logo .lt b em{font-style:normal;color:inherit}
 .logo .lt span{font-size:.6rem;color:var(--partner-blue);font-weight:700;letter-spacing:.05em;white-space:nowrap}
 .rec-badge{background:var(--grad);color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.06em;padding:.3rem .8rem;border-radius:999px;white-space:nowrap}
 
@@ -551,6 +551,10 @@ async function runRecruiter(){
 function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
 function renderResults(d){
+  // Guardar el texto del descriptor para reutilizar en Pestaña 2
+  const _txtGuardar = document.getElementById('descText')?.value?.trim();
+  if(_txtGuardar && _txtGuardar.length > 30) descriptorGuardado = _txtGuardar;
+
   const kw=d.palabras_clave||{};
   const sal=d.benchmark_salarial||{};
   const donde=d.donde_buscar||{};
@@ -796,14 +800,6 @@ function resetCVCheck(){
   validateCVCheck();
 }
 
-// Guardar descriptor cuando se genera estrategia exitosamente
-const _origRender = renderResults;
-function renderResults(d){
-  _origRender(d);
-  // Guardar el texto del descriptor para reutilizar en Pestaña 2
-  const txt = document.getElementById('descText')?.value?.trim();
-  if(txt && txt.length > 30) descriptorGuardado = txt;
-}
 function printResults(){
   const cargo=document.querySelector('#resultsMount .result-header h2');
   const titulo=document.title;
