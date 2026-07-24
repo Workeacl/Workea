@@ -8,8 +8,15 @@ export default async function handler(req, res) {
 
   const listaCodigos = (process.env.WORKEA_CODIGO || '')
     .split(',').map(c => c.trim()).filter(Boolean);
-  if (listaCodigos.length && !listaCodigos.includes((codigo || '').trim())) {
+  const codigoLimpio = (codigo || '').trim();
+  if (listaCodigos.length && !listaCodigos.includes(codigoLimpio)) {
     return res.status(401).json({ error: 'Codigo de acceso invalido' });
+  }
+  // Restriccion de prefijo: Profile Check solo acepta el codigo maestro o PC-
+  const esMaestro = codigoLimpio.toUpperCase() === 'WORKEA2026';
+  const esPC = codigoLimpio.toUpperCase().startsWith('PC-');
+  if (!esMaestro && !esPC) {
+    return res.status(401).json({ error: 'Este codigo no corresponde a Workea Profile Check' });
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
