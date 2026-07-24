@@ -507,7 +507,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <a class="btn btn-brand" href="https://mpago.la/2yvY447" target="_blank" rel="noopener">Obtener Informe Workea Match →</a>
         <p class="plan-note">7 días de acceso · Precio de acceso anticipado · Pago seguro con Mercado Pago<br>Tras pagar, serás redirigida/o automáticamente al formulario de activación de tu código 🔑</p>
         <div style="margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--line)">
-          <button class="btn btn-ghost" onclick="startApp()" style="width:100%;justify-content:center;font-size:.85rem">¿Ya tienes un código? Actívalo aquí</button>
+          <button class="btn btn-ghost" onclick="irActivarCodigo()" style="width:100%;justify-content:center;font-size:.85rem">¿Ya tienes un código? Actívalo aquí</button>
         </div>
       </div>
 
@@ -647,7 +647,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <h2>Analiza una oportunidad laboral</h2>
         <p>Pega la oferta, sube una captura o carga un archivo. Workea te ayudará a entenderla.</p>
       </div>
-      <div class="demo-banner">🔎<span><b>Modo de ejemplo.</b> El análisis que verás usa datos de ejemplo para mostrarte la experiencia. Si tienes un código de acceso, actívalo abajo para analizar TU oferta y TU CV.</span></div>
+      <div class="demo-banner" id="demoBanner">🔎<span><b>Modo de ejemplo.</b> El análisis que verás usa datos de ejemplo para mostrarte la experiencia. Si tienes un código de acceso, actívalo abajo para analizar TU oferta y TU CV.</span></div>
       <div class="card">
         <div class="tabs" role="tablist">
           <button class="tab active" data-tab="link" onclick="setTab('link')">🔗 Pegar enlace</button>
@@ -694,7 +694,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
         <div id="inputError"></div>
 
-        <div class="demo-strip">
+        <div class="demo-strip" id="demoEjemploStrip">
           <p><b>¿Quieres ver Workea en acción?</b> Prueba con una oferta real de ejemplo.</p>
           <button class="btn btn-brand" onclick="useDemoOffer()">Usar oferta de ejemplo</button>
         </div>
@@ -706,7 +706,6 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
             <button class="btn btn-brand" onclick="activarCodigo()">Activar</button>
           </span>
         </div>
-
         <div class="actions">
           <button class="btn btn-primary" id="btnAnalyze" disabled onclick="startOfferFlow()">Analizar oferta →</button>
         </div>
@@ -1260,6 +1259,21 @@ function startApp(){
   window.scrollTo(0,0);
   renderStepper(0);
 }
+function irActivarCodigo(){
+  startApp();
+  // Ocultar lo que no aplica a quien ya tiene código, para evitar confusión
+  const banner = document.getElementById('demoBanner');
+  const ejemplo = document.getElementById('demoEjemploStrip');
+  if(banner) banner.style.display = 'none';
+  if(ejemplo) ejemplo.style.display = 'none';
+  setTimeout(()=>{
+    const inp = document.getElementById('codigoInput');
+    if(inp){
+      inp.scrollIntoView({behavior:'smooth', block:'center'});
+      inp.focus();
+    }
+  }, 150);
+}
 function goLanding(){
   document.getElementById('app').classList.add('hidden');
   document.getElementById('landing').classList.remove('hidden');
@@ -1485,6 +1499,10 @@ function activarCodigo(){
   const v = document.getElementById('codigoInput').value.trim();
   if(!v){ return; }
   accessCode = v; realMode = true; modoPlan = 'completo';
+  const banner = document.getElementById('demoBanner');
+  const ejemplo = document.getElementById('demoEjemploStrip');
+  if(banner) banner.style.display = 'none';
+  if(ejemplo) ejemplo.style.display = 'none';
   document.getElementById('realStrip').innerHTML =
     '<p><b>✅ Análisis real activado.</b> Pega el texto de tu oferta, sube su PDF o una captura (hasta 3 ofertas para compararlas), y luego tu CV.</p>';
   document.querySelector('[data-tab="link"]').classList.add('hidden');
