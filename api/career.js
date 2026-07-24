@@ -50,8 +50,8 @@ export default async function handler(req, res) {
     '"riesgos":["riesgo concreto detectado en el CV, ej anios haciendo lo mismo, falta de logros cuantificables"],',
     '"oportunidades_ocultas":["camino lateral que la persona probablemente no ha considerado, con fundamento"],',
     '"plan_12_meses":[{"trimestre":"Q1","acciones":["accion 1","accion 2"]},{"trimestre":"Q2","acciones":[""]},{"trimestre":"Q3","acciones":[""]},{"trimestre":"Q4","acciones":[""]}],',
-    '"consejo_reclutadora":"parrafo natural de 4-6 lineas, en primera persona, como si la persona estuviera sentada frente a ti. Honesto, especifico a SU caso, priorizando lo que mas impacto tendria. No generico."}',
-    'Incluye: 3 cargos_hoy con salarios referenciales, 2 caminos en mapa_carrera, 4-6 brechas repartidas en niveles, 2 simulaciones de las habilidades de MAYOR impacto, 1-2 riesgos, 1-2 oportunidades ocultas, y 2 acciones por trimestre. Se conciso en cada texto: 1-2 lineas maximo por campo.',
+    '"consejo_reclutadora":"parrafo natural de 5-7 lineas, en primera persona, como si la persona estuviera sentada frente a ti. Menciona al menos un detalle CONCRETO de su CV o trayectoria (una empresa, un logro, un patron que viste). Prioriza lo que mas impacto tendria. Prohibido sonar generico o como plantilla."}',
+    'Personaliza TODO al caso especifico de esta persona: usa detalles concretos de su CV (nombres de empresas, tecnologias, anios, logros) en vez de generalidades. Incluye: 3 cargos_hoy con salarios referenciales, 2 caminos en mapa_carrera bien diferenciados segun el perfil real, 5-6 brechas repartidas en niveles con razones especificas a su trayectoria, 2-3 simulaciones de las habilidades de MAYOR impacto con beneficios concretos, 2 riesgos basados en patrones reales de SU CV, 1-2 oportunidades ocultas conectadas a su experiencia real, y 2-3 acciones especificas por trimestre. Cada texto puede tener 2-3 lineas si aporta especificidad real — evita el relleno generico pero no sacrifiques el detalle que hace que la persona sienta que es SU informe.',
     'El consejo_reclutadora es la joya del informe: debe sentirse escrito para ESTA persona, no una plantilla.'
   ];
   const system = systemParts.join(' ');
@@ -66,7 +66,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 5000,
+        max_tokens: 7000,
         system,
         messages: [{
           role: 'user',
