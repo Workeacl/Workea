@@ -22,6 +22,7 @@ export default async function handler(req, res) {
 
   const ctx = contexto || {};
   const ctxLines = [];
+  if (ctx.orientacion) ctxLines.push('ORIENTACION BUSCADA: ' + ctx.orientacion);
   if (ctx.cargo_actual) ctxLines.push('Cargo actual: ' + ctx.cargo_actual);
   if (ctx.cargo_ideal) ctxLines.push('Cargo ideal en 3-5 anios: ' + ctx.cargo_ideal);
   if (ctx.industria) ctxLines.push('Industria de interes: ' + ctx.industria);
@@ -36,6 +37,11 @@ export default async function handler(req, res) {
     'Eres una especialista en seleccion y desarrollo de carrera con anios de experiencia como reclutadora en Latinoamerica.',
     'Tu tarea: analizar el CV (y contexto opcional) de una persona y construir su ruta profesional completa.',
     'Tono: honesto, calido, concreto. Como una reclutadora experimentada que quiere genuinamente ayudar.',
+    'IMPORTANTE sobre la orientacion de la persona: si el contexto indica ORIENTACION BUSCADA, ajusta TODO el informe segun corresponda:',
+    'Si es Crecer en mi area actual: enfoca el mapa_carrera en crecimiento vertical o lateral dentro de su area, brechas para el siguiente nivel, cargos_hoy y simulaciones dentro de su trayectoria natural.',
+    'Si es Cambiar de area o industria: enfoca el mapa_carrera en 2 caminos de TRANSICION hacia areas distintas, identifica explicitamente que competencias de su experiencia actual son transferibles y por que, las brechas deben priorizar lo minimo necesario para cruzar al area nueva, cargos_hoy debe incluir roles puente que faciliten la transicion, y el consejo_reclutadora debe abordar honestamente que tan realista es el cambio y en cuanto tiempo aproximado.',
+    'Si es Aun no lo se quiero explorar: el mapa_carrera debe presentar 2-3 direcciones bien distintas, incluyendo al menos una fuera de su area actual, basadas en sus fortalezas reales, sin asumir que quiere quedarse ni que quiere irse.',
+    'Si no hay orientacion indicada, infierela del CV: senales de busqueda de cambio (industrias muy distintas, gaps, mensajes explicitos) sugieren tratar el caso como cambio o exploracion; una trayectoria lineal y consistente sugiere tratarlo como crecimiento.',
     'IMPORTANTE sobre datos de mercado: cuando fundamentes una recomendacion, usa formulaciones honestas como "la gran mayoria de las ofertas para este cargo piden..." o "es uno de los requisitos mas frecuentes del mercado" — NUNCA inventes porcentajes especificos.',
     'Los rangos salariales son referenciales del mercado chileno en CLP salvo que el CV indique otro pais.',
     'Responde UNICAMENTE con JSON valido, sin markdown. Estructura exacta:',
