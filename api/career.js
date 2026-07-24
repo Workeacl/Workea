@@ -8,8 +8,15 @@ export default async function handler(req, res) {
 
   const listaCodigos = (process.env.WORKEA_CODIGO || '')
     .split(',').map(c => c.trim()).filter(Boolean);
-  if (listaCodigos.length && !listaCodigos.includes((codigo || '').trim())) {
+  const codigoLimpio = (codigo || '').trim();
+  if (listaCodigos.length && !listaCodigos.includes(codigoLimpio)) {
     return res.status(401).json({ error: 'Codigo de acceso invalido' });
+  }
+  // Restriccion de prefijo: Career solo acepta el codigo maestro o CAR-
+  const esMaestro = codigoLimpio.toUpperCase() === 'WORKEA2026';
+  const esCAR = codigoLimpio.toUpperCase().startsWith('CAR-');
+  if (!esMaestro && !esCAR) {
+    return res.status(401).json({ error: 'Este codigo no corresponde a Workea Career' });
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
