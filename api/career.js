@@ -51,7 +51,7 @@ export default async function handler(req, res) {
     '"oportunidades_ocultas":["camino lateral que la persona probablemente no ha considerado, con fundamento"],',
     '"plan_12_meses":[{"trimestre":"Q1","acciones":["accion 1","accion 2"]},{"trimestre":"Q2","acciones":[""]},{"trimestre":"Q3","acciones":[""]},{"trimestre":"Q4","acciones":[""]}],',
     '"consejo_reclutadora":"parrafo natural de 4-6 lineas, en primera persona, como si la persona estuviera sentada frente a ti. Honesto, especifico a SU caso, priorizando lo que mas impacto tendria. No generico."}',
-    'Incluye: 3-4 cargos_hoy con salarios referenciales, 2-3 caminos en mapa_carrera, 4-7 brechas repartidas en niveles, 2-3 simulaciones de las habilidades de MAYOR impacto, 1-3 riesgos, 1-2 oportunidades ocultas.',
+    'Incluye: 3 cargos_hoy con salarios referenciales, 2 caminos en mapa_carrera, 4-6 brechas repartidas en niveles, 2 simulaciones de las habilidades de MAYOR impacto, 1-2 riesgos, 1-2 oportunidades ocultas, y 2 acciones por trimestre. Se conciso en cada texto: 1-2 lineas maximo por campo.',
     'El consejo_reclutadora es la joya del informe: debe sentirse escrito para ESTA persona, no una plantilla.'
   ];
   const system = systemParts.join(' ');
@@ -66,7 +66,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 3500,
+        max_tokens: 5000,
         system,
         messages: [{
           role: 'user',
@@ -81,6 +81,10 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: 'Error del servicio: ' + (data.error?.message || 'desconocido') });
     }
 
+    if (data.stop_reason === 'max_tokens') {
+      console.error('Respuesta cortada por max_tokens');
+      return res.status(500).json({ error: 'Tu ruta quedo muy extensa. Intenta con un CV mas resumido.' });
+    }
     const txt = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
     let jsonStr = txt.replace(/```json|```/g, '').trim();
     const start = jsonStr.indexOf('{');
