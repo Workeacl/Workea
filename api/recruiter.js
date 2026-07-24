@@ -38,22 +38,22 @@ export default async function handler(req, res) {
         seniority: { type: 'string', enum: ['Junior', 'Semi Senior', 'Senior', 'Lead', 'Manager'] },
         entendimiento: { type: 'string', description: 'Explicacion del rol en 3-4 lineas simples, sin tecnicismos' },
         criticos: {
-          type: 'array', description: '3-4 requisitos criticos (excluyentes)',
+          type: 'array', description: 'OBLIGATORIO: 3-4 requisitos criticos (excluyentes) extraidos del descriptor. Nunca dejar vacio.',
           items: { type: 'object', properties: { requisito: { type: 'string' }, nota: { type: 'string', description: 'por que es critico' } }, required: ['requisito', 'nota'] }
         },
         deseables: {
-          type: 'array', description: '2-3 requisitos deseables (no excluyentes)',
+          type: 'array', description: 'OBLIGATORIO: 2-3 requisitos deseables (no excluyentes). Nunca dejar vacio.',
           items: { type: 'object', properties: { requisito: { type: 'string' } }, required: ['requisito'] }
         },
-        competencias_tecnicas: { type: 'array', items: { type: 'string' } },
-        competencias_conductuales: { type: 'array', items: { type: 'string' } },
+        competencias_tecnicas: { type: 'array', items: { type: 'string' }, description: 'OBLIGATORIO: 3-5 competencias tecnicas clave del cargo. Nunca dejar vacio.' },
+        competencias_conductuales: { type: 'array', items: { type: 'string' }, description: 'OBLIGATORIO: 3-5 competencias conductuales relevantes. Nunca dejar vacio.' },
         palabras_clave: {
           type: 'object',
           properties: {
-            titulos_principales: { type: 'array', items: { type: 'string' }, description: '4-5 titulos exactos del cargo' },
-            titulos_alternativos: { type: 'array', items: { type: 'string' }, description: '3 titulos alternativos con perfil similar' },
-            terminos_tecnicos: { type: 'array', items: { type: 'string' } },
-            booleana_sugerida: { type: 'string', description: 'busqueda booleana lista para usar en LinkedIn Recruiter' }
+            titulos_principales: { type: 'array', items: { type: 'string' }, description: 'OBLIGATORIO: entre 4 y 6 titulos de cargo exactos y realistas para buscar en LinkedIn, basados en el cargo analizado (ej: si es Analista de Marketing Digital, incluir variantes como Digital Marketing Analyst, Especialista en Marketing Digital, etc). Nunca dejar vacio.' },
+            titulos_alternativos: { type: 'array', items: { type: 'string' }, description: 'OBLIGATORIO: entre 3 y 4 titulos alternativos de cargos con perfil similar pero nombre distinto. Nunca dejar vacio.' },
+            terminos_tecnicos: { type: 'array', items: { type: 'string' }, description: 'OBLIGATORIO: entre 5 y 8 terminos, herramientas, tecnologias o habilidades tecnicas clave del cargo, extraidos del descriptor. Nunca dejar vacio.' },
+            booleana_sugerida: { type: 'string', description: 'OBLIGATORIO: una busqueda booleana concreta lista para copiar en LinkedIn Recruiter, usando los titulos y terminos anteriores, formato tipo (titulo1 OR titulo2) AND (termino1 OR termino2)' }
           },
           required: ['titulos_principales', 'titulos_alternativos', 'terminos_tecnicos', 'booleana_sugerida']
         },
@@ -61,12 +61,12 @@ export default async function handler(req, res) {
           type: 'object',
           properties: {
             empresas: {
-              type: 'array', description: '5 empresas donde suelen estar estos perfiles',
+              type: 'array', description: 'OBLIGATORIO: exactamente 5 empresas reales del pais indicado donde suelen estar estos perfiles. Nunca dejar vacio.',
               items: { type: 'object', properties: { nombre: { type: 'string' }, razon: { type: 'string' } }, required: ['nombre', 'razon'] }
             },
-            sectores_afines: { type: 'array', items: { type: 'string' } },
-            comunidades: { type: 'array', items: { type: 'string' } },
-            plataformas: { type: 'array', items: { type: 'string' } }
+            sectores_afines: { type: 'array', items: { type: 'string' }, description: 'OBLIGATORIO: 2-3 sectores afines. Nunca dejar vacio.' },
+            comunidades: { type: 'array', items: { type: 'string' }, description: 'OBLIGATORIO: 1-3 comunidades o grupos relevantes del rubro. Nunca dejar vacio.' },
+            plataformas: { type: 'array', items: { type: 'string' }, description: 'OBLIGATORIO: 2-3 plataformas ademas de LinkedIn donde buscar este perfil. Nunca dejar vacio.' }
           },
           required: ['empresas', 'sectores_afines', 'comunidades', 'plataformas']
         },
