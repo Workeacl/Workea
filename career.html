@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workea Career · ¿Cuál debería ser tu siguiente paso profesional?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#6c53ee;--cyan:#12cdf0;--grad:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0);
+  --brand-strong:#5138d6;--navy:#0a1430;--partner-blue:#51608a;
+  --brand-tint:#f0edfe;--brand-tint-2:#ded7fc;
+  --ink:#101b38;--muted:#5a6785;--faint:#8f9ab3;
+  --bg:#f6f8fc;--surface:#ffffff;--line:#e3e6f0;
+  --green:#2f9e6d;--green-bg:#e9f7f0;--green-ln:#bfe5d2;
+  --amber:#8a6508;--amber-bg:#fdf6e3;--amber-ln:#f0dfae;
+  --red:#9c3f3f;--red-bg:#fdeeee;--red-ln:#f0c9c9;
+  --gray-bg:#eef0f6;--gray-ln:#d9dfe9;
+  --shadow:0 1px 2px rgba(16,27,56,.05),0 8px 24px rgba(16,27,56,.07);
+  --shadow-lg:0 2px 4px rgba(16,27,56,.06),0 18px 48px rgba(16,27,56,.12);
+  --r:14px;--display:'Bricolage Grotesque',sans-serif;--body:'Instrument Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;letter-spacing:-.01em}
+button{font-family:var(--body);cursor:pointer;border:none;background:none}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+
+.app-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.app-header-in{max-width:880px;margin:0 auto;padding:.85rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;align-items:center;gap:.6rem}
+.logo-w{width:38px;height:28px;flex-shrink:0}
+.logo .lt{display:flex;flex-direction:column;line-height:1.05}
+.logo .lt b{font-weight:700;font-size:1.2rem;letter-spacing:-.015em;color:var(--navy)}
+.logo .lt b em{font-style:normal;color:inherit}
+.logo .lt span{font-size:.58rem;color:var(--partner-blue);font-weight:700;letter-spacing:.05em;display:block;margin-top:.1rem}
+.career-badge{background:var(--grad);color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.06em;padding:.3rem .8rem;border-radius:999px}
+
+.main{max-width:880px;margin:0 auto;padding:2.2rem 1.5rem 5rem}
+.screen{animation:fadeUp .3s ease both}
+.screen.hidden{display:none!important}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-weight:600;font-size:.93rem;padding:.78rem 1.5rem;border-radius:999px;transition:transform .15s,box-shadow .15s;cursor:pointer;border:none}
+.btn-primary{background:var(--navy);color:#fff;box-shadow:0 4px 14px rgba(10,20,48,.25)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-brand{background:var(--grad);color:#fff}
+.btn-brand:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn-ghost{color:var(--navy);background:transparent;border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--brand);background:var(--brand-tint)}
+.btn[disabled]{opacity:.4;cursor:not-allowed;transform:none!important}
+.error-box{display:flex;gap:.7rem;align-items:flex-start;background:var(--red-bg);border:1px solid var(--red-ln);border-radius:12px;padding:.9rem 1.1rem;margin-top:1rem;font-size:.9rem;color:#8f3d3d}
+.info-box{display:flex;gap:.7rem;align-items:flex-start;background:var(--brand-tint);border:1px solid var(--brand-tint-2);border-radius:12px;padding:.9rem 1.1rem;font-size:.9rem;color:var(--brand-strong)}
+
+/* landing */
+.landing-hero{text-align:center;padding:3rem 1rem 2.2rem}
+.landing-hero .eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);background:var(--brand-tint);border:1px solid var(--brand-tint-2);padding:.35rem .9rem;border-radius:999px;margin-bottom:1.2rem}
+.landing-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;margin-bottom:.9rem}
+.landing-hero .sub{font-size:1.08rem;color:var(--muted);max-width:36rem;margin:0 auto 1rem}
+.landing-hero .pain{font-size:.98rem;color:var(--ink);max-width:33rem;margin:0 auto 2.2rem;font-style:italic}
+.includes{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:2.4rem}
+.inc-item{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;display:flex;gap:.7rem;align-items:flex-start;box-shadow:var(--shadow)}
+.inc-item .ii-ico{font-size:1.15rem;flex-shrink:0}
+.inc-item p{font-size:.86rem;color:var(--muted)}
+.inc-item b{display:block;font-size:.9rem;color:var(--ink);margin-bottom:.1rem}
+.price-box{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:2rem;box-shadow:var(--shadow-lg);max-width:380px;margin:0 auto}
+.price-box .pb-name{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin-bottom:.5rem}
+.price-box .pb-price{font-family:var(--display);font-size:2.2rem;font-weight:800;color:var(--navy);margin-bottom:.3rem}
+.price-box .pb-sub{font-size:.88rem;color:var(--muted);margin-bottom:1.2rem}
+
+/* acceso */
+.access-wrap{max-width:420px;margin:3rem auto;text-align:center}
+.access-wrap h2{font-size:1.5rem;margin-bottom:.4rem}
+.access-wrap p{color:var(--muted);margin-bottom:1.5rem}
+.access-field{display:flex;gap:.6rem}
+.access-field input{flex:1;font-family:var(--body);font-size:.95rem;padding:.85rem 1rem;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--ink)}
+.access-field input:focus{outline:none;border-color:var(--brand)}
+
+/* ingreso */
+.screen-head{margin-bottom:1.5rem}
+.screen-head h2{font-size:clamp(1.4rem,2.6vw,1.8rem);font-weight:700;margin-bottom:.4rem}
+.screen-head p{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.2rem}
+.card h3{font-size:.95rem;font-weight:700;margin-bottom:.9rem}
+.tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.tab{font-size:.88rem;font-weight:600;color:var(--muted);padding:.55rem 1rem;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);transition:all .15s}
+.tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.tab:hover:not(.active){border-color:var(--brand)}
+.field{margin-bottom:1rem}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:.86rem;font-weight:600;margin-bottom:.4rem}
+.field textarea,.field input[type=text],.field select{width:100%;font-family:var(--body);font-size:.93rem;padding:.8rem 1rem;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+.field textarea{resize:vertical;min-height:150px;line-height:1.5}
+.field textarea:focus,.field input:focus,.field select:focus{outline:none;border-color:var(--brand);background:#fff}
+.field .hint{font-size:.78rem;color:var(--faint);margin-top:.35rem}
+.dropzone{border:2px dashed var(--line);border-radius:14px;background:var(--bg);padding:1.8rem 1.5rem;text-align:center;transition:all .15s;cursor:pointer}
+.dropzone:hover{border-color:var(--brand);background:var(--brand-tint)}
+.dropzone .dz-ico{font-size:1.7rem;margin-bottom:.4rem}
+.dropzone p{font-size:.9rem;color:var(--muted)}
+.dropzone p b{color:var(--brand-strong)}
+.file-chip{display:inline-flex;align-items:center;gap:.6rem;background:var(--brand-tint);border:1px solid var(--brand-tint-2);color:var(--brand-strong);font-size:.88rem;font-weight:600;padding:.55rem 1rem;border-radius:10px;margin-top:.8rem}
+.form-toggle{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
+.form-toggle .chev{transition:transform .2s;color:var(--faint)}
+.form-toggle.open .chev{transform:rotate(180deg)}
+.form-body{display:none;margin-top:1.2rem;padding-top:1.2rem;border-top:1px dashed var(--line)}
+.form-toggle.open + .form-body{display:block}
+.prio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.prio-btn{padding:.55rem .6rem;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);font-size:.8rem;font-weight:600;color:var(--muted);transition:all .15s;text-align:center}
+.prio-btn:hover{border-color:var(--brand)}
+.prio-btn.selected{background:var(--brand-tint);border-color:var(--brand);color:var(--brand-strong)}
+.actions{display:flex;justify-content:flex-end;gap:.8rem;margin-top:1.4rem;flex-wrap:wrap}
+.actions.split{justify-content:space-between}
+
+/* loading */
+.loading-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:5rem 1rem}
+.scanner{width:74px;height:74px;border-radius:20px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:1.5rem}
+.scanner span{font-size:2rem}
+.scanner::after{content:"";position:absolute;left:8%;right:8%;height:3px;background:var(--brand);border-radius:3px;top:12%;animation:none}
+#scr-loading:not(.hidden) .scanner::after{animation:scan 1.6s ease-in-out infinite;box-shadow:0 0 12px var(--brand)}
+@keyframes scan{0%,100%{top:12%}50%{top:82%}}
+.loading-wrap h3{font-size:1.2rem;margin-bottom:.4rem}
+.loading-msg{color:var(--muted);font-size:.9rem}
+.progress-track{width:min(300px,80%);height:6px;background:var(--gray-bg);border-radius:3px;margin-top:1.3rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--grad);border-radius:3px;width:0%;transition:width .5s ease}
+
+/* resultados */
+.result-top{background:var(--navy);border-radius:20px;padding:2rem 2.2rem;margin-bottom:1.3rem;box-shadow:var(--shadow-lg);display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:center}
+.res-ring{position:relative;width:120px;height:120px;flex-shrink:0}
+.res-ring svg{transform:rotate(-90deg)}
+.rr-bg{stroke:rgba(255,255,255,.15)}
+.rr-val{stroke:url(#rGrad);stroke-linecap:round;stroke-dasharray:283}
+.rr-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rr-label b{font-family:var(--display);font-size:1.8rem;font-weight:800;color:#fff;line-height:1}
+.rr-label span{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase;margin-top:.2rem;max-width:90px;text-align:center}
+.res-reading .rk{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:.4rem}
+.res-reading h2{font-size:clamp(1.1rem,2.4vw,1.5rem);color:#fff;margin-bottom:.5rem}
+.res-reading p{font-size:.9rem;color:#a5bde6}
+.res-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:1.4rem;box-shadow:var(--shadow);margin-bottom:1.1rem}
+.res-card h3{font-size:1rem;font-weight:700;margin-bottom:.9rem;display:flex;align-items:center;gap:.5rem}
+.tag-cloud{display:flex;flex-wrap:wrap;gap:.5rem}
+.tag{font-size:.83rem;font-weight:600;padding:.38rem .85rem;border-radius:999px;border:1px solid}
+.tag-brand{background:var(--brand-tint);border-color:var(--brand-tint-2);color:var(--brand-strong)}
+.tag-green{background:var(--green-bg);border-color:var(--green-ln);color:var(--green)}
+.tag-amber{background:var(--amber-bg);border-color:var(--amber-ln);color:var(--amber)}
+.tag-gray{background:var(--gray-bg);border-color:var(--gray-ln);color:var(--muted)}
+.diag-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.diag-item{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem}
+.diag-item .dl{font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin-bottom:.2rem}
+.diag-item .dv{font-size:.92rem;font-weight:700}
+.cargo-card{display:flex;justify-content:space-between;align-items:center;gap:1rem;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:.9rem 1.1rem;margin-bottom:.6rem;flex-wrap:wrap}
+.cargo-card b{font-size:.93rem}
+.cargo-card .salario{font-size:.82rem;color:var(--muted);white-space:nowrap}
+.path-col{border-left:3px solid var(--brand-tint-2);padding-left:1.1rem;margin-bottom:1.2rem}
+.path-col:last-child{margin-bottom:0}
+.path-col h4{font-size:.92rem;font-weight:700;color:var(--brand-strong);margin-bottom:.4rem}
+.path-col p{font-size:.87rem;color:var(--muted)}
+.path-col .path-cargos{font-size:.85rem;margin-top:.4rem}
+.brecha-group{margin-bottom:1rem}
+.brecha-group:last-child{margin-bottom:0}
+.brecha-group .bg-label{font-size:.74rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.sim-card{background:linear-gradient(135deg,var(--brand-tint),#fff);border:1px solid var(--brand-tint-2);border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:.7rem}
+.sim-card b{font-size:.93rem;color:var(--brand-strong)}
+.sim-card ul{list-style:none;margin-top:.5rem}
+.sim-card li{font-size:.87rem;color:var(--ink);padding:.15rem 0;display:flex;gap:.5rem}
+.sim-card li::before{content:"✔";color:var(--green);font-weight:800}
+.riesgo-card{background:var(--amber-bg);border:1px solid var(--amber-ln);border-radius:12px;padding:1rem 1.2rem;margin-bottom:.6rem;font-size:.9rem;color:var(--amber)}
+.oculta-card{background:var(--green-bg);border:1px solid var(--green-ln);border-radius:12px;padding:1rem 1.2rem;margin-bottom:.6rem;font-size:.9rem;color:#1c6b47}
+.plan-q{display:grid;grid-template-columns:auto 1fr;gap:1rem;margin-bottom:.9rem;align-items:start}
+.plan-q .q-badge{background:var(--grad);color:#fff;font-family:var(--display);font-weight:800;font-size:.8rem;padding:.4rem .7rem;border-radius:10px;white-space:nowrap}
+.plan-q ul{list-style:none}
+.plan-q li{font-size:.88rem;color:var(--muted);padding:.12rem 0;display:flex;gap:.5rem}
+.plan-q li::before{content:"·";color:var(--brand);font-weight:800}
+.consejo-card{background:var(--navy);border-radius:18px;padding:1.8rem 2rem;color:#fff;box-shadow:var(--shadow-lg);margin-top:1.3rem}
+.consejo-card .ck{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:.6rem}
+.consejo-card h3{font-size:1.15rem;color:#fff;margin-bottom:.7rem}
+.consejo-card p{font-size:.95rem;color:#c9d6ef;line-height:1.7;font-style:italic}
+.consejo-card .firma{margin-top:1rem;font-size:.82rem;color:#a5bde6;font-style:normal}
+.cta-final{background:var(--grad);border-radius:18px;padding:1.8rem 2rem;text-align:center;box-shadow:var(--shadow-lg);margin-top:1.3rem}
+.cta-final h3{font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:.4rem}
+.cta-final p{font-size:.9rem;color:rgba(255,255,255,.9);margin-bottom:1.2rem}
+.btn-white{background:#fff;color:var(--navy);font-weight:700;padding:.85rem 1.8rem;border-radius:999px;border:none;cursor:pointer;font-size:.93rem}
+.btn-white:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(10,20,48,.2)}
+
+@media print{
+  .app-header,.actions{display:none!important}
+  body{background:#fff}
+  .result-top,.res-card,.consejo-card,.cta-final{box-shadow:none!important;break-inside:avoid}
+}
+@media(max-width:680px){
+  .result-top{grid-template-columns:1fr;text-align:center}
+  .includes{grid-template-columns:1fr}
+  .diag-grid{grid-template-columns:1fr}
+  .prio-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-in">
+    <a class="logo" href="/">
+      <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true">
+        <defs><linearGradient id="wgLogo" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/>
+        </linearGradient></defs>
+        <path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgLogo)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+    </a>
+    <span class="career-badge">Career</span>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- LANDING -->
+  <div id="scr-landing" class="screen">
+    <div class="landing-hero">
+      <span class="eyebrow">🧭 Ruta profesional</span>
+      <h1>¿Cuál debería ser tu siguiente paso profesional?</h1>
+      <p class="sub">Descubre hacia dónde puedes crecer, qué te falta para llegar y cómo acercarte al rol que realmente quieres.</p>
+      <p class="pain">"No todos los cambios de trabajo son un avance. A veces solo cambiamos de empresa, pero seguimos en el mismo lugar profesionalmente."</p>
+    </div>
+
+    <div class="includes">
+      <div class="inc-item"><span class="ii-ico">🩻</span><div><b>Diagnóstico profesional</b><p>Una radiografía de tu perfil hoy: seniority, fortalezas y competencias.</p></div></div>
+      <div class="inc-item"><span class="ii-ico">🎯</span><div><b>Cargos a tu alcance hoy</b><p>Posiciones para las que ya eres competitivo/a, con rangos salariales referenciales.</p></div></div>
+      <div class="inc-item"><span class="ii-ico">🗺️</span><div><b>Tu mapa de carrera</b><p>No una línea: distintos caminos posibles de crecimiento según tus intereses.</p></div></div>
+      <div class="inc-item"><span class="ii-ico">⚡</span><div><b>Brechas priorizadas</b><p>Qué atacar primero: alto impacto, impacto medio y largo plazo.</p></div></div>
+      <div class="inc-item"><span class="ii-ico">🔮</span><div><b>Simulación de crecimiento</b><p>Qué pasaría con tus oportunidades si desarrollas cada habilidad clave.</p></div></div>
+      <div class="inc-item"><span class="ii-ico">⚠️</span><div><b>Riesgos y oportunidades ocultas</b><p>Lo que casi nadie te dice: qué limita tu crecimiento y qué caminos no habías considerado.</p></div></div>
+      <div class="inc-item"><span class="ii-ico">📅</span><div><b>Plan de acción de 12 meses</b><p>Una hoja de ruta trimestre a trimestre, no una lista de buenas intenciones.</p></div></div>
+      <div class="inc-item"><span class="ii-ico">💬</span><div><b>El consejo de la reclutadora</b><p>Un análisis natural y honesto, como si estuvieras sentada/o frente a una especialista.</p></div></div>
+    </div>
+
+    <div class="price-box">
+      <p class="pb-name">Workea Career</p>
+      <p class="pb-price">$4.990</p>
+      <p class="pb-sub">Tu ruta profesional completa · resultado al instante</p>
+      <a class="btn btn-brand" href="#" id="btnComprar" style="justify-content:center;width:100%">Descubrir mi ruta →</a>
+      <p style="font-size:.76rem;color:var(--faint);margin-top:.6rem">Pago seguro con Mercado Pago · Tras pagar recibirás tu código por correo</p>
+      <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line)">
+        <button class="btn btn-ghost" onclick="showScreen('scr-access')" style="width:100%;justify-content:center;font-size:.88rem">¿Ya tienes un código? Actívalo aquí</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCESO -->
+  <div id="scr-access" class="screen hidden">
+    <div class="access-wrap">
+      <h2>Activa tu acceso</h2>
+      <p>Ingresa el código que recibiste por correo tras tu compra.</p>
+      <div class="access-field">
+        <input type="password" id="accessInput" placeholder="Código de acceso" onkeydown="if(event.key==='Enter')checkAccess()">
+        <button class="btn btn-primary" onclick="checkAccess()">Entrar →</button>
+      </div>
+      <div id="accessError"></div>
+      <p style="margin-top:1.2rem;font-size:.85rem;color:var(--faint)">¿No tienes código? <a href="#" onclick="showScreen('scr-landing');return false" style="color:var(--brand-strong)">Ver el plan →</a></p>
+    </div>
+  </div>
+
+  <!-- INGRESO -->
+  <div id="scr-input" class="screen hidden">
+    <div id="accessConfirm"></div>
+    <div class="screen-head">
+      <h2>Construyamos tu ruta profesional</h2>
+      <p>Tu CV es lo único obligatorio. El cuestionario opcional hace tu ruta mucho más precisa — toma 2 minutos.</p>
+    </div>
+
+    <div class="card">
+      <h3>1 · Tu currículum <span style="font-size:.72rem;font-weight:700;color:var(--red);background:var(--red-bg);padding:.15rem .55rem;border-radius:999px;margin-left:.3rem">OBLIGATORIO</span></h3>
+      <div class="tabs">
+        <button class="tab active" data-tab="text" onclick="setTab('text')">📋 Pegar texto</button>
+        <button class="tab" data-tab="pdf" onclick="setTab('pdf')">📄 Subir PDF</button>
+      </div>
+      <div id="tab-text" class="field">
+        <textarea id="cvText" placeholder="Pega aquí el contenido completo de tu CV..." oninput="validateInput()"></textarea>
+      </div>
+      <div id="tab-pdf" class="hidden">
+        <div class="dropzone" onclick="pickFile()" tabindex="0" role="button">
+          <div class="dz-ico">📄</div>
+          <p>Arrastra tu CV en PDF o <b>búscalo en tu equipo</b></p>
+        </div>
+        <div id="pdfChip"></div>
+        <div id="pdfMsg"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="form-toggle" id="formToggle" onclick="this.classList.toggle('open')">
+        <h3 style="margin:0">2 · Cuestionario de contexto <span style="font-size:.72rem;font-weight:700;color:var(--green);background:var(--green-bg);padding:.15rem .55rem;border-radius:999px;margin-left:.3rem">OPCIONAL · RECOMENDADO</span></h3>
+        <span class="chev">▾</span>
+      </div>
+      <div class="form-body">
+        <div class="field">
+          <label>¿Cuál es tu cargo actual?</label>
+          <input type="text" id="q1" placeholder="Ej: Analista de Selección">
+        </div>
+        <div class="field">
+          <label>¿Cuál sería tu cargo ideal en 3 a 5 años?</label>
+          <input type="text" id="q2" placeholder="Ej: HR Manager — o escribe 'no lo sé' y te ayudamos a descubrirlo">
+        </div>
+        <div class="field">
+          <label>¿Hay alguna industria que te interese especialmente?</label>
+          <input type="text" id="q3" placeholder="Ej: tecnología, banca, salud... o 'sin preferencia'">
+        </div>
+        <div class="field">
+          <label>¿Prefieres especializarte o liderar equipos?</label>
+          <div class="prio-grid" style="grid-template-columns:repeat(3,1fr)">
+            <button class="prio-btn" data-q4="Especializarme" onclick="pick(this,'q4')">🎓 Especializarme</button>
+            <button class="prio-btn" data-q4="Liderar equipos" onclick="pick(this,'q4')">👥 Liderar equipos</button>
+            <button class="prio-btn" data-q4="Aún no lo sé" onclick="pick(this,'q4')">🤔 Aún no lo sé</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>¿Qué habilidades sientes que hoy te faltan?</label>
+          <input type="text" id="q5" placeholder="Ej: inglés, manejo de datos, liderazgo...">
+        </div>
+        <div class="field">
+          <label>¿Qué es más importante para ti? (elige hasta 2)</label>
+          <div class="prio-grid">
+            <button class="prio-btn" data-q6="Mejor sueldo" onclick="pickMulti(this)">💰 Mejor sueldo</button>
+            <button class="prio-btn" data-q6="Flexibilidad" onclick="pickMulti(this)">🏡 Flexibilidad</button>
+            <button class="prio-btn" data-q6="Crecimiento" onclick="pickMulti(this)">📈 Crecimiento</button>
+            <button class="prio-btn" data-q6="Liderazgo" onclick="pickMulti(this)">👥 Liderazgo</button>
+            <button class="prio-btn" data-q6="Estabilidad" onclick="pickMulti(this)">🛡️ Estabilidad</button>
+            <button class="prio-btn" data-q6="Cambio de industria" onclick="pickMulti(this)">🔄 Cambiar industria</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>¿Cuál es tu nivel de inglés?</label>
+          <div class="prio-grid" style="grid-template-columns:repeat(4,1fr)">
+            <button class="prio-btn" data-q7="Básico" onclick="pick(this,'q7')">Básico</button>
+            <button class="prio-btn" data-q7="Intermedio" onclick="pick(this,'q7')">Intermedio</button>
+            <button class="prio-btn" data-q7="Avanzado" onclick="pick(this,'q7')">Avanzado</button>
+            <button class="prio-btn" data-q7="Nativo" onclick="pick(this,'q7')">Nativo</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>¿Estarías dispuesta/o a estudiar o certificarte durante el próximo año?</label>
+          <div class="prio-grid" style="grid-template-columns:repeat(3,1fr)">
+            <button class="prio-btn" data-q8="Sí" onclick="pick(this,'q8')">✅ Sí</button>
+            <button class="prio-btn" data-q8="Depende del tiempo" onclick="pick(this,'q8')">⏳ Depende</button>
+            <button class="prio-btn" data-q8="Por ahora no" onclick="pick(this,'q8')">❌ Por ahora no</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="btnAnalyze" disabled onclick="runCareer()">Construir mi ruta profesional →</button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="scr-loading" class="screen hidden">
+    <div class="loading-wrap">
+      <div class="scanner"><span>🧭</span></div>
+      <h3>Construyendo tu ruta…</h3>
+      <p class="loading-msg" id="loadMsg">Leyendo tu trayectoria profesional</p>
+      <div class="progress-track"><div class="progress-fill" id="loadBar"></div></div>
+    </div>
+  </div>
+
+  <!-- RESULTADOS -->
+  <div id="scr-results" class="screen hidden">
+    <div id="resultsMount"></div>
+    <div class="actions split" style="margin-top:1.4rem">
+      <button class="btn btn-ghost" onclick="showScreen('scr-input')">← Volver</button>
+      <button class="btn btn-primary" onclick="printResults()">Descargar mi ruta (PDF)</button>
+    </div>
+  </div>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const CAREER_CODIGO = 'WORKEA2026';
+let tab='text', fileData=null;
+const respuestas = { q4:'', q6:[], q7:'', q8:'' };
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  const el=document.getElementById(id);
+  el.classList.remove('hidden');
+  el.style.animation='none'; void el.offsetWidth; el.style.animation='';
+  window.scrollTo({top:0});
+}
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function checkAccess(){
+  const v=document.getElementById('accessInput').value.trim();
+  if(v===CAREER_CODIGO){
+    showScreen('scr-input');
+    document.getElementById('accessConfirm').innerHTML=
+      '<div style="display:flex;align-items:center;gap:.6rem;background:var(--green-bg);border:1px solid var(--green-ln);border-radius:12px;padding:.75rem 1.1rem;margin-bottom:1.2rem;font-size:.9rem;color:#1c6b47"><span>✅</span><span><b>Sesión iniciada.</b> Ingresa tu CV para construir tu ruta profesional.</span></div>';
+  } else {
+    document.getElementById('accessError').innerHTML=
+      '<div class="error-box">⚠️ <span>Código incorrecto. Si no lo recuerdas, escríbenos a workea@tupartnerlaboral.cl.</span></div>';
+  }
+}
+
+function setTab(t){
+  tab=t; fileData=null;
+  document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+  ['text','pdf'].forEach(x=>document.getElementById('tab-'+x).classList.toggle('hidden',x!==t));
+  validateInput();
+}
+function validateInput(){
+  const txt=document.getElementById('cvText').value.trim();
+  let ok=false;
+  if(tab==='text') ok=txt.length>80;
+  if(tab==='pdf') ok=!!fileData;
+  document.getElementById('btnAnalyze').disabled=!ok;
+}
+async function extractPdfText(file){
+  const buf=await file.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  const out=[];
+  for(let p=1;p<=pdf.numPages;p++){
+    const page=await pdf.getPage(p);
+    const tc=await page.getTextContent();
+    out.push(tc.items.map(i=>i.str).join(' '));
+  }
+  return out.join('\n\n');
+}
+function pickFile(){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='.pdf';
+  inp.onchange=async()=>{
+    const f=inp.files[0]; if(!f) return;
+    const msg=document.getElementById('pdfMsg');
+    msg.innerHTML='<div style="color:var(--muted);font-size:.88rem;padding:.5rem 0">📄 Leyendo PDF…</div>';
+    try{
+      const txt=(await extractPdfText(f)).trim();
+      if(txt.length<80){ msg.innerHTML='<div class="error-box">ℹ️ <span>Este PDF no contiene texto legible. Usa "Pegar texto".</span></div>'; return; }
+      fileData={contenido:txt};
+      document.getElementById('pdfChip').innerHTML=`<span class="file-chip">📎 ${f.name.replace(/[<>&]/g,'')} <button onclick="removeFile()">×</button></span>`;
+      msg.innerHTML='<div style="color:var(--green);font-size:.88rem;padding:.5rem 0">✅ CV leído correctamente</div>';
+      validateInput();
+    }catch(e){ msg.innerHTML='<div class="error-box">⚠️ <span>No pudimos leer el PDF. Pega el texto directamente.</span></div>'; }
+  };
+  inp.click();
+}
+function removeFile(){
+  fileData=null;
+  document.getElementById('pdfChip').innerHTML='';
+  document.getElementById('pdfMsg').innerHTML='';
+  validateInput();
+}
+
+function pick(btn, q){
+  respuestas[q]=btn.dataset[q];
+  btn.parentElement.querySelectorAll('.prio-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function pickMulti(btn){
+  const v=btn.dataset.q6;
+  const i=respuestas.q6.indexOf(v);
+  if(i>=0){ respuestas.q6.splice(i,1); btn.classList.remove('selected'); }
+  else if(respuestas.q6.length<2){ respuestas.q6.push(v); btn.classList.add('selected'); }
+}
+
+async function runCareer(){
+  showScreen('scr-loading');
+  const msgs=['Leyendo tu trayectoria profesional','Identificando tus fortalezas','Mapeando cargos a tu alcance','Explorando caminos de crecimiento','Priorizando tus brechas','Detectando riesgos y oportunidades ocultas','Armando tu plan de 12 meses','Escribiendo el consejo final'];
+  let i=0;
+  const msgEl=document.getElementById('loadMsg'), bar=document.getElementById('loadBar');
+  msgEl.textContent=msgs[0]; bar.style.width='8%';
+  const iv=setInterval(()=>{i++;if(i<msgs.length){msgEl.textContent=msgs[i];bar.style.width=(8+i/msgs.length*85)+'%';}},2200);
+
+  const cv = tab==='text' ? document.getElementById('cvText').value.trim() : (fileData?.contenido||'');
+  const contexto = {
+    cargo_actual: document.getElementById('q1').value.trim(),
+    cargo_ideal: document.getElementById('q2').value.trim(),
+    industria: document.getElementById('q3').value.trim(),
+    especializar_liderar: respuestas.q4,
+    habilidades_faltantes: document.getElementById('q5').value.trim(),
+    prioridades: respuestas.q6,
+    ingles: respuestas.q7,
+    dispuesto_estudiar: respuestas.q8
+  };
+
+  try{
+    const r=await fetch('/api/career',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({cv,contexto,codigo:CAREER_CODIGO})});
+    const data=await r.json();
+    clearInterval(iv);
+    if(!r.ok||data.error) throw new Error(data.error||'Error del servidor');
+    bar.style.width='100%';
+    setTimeout(()=>renderResults(data),400);
+  }catch(e){
+    clearInterval(iv);
+    showScreen('scr-input');
+    document.getElementById('pdfMsg').innerHTML=`<div class="error-box">⚠️ <span>${esc(e.message||'No pudimos construir tu ruta. Intenta de nuevo.')}</span></div>`;
+  }
+}
+
+function renderResults(d){
+  const score=Math.max(0,Math.min(100,d.nivel_preparacion||0));
+  const circ=2*Math.PI*45;
+  const offset=circ*(1-score/100);
+  const diag=d.diagnostico||{};
+  const tags=(arr,cls)=>(arr||[]).map(t=>`<span class="tag ${cls}">${esc(t)}</span>`).join('');
+
+  const cargosHoy=(d.cargos_hoy||[]).map(c=>`
+    <div class="cargo-card"><b>${esc(c.cargo)}</b><span class="salario">${esc(c.salario_ref||'')}</span></div>`).join('');
+
+  const caminos=(d.mapa_carrera||[]).map(p=>`
+    <div class="path-col">
+      <h4>${esc(p.nombre)}</h4>
+      <p>${esc(p.descripcion||'')}</p>
+      ${p.cargos?.length?`<p class="path-cargos"><b>Cargos del camino:</b> ${p.cargos.map(esc).join(' → ')}</p>`:''}
+    </div>`).join('');
+
+  const brechas=(nivel,color,emoji)=>{
+    const arr=(d.brechas||[]).filter(b=>b.nivel===nivel);
+    if(!arr.length) return '';
+    return `<div class="brecha-group">
+      <p class="bg-label" style="color:${color}">${emoji} ${nivel==='alto'?'Alto impacto':(nivel==='medio'?'Impacto medio':'Largo plazo')}</p>
+      <div class="tag-cloud">${arr.map(b=>`<span class="tag ${nivel==='alto'?'tag-amber':(nivel==='medio'?'tag-brand':'tag-gray')}" title="${esc(b.razon||'')}">${esc(b.habilidad)}</span>`).join('')}</div>
+    </div>`;
+  };
+
+  const sims=(d.simulaciones||[]).map(s=>`
+    <div class="sim-card"><b>Si desarrollas ${esc(s.habilidad)}…</b>
+      <ul>${(s.beneficios||[]).map(b=>`<li>${esc(b)}</li>`).join('')}</ul>
+    </div>`).join('');
+
+  const riesgos=(d.riesgos||[]).map(r=>`<div class="riesgo-card">⚠️ ${esc(r)}</div>`).join('');
+  const ocultas=(d.oportunidades_ocultas||[]).map(o=>`<div class="oculta-card">💎 ${esc(o)}</div>`).join('');
+
+  const plan=(d.plan_12_meses||[]).map(t=>`
+    <div class="plan-q">
+      <span class="q-badge">${esc(t.trimestre)}</span>
+      <ul>${(t.acciones||[]).map(a=>`<li>${esc(a)}</li>`).join('')}</ul>
+    </div>`).join('');
+
+  document.getElementById('resultsMount').innerHTML=`
+    <svg width="0" height="0" style="position:absolute">
+      <defs><linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#2be0f8"/><stop offset="100%" stop-color="#7b5cf0"/>
+      </linearGradient></defs>
+    </svg>
+
+    <div class="result-top">
+      <div class="res-ring">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle class="rr-bg" cx="60" cy="60" r="45" fill="none" stroke-width="9"/>
+          <circle class="rr-val" cx="60" cy="60" r="45" fill="none" stroke-width="9"
+            stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/>
+        </svg>
+        <div class="rr-label"><b>${score}%</b><span>listo para el siguiente nivel</span></div>
+      </div>
+      <div class="res-reading">
+        <p class="rk">Workea Career · Tu ruta profesional</p>
+        <h2>${esc(d.titulo||'Tu ruta profesional')}</h2>
+        <p>${esc(d.resumen||'')}</p>
+      </div>
+    </div>
+
+    <div class="res-card">
+      <h3>🩻 Diagnóstico profesional</h3>
+      <div class="diag-grid">
+        <div class="diag-item"><p class="dl">Seniority actual</p><p class="dv">${esc(diag.seniority||'—')}</p></div>
+        <div class="diag-item"><p class="dl">Área</p><p class="dv">${esc(diag.area||'—')}</p></div>
+        <div class="diag-item"><p class="dl">Fortaleza principal</p><p class="dv">${esc(diag.fortaleza_principal||'—')}</p></div>
+        <div class="diag-item"><p class="dl">Años de experiencia</p><p class="dv">${esc(diag.experiencia||'—')}</p></div>
+      </div>
+      <div style="margin-top:1rem">
+        <p style="font-size:.78rem;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Competencias más fuertes</p>
+        <div class="tag-cloud" style="margin-bottom:.9rem">${tags(diag.competencias_fuertes,'tag-green')}</div>
+        <p style="font-size:.78rem;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Menos desarrolladas</p>
+        <div class="tag-cloud">${tags(diag.competencias_debiles,'tag-gray')}</div>
+      </div>
+    </div>
+
+    <div class="res-card">
+      <h3>🎯 Hoy eres competitiva/o para…</h3>
+      ${cargosHoy||'<p style="color:var(--faint);font-size:.9rem">Sin cargos identificados</p>'}
+      <p style="font-size:.76rem;color:var(--faint);margin-top:.6rem">Rangos salariales referenciales del mercado — pueden variar según empresa y experiencia.</p>
+    </div>
+
+    <div class="res-card">
+      <h3>🗺️ Tu mapa de carrera</h3>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:1.1rem">No hay un solo camino — estos son los que tu perfil hace posibles:</p>
+      ${caminos}
+    </div>
+
+    <div class="res-card">
+      <h3>⚡ Tus brechas, priorizadas</h3>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:1rem">Pasa el cursor sobre cada una para ver por qué importa.</p>
+      ${brechas('alto','var(--amber)','🔥')}
+      ${brechas('medio','var(--brand-strong)','📌')}
+      ${brechas('largo','var(--faint)','🌱')}
+    </div>
+
+    <div class="res-card">
+      <h3>🔮 Simulación de crecimiento</h3>
+      ${sims}
+    </div>
+
+    ${riesgos?`<div class="res-card"><h3>⚠️ Riesgos que debes conocer</h3>${riesgos}</div>`:''}
+    ${ocultas?`<div class="res-card"><h3>💎 Oportunidades que quizás no habías considerado</h3>${ocultas}</div>`:''}
+
+    <div class="res-card">
+      <h3>📅 Tu plan de acción · próximos 12 meses</h3>
+      ${plan}
+    </div>
+
+    <div class="consejo-card">
+      <p class="ck">El consejo de la reclutadora</p>
+      <h3>Si estuvieras frente a mi escritorio, esto es lo que te diría:</h3>
+      <p>"${esc(d.consejo_reclutadora||'')}"</p>
+      <p class="firma">— Workea Career · con la metodología de Tu Partner Laboral</p>
+    </div>
+
+    <div class="cta-final">
+      <h3>¿Quieres trabajar tu ruta con acompañamiento real?</h3>
+      <p>Tu ruta te muestra el camino. Las asesorías de Tu Partner Laboral te acompañan a recorrerlo: CV, LinkedIn, entrevistas y estrategia personalizada.</p>
+      <a class="btn-white" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener">Conocer las asesorías →</a>
+    </div>`;
+
+  showScreen('scr-results');
+}
+
+function printResults(){
+  const t=document.title;
+  document.title='Mi-Ruta-Profesional-Workea';
+  window.print();
+  setTimeout(()=>{document.title=t;},800);
+}
+</script>
+</body>
+</html>
