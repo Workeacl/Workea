@@ -483,8 +483,10 @@ async function canjearCodigo(){
   if(!c){ msg.innerHTML='<div class="error-box">⚠️ Código no encontrado. Revisa que esté bien escrito.</div>'; return; }
   if(c.estado !== 'libre'){ msg.innerHTML='<div class="error-box">⚠️ Este código ya fue usado.</div>'; return; }
 
+  // Si el código ya fue usado antes en un análisis (sin canjear en Mi cuenta),
+  // "vence" ya viene fijado desde ese primer uso — no lo recalculamos.
   const dias = c.plan === 'experto' ? 30 : 7;
-  const vence = new Date(Date.now() + dias*24*60*60*1000);
+  const vence = c.vence ? new Date(c.vence) : new Date(Date.now() + dias*24*60*60*1000);
 
   const { error: e1 } = await sb.from('codigos').update({
     estado:'usado', usado_por: usuario.id, usado_correo: usuario.email,
@@ -500,52 +502,10 @@ async function canjearCodigo(){
   if(e2){ msg.innerHTML='<div class="error-box">⚠️ Código canjeado pero hubo un error activando el plan. Escríbenos.</div>'; return; }
 
   perfil.plan = c.plan; perfil.plan_vence = vence.toISOString();
-  msg.innerHTML = '<div class="ok-box">✅ <b>¡Código canjeado!</b> Tu plan quedó activo por ' + dias + ' días.</div>';
+
+  const diasRestantes = Math.max(1, Math.ceil((vence.getTime() - Date.now()) / (24*60*60*1000)));
+  msg.innerHTML = '<div class="ok-box">✅ <b>¡Código canjeado!</b> Tu plan queda activo por ' + diasRestantes + ' día' + (diasRestantes===1?'':'s') + ' más.</div>';
   document.getElementById('canjeInput').value='';
   await renderPlan();
   await renderHistorial();
 }
-
-/* ===== ADMIN ===== */
-async function abrirAdmin(){
-  showScreen('scr-admin');
-
-  const [{ data: perfiles }, { data: codigos }, { data: analisis }] = await Promise.all([
-    sb.from('perfiles').select('*').order('creado',{ascending:false}),
-    sb.from('codigos').select('*').order('creado',{ascending:false}),
-    sb.from('analisis').select('id,usuario,creado')
-  ]);
-
-  const activos = (perfiles||[]).filter(p=>p.plan!=='esencial' && p.plan_vence && new Date(p.plan_vence)>new Date());
-  const libres = (codigos||[]).filter(c=>c.estado==='libre');
-
-  document.getElementById('adminKpis').innerHTML = `
-    <div class="kpi-card"><p class="kv">${(perfiles||[]).length}</p><p class="kl">Usuarios registrados</p></div>
-    <div class="kpi-card"><p class="kv">${activos.length}</p><p class="kl">Planes activos</p></div>
-    <div class="kpi-card"><p class="kv">${(analisis||[]).length}</p><p class="kl">Análisis guardados</p></div>
-    <div class="kpi-card"><p class="kv">${libres.length}</p><p class="kl">Códigos libres</p></div>`;
-
-  const conteo = {};
-  (analisis||[]).forEach(a=>{ conteo[a.usuario]=(conteo[a.usuario]||0)+1; });
-
-  document.getElementById('adminUsuarios').innerHTML = `<table>
-    <tr><th>Correo</th><th>Plan</th><th>Análisis</th><th>Vence</th><th>Estado</th></tr>
-    ${(perfiles||[]).map(p=>{
-      const activo = p.plan!=='esencial' && p.plan_vence && new Date(p.plan_vence)>new Date();
-      const vence = p.plan_vence ? new Date(p.plan_vence).toLocaleDateString('es-CL',{day:'numeric',month:'short'}) : '—';
-      return `<tr><td>${esc(p.correo||'')}</td><td>${esc(p.plan||'')}</td><td>${conteo[p.id]||0}</td><td>${vence}</td>
-        <td><span class="tag-mini ${activo?'tm-green':(p.plan==='esencial'?'tm-gray':'tm-amber')}">${activo?'Activo':(p.plan==='esencial'?'Esencial':'Vencido')}</span></td></tr>`;
-    }).join('')}</table>`;
-
-  document.getElementById('adminCodigos').innerHTML = `<table>
-    <tr><th>Código</th><th>Plan</th><th>Estado</th><th>Canjeado por</th><th>Vence</th></tr>
-    ${(codigos||[]).map(c=>{
-      const vence = c.vence ? new Date(c.vence).toLocaleDateString('es-CL',{day:'numeric',month:'short'}) : '—';
-      return `<tr><td><b>${esc(c.codigo)}</b></td><td>${esc(c.plan)}</td>
-        <td><span class="tag-mini ${c.estado==='libre'?'tm-green':'tm-amber'}">${c.estado==='libre'?'Libre':'Usado'}</span></td>
-        <td>${esc(c.usado_correo||'—')}</td><td>${vence}</td></tr>`;
-    }).join('')}</table>`;
-}
-</script>
-</body>
-</html>
