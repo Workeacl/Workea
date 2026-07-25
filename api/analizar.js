@@ -2,6 +2,7 @@
 // Recibe {oferta, cv, codigo} y devuelve el análisis Workea en JSON.
 // Usa Anthropic tool use para garantizar JSON valido sin parseo manual.
 // Validación de código migrada a Supabase (tabla "codigos") — reemplaza WORKEA_CODIGO.
+// La vigencia (vence) se fija en el primer uso real, no al momento de generar/enviar el código.
 
 const SUPABASE_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
 
@@ -11,13 +12,13 @@ async function validarCodigoEnSupabase(codigoLimpio) {
     return { ok: false, status: 500, error: 'Falta configurar SUPABASE_SERVICE_ROLE_KEY en Vercel' };
   }
 
-  const url = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&select=codigo,plan,estado`;
-  const r = await fetch(url, {
-    headers: {
-      'apikey': serviceKey,
-      'Authorization': `Bearer ${serviceKey}`
-    }
-  });
+  const headers = {
+    'apikey': serviceKey,
+    'Authorization': `Bearer ${serviceKey}`
+  };
+
+  const url = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&select=codigo,plan,estado,vence`;
+  const r = await fetch(url, { headers });
 
   if (!r.ok) {
     return { ok: false, status: 502, error: 'No se pudo verificar el código. Intenta de nuevo.' };
@@ -30,9 +31,30 @@ async function validarCodigoEnSupabase(codigoLimpio) {
     return { ok: false, status: 401, error: 'Código de acceso inválido' };
   }
 
-  // Nota: no exigimos estado === 'libre' aquí. Un código ya "usado" (canjeado en
-  // "Mi cuenta" para activar el plan) igual debe poder usarse para analizar,
-  // porque canjear y analizar son dos acciones distintas.
+  // Si "vence" ya está fijado, revisamos si el código sigue vigente.
+  if (fila.vence) {
+    const vence = new Date(fila.vence);
+    if (vence.getTime() < Date.now()) {
+      return { ok: false, status: 401, error: 'Tu acceso venció. Reactívalo para seguir usando Workea.' };
+    }
+    return { ok: true, plan: fila.plan };
+  }
+
+  // Primer uso real: fijamos "vence" ahora mismo (7 días match/career, 30 días experto).
+  const dias = fila.plan === 'experto' ? 30 : 7;
+  const vence = new Date(Date.now() + dias * 24 * 60 * 60 * 1000);
+
+  const patchUrl = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&vence=is.null`;
+  const patchR = await fetch(patchUrl, {
+    method: 'PATCH',
+    headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ vence: vence.toISOString() })
+  });
+
+  if (!patchR.ok) {
+    // No bloqueamos el análisis por un error al guardar la fecha; solo lo dejamos registrado.
+    console.error('No se pudo fijar "vence" para', codigoLimpio);
+  }
 
   return { ok: true, plan: fila.plan };
 }
@@ -67,8 +89,6 @@ export default async function handler(req, res) {
       if (!resultado.ok) {
         return res.status(resultado.status).json({ error: resultado.error });
       }
-      // resultado.plan queda disponible por si en el futuro quieres diferenciar
-      // el análisis según plan (match / experto / career).
     }
   }
 
