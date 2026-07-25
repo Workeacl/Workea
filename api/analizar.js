@@ -1,18 +1,16 @@
 // api/analizar.js — Función serverless de Workea (Vercel)
 // Recibe {oferta, cv, codigo} y devuelve el análisis Workea en JSON.
+// Usa Anthropic tool use para garantizar JSON valido sin parseo manual.
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método no permitido' });
   }
 
-  const { oferta, ofertas, imagenes, cv, codigo, modo, texto, pais } = req.body || {};
+  const { oferta, ofertas, imagenes, cv, codigo, modo } = req.body || {};
   const esencial = modo === 'esencial';
-  const recruiter = modo === 'recruiter';
 
   // Códigos de acceso: WORKEA_CODIGO acepta uno o varios separados por coma.
-  // Ej: "ANA-7GK2, PEDRO-9XL4, PILOTO1" — cada cliente puede tener el suyo.
-  // El Informe Esencial (gratuito, versión resumida) no exige código.
   if (!esencial) {
     const listaCodigos = (process.env.WORKEA_CODIGO || '')
       .split(',').map(c => c.trim()).filter(Boolean);
@@ -52,7 +50,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Falta configurar ANTHROPIC_API_KEY en Vercel' });
   }
 
-  const system = `Eres el motor de análisis de Workea (by Tu Partner Laboral), una plataforma chilena de empleabilidad creada por especialistas en selección. Tu tarea: analizar una oferta laboral y compararla con el CV de la persona, siguiendo la metodología Workea.
+  const system = `Eres el motor de análisis de Workea (by Tu Partner Laboral), una plataforma chilena de empleabilidad creada por especialistas en selección. Tu tarea: analizar una oferta laboral y compararla con el CV de la persona, siguiendo la metodología Workea, usando la herramienta generar_analisis.
 
 PRINCIPIOS OBLIGATORIOS:
 - La explicación cualitativa importa más que el porcentaje.
@@ -63,25 +61,76 @@ PRINCIPIOS OBLIGATORIOS:
 - No recomiendes keyword stuffing: solo sugiere términos que describan experiencia real.
 - Si la oferta tiene señales relevantes (contratación vía consultora externa, condiciones inusuales, información faltante), menciónalo en "observacion".
 - Tono: cercano, claro, profesional, humano. Trata a la persona de "tú". Español de Chile neutro.
+- Para benchmark_salarial: si la oferta menciona sueldo, evalúa si está alineado, bajo o sobre el mercado para ese cargo y seniority. Si no lo menciona, entrega un rango referencial. Usa formulaciones honestas ("la mayoría de las ofertas similares ofrecen...") y nunca inventes porcentajes o estadísticas precisas que no puedas fundamentar.
+- Para nivel_calibre: compara el seniority/experiencia real del CV con el nivel que pide la oferta. Sé honesta: si la persona tiene más experiencia de la que pide el cargo, es "sobrecalificado"; si tiene menos, "subcalificado"; si calza, "alineado".
 
-Responde ÚNICAMENTE con un objeto JSON válido, sin markdown ni texto adicional, con esta estructura exacta:
-{
- "info": {"cargo": "", "empresa": "", "ubicacion": "", "modalidad": "", "seniority": ""},
- "compatibilidad": {"porcentaje": 0, "titulo": "frase resumen de una línea", "lectura": "párrafo explicativo de 3-5 líneas"},
- "observacion": "señal relevante sobre la oportunidad misma, o null",
- "fortalezas": [{"titulo": "", "detalle": ""}],
- "oportunidades": [{"titulo": "", "detalle": ""}],
- "brechas": [{"titulo": "", "detalle": ""}],
- "insuficiente": [{"titulo": "", "detalle": ""}],
- "claves": [{"palabra": "", "estado": "presente|relacionada|no", "nota": ""}],
- "cv": [{"seccion": "", "actual": "", "recomendacion": "", "porque": ""}],
- "entrevista": [{"pregunta": "", "evalua": "", "preparar": ""}],
- "recomendacion": {"nivel": "verde|amarillo|naranjo|rojo", "titulo": "", "detalle": ""},
- "comparacion": [{"oferta": "cargo — empresa", "porcentaje": 0, "veredicto": "1-2 líneas: por qué este orden de prioridad"}]
-}
-MODO ESENCIAL (si se te indica): genera solo la orientación inicial. Incluye únicamente: info, compatibilidad, fortalezas (máx 3), oportunidades (máx 2), brechas (máx 2) y recomendacion. Deja claves, cv, entrevista, insuficiente y comparacion como listas vacías. Sé breve y directo.
-Si recibes UNA sola oferta, omite "comparacion" (o déjala como lista vacía). Si recibes VARIAS ofertas: incluye "comparacion" ordenada de mayor a menor prioridad de postulación, y desarrolla TODO el análisis detallado sobre la oferta prioritaria, indicando en compatibilidad.titulo a qué oferta corresponde.
-Incluye 3-6 fortalezas, 2-4 oportunidades, 0-3 brechas, 0-3 insuficiente, 8-12 claves, 3-4 recomendaciones de CV y 5-6 preguntas de entrevista. Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`;
+${esencial ? 'MODO ESENCIAL: genera solo la orientación inicial. Incluye info, compatibilidad, fortalezas (máx 3), oportunidades (máx 2), brechas (máx 2) y recomendacion. Deja claves, cv, entrevista, insuficiente y comparacion como listas vacías. Deja nivel_calibre y benchmark_salarial con sus campos de texto vacíos y números en 0 (son funciones exclusivas del plan pagado). Sé breve y directo.' : 'Incluye 3-6 fortalezas, 2-4 oportunidades, 0-3 brechas, 0-3 insuficiente, 8-12 claves, 3-4 recomendaciones de CV y 5-6 preguntas de entrevista. Completa nivel_calibre y benchmark_salarial con contenido real y específico, nunca vacío.'}
+Si recibes UNA sola oferta, deja "comparacion" como lista vacía. Si recibes VARIAS ofertas: incluye "comparacion" ordenada de mayor a menor prioridad de postulación, y desarrolla TODO el análisis detallado sobre la oferta prioritaria, indicando en compatibilidad.titulo a qué oferta corresponde.
+Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`;
+
+  const tool = {
+    name: 'generar_analisis',
+    description: 'Genera el análisis Workea completo de compatibilidad entre la oferta y el CV',
+    input_schema: {
+      type: 'object',
+      properties: {
+        info: {
+          type: 'object',
+          properties: {
+            cargo: { type: 'string' }, empresa: { type: 'string' }, ubicacion: { type: 'string' },
+            modalidad: { type: 'string' }, seniority: { type: 'string' }
+          },
+          required: ['cargo', 'empresa', 'ubicacion', 'modalidad', 'seniority']
+        },
+        compatibilidad: {
+          type: 'object',
+          properties: {
+            porcentaje: { type: 'integer' },
+            titulo: { type: 'string', description: 'frase resumen de una línea' },
+            lectura: { type: 'string', description: 'párrafo explicativo de 3-5 líneas' }
+          },
+          required: ['porcentaje', 'titulo', 'lectura']
+        },
+        observacion: { type: 'string', description: 'señal relevante sobre la oportunidad misma, string vacío si no aplica' },
+        nivel_calibre: {
+          type: 'object',
+          properties: {
+            nivel: { type: 'string', enum: ['sobrecalificado', 'alineado', 'subcalificado', ''] },
+            detalle: { type: 'string', description: '1-2 líneas explicando por qué, comparando el nivel de experiencia del CV con lo que pide la oferta' }
+          },
+          required: ['nivel', 'detalle']
+        },
+        benchmark_salarial: {
+          type: 'object',
+          properties: {
+            rango_min: { type: 'integer' },
+            rango_max: { type: 'integer' },
+            moneda: { type: 'string', description: 'CLP u otra según el país de la oferta' },
+            lectura: { type: 'string', description: 'si la oferta menciona sueldo: si está alineado, bajo o sobre mercado. Si no lo menciona: nota de que es un rango referencial' }
+          },
+          required: ['rango_min', 'rango_max', 'moneda', 'lectura']
+        },
+        fortalezas: { type: 'array', items: { type: 'object', properties: { titulo: { type: 'string' }, detalle: { type: 'string' } }, required: ['titulo', 'detalle'] } },
+        oportunidades: { type: 'array', items: { type: 'object', properties: { titulo: { type: 'string' }, detalle: { type: 'string' } }, required: ['titulo', 'detalle'] } },
+        brechas: { type: 'array', items: { type: 'object', properties: { titulo: { type: 'string' }, detalle: { type: 'string' } }, required: ['titulo', 'detalle'] } },
+        insuficiente: { type: 'array', items: { type: 'object', properties: { titulo: { type: 'string' }, detalle: { type: 'string' } }, required: ['titulo', 'detalle'] } },
+        claves: { type: 'array', items: { type: 'object', properties: { palabra: { type: 'string' }, estado: { type: 'string', enum: ['presente', 'relacionada', 'no'] }, nota: { type: 'string' } }, required: ['palabra', 'estado', 'nota'] } },
+        cv: { type: 'array', items: { type: 'object', properties: { seccion: { type: 'string' }, actual: { type: 'string' }, recomendacion: { type: 'string' }, porque: { type: 'string' } }, required: ['seccion', 'actual', 'recomendacion', 'porque'] } },
+        entrevista: { type: 'array', items: { type: 'object', properties: { pregunta: { type: 'string' }, evalua: { type: 'string' }, preparar: { type: 'string' } }, required: ['pregunta', 'evalua', 'preparar'] } },
+        recomendacion: {
+          type: 'object',
+          properties: {
+            nivel: { type: 'string', enum: ['verde', 'amarillo', 'naranjo', 'rojo'] },
+            titulo: { type: 'string' },
+            detalle: { type: 'string' }
+          },
+          required: ['nivel', 'titulo', 'detalle']
+        },
+        comparacion: { type: 'array', items: { type: 'object', properties: { oferta: { type: 'string' }, porcentaje: { type: 'integer' }, veredicto: { type: 'string' } }, required: ['oferta', 'porcentaje', 'veredicto'] } }
+      },
+      required: ['info', 'compatibilidad', 'observacion', 'nivel_calibre', 'benchmark_salarial', 'fortalezas', 'oportunidades', 'brechas', 'insuficiente', 'claves', 'cv', 'entrevista', 'recomendacion', 'comparacion']
+    }
+  };
 
   try {
     const r = await fetch('https://api.anthropic.com/v1/messages', {
@@ -93,15 +142,17 @@ Incluye 3-6 fortalezas, 2-4 oportunidades, 0-3 brechas, 0-3 insuficiente, 8-12 c
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: esencial ? 1600 : 5000,
+        max_tokens: esencial ? 1600 : 5500,
         system,
+        tools: [tool],
+        tool_choice: { type: 'tool', name: 'generar_analisis' },
         messages: [{
           role: 'user',
           content: [
             ...listaImagenes.map(im => ({ type: 'image', source: { type: 'base64', media_type: im.media_type, data: im.data } })),
             ...(listaImagenes.length ? [{ type: 'text', text: 'Las imágenes anteriores son capturas de la oferta laboral: léelas como una oferta.' }] : []),
             ...listaOfertas.map((o, i) => ({ type: 'text', text: `OFERTA LABORAL ${i + 1}:\n${o}` })),
-            { type: 'text', text: (esencial ? 'MODO ESENCIAL.\n\n' : '') + `CV DE LA PERSONA:\n${cv}\n\nGenera el análisis Workea en JSON.` }
+            { type: 'text', text: (esencial ? 'MODO ESENCIAL.\n\n' : '') + `CV DE LA PERSONA:\n${cv}\n\nGenera el análisis Workea.` }
           ]
         }]
       })
@@ -109,21 +160,17 @@ Incluye 3-6 fortalezas, 2-4 oportunidades, 0-3 brechas, 0-3 insuficiente, 8-12 c
 
     const data = await r.json();
     if (!r.ok) {
-      console.error('Error Anthropic:', data);
+      console.error('Error Anthropic:', JSON.stringify(data).substring(0, 300));
       return res.status(502).json({ error: 'El servicio de análisis no respondió correctamente' });
     }
 
-    const texto = (data.content || [])
-      .filter(b => b.type === 'text')
-      .map(b => b.text)
-      .join('');
+    const toolUse = (data.content || []).find(b => b.type === 'tool_use');
+    if (!toolUse || !toolUse.input) {
+      console.error('Sin tool_use en respuesta:', JSON.stringify(data).substring(0, 300));
+      return res.status(500).json({ error: 'Respuesta inesperada del servicio. Intenta de nuevo.' });
+    }
 
-    const limpio = texto.replace(/```json|```/g, '').trim();
-    const inicio = limpio.indexOf('{');
-    const fin = limpio.lastIndexOf('}');
-    const json = JSON.parse(limpio.slice(inicio, fin + 1));
-
-    return res.status(200).json(json);
+    return res.status(200).json(toolUse.input);
   } catch (e) {
     console.error('Error:', e);
     return res.status(500).json({ error: 'No se pudo generar el análisis. Intenta de nuevo.' });
