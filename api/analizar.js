@@ -61,6 +61,7 @@ PRINCIPIOS OBLIGATORIOS:
 - No recomiendes keyword stuffing: solo sugiere términos que describan experiencia real.
 - Si la oferta tiene señales relevantes (contratación vía consultora externa, condiciones inusuales, información faltante), menciónalo en "observacion".
 - Tono: cercano, claro, profesional, humano. Trata a la persona de "tú". Español de Chile neutro.
+- IMPORTANTE: todos los campos marcados como obligatorios en el schema deben tener contenido real y específico. Nunca dejes "compatibilidad", "info" ni "recomendacion" vacíos o en 0 — son el corazón del informe.
 - Para benchmark_salarial: si la oferta menciona sueldo, evalúa si está alineado, bajo o sobre el mercado para ese cargo y seniority. Si no lo menciona, entrega un rango referencial. Usa formulaciones honestas ("la mayoría de las ofertas similares ofrecen...") y nunca inventes porcentajes o estadísticas precisas que no puedas fundamentar.
 - Para nivel_calibre: compara el seniority/experiencia real del CV con el nivel que pide la oferta. Sé honesta: si la persona tiene más experiencia de la que pide el cargo, es "sobrecalificado"; si tiene menos, "subcalificado"; si calza, "alineado".
 
@@ -77,7 +78,8 @@ Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`
         info: {
           type: 'object',
           properties: {
-            cargo: { type: 'string' }, empresa: { type: 'string' }, ubicacion: { type: 'string' },
+            cargo: { type: 'string', description: 'OBLIGATORIO: nombre del cargo. Nunca dejar vacío si aparece en la oferta.' },
+            empresa: { type: 'string' }, ubicacion: { type: 'string' },
             modalidad: { type: 'string' }, seniority: { type: 'string' }
           },
           required: ['cargo', 'empresa', 'ubicacion', 'modalidad', 'seniority']
@@ -85,9 +87,9 @@ Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`
         compatibilidad: {
           type: 'object',
           properties: {
-            porcentaje: { type: 'integer' },
-            titulo: { type: 'string', description: 'frase resumen de una línea' },
-            lectura: { type: 'string', description: 'párrafo explicativo de 3-5 líneas' }
+            porcentaje: { type: 'integer', description: 'OBLIGATORIO: porcentaje real entre 0 y 100 según el análisis. Nunca dejar en 0 salvo que el perfil realmente no tenga ninguna relación con el cargo.' },
+            titulo: { type: 'string', description: 'OBLIGATORIO: frase resumen de una línea sobre el nivel de compatibilidad. Nunca dejar vacío.' },
+            lectura: { type: 'string', description: 'OBLIGATORIO: párrafo explicativo de 3-5 líneas explicando el porcentaje. Nunca dejar vacío.' }
           },
           required: ['porcentaje', 'titulo', 'lectura']
         },
@@ -121,8 +123,8 @@ Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`
           type: 'object',
           properties: {
             nivel: { type: 'string', enum: ['verde', 'amarillo', 'naranjo', 'rojo'] },
-            titulo: { type: 'string' },
-            detalle: { type: 'string' }
+            titulo: { type: 'string', description: 'OBLIGATORIO: nunca dejar vacío' },
+            detalle: { type: 'string', description: 'OBLIGATORIO: párrafo de cierre, nunca dejar vacío' }
           },
           required: ['nivel', 'titulo', 'detalle']
         },
