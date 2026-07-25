@@ -448,6 +448,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     </div>
     <div class="benefits">
       <div class="benefit"><div class="b-ico">🧭</div><div><h4>Entiende qué es realmente excluyente</h4><p>Distingue los requisitos que funcionan como filtro de los que solo suman puntos.</p></div></div>
+      <div class="benefit"><div class="b-ico">💰</div><div><h4>Sueldo referencial y nivel de calce</h4><p>Sabe si el sueldo de la oferta está alineado con el mercado y si tu perfil está sobre, bajo o alineado con el nivel del cargo.</p></div></div>
       <div class="benefit"><div class="b-ico">💬</div><div><h4>Explicaciones, no solo números</h4><p>Cada resultado viene con el porqué: qué coincide, qué falta comunicar y qué preparar.</p></div></div>
       <div class="benefit"><div class="b-ico">✍️</div><div><h4>Mejora tu CV sin inventar nada</h4><p>Las recomendaciones se basan solo en tu experiencia real. Nada de keyword stuffing.</p></div></div>
       <div class="benefit"><div class="b-ico">🎤</div><div><h4>Llega preparado a la entrevista</h4><p>Preguntas probables, qué evalúa cada una y qué deberías tener listo para responder.</p></div></div>
@@ -500,6 +501,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <li>Análisis detallado de tu CV y de cada oferta</li>
           <li>Palabras clave que faltan y competencias relevantes</li>
           <li>Riesgos de descarte y experiencias que deberías destacar</li>
+          <li>Sueldo referencial de mercado y si tu perfil está sobre, bajo o alineado con el nivel del cargo</li>
           <li>Checklist antes de postular</li>
           <li class="plus">🎯 Plan de Acción Workea: recomendaciones concretas y priorizadas. No solo sabrás qué cambiar: sabrás qué hacer primero.</li>
         </ul>
@@ -1625,6 +1627,19 @@ function renderResults(d){
       <div class="compat-reading"><p class="kicker">Compatibilidad estimada · lo que significa</p>
         <h3>${esc(d.compatibilidad?.titulo||'')}</h3><p>${esc(d.compatibilidad?.lectura||'')}</p></div></div>
     ${d.observacion?`<div class="note-card" style="margin-top:1rem"><b>Observación sobre la oportunidad:</b> ${esc(d.observacion)}</div>`:''}
+    ${(d.nivel_calibre?.nivel || d.benchmark_salarial?.rango_min)?`<div class="finding-group" style="margin-top:1.2rem"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Ajuste de nivel y sueldo referencial</h3></div>
+      <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        ${d.nivel_calibre?.nivel?`<div>
+          <p style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:.4rem">Nivel de calce</p>
+          <p style="font-size:.95rem;font-weight:700;margin-bottom:.3rem">${d.nivel_calibre.nivel==='sobrecalificado'?'📈 Sobrecalificado/a':d.nivel_calibre.nivel==='subcalificado'?'📉 Bajo el nivel pedido':'✅ Nivel alineado'}</p>
+          <p style="font-size:.87rem;color:var(--muted)">${esc(d.nivel_calibre.detalle||'')}</p>
+        </div>`:'<div></div>'}
+        ${d.benchmark_salarial?.rango_min?`<div>
+          <p style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:.4rem">Sueldo referencial</p>
+          <p style="font-size:.95rem;font-weight:700;margin-bottom:.3rem">${esc(d.benchmark_salarial.moneda||'CLP')} ${Number(d.benchmark_salarial.rango_min).toLocaleString('es-CL')} – ${Number(d.benchmark_salarial.rango_max).toLocaleString('es-CL')}</p>
+          <p style="font-size:.87rem;color:var(--muted)">${esc(d.benchmark_salarial.lectura||'')}</p>
+        </div>`:''}
+      </div></div>`:''}
     ${''}${(d.comparacion&&d.comparacion.length>1)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Comparación de tus ofertas: ¿a cuál postular primero?</h3></div>${d.comparacion.map((c,i)=>`<div class="finding ${i===0?'f-green':'f-neutral'}"><b>${i===0?'🥇 ':i===1?'🥈 ':'🥉 '}${esc(c.oferta)} — ${c.porcentaje??''}%</b><p>${esc(c.veredicto)}</p></div>`).join('')}</div>`:''}
     ${group('var(--green)','Fortalezas',d.fortalezas,'f-green')}
     ${group('var(--amber)','Oportunidades de mejora',d.oportunidades,'f-amber')}
