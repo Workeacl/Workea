@@ -1,6 +1,41 @@
 // api/analizar.js — Función serverless de Workea (Vercel)
 // Recibe {oferta, cv, codigo} y devuelve el análisis Workea en JSON.
 // Usa Anthropic tool use para garantizar JSON valido sin parseo manual.
+// Validación de código migrada a Supabase (tabla "codigos") — reemplaza WORKEA_CODIGO.
+
+const SUPABASE_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
+
+async function validarCodigoEnSupabase(codigoLimpio) {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey) {
+    return { ok: false, status: 500, error: 'Falta configurar SUPABASE_SERVICE_ROLE_KEY en Vercel' };
+  }
+
+  const url = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&select=codigo,plan,estado`;
+  const r = await fetch(url, {
+    headers: {
+      'apikey': serviceKey,
+      'Authorization': `Bearer ${serviceKey}`
+    }
+  });
+
+  if (!r.ok) {
+    return { ok: false, status: 502, error: 'No se pudo verificar el código. Intenta de nuevo.' };
+  }
+
+  const rows = await r.json();
+  const fila = Array.isArray(rows) ? rows[0] : null;
+
+  if (!fila) {
+    return { ok: false, status: 401, error: 'Código de acceso inválido' };
+  }
+
+  // Nota: no exigimos estado === 'libre' aquí. Un código ya "usado" (canjeado en
+  // "Mi cuenta" para activar el plan) igual debe poder usarse para analizar,
+  // porque canjear y analizar son dos acciones distintas.
+
+  return { ok: true, plan: fila.plan };
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -10,20 +45,30 @@ export default async function handler(req, res) {
   const { oferta, ofertas, imagenes, cv, codigo, modo } = req.body || {};
   const esencial = modo === 'esencial';
 
-  // Códigos de acceso: WORKEA_CODIGO acepta uno o varios separados por coma.
+  // Códigos de acceso: se validan contra la tabla "codigos" de Supabase.
   if (!esencial) {
-    const listaCodigos = (process.env.WORKEA_CODIGO || '')
-      .split(',').map(c => c.trim()).filter(Boolean);
     const codigoLimpio = (codigo || '').trim();
-    if (listaCodigos.length && !listaCodigos.includes(codigoLimpio)) {
-      return res.status(401).json({ error: 'Código de acceso inválido' });
-    }
-    // Restricción de prefijo: Match solo acepta el código maestro, WK- o EXP-
+
+    // El código maestro sigue funcionando igual que antes, sin pasar por Supabase.
     const esMaestro = codigoLimpio.toUpperCase() === 'WORKEA2026';
-    const esWK = codigoLimpio.toUpperCase().startsWith('WK-');
-    const esEXP = codigoLimpio.toUpperCase().startsWith('EXP-');
-    if (!esMaestro && !esWK && !esEXP) {
-      return res.status(401).json({ error: 'Este código no corresponde a Workea Match' });
+
+    if (!esMaestro) {
+      if (!codigoLimpio) {
+        return res.status(401).json({ error: 'Código de acceso inválido' });
+      }
+
+      // Restricción de prefijo: se mantiene igual que antes.
+      const prefijoValido = ['WK-', 'EXP-', 'WC-'].some(p => codigoLimpio.toUpperCase().startsWith(p));
+      if (!prefijoValido) {
+        return res.status(401).json({ error: 'Este código no corresponde a Workea Match' });
+      }
+
+      const resultado = await validarCodigoEnSupabase(codigoLimpio.toUpperCase());
+      if (!resultado.ok) {
+        return res.status(resultado.status).json({ error: resultado.error });
+      }
+      // resultado.plan queda disponible por si en el futuro quieres diferenciar
+      // el análisis según plan (match / experto / career).
     }
   }
 
