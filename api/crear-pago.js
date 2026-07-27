@@ -1,5 +1,7 @@
 // api/crear-pago.js — Genera una preferencia de pago en Mercado Pago
-// con redirección automática al formulario de activación tras el pago aprobado.
+// con redirección automática al formulario de activación, con el
+// número de operación ya prellenado para no depender de que el
+// usuario lo copie o recuerde.
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -11,7 +13,9 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Falta configurar MP_ACCESS_TOKEN en Vercel' });
   }
 
-  const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSe9UDo4wpX6gPw0rFjdl4_Jyr9gB5AUwckhuhOsoF5Gk_gv6g/viewform';
+  // URL intermedia propia: recibe la redirección de Mercado Pago,
+  // extrae el payment_id, y arma el link del formulario prellenado.
+  const REDIRECT_URL = 'https://workea.cl/api/redirigir-formulario';
 
   const preferencia = {
     items: [
@@ -23,8 +27,8 @@ export default async function handler(req, res) {
       }
     ],
     back_urls: {
-      success: FORM_URL,
-      pending: FORM_URL,
+      success: REDIRECT_URL,
+      pending: REDIRECT_URL,
       failure: 'https://workea.cl'
     },
     auto_return: 'approved'
