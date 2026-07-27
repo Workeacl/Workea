@@ -506,7 +506,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <li class="plus">🎯 Plan de Acción Workea: recomendaciones concretas y priorizadas. No solo sabrás qué cambiar: sabrás qué hacer primero.</li>
         </ul>
         <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> a qué oferta conviene postular primero, qué cambios tienen mayor impacto y cómo aumentar tus posibilidades de ser llamado a entrevista.</p>
-        <a class="btn btn-brand" href="https://mpago.la/2yvY447" target="_blank" rel="noopener">Obtener Informe Workea Match →</a>
+        <button class="btn btn-brand" onclick="comprarMatch(this)">Obtener Informe Workea Match →</button>
         <p class="plan-note">7 días de acceso · Precio de acceso anticipado · Pago seguro con Mercado Pago<br>Tras pagar, serás redirigida/o automáticamente al formulario de activación de tu código 🔑</p>
         <div style="margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--line)">
           <button class="btn btn-ghost" onclick="irActivarCodigo()" style="width:100%;justify-content:center;font-size:.85rem">¿Ya tienes un código? Actívalo aquí</button>
@@ -1664,12 +1664,33 @@ function renderResults(d){
       </div>
       <button class="btn btn-ghost" onclick="enviarInforme()" style="white-space:nowrap;flex-shrink:0">Enviar mi informe →</button>
     </div>`:''}
-    ${modoPlan==='esencial'?`<div class="real-cta"><div><h3>Este fue tu Informe Esencial 🩵</h3><p>Ya sabes si vale la pena postular. El <b>Workea Match</b> ($2.990, precio de acceso anticipado) te da 7 días de acceso ilimitado y agrega el análisis detallado, las palabras clave, las recomendaciones para tu CV, tu preparación de entrevista y el plan de acción priorizado — al instante.</p></div><a class="btn btn-wa" href="https://mpago.la/2yvY447" target="_blank" rel="noopener">Obtener Informe Workea Match →</a></div>`:''}`;
+    ${modoPlan==='esencial'?`<div class="real-cta"><div><h3>Este fue tu Informe Esencial 🩵</h3><p>Ya sabes si vale la pena postular. El <b>Workea Match</b> ($2.990, precio de acceso anticipado) te da 7 días de acceso ilimitado y agrega el análisis detallado, las palabras clave, las recomendaciones para tu CV, tu preparación de entrevista y el plan de acción priorizado — al instante.</p></div><button class="btn btn-wa" onclick="comprarMatch(this)">Obtener Informe Workea Match →</button></div>`:''}`;
   document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
   document.getElementById('scr-results').classList.remove('hidden');
   renderStepper(6); window.scrollTo({top:0});
   const cel = document.querySelector('#resultsMount .offer-header h3');
   if(cel){ document.title = ('Informe-Workea-'+cel.textContent.trim()).replace(/\s+/g,'-').replace(/[^\wáéíóúñÁÉÍÓÚÑ\-]/g,''); }
+}
+
+async function comprarMatch(btn){
+  const textoOriginal = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Generando tu pago...';
+  try {
+    const r = await fetch('/api/crear-pago', { method: 'POST' });
+    const data = await r.json();
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      alert('No se pudo iniciar el pago. Intenta de nuevo.');
+      btn.disabled = false;
+      btn.textContent = textoOriginal;
+    }
+  } catch (err) {
+    alert('No se pudo iniciar el pago. Intenta de nuevo.');
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+  }
 }
 
 </script>
