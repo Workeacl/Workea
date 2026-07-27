@@ -1,0 +1,1698 @@
+  <!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workea · No postules a ciegas</title>
+<meta name="description" content="Analiza cualquier oferta laboral junto a tu CV antes de postular. Descubre tu compatibilidad real, qué destacar y cómo prepararte, con la metodología de una especialista en selección. Creado por Tu Partner Laboral.">
+<meta name="keywords" content="analizar oferta laboral, compatibilidad CV, como postular a un trabajo, análisis de CV con IA, buscar empleo Chile, entrevista de trabajo, Tu Partner Laboral">
+<link rel="canonical" href="https://workea.cl/">
+
+<!-- Open Graph (WhatsApp, Facebook, LinkedIn) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://workea.cl/">
+<meta property="og:title" content="Workea · No postules a ciegas">
+<meta property="og:description" content="Analiza cualquier oferta laboral junto a tu CV antes de postular. Descubre tu compatibilidad real y cómo prepararte, con la metodología de una especialista en selección.">
+<meta property="og:image" content="https://workea.cl/logo.png">
+<meta property="og:locale" content="es_CL">
+<meta property="og:site_name" content="Workea">
+<meta property="article:publisher" content="https://www.instagram.com/tupartnerlaboralcl">
+
+<!-- Twitter / X Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Workea · No postules a ciegas">
+<meta name="twitter:description" content="Analiza cualquier oferta laboral junto a tu CV antes de postular. Descubre tu compatibilidad real y cómo prepararte.">
+<meta name="twitter:image" content="https://workea.cl/logo.png">
+
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#6c53ee;--cyan:#12cdf0;--grad:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0);
+  --brand-strong:#5138d6;
+  --brand-deep:#0a1430;--navy:#0a1430;--partner-blue:#51608a;
+  --brand-tint:#f0edfe;
+  --brand-tint-2:#ded7fc;
+  --ink:#101b38;
+  --muted:#5a6785;
+  --faint:#8f9ab3;
+  --bg:#f6f8fc;
+  --surface:#ffffff;
+  --line:#e3e6f0;
+  --green:#2f9e6d;   --green-bg:#e9f7f0;  --green-line:#bfe5d2;
+  --amber:#c9930f;   --amber-bg:#fdf6e3;  --amber-line:#f0dfae;
+  --orange:#d2702f;  --orange-bg:#fdf0e5; --orange-line:#f2d4b8;
+  --red:#c65454;     --red-bg:#fdeeee;    --red-line:#f0c9c9;
+  --neutral-bg:#eef0f6; --neutral-line:#dcdfe9;
+  --r:16px;
+  --shadow:0 1px 2px rgba(16,27,56,.05),0 8px 24px rgba(16,27,56,.07);
+  --shadow-lg:0 2px 4px rgba(16,27,56,.06),0 18px 48px rgba(16,27,56,.12);
+  --display:'Bricolage Grotesque',sans-serif;
+  --body:'Instrument Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;letter-spacing:-.01em}
+button{font-family:var(--body);cursor:pointer;border:none;background:none}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* ---------- brand ---------- */
+.logo{display:flex;align-items:center;gap:.65rem;text-decoration:none}
+.logo .logo-w{width:46px;height:34px;flex-shrink:0}
+.logo .lt{display:flex;flex-direction:column;line-height:1.05}
+.logo .lt b{font-family:var(--body);font-weight:700;font-size:1.3rem;letter-spacing:-.015em;color:var(--navy)}
+.logo .lt b em{font-style:normal;color:inherit}
+.logo .lt span{font-size:.6rem;color:var(--partner-blue);font-weight:700;letter-spacing:.05em;display:flex;align-items:center;gap:.35rem;white-space:nowrap}
+.logo .lt span::before,.logo .lt span::after{content:"";height:1px;flex:1;min-width:10px;background:var(--partner-blue);opacity:.55}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;gap:.5rem;font-weight:600;font-size:.95rem;padding:.8rem 1.4rem;border-radius:999px;transition:transform .15s,box-shadow .15s,background .15s}
+.btn-primary{background:var(--brand-deep);color:#fff;box-shadow:0 4px 14px rgba(10,20,48,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(10,20,48,.3)}
+.btn-brand{background:var(--grad);color:#fff}
+.btn-brand:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn-ghost{color:var(--brand-deep);background:transparent;border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--brand);background:var(--brand-tint)}
+.btn-link{color:var(--brand-strong);font-weight:600;padding:.5rem .25rem}
+.btn-link:hover{text-decoration:underline}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none!important}
+
+/* ---------- landing ---------- */
+.landing-nav{display:flex;justify-content:space-between;align-items:center;max-width:1120px;margin:0 auto;padding:1.4rem 1.5rem}
+.landing-nav .nav-links{display:flex;gap:1.5rem;align-items:center;font-size:.92rem;color:var(--muted)}
+.landing-nav .nav-links a{text-decoration:none;font-weight:500}
+.landing-nav .nav-links a:hover{color:var(--brand-deep)}
+
+.hero{max-width:1120px;margin:0 auto;padding:3.5rem 1.5rem 4.5rem;display:grid;grid-template-columns:1.05fr .95fr;gap:3.5rem;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand-strong);background:var(--brand-tint);border:1px solid var(--brand-tint-2);padding:.35rem .9rem;border-radius:999px;margin-bottom:1.2rem}
+.hero h1{font-size:clamp(2.2rem,4.6vw,3.4rem);font-weight:800;margin-bottom:1.1rem}
+.hero h1 em{font-style:normal;color:var(--brand-strong);position:relative;white-space:nowrap}
+.hero h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.08em;height:.32em;background:var(--brand-tint-2);z-index:-1;border-radius:4px}
+.hero .sub{font-size:1.15rem;color:var(--muted);max-width:32rem;margin-bottom:1.8rem}
+.hero-ctas{display:flex;gap:.9rem;flex-wrap:wrap;align-items:center}
+.hero-note{margin-top:1rem;font-size:.85rem;color:var(--faint)}
+
+/* mini demo card en hero */
+.demo-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-lg);padding:1.5rem;position:relative}
+.demo-card .dc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;border-bottom:1px dashed var(--line);padding-bottom:1rem;margin-bottom:1rem}
+.demo-card .dc-head h3{font-size:1.05rem}
+.demo-card .dc-head p{font-size:.82rem;color:var(--muted)}
+.dc-badge{font-size:.72rem;font-weight:700;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-line);padding:.3rem .7rem;border-radius:999px;white-space:nowrap}
+.dc-row{display:flex;gap:.7rem;align-items:flex-start;margin-bottom:.8rem;font-size:.88rem}
+.dc-dot{width:10px;height:10px;border-radius:50%;margin-top:.42rem;flex-shrink:0}
+.dc-row p b{font-weight:600}
+.dc-reading{background:var(--brand-tint);border:1px solid var(--brand-tint-2);border-radius:12px;padding:.85rem 1rem;font-size:.85rem;color:var(--brand-deep);margin-top:.4rem}
+.dc-reading b{font-weight:700}
+.demo-float{position:absolute;top:-1.1rem;right:-0.8rem;background:var(--brand-deep);color:#fff;font-size:.75rem;font-weight:600;padding:.45rem .9rem;border-radius:999px;box-shadow:var(--shadow)}
+
+.section{max-width:1120px;margin:0 auto;padding:4rem 1.5rem}
+.section-head{max-width:42rem;margin-bottom:2.5rem}
+.section-head h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;margin-bottom:.7rem}
+.section-head p{color:var(--muted);font-size:1.05rem}
+
+.problem{background:linear-gradient(120deg,#e9fbfe 0%,#eef2fe 45%,#f0edfe 100%);border:1px solid var(--line);color:var(--ink);border-radius:28px;padding:3.5rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin:0 1.5rem}
+@media(min-width:1120px){.problem{margin:0 auto;max-width:1088px}}
+.problem h2{font-size:clamp(1.6rem,3vw,2.2rem);margin-bottom:1rem}
+.problem p{color:var(--muted);font-size:1.02rem;margin-bottom:.9rem}
+.problem .stat-list{display:flex;flex-direction:column;gap:1rem}
+.stat-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:1rem 1.2rem;box-shadow:var(--shadow)}
+.stat-item b{display:block;font-family:var(--display);font-size:1.05rem;margin-bottom:.15rem;color:var(--ink)}
+.stat-item span{font-size:.88rem;color:var(--muted)}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+.step-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:1.8rem;box-shadow:var(--shadow);position:relative;transition:transform .2s,box-shadow .2s}
+.step-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.step-icon{width:48px;height:48px;border-radius:14px;background:var(--brand-tint);display:flex;align-items:center;justify-content:center;margin-bottom:1.1rem;font-size:1.3rem}
+.step-card h3{font-size:1.15rem;margin-bottom:.5rem}
+.step-card p{font-size:.92rem;color:var(--muted)}
+
+.benefits{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem}
+.benefit{display:flex;gap:1rem;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:1.3rem 1.4rem}
+.benefit .b-ico{width:38px;height:38px;flex-shrink:0;border-radius:11px;background:var(--brand-tint);display:flex;align-items:center;justify-content:center}
+.benefit h4{font-size:1rem;margin-bottom:.25rem}
+.benefit p{font-size:.88rem;color:var(--muted)}
+
+.final-cta{text-align:center;padding:4.5rem 1.5rem}
+.final-cta h2{font-size:clamp(1.8rem,3.4vw,2.5rem);margin-bottom:.8rem}
+.final-cta p{color:var(--muted);margin-bottom:1.6rem}
+
+footer{border-top:1px solid var(--line);background:var(--surface)}
+.footer-in{max-width:1120px;margin:0 auto;padding:2.2rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.footer-in p{font-size:.85rem;color:var(--faint)}
+.footer-tag{font-size:.85rem;color:var(--muted)}
+.footer-tag b{color:var(--brand-deep)}
+
+/* ---------- app shell ---------- */
+.app-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.app-header-in{max-width:1060px;margin:0 auto;padding:.9rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.stepper{display:flex;gap:.35rem;align-items:center;flex-wrap:wrap}
+.step-pill{display:flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600;color:var(--faint);padding:.35rem .75rem;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.step-pill .n{width:20px;height:20px;border-radius:50%;background:var(--neutral-bg);color:var(--faint);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700}
+.step-pill.active{color:var(--brand-deep);background:var(--brand-tint);border-color:var(--brand-tint-2)}
+.step-pill.active .n{background:var(--brand);color:#fff}
+.step-pill.done{color:var(--muted)}
+.step-pill.done .n{background:var(--green-bg);color:var(--green)}
+.step-sep{color:var(--line);font-size:.8rem}
+.app-main{max-width:1060px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+.screen{animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.screen-head{max-width:40rem;margin-bottom:2rem}
+.screen-head h2{font-size:clamp(1.5rem,2.8vw,2rem);font-weight:700;margin-bottom:.5rem}
+.screen-head p{color:var(--muted);font-size:1rem}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.6rem}
+.card+.card{margin-top:1.2rem}
+.card h3{font-size:1.1rem;margin-bottom:.9rem}
+
+/* tabs entrada de oferta */
+.tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.tab{font-size:.9rem;font-weight:600;color:var(--muted);padding:.6rem 1.1rem;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);display:flex;align-items:center;gap:.45rem;transition:all .15s}
+.tab:hover{border-color:var(--brand)}
+.tab.active{background:var(--brand-deep);color:#fff;border-color:var(--brand-deep)}
+.field label{display:block;font-size:.88rem;font-weight:600;margin-bottom:.45rem;color:var(--ink)}
+.field input[type=url],.field textarea{width:100%;font-family:var(--body);font-size:.95rem;padding:.85rem 1rem;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);transition:border .15s}
+.field textarea{min-height:180px;resize:vertical;line-height:1.5}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--brand);background:#fff}
+.field .hint{font-size:.8rem;color:var(--faint);margin-top:.4rem}
+.dropzone{border:2px dashed var(--line);border-radius:14px;background:var(--bg);padding:2.2rem 1.5rem;text-align:center;transition:all .15s;cursor:pointer}
+.dropzone:hover{border-color:var(--brand);background:var(--brand-tint)}
+.dropzone .dz-ico{font-size:1.8rem;margin-bottom:.5rem}
+.dropzone p{font-size:.92rem;color:var(--muted)}
+.dropzone p b{color:var(--brand-strong)}
+.dropzone .dz-formats{font-size:.78rem;color:var(--faint);margin-top:.4rem}
+.file-chip{display:inline-flex;align-items:center;gap:.6rem;background:var(--brand-tint);border:1px solid var(--brand-tint-2);color:var(--brand-deep);font-size:.88rem;font-weight:600;padding:.55rem 1rem;border-radius:10px;margin-top:1rem}
+.file-chip button{color:var(--brand-strong);font-weight:700;font-size:1rem;line-height:1}
+.demo-strip{display:flex;align-items:center;justify-content:space-between;gap:1rem;background:var(--brand-tint);border:1px solid var(--brand-tint-2);border-radius:12px;padding:.9rem 1.1rem;margin-top:1.4rem;flex-wrap:wrap}
+.demo-strip p{font-size:.88rem;color:var(--brand-deep)}
+.actions{display:flex;justify-content:flex-end;gap:.8rem;margin-top:1.8rem;flex-wrap:wrap}
+.actions.split{justify-content:space-between}
+.error-box{display:flex;gap:.7rem;align-items:flex-start;background:var(--red-bg);border:1px solid var(--red-line);border-radius:12px;padding:.9rem 1.1rem;margin-top:1rem;font-size:.9rem;color:#8f3d3d}
+
+/* loading */
+.loading-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:5rem 1rem}
+.scanner{width:74px;height:74px;border-radius:20px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:1.6rem}
+.scanner span{font-size:2rem}
+.scanner::after{content:"";position:absolute;left:8%;right:8%;height:3px;background:var(--grad);border-radius:3px;top:12%;animation:scan 1.6s ease-in-out infinite;box-shadow:0 0 12px #1999f1}
+@keyframes scan{0%,100%{top:12%}50%{top:82%}}
+.loading-wrap h3{font-size:1.3rem;margin-bottom:.4rem}
+.loading-msg{color:var(--muted);font-size:.95rem;min-height:1.5rem;transition:opacity .3s}
+.progress-track{width:min(320px,80%);height:6px;background:var(--neutral-bg);border-radius:3px;margin-top:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--grad);border-radius:3px;width:0%;transition:width .5s ease}
+
+/* análisis de oferta */
+.offer-header{display:flex;justify-content:space-between;gap:1.5rem;align-items:flex-start;flex-wrap:wrap}
+.offer-header h3{font-size:1.35rem;margin-bottom:.2rem}
+.offer-header .company{color:var(--muted);font-size:.95rem}
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.9rem;margin-top:1.3rem}
+.meta-item{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:.75rem .95rem}
+.meta-item span{display:block;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:.15rem}
+.meta-item b{font-size:.92rem;font-weight:600}
+.req-cols{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.req-list{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+.req-list li{display:flex;gap:.6rem;align-items:flex-start;font-size:.92rem}
+.req-list .mark{flex-shrink:0;width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;margin-top:.1rem}
+.mark.crit{background:var(--red-bg);color:var(--red)}
+.mark.nice{background:var(--brand-tint);color:var(--brand-strong)}
+.pill-row{display:flex;flex-wrap:wrap;gap:.5rem}
+.pill{font-size:.83rem;font-weight:600;padding:.4rem .85rem;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink)}
+.note-card{background:var(--brand-tint);border:1px solid var(--brand-tint-2);border-radius:12px;padding:1rem 1.2rem;font-size:.92rem;color:var(--brand-deep)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+
+/* comparación */
+.compat-hero{display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:2rem}
+.ring-wrap{position:relative;width:130px;height:130px}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{stroke:var(--neutral-bg)}
+.ring-val{stroke:var(--brand);stroke-linecap:round;transition:stroke-dashoffset 1.2s ease}
+.ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-label b{font-family:var(--display);font-size:1.9rem;font-weight:800;line-height:1}
+.ring-label span{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-top:.2rem}
+.compat-reading .kicker{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin-bottom:.4rem}
+.compat-reading h3{font-size:clamp(1.2rem,2.4vw,1.55rem);margin-bottom:.6rem;font-weight:700}
+.compat-reading p{color:var(--muted);font-size:.98rem}
+
+.finding-group{margin-top:1.6rem}
+.finding-head{display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem}
+.finding-head .fh-dot{width:14px;height:14px;border-radius:50%}
+.finding-head h3{font-size:1.05rem}
+.finding-head .count{font-size:.78rem;font-weight:700;color:var(--muted);background:var(--neutral-bg);padding:.15rem .6rem;border-radius:999px}
+.finding{border-radius:14px;border:1px solid;padding:1.1rem 1.3rem;margin-bottom:.7rem}
+.finding b{display:block;font-weight:700;font-size:.95rem;margin-bottom:.25rem}
+.finding p{font-size:.9rem}
+.finding.f-green{background:var(--green-bg);border-color:var(--green-line)}.finding.f-green b{color:#1c6b47}.finding.f-green p{color:#2e7050}
+.finding.f-amber{background:var(--amber-bg);border-color:var(--amber-line)}.finding.f-amber b{color:#8a6508}.finding.f-amber p{color:#8f6f1c}
+.finding.f-red{background:var(--red-bg);border-color:var(--red-line)}.finding.f-red b{color:#9c3f3f}.finding.f-red p{color:#9c4d4d}
+.finding.f-neutral{background:var(--neutral-bg);border-color:var(--neutral-line)}.finding.f-neutral b{color:#4a5f64}.finding.f-neutral p{color:#5d7378}
+
+/* adaptación cv */
+.adapt-block{margin-bottom:1.4rem}
+.adapt-block h3{display:flex;align-items:center;gap:.6rem;font-size:1.05rem;margin-bottom:1rem}
+.adapt-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.version{border-radius:12px;padding:1rem 1.2rem;font-size:.92rem}
+.version .v-tag{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .6rem;border-radius:999px;margin-bottom:.55rem}
+.v-current{background:var(--bg);border:1px solid var(--line);color:var(--muted)}
+.v-current .v-tag{background:var(--neutral-bg);color:var(--muted)}
+.v-reco{background:var(--brand-tint);border:1px solid var(--brand-tint-2);color:var(--brand-deep)}
+.v-reco .v-tag{background:var(--brand);color:#fff}
+.why{display:flex;gap:.6rem;align-items:flex-start;margin-top:.8rem;font-size:.87rem;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:.75rem 1rem}
+.why b{color:var(--ink);font-weight:700}
+.honesty{display:flex;gap:.8rem;align-items:flex-start;background:var(--amber-bg);border:1px solid var(--amber-line);border-radius:12px;padding:1rem 1.2rem;font-size:.9rem;color:#7d5c10}
+
+/* keywords */
+.kw-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.kw-legend span{display:inline-flex;align-items:center;gap:.45rem;font-size:.85rem;color:var(--muted);font-weight:500}
+.kw-dot{width:11px;height:11px;border-radius:50%}
+.kw-group{margin-bottom:1.3rem}
+.kw-group h4{font-size:.8rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin-bottom:.6rem}
+.kw-chip{display:inline-flex;align-items:center;gap:.5rem;font-size:.87rem;font-weight:600;padding:.45rem .95rem;border-radius:999px;border:1px solid;margin:0 .4rem .5rem 0}
+.kw-chip i{width:9px;height:9px;border-radius:50%;font-style:normal}
+.kw-p{background:var(--green-bg);border-color:var(--green-line);color:#1c6b47}.kw-p i{background:var(--green)}
+.kw-r{background:var(--amber-bg);border-color:var(--amber-line);color:#8a6508}.kw-r i{background:var(--amber)}
+.kw-n{background:var(--neutral-bg);border-color:var(--neutral-line);color:#5d7378}.kw-n i{background:var(--faint)}
+
+/* entrevista */
+.q-cat{font-size:.8rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .7rem}
+.q-item{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:.7rem;overflow:hidden}
+.q-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;gap:1rem;text-align:left;padding:1.05rem 1.3rem;font-size:.96rem;font-weight:600;color:var(--ink)}
+.q-toggle .chev{transition:transform .2s;color:var(--faint);flex-shrink:0}
+.q-item.open .chev{transform:rotate(180deg)}
+.q-body{display:none;padding:0 1.3rem 1.2rem;border-top:1px dashed var(--line)}
+.q-item.open .q-body{display:block}
+.q-body .qb{margin-top:1rem}
+.q-body .qb span{display:block;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:.25rem}
+.q-body .qb p{font-size:.9rem;color:var(--muted)}
+
+/* resumen final */
+.summary-hero{background:var(--brand-deep);color:#fff;border-radius:22px;padding:2.4rem 2.4rem 2rem;box-shadow:var(--shadow-lg)}
+.summary-hero .kicker{font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand);margin-bottom:.5rem}
+.summary-hero h2{font-size:clamp(1.5rem,3vw,2.1rem);margin-bottom:.4rem}
+.summary-hero .sh-sub{color:#9fabd4;font-size:.95rem}
+.verdict{display:flex;gap:1rem;align-items:flex-start;margin-top:1.6rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:1.3rem 1.4rem}
+.verdict .v-emoji{font-size:1.6rem;line-height:1}
+.verdict h3{font-size:1.15rem;margin-bottom:.3rem;color:#ffe9b8}
+.verdict p{font-size:.92rem;color:#ccd4ef}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.4rem}
+.sum-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.3rem;box-shadow:var(--shadow)}
+.sum-card .sc-tag{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.25rem .65rem;border-radius:999px;margin-bottom:.6rem}
+.sum-card p{font-size:.9rem;color:var(--muted)}
+.sc-green{background:var(--green-bg);color:#1c6b47}
+.sc-amber{background:var(--amber-bg);color:#8a6508}
+.sc-red{background:var(--red-bg);color:#9c3f3f}
+.next-steps{margin-top:1.4rem}
+.next-steps ol{margin-left:1.2rem;display:flex;flex-direction:column;gap:.5rem;font-size:.93rem;color:var(--muted)}
+.next-steps b{color:var(--ink)}
+
+
+
+/* planes */
+.plans-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.3rem;align-items:stretch}
+.plan-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:1.9rem 1.7rem;display:flex;flex-direction:column;box-shadow:var(--shadow);position:relative}
+.plan-card.featured{border:2px solid transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--grad) border-box;box-shadow:var(--shadow-lg)}
+.plan-badge{position:absolute;top:-.85rem;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.07em;padding:.32rem .95rem;border-radius:999px;white-space:nowrap}
+.plan-name{font-family:var(--display);font-size:1.25rem;font-weight:700;color:var(--navy)}
+.plan-goal{font-size:.84rem;color:var(--brand-strong);font-weight:700;margin:.15rem 0 .9rem}
+.plan-price{font-family:var(--display);font-size:2rem;font-weight:800;color:var(--ink);line-height:1}
+.plan-price span{font-size:.82rem;color:var(--muted);font-weight:500}
+.plan-feats{list-style:none;margin:1.2rem 0 1.5rem;display:flex;flex-direction:column;gap:.55rem;flex:1}
+.plan-feats li{display:flex;gap:.55rem;font-size:.88rem;color:var(--muted);align-items:flex-start}
+.plan-feats li::before{content:"✓";color:var(--green);font-weight:800;flex-shrink:0}
+.plan-feats li.plus::before{content:"★";color:var(--brand-strong)}
+.plan-note{font-size:.78rem;color:var(--faint);margin-top:.9rem;text-align:center}
+.plan-card .btn{justify-content:center;width:100%;font-size:.86rem;padding:.7rem 1rem}
+/* demo + análisis real */
+.demo-banner{display:flex;gap:.6rem;align-items:flex-start;background:var(--amber-bg);border:1px solid var(--amber-line);color:#7d5c10;font-size:.87rem;border-radius:12px;padding:.75rem 1rem;margin-bottom:1.4rem}
+.real-cta{background:var(--grad);border-radius:20px;padding:1.8rem 2rem;color:#fff;margin-top:1.4rem;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;flex-wrap:wrap;box-shadow:var(--shadow-lg)}
+.real-cta h3{font-size:1.25rem;margin-bottom:.35rem;color:#fff}
+.real-cta p{font-size:.92rem;color:rgba(255,255,255,.94);max-width:32rem}
+.btn-wa{background:#fff;color:var(--navy);font-weight:700;white-space:nowrap}
+.btn-wa:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(10,20,48,.25)}
+
+/* impresión del informe */
+.print-brand{display:none}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .app-header,.actions,.demo-strip,.demo-banner,#inputError,#cvMsg{display:none!important}
+  body{background:#fff}
+  .print-brand{display:flex!important;align-items:flex-end;justify-content:space-between;border-bottom:3px solid #6c53ee;padding-bottom:.6rem;margin-bottom:1.4rem}
+  .card,.compat-hero,.finding,.q-item,.sum-card{box-shadow:none!important;break-inside:avoid}
+  .q-body{display:block!important}
+  .app-main{padding-top:0}
+}
+/* responsive */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:2rem;gap:2.5rem}
+  .problem{grid-template-columns:1fr;padding:2.5rem 1.6rem}
+  .steps{grid-template-columns:1fr}
+  .plans-grid{grid-template-columns:1fr}
+  .benefits{grid-template-columns:1fr}
+  .req-cols,.two-col,.adapt-grid{grid-template-columns:1fr}
+  .compat-hero{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .summary-grid{grid-template-columns:1fr}
+  .stepper{display:none}
+  .stepper-mobile{display:block;font-size:.8rem;font-weight:700;color:var(--brand-strong)}
+}
+@media(min-width:901px){.stepper-mobile{display:none}}
+@media(max-width:900px){.plans-grid{grid-template-columns:repeat(2,1fr)}#metodologia>div{grid-template-columns:1fr!important;text-align:left}}@media(max-width:540px){.plans-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ============ LANDING ============ -->
+<div id="landing">
+  <nav class="landing-nav">
+    <a class="logo" href="#" onclick="return false">
+      <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#beneficios">Beneficios</a>
+      <a href="#planes">Planes</a>
+      <a href="/cuenta.html">Mi cuenta</a>
+      <button class="btn btn-primary" onclick="startApp()">Analizar una oferta</button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <span class="eyebrow">✦ No postules a ciegas</span>
+      <h1>¿Encontraste una oferta laboral? <em>Entiéndela</em> antes de postular.</h1>
+      <p class="sub">Workea analiza la oferta, la compara con tu experiencia y te muestra qué destacar, qué preparar y cómo presentar tu postulación con estrategia.</p>
+      <div class="hero-ctas">
+        <button class="btn btn-primary" onclick="startApp()">Analizar una oferta →</button>
+        <a class="btn btn-ghost" href="#como-funciona">Cómo funciona</a>
+      </div>
+    </div>
+    <div class="demo-card" aria-label="Ejemplo de análisis Workea">
+      <span class="demo-float">Análisis Workea</span>
+      <div class="dc-head">
+        <div>
+          <h3>Analista de Marketing Digital</h3>
+          <p>TiendaViva (e-commerce) · Santiago, híbrido</p>
+        </div>
+        <span class="dc-badge">Compatibilidad 72%</span>
+      </div>
+      <div class="dc-row"><span class="dc-dot" style="background:var(--green)"></span><p><b>Coincide:</b> campañas en redes sociales y email marketing con resultados de venta.</p></div>
+      <div class="dc-row"><span class="dc-dot" style="background:var(--amber)"></span><p><b>Mejorable:</b> tu experiencia vendiendo online existe, pero tu CV no la llama "e-commerce".</p></div>
+      <div class="dc-row"><span class="dc-dot" style="background:var(--red)"></span><p><b>No se identifica:</b> Google Ads ni Google Analytics.</p></div>
+      <div class="dc-reading"><b>Lectura Workea:</b> postula, pero ajusta tu presentación. Tu experiencia es pertinente; tu CV aún no la comunica del todo.</div>
+    </div>
+  </header>
+
+  <section class="problem" id="problema">
+    <div>
+      <h2>Postular sin entender la oferta es postular a ciegas.</h2>
+      <p>La mayoría de las personas envía el mismo CV a todas las ofertas y espera. El resultado: silencio, dudas y la sensación de que "algo falta".</p>
+      <p>El problema casi nunca es la experiencia. Es que la oferta pide algo específico y el CV cuenta otra historia.</p>
+    </div>
+    <div class="stat-list">
+      <div class="stat-item"><b>"Postulo y nadie responde."</b><span>Sin saber qué filtró tu postulación, no puedes mejorarla.</span></div>
+      <div class="stat-item"><b>"No sé si cumplo con lo que piden."</b><span>Las ofertas mezclan requisitos excluyentes con deseables, sin distinguirlos.</span></div>
+      <div class="stat-item"><b>"Tengo la experiencia, pero no sé cómo mostrarla."</b><span>La experiencia que no se comunica es experiencia que no existe para quien revisa.</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="como-funciona">
+    <div class="section-head">
+      <h2>Cómo funciona</h2>
+      <p>Tres pasos para pasar de "creo que podría servir" a "sé exactamente cómo presentarme".</p>
+    </div>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-icon">🔍</div>
+        <h3>1 · Analiza la oferta</h3>
+        <p>Pega el enlace, el texto o sube una captura. Workea separa lo crítico de lo deseable y te muestra qué busca realmente la empresa.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">⚖️</div>
+        <h3>2 · Compara tu experiencia</h3>
+        <p>Sube tu CV y descubre tus fortalezas, tus oportunidades de mejora y las brechas que conviene revisar antes de postular.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">🎯</div>
+        <h3>3 · Postula con estrategia</h3>
+        <p>Recibe recomendaciones concretas para tu CV y una guía de preparación para la entrevista, basadas en tu experiencia real.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="beneficios" style="padding-top:0">
+    <div class="section-head">
+      <h2>Más que un porcentaje: una lectura completa</h2>
+      <p>Workea no te evalúa. Te ayuda a entender la oportunidad y a tomar una decisión informada.</p>
+    </div>
+    <div class="benefits">
+      <div class="benefit"><div class="b-ico">🧭</div><div><h4>Entiende qué es realmente excluyente</h4><p>Distingue los requisitos que funcionan como filtro de los que solo suman puntos.</p></div></div>
+      <div class="benefit"><div class="b-ico">💰</div><div><h4>Sueldo referencial y nivel de calce</h4><p>Sabe si el sueldo de la oferta está alineado con el mercado y si tu perfil está sobre, bajo o alineado con el nivel del cargo.</p></div></div>
+      <div class="benefit"><div class="b-ico">💬</div><div><h4>Explicaciones, no solo números</h4><p>Cada resultado viene con el porqué: qué coincide, qué falta comunicar y qué preparar.</p></div></div>
+      <div class="benefit"><div class="b-ico">✍️</div><div><h4>Mejora tu CV sin inventar nada</h4><p>Las recomendaciones se basan solo en tu experiencia real. Nada de keyword stuffing.</p></div></div>
+      <div class="benefit"><div class="b-ico">🎤</div><div><h4>Llega preparado a la entrevista</h4><p>Preguntas probables, qué evalúa cada una y qué deberías tener listo para responder.</p></div></div>
+    </div>
+  </section>
+
+  <!-- MIRADA PROFESIONAL -->
+  <section class="section" id="metodologia" style="padding-top:0">
+    <div style="background:var(--navy);border-radius:22px;padding:2.6rem 2.4rem;box-shadow:var(--shadow-lg);display:grid;grid-template-columns:auto 1fr;gap:2.2rem;align-items:center">
+      <div style="width:76px;height:76px;border-radius:20px;background:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0);display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0">👩🏻‍💻</div>
+      <div>
+        <p style="font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:.5rem">La metodología detrás de Workea</p>
+        <h2 style="font-size:clamp(1.25rem,2.6vw,1.7rem);color:#fff;margin-bottom:.8rem">Workea analiza como analiza una reclutadora — porque fue creada por una.</h2>
+        <p style="font-size:.95rem;color:#c9d6ef;line-height:1.7;margin-bottom:.8rem">Detrás de cada informe está la metodología de una <b style="color:#fff">psicóloga laboral especialista en selección</b>, con experiencia real revisando CVs, levantando perfiles y entrevistando candidatos. Workea lee cada oferta como se lee en un proceso de selección de verdad: distinguiendo lo que filtra de lo que suma, lo que la empresa dice de lo que realmente busca.</p>
+        <p style="font-size:.9rem;color:#a5bde6">No es una respuesta genérica: es criterio profesional convertido en herramienta, disponible cada vez que lo necesites.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="planes" style="padding-top:0">
+    <div class="section-head">
+      <h2>Elige el nivel de análisis que necesitas</h2>
+      <p>No todos los candidatos necesitan el mismo nivel de orientación. Todos los Informes Workea tienen un mismo objetivo: ayudarte a tomar mejores decisiones antes de postular. La diferencia está en la profundidad del análisis y el nivel de estrategia que recibirás.</p>
+    </div>
+    <div class="plans-grid">
+
+      <div class="plan-card">
+        <p class="plan-name">🩵 Informe Workea Esencial</p>
+        <p class="plan-goal">¿Vale la pena postular a esta oferta?</p>
+        <p class="plan-price">Gratis</p>
+        <ul class="plan-feats">
+          <li>Análisis de 1 CV y 1 oferta laboral</li>
+          <li>WorkScore: tu compatibilidad con la oferta</li>
+          <li>Principales fortalezas y oportunidades de mejora</li>
+          <li>Recomendación final: postula, ajusta antes, o esta oferta probablemente no es tu mejor opción</li>
+        </ul>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> si realmente calzas con el cargo, qué podría dejarte fuera del proceso y si vale la pena postular.</p>
+        <button class="btn btn-ghost" onclick="startEsencial()">Obtener mi Informe Esencial gratis</button>
+        <p class="plan-note">1 informe gratis por persona · resultado al instante · sin registro</p>
+      </div>
+
+      <div class="plan-card featured">
+        <span class="plan-badge">🚀 ACCESO ANTICIPADO</span>
+        <p class="plan-name">💙 Informe Workea Match</p>
+        <p class="plan-goal">¿Qué tan bien calzo con esta oportunidad?</p>
+        <p class="plan-price"><span style="text-decoration:line-through;color:var(--faint);font-size:1rem;font-weight:600">$4.990</span> $2.990 <span>/ informe</span></p>
+        <ul class="plan-feats">
+          <li>Todo lo del Informe Esencial, más:</li>
+          <li>7 días de acceso para analizar todas las ofertas que necesites</li>
+          <li>Análisis detallado de tu CV y de cada oferta</li>
+          <li>Palabras clave que faltan y competencias relevantes</li>
+          <li>Riesgos de descarte y experiencias que deberías destacar</li>
+          <li>Sueldo referencial de mercado y si tu perfil está sobre, bajo o alineado con el nivel del cargo</li>
+          <li>Checklist antes de postular</li>
+          <li class="plus">🎯 Plan de Acción Workea: recomendaciones concretas y priorizadas. No solo sabrás qué cambiar: sabrás qué hacer primero.</li>
+        </ul>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> a qué oferta conviene postular primero, qué cambios tienen mayor impacto y cómo aumentar tus posibilidades de ser llamado a entrevista.</p>
+        <button class="btn btn-brand" onclick="comprarMatch(this)">Obtener Informe Workea Match →</button>
+        <p class="plan-note">7 días de acceso · Precio de acceso anticipado · Pago seguro con Mercado Pago<br>Tras pagar, serás redirigida/o automáticamente al formulario de activación de tu código 🔑</p>
+        <div style="margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--line)">
+          <button class="btn btn-ghost" onclick="irActivarCodigo()" style="width:100%;justify-content:center;font-size:.85rem">¿Ya tienes un código? Actívalo aquí</button>
+        </div>
+      </div>
+
+      <div class="plan-card">
+        <span class="plan-badge" style="background:var(--navy)">PRÓXIMAMENTE</span>
+        <p class="plan-name">💜 Informe Workea Experto</p>
+        <p class="plan-goal">¿Cuál es mi mejor estrategia para encontrar trabajo?</p>
+        <p class="plan-price" style="color:var(--faint);font-size:1.1rem">Precio por confirmar</p>
+        <ul class="plan-feats">
+          <li>Todo lo del Informe Workea Match, más:</li>
+          <li>30 días de acceso ilimitado para analizar todas las ofertas que necesites</li>
+          <li>📊 Insights Workea: habilidades más pedidas en tus ofertas, requisitos que se repiten, qué está limitando tus posibilidades</li>
+          <li>Fortalezas que hoy no estás comunicando</li>
+          <li>Riesgos y señales de alerta detectadas en las ofertas</li>
+          <li class="plus">🎯 Estrategia Workea: hoja de ruta personalizada elaborada por una especialista en selección, con acciones priorizadas para conseguir entrevistas</li>
+        </ul>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> qué cargos tienen mayor compatibilidad contigo, qué habilidades potenciar y dónde vale la pena invertir tu tiempo.</p>
+        <a class="btn btn-ghost experto-wait" href="#">Avísame cuando esté disponible →</a>
+        <p class="plan-note">Lo estamos afinando junto a los primeros usuarios. Únete a la lista de espera y sé de las primeras personas en acceder.</p>
+      </div>
+
+      <div class="plan-card">
+        <span class="plan-badge" style="background:var(--navy)">PRÓXIMAMENTE</span>
+        <p class="plan-name">🔵 Workea Profile Check</p>
+        <p class="plan-goal">¿Qué tan optimizado está tu perfil de LinkedIn?</p>
+        <p class="plan-price" style="color:var(--faint)">$2.990 <span>/ análisis</span></p>
+        <ul class="plan-feats">
+          <li>Score general de optimización (0-100%)</li>
+          <li>Análisis del titular, "Acerca de" y experiencia</li>
+          <li>Palabras clave detectadas en tu perfil</li>
+          <li>Coherencia general del perfil</li>
+          <li class="plus">🏆 Tus 3 prioridades concretas de mejora</li>
+        </ul>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> cómo te ve un reclutador, qué está comunicando tu perfil y qué cambiar primero.</p>
+        <a class="btn btn-ghost experto-wait" href="#">Avísame cuando esté disponible →</a>
+        <p class="plan-note">Lo estamos afinando junto a los primeros usuarios. Únete a la lista de espera.</p>
+      </div>
+
+    </div>
+
+    <div class="kw-legend" style="justify-content:center;margin-top:1.6rem;gap:1.6rem">
+      <span>🔒 Pago seguro vía Mercado Pago</span>
+      <span>👩‍💼 Estrategia Experto revisada por especialista real en selección</span>
+      <span>✨ Sin suscripciones automáticas: pagas solo lo que usas</span>
+    </div>
+
+    <div style="max-width:46rem;margin:2.8rem auto 0">
+      <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1.2rem;text-align:center">Preguntas frecuentes</h3>
+
+      <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .6rem">Sobre los pagos y el acceso</p>
+
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué pasa justo después de pagar?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Mercado Pago te redirigirá automáticamente al formulario de activación de Workea. Completa tus datos (nombre, correo y número de comprobante) y en menos de 1 minuto recibirás tu código personal por correo. Si cerraste la ventana antes de completar el formulario, escríbenos a workea@tupartnerlaboral.cl con tu comprobante y te enviamos el acceso de inmediato.</p></div></div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Pagué desde la cuenta de otra persona?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">No hay problema: tu código se envía al correo que TÚ indiques en el formulario de activación, pagues desde la cuenta que pagues. Solo incluye el número de operación o el correo de la cuenta con que se pagó para que podamos validar la compra.</p></div></div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Tengo que suscribirme?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">No. Cada producto de Workea es un pago único, sin mensualidades ni renovaciones automáticas: el Esencial es gratis; el Workea Match activa 7 días de acceso ilimitado; el Workea Profile Check entrega tu diagnóstico al instante; y el Informe Workea Experto (próximamente) cubrirá 30 días con Estrategia incluida.</p></div></div>
+      </div>
+
+      <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .6rem">Sobre los análisis</p>
+
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Cómo recibo mi Informe Workea Match?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Tras confirmar tu pago, recibirás tu código personal por correo. Lo activas en la plataforma y tienes 7 días para analizar todas las ofertas que quieras — una por una o hasta 3 comparadas a la vez. Cada informe queda disponible en pantalla para descargar en PDF.</p></div></div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Puedo analizar una oferta de LinkedIn u otro portal?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">¡Sí! La forma más confiable es <b>copiar y pegar el texto completo de la oferta</b> (cargo, requisitos y responsabilidades): funciona con cualquier portal. Los enlaces directos a veces no se pueden leer porque algunos sitios como LinkedIn bloquean el acceso externo. También puedes subir el PDF de la oferta o una captura de pantalla directamente en la plataforma.</p></div></div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué hace diferente el Informe Workea Experto?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem"><b>Disponible próximamente.</b> Incluirá 30 días de acceso ilimitado para analizar todas tus ofertas, más una Estrategia Workea elaborada por una especialista en selección al cierre del período: dónde invertir tu tiempo, qué potenciar y cómo aumentar tus posibilidades de conseguir entrevistas. Criterio profesional, no solo más texto.</p></div></div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Para qué sirve el Workea Profile Check?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">El Workea Profile Check analiza tu perfil de LinkedIn de forma independiente — sin necesitar una oferta específica. Recibirás un score de optimización, el análisis de tu titular, sección "Acerca de" y experiencia, las palabras clave detectadas y tus 3 prioridades concretas de mejora. Es el paso natural después de optimizar tu postulación: asegurarte de que tu LinkedIn comunica lo mismo.</p></div></div>
+      </div>
+
+      <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .6rem">Sobre tus datos</p>
+
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué pasa con mi CV, mi perfil y mis datos?<span class="chev">▾</span></button>
+        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Tu información se usa únicamente para generar tu análisis. No se comparte con empresas ni reclutadores, y puedes pedir su eliminación cuando quieras escribiendo a workea@tupartnerlaboral.cl.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="problem" style="grid-template-columns:1.2fr auto;align-items:center">
+      <div>
+        <h2 style="font-size:clamp(1.3rem,2.6vw,1.7rem)">¿Necesitas más que un análisis?</h2>
+        <p style="margin-bottom:0">Detrás de Workea está <b>Tu Partner Laboral</b>: asesorías personalizadas de empleabilidad, armado y optimización de CV, preparación de entrevistas y acompañamiento en tu búsqueda, con una especialista en selección.</p>
+      </div>
+      <a class="btn btn-primary" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener">Conocer las asesorías →</a>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <h2>Antes de postular, entiende.</h2>
+    <p>Tu próxima postulación puede ser la primera que hagas con estrategia.</p>
+    <button class="btn btn-primary" onclick="startApp()">Analizar una oferta →</button>
+  </section>
+
+  <footer>
+    <div class="footer-in">
+      <a class="logo" href="#" onclick="return false">
+        <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+      </a>
+      <p class="footer-tag">Experiencia humana <b>+</b> tecnología inteligente · <a class="btn-link" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener" style="font-size:.85rem">Asesorías Tu Partner Laboral</a></p>
+      <div style="display:flex;gap:.9rem;align-items:center">
+        <!--
+        <a href="https://www.instagram.com/tupartnerlaboralcl" target="_blank" rel="noopener" aria-label="Instagram Tu Partner Laboral" style="color:var(--faint);transition:color .15s" onmouseover="this.style.color='var(--brand)'" onmouseout="this.style.color='var(--faint)'">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@tupartnerlaboral" target="_blank" rel="noopener" aria-label="TikTok Tu Partner Laboral" style="color:var(--faint);transition:color .15s" onmouseover="this.style.color='var(--brand)'" onmouseout="this.style.color='var(--faint)'">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82c-.87-.96-1.35-2.2-1.35-3.5h-3.02v14.08c0 1.5-1.22 2.72-2.72 2.72a2.72 2.72 0 01-2.72-2.72 2.72 2.72 0 012.72-2.72c.28 0 .55.04.8.12V11.5a5.8 5.8 0 00-.8-.06 5.76 5.76 0 00-5.76 5.76A5.76 5.76 0 009.51 23a5.76 5.76 0 005.76-5.76V9.4a8.8 8.8 0 005.1 1.63V7.99a5.5 5.5 0 01-3.77-2.17z"/></svg>
+        </a> -->
+      </div>
+      <p>© 2026 Workea · Tu Partner Laboral</p>
+    </div>
+  </footer>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="hidden">
+  <header class="app-header">
+    <div class="app-header-in">
+      <a class="logo" href="#" onclick="goLanding();return false">
+        <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+      </a>
+      <nav class="stepper" id="stepper" aria-label="Progreso del análisis"></nav>
+      <span class="stepper-mobile" id="stepperMobile"></span>
+    </div>
+  </header>
+
+  <main class="app-main">
+
+    <!-- PASO: INGRESO DE OFERTA -->
+    <section class="screen" id="scr-input">
+      <div class="screen-head">
+        <h2>Analiza una oportunidad laboral</h2>
+        <p>Pega la oferta, sube una captura o carga un archivo. Workea te ayudará a entenderla.</p>
+      </div>
+      <div class="demo-banner" id="demoBanner">🔎<span><b>Modo de ejemplo.</b> El análisis que verás usa datos de ejemplo para mostrarte la experiencia. Si tienes un código de acceso, actívalo abajo para analizar TU oferta y TU CV.</span></div>
+      <div class="card">
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="link" onclick="setTab('link')">🔗 Pegar enlace</button>
+          <button class="tab" data-tab="text" onclick="setTab('text')">📋 Pegar texto</button>
+          <button class="tab" data-tab="file" onclick="setTab('file')">📄 Subir archivo</button>
+          <button class="tab" data-tab="shot" onclick="setTab('shot')">🖼️ Subir captura</button>
+        </div>
+
+        <div id="tab-link" class="tab-panel field">
+          <label for="offerUrl">Enlace de la oferta</label>
+          <input type="url" id="offerUrl" placeholder="Pega aquí el enlace de la oferta laboral" oninput="validateInput()">
+          <p class="hint">💡 Algunos portales (como LinkedIn) bloquean la lectura de sus enlaces. Si es tu caso, usa la pestaña <b>"Pegar texto"</b>: copia el contenido completo de la oferta y pégalo — es el método más confiable.</p>
+        </div>
+
+        <div id="tab-text" class="tab-panel field hidden">
+          <label for="offerText">Contenido de la oferta</label>
+          <textarea id="offerText" placeholder="Copia y pega aquí el contenido de la oferta" oninput="validateInput()"></textarea>
+          <p class="hint">Incluye el cargo, los requisitos y las responsabilidades para un mejor análisis.</p>
+          <div id="extraOffers" class="hidden" style="margin-top:1rem">
+            <label for="offerText2">Oferta 2 (opcional — tu plan permite comparar hasta 3)</label>
+            <textarea id="offerText2" style="min-height:110px" placeholder="Pega aquí una segunda oferta si quieres compararlas"></textarea>
+            <label for="offerText3" style="margin-top:.8rem">Oferta 3 (opcional)</label>
+            <textarea id="offerText3" style="min-height:110px" placeholder="Pega aquí una tercera oferta"></textarea>
+          </div>
+        </div>
+
+        <div id="tab-file" class="tab-panel hidden">
+          <div class="dropzone" onclick="pickFile('offer')" onkeydown="if(event.key==='Enter')pickFile('offer')" tabindex="0" role="button">
+            <div class="dz-ico">📄</div>
+            <p>Arrastra el archivo aquí o <b>búscalo en tu equipo</b></p>
+            <p class="dz-formats">PDF con texto · si es Word o imagen, usa "Pegar texto"</p>
+          </div>
+          <div id="offerFileChip"></div>
+        </div>
+
+        <div id="tab-shot" class="tab-panel hidden">
+          <div class="dropzone" onclick="shotInfo()" onkeydown="if(event.key==='Enter')shotInfo()" tabindex="0" role="button">
+            <div class="dz-ico">🖼️</div>
+            <p>Sube una captura de pantalla de la oferta</p>
+            <p class="dz-formats">PNG · JPG · desde tu celular o computador</p>
+          </div>
+          <div id="offerShotChip"></div>
+        </div>
+
+        <div id="inputError"></div>
+
+        <div class="demo-strip" id="demoEjemploStrip">
+          <p><b>¿Quieres ver Workea en acción?</b> Prueba con una oferta real de ejemplo.</p>
+          <button class="btn btn-brand" onclick="useDemoOffer()">Usar oferta de ejemplo</button>
+        </div>
+
+        <div class="demo-strip" id="realStrip" style="background:var(--brand-tint);border-color:var(--brand-tint-2)">
+          <p id="realStripMsg"><b>🔑 ¿Tienes un código de acceso?</b> Actívalo para obtener tu análisis personalizado al instante.</p>
+          <span style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <input type="text" id="codigoInput" placeholder="Código de acceso" style="font-family:var(--body);font-size:.88rem;padding:.55rem .9rem;border:1.5px solid var(--line);border-radius:999px;background:#fff;width:150px">
+            <button class="btn btn-brand" onclick="activarCodigo()">Activar</button>
+          </span>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" id="btnAnalyze" disabled onclick="startOfferFlow()">Analizar oferta →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOADING -->
+    <section class="screen hidden" id="scr-loading">
+      <div class="loading-wrap">
+        <div class="scanner"><span id="loadIcon">🔍</span></div>
+        <h3 id="loadTitle">Analizando la oferta…</h3>
+        <p class="loading-msg" id="loadMsg">Leyendo el contenido</p>
+        <div class="progress-track"><div class="progress-fill" id="loadBar"></div></div>
+      </div>
+    </section>
+
+    <!-- PASO: ANÁLISIS DE OFERTA -->
+    <section class="screen hidden" id="scr-offer">
+      <div class="screen-head">
+        <h2>Esto es lo que la empresa está buscando</h2>
+        <p>Workea estructuró la oferta para que veas con claridad qué es excluyente, qué suma y qué palabras importan.</p>
+      </div>
+
+      <div class="card">
+        <div class="offer-header">
+          <div>
+            <h3>Analista de Marketing Digital</h3>
+            <p class="company">TiendaViva · E-commerce / Retail</p>
+          </div>
+          <span class="dc-badge" style="background:var(--brand-tint);color:var(--brand-deep);border-color:var(--brand-tint-2)">Seniority: Analista</span>
+        </div>
+        <div class="meta-grid">
+          <div class="meta-item"><span>Ubicación</span><b>Santiago, Chile</b></div>
+          <div class="meta-item"><span>Modalidad</span><b>Híbrida</b></div>
+          <div class="meta-item"><span>Contrato</span><b>Indefinido</b></div>
+          <div class="meta-item"><span>Jornada</span><b>Completa</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Requisitos: qué filtra y qué suma</h3>
+        <div class="req-cols">
+          <div>
+            <p style="font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red);margin-bottom:.7rem">Críticos · probables filtros</p>
+            <ul class="req-list">
+              <li><span class="mark crit">!</span><span>2+ años de experiencia en marketing digital.</span></li>
+              <li><span class="mark crit">!</span><span>Gestión de campañas pagadas en <b>Meta Ads y Google Ads</b>.</span></li>
+              <li><span class="mark crit">!</span><span>Manejo de <b>Google Analytics (GA4)</b> y reportería de métricas.</span></li>
+              <li><span class="mark crit">!</span><span>Experiencia en e-commerce o venta online.</span></li>
+            </ul>
+          </div>
+          <div>
+            <p style="font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-strong);margin-bottom:.7rem">Deseables · suman valor</p>
+            <ul class="req-list">
+              <li><span class="mark nice">+</span><span>Email marketing (Mailchimp o Klaviyo).</span></li>
+              <li><span class="mark nice">+</span><span>Conocimientos básicos de SEO.</span></li>
+              <li><span class="mark nice">+</span><span>Manejo de Canva o Figma.</span></li>
+              <li><span class="mark nice">+</span><span>Certificaciones de Google o Meta.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:1.2rem">
+        <div class="card" style="margin-top:0">
+          <h3>Competencias técnicas</h3>
+          <div class="pill-row">
+            <span class="pill">Meta Ads</span><span class="pill">Google Ads</span><span class="pill">Google Analytics (GA4)</span><span class="pill">Email marketing</span><span class="pill">SEO</span><span class="pill">Reportería de resultados</span>
+          </div>
+        </div>
+        <div class="card" style="margin-top:0">
+          <h3>Competencias conductuales</h3>
+          <div class="pill-row">
+            <span class="pill">Orientación a resultados</span><span class="pill">Análisis de datos</span><span class="pill">Autonomía</span><span class="pill">Trabajo con equipo comercial</span><span class="pill">Adaptabilidad</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Experiencia que espera el cargo</h3>
+        <div class="meta-grid" style="margin-top:0">
+          <div class="meta-item"><span>Años</span><b>2 o más</b></div>
+          <div class="meta-item"><span>Tipo</span><b>Campañas de punta a punta</b></div>
+          <div class="meta-item"><span>Industria</span><b>E-commerce (ideal)</b></div>
+          <div class="meta-item"><span>Autonomía</span><b>Media</b></div>
+        </div>
+        <p style="font-size:.92rem;color:var(--muted);margin-top:1rem">Responsabilidades centrales: planificar y ejecutar campañas, gestionar presupuesto publicitario, crear contenidos con el equipo comercial, y medir y reportar resultados de venta.</p>
+      </div>
+
+      <div class="note-card" style="margin-top:1.2rem">
+        <b>Lectura Workea:</b> esta oferta pesa más la <b>pauta pagada y la medición de resultados</b> que la creación de contenido. Si tu experiencia incluye campañas con presupuesto y números de venta, ese será tu mejor argumento.
+      </div>
+
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="showScreen('scr-input',1)">← Cambiar oferta</button>
+        <button class="btn btn-primary" onclick="showScreen('scr-cv',2)">Comparar con mi CV →</button>
+      </div>
+    </section>
+
+    <!-- PASO: CARGA DE CV -->
+    <section class="screen hidden" id="scr-cv">
+      <div class="screen-head">
+        <h2>Ahora, cuéntanos de ti</h2>
+        <p>Sube tu CV o pega su contenido. Workea lo comparará con la oferta usando solo la información que entregues: nada se inventa ni se asume.</p>
+      </div>
+      <div class="card">
+        <div class="tabs">
+          <button class="tab active" data-cvtab="file" onclick="setCvTab('file')">📄 Subir CV (PDF o documento)</button>
+          <button class="tab" data-cvtab="text" onclick="setCvTab('text')">📋 Pegar contenido</button>
+        </div>
+        <div id="cvtab-file" class="tab-panel">
+          <div class="dropzone" onclick="pickFile('cv')" onkeydown="if(event.key==='Enter')pickFile('cv')" tabindex="0" role="button">
+            <div class="dz-ico">📎</div>
+            <p>Arrastra tu CV aquí o <b>búscalo en tu equipo</b></p>
+            <p class="dz-formats">PDF con texto · si es Word, usa "Pegar contenido"</p>
+          </div>
+          <div id="cvFileChip"></div>
+        </div>
+        <div id="cvtab-text" class="tab-panel field hidden">
+          <label for="cvText">Contenido de tu CV</label>
+          <textarea id="cvText" placeholder="Pega aquí el contenido de tu CV: experiencia, cargos, herramientas, educación…" oninput="validateCv()"></textarea>
+        </div>
+
+        <div id="cvMsg"></div>
+
+        <div class="demo-strip">
+          <p><b>¿Solo estás explorando?</b> Usa un CV de ejemplo para recorrer el análisis completo.</p>
+          <button class="btn btn-brand" onclick="useDemoCv()">Usar CV de ejemplo</button>
+        </div>
+
+        <div class="actions split">
+          <button class="btn btn-ghost" onclick="showScreen('scr-offer',1)">← Volver al análisis</button>
+          <button class="btn btn-primary" id="btnCompare" disabled onclick="startCompare()">Comparar con la oferta →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PASO: COMPARACIÓN -->
+    <section class="screen hidden" id="scr-compare">
+      <div class="screen-head">
+        <h2>Tu experiencia frente a esta oferta</h2>
+        <p>El número es solo un punto de partida. Lo importante es la lectura: qué coincide, qué falta comunicar y qué revisar.</p>
+      </div>
+
+      <div class="compat-hero">
+        <div class="ring-wrap" aria-label="Compatibilidad estimada 72 por ciento">
+          <svg width="130" height="130" viewBox="0 0 130 130">
+            <circle class="ring-bg" cx="65" cy="65" r="56" fill="none" stroke-width="11"/>
+            <circle class="ring-val" id="ringVal" cx="65" cy="65" r="56" fill="none" stroke-width="11" stroke-dasharray="352" stroke-dashoffset="352"/>
+          </svg>
+          <div class="ring-label"><b id="ringNum">0%</b><span>estimada</span></div>
+        </div>
+        <div class="compat-reading">
+          <p class="kicker">Compatibilidad estimada · lo que significa</p>
+          <h3>Tu experiencia presenta una buena alineación con la parte creativa y de contenidos del cargo.</h3>
+          <p>Sin embargo, dos requisitos críticos no se identifican claramente en tu CV: Google Ads y Google Analytics. Además, tu experiencia vendiendo online y tus campañas promocionadas existen, pero están contadas con un lenguaje que no conecta con lo que la oferta pide medir: resultados de venta.</p>
+        </div>
+      </div>
+
+      <div class="finding-group">
+        <div class="finding-head"><span class="fh-dot" style="background:var(--green)"></span><h3>Fortalezas</h3><span class="count">3</span></div>
+        <div class="finding f-green"><b>Campañas pagadas en Meta</b><p>Tus "publicaciones promocionadas" en Instagram y Facebook son campañas de Meta Ads: coinciden con uno de los requisitos centrales, aunque tu CV las nombra de una forma que les resta valor.</p></div>
+        <div class="finding f-green"><b>Email marketing con Mailchimp</b><p>Manejas exactamente la herramienta que la oferta menciona como deseable. Es una coincidencia directa que conviene mantener visible.</p></div>
+        <div class="finding f-green"><b>Creación de contenido y manejo de marca</b><p>Tu experiencia gestionando redes para varias marcas (agencia + pyme) responde a la responsabilidad de crear contenidos junto al equipo comercial.</p></div>
+      </div>
+
+      <div class="finding-group">
+        <div class="finding-head"><span class="fh-dot" style="background:var(--amber)"></span><h3>Oportunidades de mejora</h3><span class="count">3</span></div>
+        <div class="finding f-amber"><b>Tu experiencia e-commerce está escondida</b><p>Apoyaste la tienda online y la coordinación de pedidos de Dulce Sur: eso ES experiencia en venta online, pero tu CV nunca usa la palabra "e-commerce", que es un requisito crítico de la oferta.</p></div>
+        <div class="finding f-amber"><b>Resultados sin números</b><p>Tus reportes hablan de "seguidores e interacciones". Esta oferta pide resultados de venta: si tus campañas generaron pedidos, ventas o crecimiento, esos números hoy no aparecen.</p></div>
+        <div class="finding f-amber"><b>Lenguaje amateur para trabajo profesional</b><p>"Publicaciones promocionadas" y "envío de correos" describen con lenguaje casero tareas que la industria llama gestión de campañas Meta Ads y email marketing. El reclutador busca esos términos.</p></div>
+      </div>
+
+      <div class="finding-group">
+        <div class="finding-head"><span class="fh-dot" style="background:var(--red)"></span><h3>Brechas</h3><span class="count">2</span></div>
+        <div class="finding f-red"><b>Google Ads</b><p>Este requisito crítico no se identifica en tu CV. Si has hecho campañas en Google, es importante decirlo; si no, considera que probablemente funcione como filtro y prepárate para abordarlo con honestidad.</p></div>
+        <div class="finding f-red"><b>Google Analytics (GA4)</b><p>No se identifica en tu CV. La oferta lo pide para medir resultados. Si lo has usado aunque sea básico, inclúyelo con su nivel; si no, es una brecha concreta que puedes cerrar con un curso gratuito de Google.</p></div>
+      </div>
+
+      <div class="finding-group">
+        <div class="finding-head"><span class="fh-dot" style="background:var(--faint)"></span><h3>Información insuficiente</h3><span class="count">2</span></div>
+        <div class="finding f-neutral"><b>Presupuestos gestionados</b><p>El CV no permite saber qué montos de inversión publicitaria has manejado. La oferta incluye gestión de presupuesto; vale la pena indicarlo si fue parte de tu rol.</p></div>
+        <div class="finding f-neutral"><b>Nivel de reportería</b><p>Mencionas reportes mensuales, pero no qué medías ni con qué herramientas. Con la información disponible, este punto no puede evaluarse.</p></div>
+      </div>
+
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="showScreen('scr-cv',2)">← Volver a mi CV</button>
+        <button class="btn btn-primary" onclick="showScreen('scr-adapt',4)">Potenciar mi CV →</button>
+      </div>
+    </section>
+
+    <!-- PASO: ADAPTACIÓN DEL CV -->
+    <section class="screen hidden" id="scr-adapt">
+      <div class="screen-head">
+        <h2>Potencia tu CV para esta oportunidad</h2>
+        <p>Recomendaciones basadas únicamente en tu experiencia real. Workea no inventa logros, habilidades ni certificaciones.</p>
+      </div>
+
+      <div class="card adapt-block">
+        <h3>🏷️ Titular profesional</h3>
+        <div class="adapt-grid">
+          <div class="version v-current"><span class="v-tag">Tu versión actual</span>Publicista</div>
+          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>Analista de Marketing Digital · 3 años gestionando campañas, contenido y email marketing para marcas de consumo</div>
+        </div>
+        <div class="why">💡<span><b>Por qué importa:</b> "Publicista" describe tu carrera; el titular recomendado describe la función que la oferta busca, usando solo experiencia que ya tienes.</span></div>
+      </div>
+
+      <div class="card adapt-block">
+        <h3>💼 Experiencia laboral</h3>
+        <div class="adapt-grid">
+          <div class="version v-current"><span class="v-tag">Tu versión actual</span>"Publicaciones promocionadas para lanzamientos y fechas especiales."</div>
+          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>"Gestión de campañas pagadas en Meta Ads (Instagram y Facebook) para lanzamientos y ventas online, incluyendo segmentación de audiencias, presupuesto y análisis de resultados."</div>
+        </div>
+        <div class="why">💡<span><b>Por qué importa:</b> es la misma experiencia, contada en el idioma de la industria. "Meta Ads" es la palabra que el reclutador (y los filtros automáticos) van a buscar. Además: agrega números donde los tengas — ventas generadas, crecimiento, pedidos.</span></div>
+      </div>
+
+      <div class="card adapt-block">
+        <h3>🛒 Tu experiencia e-commerce</h3>
+        <div class="adapt-grid">
+          <div class="version v-current"><span class="v-tag">Tu versión actual</span>"Apoyo en la tienda online y coordinación de pedidos."</div>
+          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>"Gestión del canal e-commerce de la marca: administración de la tienda online, coordinación de pedidos y campañas orientadas a venta digital."</div>
+        </div>
+        <div class="why">💡<span><b>Por qué importa:</b> la oferta pide experiencia en e-commerce y tú la tienes — pero tu CV nunca usa esa palabra. Nómbrala tal como la industria la busca.</span></div>
+      </div>
+
+      <div class="card adapt-block">
+        <h3>🛠️ Habilidades</h3>
+        <div class="adapt-grid">
+          <div class="version v-current"><span class="v-tag">Tu versión actual</span>Canva · redes sociales · Office · trabajo en equipo</div>
+          <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>Meta Ads · Email marketing (Mailchimp) · Gestión de redes sociales · Creación de contenido · Canva · Reportería de resultados</div>
+        </div>
+        <div class="why">💡<span><b>Por qué importa:</b> las competencias que la oferta valora ya están en tu experiencia, pero hoy no son visibles como habilidades. No agregues Google Ads ni GA4 si no los has usado: esas brechas se abordan con honestidad (o con un curso, que ambos ofrecen gratis).</span></div>
+      </div>
+
+      <div class="honesty">⚠️<span><b>Un principio importante:</b> no agregues Google Ads ni Google Analytics si no los has usado. Un CV honesto y bien comunicado siempre rinde más que uno inflado: las brechas reales se conversan en la entrevista, no se ocultan.</span></div>
+
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="showScreen('scr-compare',3)">← Volver a la comparación</button>
+        <button class="btn btn-primary" onclick="showScreen('scr-keywords',4)">Ver las claves de la oferta →</button>
+      </div>
+    </section>
+
+    <!-- PASO: PALABRAS CLAVE -->
+    <section class="screen hidden" id="scr-keywords">
+      <div class="screen-head">
+        <h2>Las claves de esta oferta</h2>
+        <p>Los términos que probablemente busca quien revise tu postulación, y cómo aparecen (o no) en tu CV.</p>
+      </div>
+
+      <div class="card">
+        <div class="kw-legend">
+          <span><i class="kw-dot" style="background:var(--green)"></i> Presente: aparece claramente en tu CV</span>
+          <span><i class="kw-dot" style="background:var(--amber)"></i> Relacionada: tienes experiencia similar con otro nombre</span>
+          <span><i class="kw-dot" style="background:var(--faint)"></i> No identificada: no aparece en tu CV</span>
+        </div>
+
+        <div class="kw-group"><h4>Funciones</h4>
+          <span class="kw-chip kw-p"><i></i>Gestión de redes sociales</span>
+          <span class="kw-chip kw-p"><i></i>Creación de contenido</span>
+          <span class="kw-chip kw-r"><i></i>Gestión de campañas</span>
+          <span class="kw-chip kw-r"><i></i>E-commerce</span>
+        </div>
+        <div class="kw-group"><h4>Herramientas</h4>
+          <span class="kw-chip kw-p"><i></i>Mailchimp</span>
+          <span class="kw-chip kw-p"><i></i>Canva</span>
+          <span class="kw-chip kw-r"><i></i>Meta Ads</span>
+          <span class="kw-chip kw-n"><i></i>Google Ads</span>
+          <span class="kw-chip kw-n"><i></i>Google Analytics (GA4)</span>
+        </div>
+        <div class="kw-group"><h4>Competencias técnicas</h4>
+          <span class="kw-chip kw-p"><i></i>Email marketing</span>
+          <span class="kw-chip kw-r"><i></i>Reportería de resultados</span>
+          <span class="kw-chip kw-n"><i></i>SEO</span>
+        </div>
+        <div class="kw-group"><h4>Industria y resultados</h4>
+          <span class="kw-chip kw-p"><i></i>Marcas de consumo</span>
+          <span class="kw-chip kw-r"><i></i>Venta online</span>
+          <span class="kw-chip kw-n"><i></i>ROAS / métricas de venta</span>
+        </div>
+
+        <div class="note-card"><b>Importante:</b> las palabras "relacionadas" puedes incorporarlas usando el término exacto de la oferta, porque describen experiencia que ya tienes. Las "no identificadas" solo agrégalas si realmente corresponden a tu experiencia.</div>
+      </div>
+
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="showScreen('scr-adapt',4)">← Volver a mi CV</button>
+        <button class="btn btn-primary" onclick="showScreen('scr-interview',5)">Prepararme para la entrevista →</button>
+      </div>
+    </section>
+
+    <!-- PASO: ENTREVISTA -->
+    <section class="screen hidden" id="scr-interview">
+      <div class="screen-head">
+        <h2>Prepárate para la entrevista</h2>
+        <p>Seis preguntas probables para este cargo, qué evalúa cada una y qué te conviene preparar. Toca cada pregunta para ver el detalle.</p>
+      </div>
+
+      <p class="q-cat">Sobre tu experiencia</p>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"Cuéntame de una campaña que hayas gestionado de principio a fin."<span class="chev">▾</span></button>
+        <div class="q-body">
+          <div class="qb"><span>Qué está evaluando</span><p>Si realmente gestionas campañas completas (objetivo, audiencia, presupuesto, medición) o solo publicas contenido.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Un caso con estructura: objetivo de la campaña → a quién apuntaste → cuánto invertiste → qué resultado hubo. Usa tu mejor campaña de Dulce Sur, con números aunque sean modestos.</p></div>
+        </div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"¿Qué resultados de venta lograste con tus campañas?"<span class="chev">▾</span></button>
+        <div class="q-body">
+          <div class="qb"><span>Qué está evaluando</span><p>Tu orientación a resultados de negocio, no solo a likes. Es el corazón de este cargo en un e-commerce.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Recupera números reales: pedidos generados, crecimiento de ventas online, campañas con mejor retorno. Si no medías ventas directamente, prepara lo más cercano que tengas y dilo con honestidad.</p></div>
+        </div>
+      </div>
+
+      <p class="q-cat">Técnicas</p>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"¿Cómo segmentas una campaña en Meta Ads?"<span class="chev">▾</span></button>
+        <div class="q-body">
+          <div class="qb"><span>Qué está evaluando</span><p>Tu dominio real de la herramienta: audiencias, objetivos de campaña, presupuestos.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Describe cómo armabas tus campañas promocionadas: a quién apuntabas, con qué criterio y cómo decidías la inversión. Habla en el lenguaje de la plataforma (audiencias, alcance, conversión).</p></div>
+        </div>
+      </div>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"No vemos Google Ads ni Analytics en tu CV, ¿cómo lo abordarías?"<span class="chev">▾</span></button>
+        <div class="q-body">
+          <div class="qb"><span>Qué está evaluando</span><p>Tu honestidad frente a las brechas y tu disposición a aprender rápido.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Una respuesta directa: reconoce la brecha, muestra que dominas la lógica de campañas (que es transferible desde Meta) y menciona un plan concreto — ambas herramientas tienen certificaciones gratuitas que puedes iniciar incluso antes de la entrevista.</p></div>
+        </div>
+      </div>
+
+      <p class="q-cat">Conductuales</p>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"Cuéntame de una vez en que una campaña no funcionó."<span class="chev">▾</span></button>
+        <div class="q-body">
+          <div class="qb"><span>Qué está evaluando</span><p>Tu capacidad de análisis y de ajustar sobre la marcha, clave en pauta pagada.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Un caso real con formato STAR: qué salió mal, cómo lo detectaste, qué cambiaste y qué aprendiste. Evita culpar al presupuesto o al algoritmo.</p></div>
+        </div>
+      </div>
+
+      <p class="q-cat">Sobre el cargo</p>
+      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">"¿Por qué pasar de una pyme a un e-commerce más grande?"<span class="chev">▾</span></button>
+        <div class="q-body">
+          <div class="qb"><span>Qué está evaluando</span><p>Tu motivación real y si entiendes la diferencia de ritmo, presupuesto y exigencia de resultados.</p></div>
+          <div class="qb"><span>Qué deberías preparar</span><p>Una respuesta que valore lo aprendido en la pyme (hacer de todo, resultados con poco presupuesto) y lo que buscas ahora: especializarte en performance, trabajar con más datos y presupuesto real.</p></div>
+        </div>
+      </div>
+
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="showScreen('scr-keywords',4)">← Volver a las claves</button>
+        <button class="btn btn-primary" onclick="showScreen('scr-summary',6)">Ver mi resultado final →</button>
+      </div>
+    </section>
+
+    <!-- PASO: RESUMEN -->
+    <section class="screen hidden" id="scr-summary">
+      <div class="summary-hero">
+        <p class="kicker">Tu análisis Workea</p>
+        <h2>Analista de Marketing Digital</h2>
+        <p class="sh-sub">TiendaViva · Compatibilidad estimada: <b style="color:#fff">72%</b></p>
+        <div class="verdict">
+          <span class="v-emoji">🟡</span>
+          <div>
+            <h3>Postula, pero ajusta tu presentación</h3>
+            <p>Tu experiencia es pertinente para este cargo, pero tu CV la cuenta en un lenguaje que le resta valor. Antes de postular: nombra tus campañas como Meta Ads, haz visible tu experiencia e-commerce, agrega resultados con números, y aborda con un plan las brechas de Google Ads y Analytics. La decisión final es tuya; estos ajustes la hacen mucho más sólida.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="sum-card"><span class="sc-tag sc-green">● Tu principal fortaleza</span><p>Gestionas campañas pagadas en Meta y email marketing con Mailchimp: dos requisitos directos de la oferta.</p></div>
+        <div class="sum-card"><span class="sc-tag sc-amber">● Tu principal oportunidad</span><p>Tu experiencia e-commerce y tus resultados existen, pero están contados sin la palabra clave y sin números.</p></div>
+        <div class="sum-card"><span class="sc-tag sc-red">● Tu principal brecha</span><p>No se identifica Google Ads ni Google Analytics (GA4), dos requisitos críticos de la oferta.</p></div>
+      </div>
+
+      <div class="card next-steps">
+        <h3>Antes de postular</h3>
+        <ol>
+          <li><b>Ajusta tu CV</b> con las recomendaciones de la sección "Potencia tu CV".</li>
+          <li><b>Incorpora los términos "relacionados"</b> (Meta Ads, e-commerce, gestión de campañas) que ya describen tu experiencia real.</li>
+          <li><b>Considera iniciar las certificaciones gratuitas</b> de Google Ads y GA4: cierran tu brecha y muestran iniciativa.</li>
+          <li><b>Prepara tus respuestas</b> para las preguntas probables, especialmente sobre resultados de venta.</li>
+        </ol>
+      </div>
+
+      <div class="real-cta">
+        <div>
+          <h3>¿Quieres tu análisis real? 💬</h3>
+          <p>Este fue un ejemplo. Solicita gratis tu Informe Esencial con tu propia oferta y tu CV, o revisa los planes Estratégico y Experto para un análisis en profundidad.</p>
+        </div>
+        <button class="btn btn-wa" onclick="startEsencial()">Obtener mi Informe Esencial gratis →</button>
+      </div>
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="showScreen('scr-compare',3)">Ver análisis completo</button>
+        <button class="btn btn-ghost" onclick="resetApp()">Analizar otra oferta</button>
+      </div>
+    </section>
+
+    <!-- RESULTADOS REALES (modo IA) -->
+    <section class="screen hidden" id="scr-results">
+      <div class="print-brand">
+        <span style="display:flex;align-items:center;gap:.6rem">
+          <svg width="40" height="30" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgp" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgp)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span style="display:flex;flex-direction:column;line-height:1.05">
+            <b style="font-family:var(--body);font-weight:700;font-size:1.35rem;color:var(--navy);letter-spacing:-.015em">workea</b>
+            <span style="font-size:.6rem;color:var(--partner-blue);font-weight:700">by Tu Partner Laboral</span>
+          </span>
+        </span>
+        <span style="font-size:.72rem;color:var(--faint)">Informe Workea · No postules a ciegas · workea.cl</span>
+      </div>
+      <div id="resultsMount"></div>
+      <div class="actions split">
+        <button class="btn btn-ghost" onclick="resetApp()">Analizar otra oferta</button>
+        <button class="btn btn-primary" onclick="printResults()">Descargar mi informe (PDF)</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}
+
+/* Supabase: guardado de historial (silencioso, no bloquea nada) */
+let _sb = null;
+try {
+  _sb = supabase.createClient('https://pqelcrlxarendwearcwl.supabase.co','sb_publishable_A7q5busm8Pms9sW8L03L3w_WQpVqgze');
+} catch(e) {}
+
+async function guardarEnHistorial(d){
+  if(!_sb || modoPlan==='esencial' || !realMode) return;
+  try {
+    const { data: { session } } = await _sb.auth.getSession();
+    if(!session?.user) return;
+    const cargoTxt = (d.ofertas&&d.ofertas[0]&&(d.ofertas[0].cargo||d.ofertas[0].puesto)) || d.cargo || d.puesto || 'Cargo analizado';
+    const empresaTxt = (d.ofertas&&d.ofertas[0]&&d.ofertas[0].empresa) || d.empresa || '';
+    const compat = (d.ofertas&&d.ofertas[0]&&(d.ofertas[0].compatibilidad||d.ofertas[0].match)) || d.compatibilidad || d.match || 0;
+    const vered = (d.ofertas&&d.ofertas[0]&&d.ofertas[0].veredicto) || (d.veredicto&&(d.veredicto.titulo||d.veredicto)) || '';
+    await _sb.from('analisis').insert({
+      usuario: session.user.id,
+      cargo: String(cargoTxt).substring(0,200),
+      empresa: String(empresaTxt).substring(0,200),
+      compatibilidad: Number(compat)||0,
+      veredicto: String(vered).substring(0,120),
+      datos: d
+    });
+  } catch(e) { /* silencioso */ }
+}
+
+async function extractPdfText(file){
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data:buf}).promise;
+  const out = [];
+  for(let p=1;p<=pdf.numPages;p++){
+    const page = await pdf.getPage(p);
+    const tc = await page.getTextContent();
+    out.push(tc.items.map(i=>i.str).join(' '));
+  }
+  return out.join('\n\n');
+}
+function pickFile(kind){
+  const inp = document.createElement('input');
+  inp.type='file'; inp.accept='.pdf';
+  inp.onchange = async ()=>{
+    const f = inp.files[0]; if(!f) return;
+    const msg = kind==='cv' ? document.getElementById('cvMsg') : document.getElementById('inputError');
+    if(!/\.pdf$/i.test(f.name)){
+      msg.innerHTML = '<div class="error-box">ℹ️ <span>Por ahora leemos archivos <b>PDF</b>. Si tu documento es Word o una imagen, copia y pega su texto.</span></div>';
+      return;
+    }
+    msg.innerHTML = '<div class="error-box" style="background:var(--brand-tint);border-color:var(--brand-tint-2);color:var(--brand-deep)">📄 <span>Leyendo tu archivo…</span></div>';
+    try{
+      const txt = (await extractPdfText(f)).trim();
+      if(txt.length < 40){
+        msg.innerHTML = '<div class="error-box">ℹ️ <span>Este PDF no contiene texto legible (puede ser un documento escaneado). Copia y pega el texto directamente.</span></div>';
+        return;
+      }
+      if(kind==='cv'){
+        setCvTab('text');
+        document.getElementById('cvText').value = txt; validateCv();
+      } else {
+        setTab('text');
+        document.getElementById('offerText').value = txt; validateInput();
+      }
+      msg.innerHTML = '<div class="error-box" style="background:var(--green-bg);border-color:var(--green-line);color:#1c6b47">✅ <span>Leímos <b>'+f.name.replace(/[<>&"]/g,'')+'</b>. Revisa el texto extraído y continúa.</span></div>';
+    }catch(e){
+      msg.innerHTML = '<div class="error-box">⚠️ <span>No pudimos leer el archivo. Copia y pega el texto directamente.</span></div>';
+    }
+  };
+  inp.click();
+}
+function shotInfo(){
+  if(realMode){ pickShot(); return; }
+  setTab('text');
+  document.getElementById('inputError').innerHTML =
+    '<div class="error-box" style="background:var(--brand-tint);border-color:var(--brand-tint-2);color:var(--brand-deep)">🖼️ <span>En la demo las capturas no se procesan. En los informes reales (Esencial, Estratégico y Experto) sí puedes subir capturas de la oferta.</span></div>';
+}
+let realShots = [];
+function fileToResizedBase64(file){
+  return new Promise((res,rej)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const max = 1600; let w = img.width, hh = img.height;
+      if(Math.max(w,hh) > max){ const k = max/Math.max(w,hh); w = Math.round(w*k); hh = Math.round(hh*k); }
+      const c = document.createElement('canvas'); c.width = w; c.height = hh;
+      c.getContext('2d').drawImage(img, 0, 0, w, hh);
+      res({ data: c.toDataURL('image/jpeg', 0.82).split(',')[1], media_type: 'image/jpeg' });
+    };
+    img.onerror = rej;
+    img.src = URL.createObjectURL(file);
+  });
+}
+function pickShot(){
+  if(realShots.length >= 2){ alert('Máximo 2 capturas por oferta. Si la oferta es más larga, pega el texto.'); return; }
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async ()=>{
+    const f = inp.files[0]; if(!f) return;
+    try{ realShots.push(await fileToResizedBase64(f)); renderShotChips(); validateInput(); }
+    catch(e){ alert('No pudimos leer la imagen. Intenta con otra o pega el texto.'); }
+  };
+  inp.click();
+}
+function renderShotChips(){
+  document.getElementById('offerShotChip').innerHTML = realShots.map((s,i)=>
+    `<span class="file-chip">🖼️ Captura ${i+1} <button aria-label="Quitar" onclick="realShots.splice(${i},1);renderShotChips();validateInput()">×</button></span>`).join(' ');
+}
+
+/* ===== CORREO DE CONTACTO WORKEA ===== */
+const CONTACTO_EMAIL = 'workea@tupartnerlaboral.cl';
+const CONTACTO_URL = 'mailto:' + CONTACTO_EMAIL
+  + '?subject=' + encodeURIComponent('Quiero mi análisis Workea')
+  + '&body=' + encodeURIComponent('¡Hola! Vengo de workea.cl y quiero mi análisis real.\n\nAdjunto en este correo:\n1. La oferta laboral que me interesa (texto, link o captura).\n2. Mi CV en PDF.\n\n¡Gracias!');
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.wa-link').forEach(a=>{a.href=CONTACTO_URL;a.removeAttribute('target');});
+  const mk=(asunto,cuerpo)=>'mailto:'+CONTACTO_EMAIL+'?subject='+encodeURIComponent(asunto)+'&body='+encodeURIComponent(cuerpo);
+  document.querySelectorAll('.experto-wait').forEach(a=>{a.href=mk('Lista de espera — Informe Experto','¡Hola! Quiero que me avisen cuando el Informe Workea Experto esté disponible.\n\n¡Gracias!');});
+  document.querySelectorAll('.esencial-link').forEach(a=>{a.href=mk('Quiero mi Informe Esencial gratis','¡Hola! Quiero mi Informe Workea Esencial gratuito.\n\nAdjunto:\n1. La oferta laboral que me interesa (texto, link o captura).\n2. Mi CV en PDF.\n\n¡Gracias!');});
+});
+
+/* ================= estado ================= */
+const state = { offerReady:false, cvReady:false, tab:'link', cvTab:'file' };
+
+const STEPS = [
+  {id:'scr-input', label:'Oferta'},
+  {id:'scr-offer', label:'Análisis'},
+  {id:'scr-cv', label:'Tu CV'},
+  {id:'scr-compare', label:'Comparación'},
+  {id:'scr-adapt', label:'Tu postulación'},
+  {id:'scr-interview', label:'Entrevista'},
+  {id:'scr-summary', label:'Resultado'}
+];
+
+/* ================= navegación ================= */
+function startApp(){
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  window.scrollTo(0,0);
+  renderStepper(0);
+}
+function irActivarCodigo(){
+  startApp();
+  // Ocultar lo que no aplica a quien ya tiene código, para evitar confusión
+  const banner = document.getElementById('demoBanner');
+  const ejemplo = document.getElementById('demoEjemploStrip');
+  if(banner) banner.style.display = 'none';
+  if(ejemplo) ejemplo.style.display = 'none';
+  setTimeout(()=>{
+    const inp = document.getElementById('codigoInput');
+    if(inp){
+      inp.scrollIntoView({behavior:'smooth', block:'center'});
+      inp.focus();
+    }
+  }, 150);
+}
+function goLanding(){
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('landing').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+function showScreen(id, stepIdx){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  const el = document.getElementById(id);
+  el.classList.remove('hidden');
+  el.style.animation='none'; void el.offsetWidth; el.style.animation='';
+  renderStepper(stepIdx);
+  window.scrollTo({top:0});
+  if(id==='scr-compare') animateRing(72);
+}
+function renderStepper(activeIdx){
+  const wrap = document.getElementById('stepper');
+  wrap.innerHTML = STEPS.map((s,i)=>{
+    const cls = i<activeIdx?'done':(i===activeIdx?'active':'');
+    const n = i<activeIdx?'✓':(i+1);
+    return `<span class="step-pill ${cls}"><span class="n">${n}</span>${s.label}</span>`;
+  }).join('<span class="step-sep">›</span>');
+  document.getElementById('stepperMobile').textContent = `Paso ${activeIdx+1} de ${STEPS.length} · ${STEPS[activeIdx].label}`;
+}
+function resetApp(){
+  document.title = 'Workea · No postules a ciegas';
+  state.offerReady=false; state.cvReady=false;
+  document.getElementById('offerUrl').value='';
+  document.getElementById('offerText').value='';
+  document.getElementById('cvText').value='';
+  ['offerFileChip','offerShotChip','cvFileChip','inputError'].forEach(id=>document.getElementById(id).innerHTML='');
+  document.getElementById('btnAnalyze').disabled=true;
+  document.getElementById('btnCompare').disabled=true;
+  showScreen('scr-input',0);
+}
+
+/* ================= ingreso de oferta ================= */
+function setTab(t){
+  state.tab=t;
+  document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+  ['link','text','file','shot'].forEach(x=>document.getElementById('tab-'+x).classList.toggle('hidden',x!==t));
+  validateInput();
+}
+function validateInput(){
+  const url = document.getElementById('offerUrl').value.trim();
+  const txt = document.getElementById('offerText').value.trim();
+  if(realMode){
+    state.offerReady = (txt.length > 40) || realShots.length > 0;
+    document.getElementById('btnAnalyze').disabled = !state.offerReady;
+    return;
+  }
+  let ok=false;
+  if(state.tab==='link') ok = url.length>8;
+  if(state.tab==='text') ok = txt.length>40;
+  if(state.tab==='file') ok = !!document.querySelector('#offerFileChip .file-chip');
+  if(state.tab==='shot') ok = !!document.querySelector('#offerShotChip .file-chip');
+  state.offerReady=ok;
+  document.getElementById('btnAnalyze').disabled=!ok;
+  const err=document.getElementById('inputError');
+  if(state.tab==='text' && txt.length>0 && txt.length<=40){
+    err.innerHTML = `<div class="error-box">⚠️ <span>El texto es muy breve para analizarlo bien. Incluye el cargo, los requisitos y las responsabilidades de la oferta.</span></div>`;
+  } else { err.innerHTML=''; }
+}
+function fakeFile(kind,name){
+  const target = kind==='cv' ? 'cvFileChip' : (state.tab==='shot'?'offerShotChip':'offerFileChip');
+  document.getElementById(target).innerHTML =
+    `<span class="file-chip">📎 ${name} <button aria-label="Quitar archivo" onclick="removeFile('${target}','${kind}');event.stopPropagation()">×</button></span>`;
+  if(kind==='cv'){ validateCv(); } else { validateInput(); }
+}
+function removeFile(target,kind){
+  document.getElementById(target).innerHTML='';
+  if(kind==='cv'){ validateCv(); } else { validateInput(); }
+}
+function useDemoOffer(){
+  setTab('text');
+  document.getElementById('offerText').value =
+`Analista de Marketing Digital — TiendaViva (Santiago, híbrido)
+
+Buscamos un/a analista para liderar el marketing digital de nuestro e-commerce: campañas pagadas, contenidos y medición de resultados.
+
+Requisitos: 2+ años en marketing digital; gestión de campañas pagadas en Meta Ads y Google Ads; manejo de Google Analytics (GA4) y reportería de métricas; experiencia en e-commerce o venta online.
+
+Deseable: email marketing (Mailchimp/Klaviyo), SEO básico, manejo de Canva o Figma, certificaciones de Google o Meta.
+
+Responsabilidades: planificar y ejecutar campañas de punta a punta, gestionar presupuesto publicitario, crear contenidos junto al equipo comercial, medir y reportar resultados de venta.
+
+Contrato indefinido · Jornada completa · Modalidad híbrida.`;
+  validateInput();
+}
+
+/* ================= carga de CV ================= */
+function setCvTab(t){
+  state.cvTab=t;
+  document.querySelectorAll('[data-cvtab]').forEach(b=>b.classList.toggle('active',b.dataset.cvtab===t));
+  ['file','text'].forEach(x=>document.getElementById('cvtab-'+x).classList.toggle('hidden',x!==t));
+  validateCv();
+}
+function validateCv(){
+  const txt = document.getElementById('cvText').value.trim();
+  let ok=false;
+  if(state.cvTab==='file') ok = !!document.querySelector('#cvFileChip .file-chip');
+  if(state.cvTab==='text') ok = txt.length>40;
+  state.cvReady=ok;
+  document.getElementById('btnCompare').disabled=!ok;
+}
+function useDemoCv(){
+  setCvTab('text');
+  document.getElementById('cvText').value =
+`Camila Torres — Publicista
+
+Experiencia:
+Encargada de Marketing, Dulce Sur (pyme de alimentos, 2023–hoy)
+- Manejo de redes sociales de la marca (Instagram, Facebook, TikTok).
+- Publicaciones promocionadas para lanzamientos y fechas especiales.
+- Envío de correos a clientes con Mailchimp.
+- Apoyo en la tienda online y coordinación de pedidos.
+- Creación de contenido y material gráfico en Canva.
+
+Community Manager, Agencia Prisma (2021–2023)
+- Gestión de redes sociales para 5 marcas de consumo.
+- Redacción de contenidos y calendarios de publicación.
+- Reportes mensuales de seguidores e interacciones.
+
+Educación: Publicidad, Duoc UC (2020).
+Habilidades: Canva, redes sociales, Office, trabajo en equipo.`;
+  validateCv();
+}
+
+/* ================= loading simulado ================= */
+function runLoading(opts, done){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById('scr-loading').classList.remove('hidden');
+  renderStepper(opts.step);
+  window.scrollTo({top:0});
+  document.getElementById('loadIcon').textContent = opts.icon;
+  document.getElementById('loadTitle').textContent = opts.title;
+  const msgEl = document.getElementById('loadMsg');
+  const bar = document.getElementById('loadBar');
+  bar.style.width='0%';
+  let i=0;
+  msgEl.textContent = opts.msgs[0];
+  bar.style.width='18%';
+  const iv = setInterval(()=>{
+    i++;
+    if(i<opts.msgs.length){
+      msgEl.style.opacity=0;
+      setTimeout(()=>{ msgEl.textContent=opts.msgs[i]; msgEl.style.opacity=1; },250);
+      bar.style.width = (18 + (i/(opts.msgs.length))*75) + '%';
+    } else {
+      clearInterval(iv);
+      bar.style.width='100%';
+      setTimeout(done, 500);
+    }
+  }, 1100);
+}
+function runOfferAnalysis(){
+  runLoading({
+    step:1, icon:'🔍', title:'Analizando la oferta…',
+    msgs:['Leyendo el contenido de la oferta','Identificando requisitos críticos y deseables','Detectando competencias y palabras clave','Preparando tu análisis']
+  }, ()=> showScreen('scr-offer',1));
+}
+function runComparison(){
+  runLoading({
+    step:3, icon:'⚖️', title:'Comparando tu experiencia con la oferta…',
+    msgs:['Leyendo tu experiencia laboral','Buscando coincidencias con los requisitos','Identificando experiencia relacionada','Detectando posibles brechas','Redactando tu lectura personalizada']
+  }, ()=> showScreen('scr-compare',3));
+}
+
+/* ================= interacciones ================= */
+function animateRing(pct){
+  const circ = 2*Math.PI*56;
+  const ring = document.getElementById('ringVal');
+  const num = document.getElementById('ringNum');
+  ring.style.strokeDasharray = circ;
+  ring.style.strokeDashoffset = circ;
+  requestAnimationFrame(()=>{ setTimeout(()=>{
+    ring.style.strokeDashoffset = circ*(1-pct/100);
+  },100); });
+  let cur=0;
+  const iv=setInterval(()=>{
+    cur+=2; if(cur>=pct){cur=pct;clearInterval(iv);}
+    num.textContent=cur+'%';
+  },26);
+}
+function toggleQ(btn){ btn.parentElement.classList.toggle('open'); }
+function enviarInforme(){
+  const mount = document.getElementById('resultsMount');
+  if(!mount) return;
+  // Recopilar el texto del informe
+  const cargo = mount.querySelector('.offer-header h3')?.textContent || 'Cargo analizado';
+  const empresa = mount.querySelector('.company')?.textContent || '';
+  const compat = mount.querySelector('.ring-num')?.textContent || '';
+  const fortalezas = [...mount.querySelectorAll('.finding.f-green b')].map(b=>b.textContent).join(', ');
+  const brechas = [...mount.querySelectorAll('.finding.f-red b')].map(b=>b.textContent).join(', ');
+  const veredicto = mount.querySelector('.verdict h3')?.textContent || '';
+
+  const asunto = encodeURIComponent('Informe Workea — ' + cargo + (empresa ? ' · ' + empresa : ''));
+  const cuerpo = encodeURIComponent(
+    'Hola, te envío mi informe Workea para revisión profesional.\n\n' +
+    'CARGO: ' + cargo + '\n' +
+    (empresa ? 'EMPRESA: ' + empresa + '\n' : '') +
+    'COMPATIBILIDAD: ' + compat + '\n' +
+    'FORTALEZAS: ' + fortalezas + '\n' +
+    'BRECHAS: ' + brechas + '\n' +
+    'VEREDICTO: ' + veredicto + '\n\n' +
+    'Adjunto también el PDF descargado desde la plataforma.'
+  );
+  window.location.href = 'mailto:workea@tupartnerlaboral.cl?subject=' + asunto + '&body=' + cuerpo;
+}
+
+function printResults(){
+  const el = document.querySelector('#resultsMount .offer-header h3');
+  const cargo = el ? el.textContent.trim() : 'analisis';
+  const titulo = document.title;
+  document.title = ('Informe-Workea-'+cargo).replace(/\s+/g,'-').replace(/[^\wáéíóúñÁÉÍÓÚÑ\-]/g,'');
+  window.print();
+  setTimeout(()=>{ document.title = titulo; }, 800);
+}
+
+/* ================= MODO ANÁLISIS REAL (IA) ================= */
+let realMode = false, accessCode = '', offerPayload = null, modoPlan = 'completo';
+
+function activarCodigo(){
+  const v = document.getElementById('codigoInput').value.trim();
+  if(!v){ return; }
+  accessCode = v; realMode = true; modoPlan = 'completo';
+  const banner = document.getElementById('demoBanner');
+  const ejemplo = document.getElementById('demoEjemploStrip');
+  if(banner) banner.style.display = 'none';
+  if(ejemplo) ejemplo.style.display = 'none';
+  document.getElementById('realStrip').innerHTML =
+    '<p><b>✅ Análisis real activado.</b> Pega el texto de tu oferta, sube su PDF o una captura (hasta 3 ofertas para compararlas), y luego tu CV.</p>';
+  document.querySelector('[data-tab="link"]').classList.add('hidden');
+  setTab('text');
+  document.getElementById('extraOffers').classList.remove('hidden');
+}
+
+function startEsencial(){
+  if(localStorage.getItem('workea_esencial_usado')){
+    startApp(); showScreen('scr-input',0);
+    document.getElementById('inputError').innerHTML =
+      '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tu Informe Esencial gratis en este dispositivo. Para tu siguiente análisis, el <b>Workea Match</b> te entrega el plan de acción completo al instante.</span></div>';
+    return;
+  }
+  realMode = true; modoPlan = 'esencial'; accessCode = '';
+  startApp(); showScreen('scr-input',0);
+  document.getElementById('realStrip').innerHTML =
+    '<p><b>🩵 Informe Esencial gratis activado.</b> Pega el texto de tu oferta, sube su PDF o una captura — y luego tu CV. Recibirás tu orientación al instante (1 informe gratis por persona).</p>';
+  document.querySelector('[data-tab="link"]').classList.add('hidden');
+  setTab('text');
+}
+
+function startOfferFlow(){
+  if(!realMode){ runOfferAnalysis(); return; }
+  let textos = [document.getElementById('offerText').value.trim(),
+    document.getElementById('offerText2').value.trim(),
+    document.getElementById('offerText3').value.trim()].filter(o=>o.length>40);
+  if(modoPlan==='esencial') textos = textos.slice(0,1);
+  if(!textos.length && !realShots.length){
+    document.getElementById('inputError').innerHTML =
+      '<div class="error-box">ℹ️ <span>Pega el texto de la oferta, sube su PDF o una captura para continuar.</span></div>';
+    return;
+  }
+  offerPayload = { ofertas: textos, imagenes: realShots.slice(0,2) };
+  showScreen('scr-cv',2);
+}
+
+function startCompare(){
+  if(!realMode){ runComparison(); return; }
+  const cv = document.getElementById('cvText').value.trim();
+  if(state.cvTab!=='text' || cv.length<=40){
+    setCvTab('text');
+    return;
+  }
+  runRealAnalysis(offerPayload, cv);
+}
+
+async function runRealAnalysis(oferta, cv){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById('scr-loading').classList.remove('hidden');
+  renderStepper(3); window.scrollTo({top:0});
+  document.getElementById('loadIcon').textContent='🤖';
+  document.getElementById('loadTitle').textContent='Generando tu análisis real…';
+  const msgs = ['Leyendo la oferta y tu CV','Identificando requisitos críticos','Comparando tu experiencia','Detectando fortalezas y brechas','Redactando recomendaciones','Preparando tu guía de entrevista'];
+  const msgEl=document.getElementById('loadMsg'), bar=document.getElementById('loadBar');
+  let i=0; msgEl.textContent=msgs[0]; bar.style.width='10%';
+  const iv=setInterval(()=>{ i=(i+1)%msgs.length; msgEl.textContent=msgs[i];
+    bar.style.width=Math.min(92,parseFloat(bar.style.width)+13)+'%'; },2500);
+  try{
+    const r = await fetch('/api/analizar',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ofertas:oferta.ofertas||[],imagenes:oferta.imagenes||[],cv,codigo:accessCode,modo:modoPlan})});
+    const data = await r.json();
+    clearInterval(iv);
+    if(!r.ok || data.error){ throw new Error(data.error||'Error del servidor'); }
+    bar.style.width='100%';
+    if(modoPlan==='esencial'){ try{ localStorage.setItem('workea_esencial_usado','1'); }catch(e){} }
+    setTimeout(()=>{ renderResults(data); },400);
+  }catch(e){
+    clearInterval(iv);
+    document.getElementById('scr-loading').classList.add('hidden');
+    const cvScr=document.getElementById('scr-cv'); cvScr.classList.remove('hidden');
+    renderStepper(2);
+    alert('No pudimos generar el análisis: '+e.message+'\n\nRevisa tu código de acceso o inténtalo de nuevo en unos minutos.');
+  }
+}
+
+function esc(s){ return String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function renderResults(d){
+  guardarEnHistorial(d);
+  const NIVEL = {verde:['🟢','f-green'],amarillo:['🟡','f-amber'],naranjo:['🟠','f-amber'],rojo:['🔴','f-red']};
+  const findings=(arr,cls)=> (arr||[]).map(f=>`<div class="finding ${cls}"><b>${esc(f.titulo)}</b><p>${esc(f.detalle)}</p></div>`).join('');
+  const group=(color,titulo,arr,cls)=> (arr&&arr.length)?`
+    <div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:${color}"></span><h3>${titulo}</h3><span class="count">${arr.length}</span></div>${findings(arr,cls)}</div>`:'';
+  const KWCLS={presente:'kw-p',relacionada:'kw-r',no:'kw-n'};
+  const claves=(d.claves||[]).map(k=>`<span class="kw-chip ${KWCLS[k.estado]||'kw-n'}" title="${esc(k.nota||'')}"><i></i>${esc(k.palabra)}</span>`).join(' ');
+  const cvRecs=(d.cv||[]).map(c=>`
+    <div class="card adapt-block"><h3>✍️ ${esc(c.seccion)}</h3>
+      <div class="adapt-grid">
+        <div class="version v-current"><span class="v-tag">Tu versión actual</span>${esc(c.actual)}</div>
+        <div class="version v-reco"><span class="v-tag">Recomendación Workea</span>${esc(c.recomendacion)}</div>
+      </div>
+      <div class="why">💡<span><b>Por qué importa:</b> ${esc(c.porque)}</span></div>
+    </div>`).join('');
+  const qs=(d.entrevista||[]).map((q,i)=>`
+    <div class="q-item ${i===0?'open':''}"><button class="q-toggle" onclick="toggleQ(this)">${esc(q.pregunta)}<span class="chev">▾</span></button>
+      <div class="q-body">
+        <div class="qb"><span>Qué está evaluando</span><p>${esc(q.evalua)}</p></div>
+        <div class="qb"><span>Qué deberías preparar</span><p>${esc(q.preparar)}</p></div>
+      </div>
+    </div>`).join('');
+  const [emo] = NIVEL[(d.recomendacion||{}).nivel]||['🟡'];
+  const info=d.info||{};
+  const metas=[['Empresa',info.empresa],['Ubicación',info.ubicacion],['Modalidad',info.modalidad],['Seniority',info.seniority]]
+    .filter(m=>m[1]).map(m=>`<div class="meta-item"><span>${m[0]}</span><b>${esc(m[1])}</b></div>`).join('');
+  const circ=2*Math.PI*56, pct=Math.max(0,Math.min(100,d.compatibilidad?.porcentaje??0));
+
+  document.getElementById('resultsMount').innerHTML = `
+    <div class="screen-head"><h2>Tu análisis Workea</h2>
+      <p>Generado automáticamente con la metodología Workea a partir de tu oferta y tu CV. Léelo completo: el número importa menos que la lectura.</p></div>
+    <div class="card"><div class="offer-header"><div><h3>${esc(info.cargo||'Oportunidad analizada')}</h3>
+      <p class="company">${esc(info.empresa||'')}</p></div></div>
+      <div class="meta-grid">${metas}</div></div>
+    <div class="compat-hero" style="margin-top:1.2rem">
+      <div class="ring-wrap"><svg width="130" height="130" viewBox="0 0 130 130">
+        <circle class="ring-bg" cx="65" cy="65" r="56" fill="none" stroke-width="11"/>
+        <circle class="ring-val" cx="65" cy="65" r="56" fill="none" stroke-width="11"
+          stroke-dasharray="${circ}" stroke-dashoffset="${circ*(1-pct/100)}"/></svg>
+        <div class="ring-label"><b>${pct}%</b><span>estimada</span></div></div>
+      <div class="compat-reading"><p class="kicker">Compatibilidad estimada · lo que significa</p>
+        <h3>${esc(d.compatibilidad?.titulo||'')}</h3><p>${esc(d.compatibilidad?.lectura||'')}</p></div></div>
+    ${d.observacion?`<div class="note-card" style="margin-top:1rem"><b>Observación sobre la oportunidad:</b> ${esc(d.observacion)}</div>`:''}
+    ${(d.nivel_calibre?.nivel || d.benchmark_salarial?.rango_min)?`<div class="finding-group" style="margin-top:1.2rem"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Ajuste de nivel y sueldo referencial</h3></div>
+      <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        ${d.nivel_calibre?.nivel?`<div>
+          <p style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:.4rem">Nivel de calce</p>
+          <p style="font-size:.95rem;font-weight:700;margin-bottom:.3rem">${d.nivel_calibre.nivel==='sobrecalificado'?'📈 Sobrecalificado/a':d.nivel_calibre.nivel==='subcalificado'?'📉 Bajo el nivel pedido':'✅ Nivel alineado'}</p>
+          <p style="font-size:.87rem;color:var(--muted)">${esc(d.nivel_calibre.detalle||'')}</p>
+        </div>`:'<div></div>'}
+        ${d.benchmark_salarial?.rango_min?`<div>
+          <p style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:.4rem">Sueldo referencial</p>
+          <p style="font-size:.95rem;font-weight:700;margin-bottom:.3rem">${esc(d.benchmark_salarial.moneda||'CLP')} ${Number(d.benchmark_salarial.rango_min).toLocaleString('es-CL')} – ${Number(d.benchmark_salarial.rango_max).toLocaleString('es-CL')}</p>
+          <p style="font-size:.87rem;color:var(--muted)">${esc(d.benchmark_salarial.lectura||'')}</p>
+        </div>`:''}
+      </div></div>`:''}
+    ${''}${(d.comparacion&&d.comparacion.length>1)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Comparación de tus ofertas: ¿a cuál postular primero?</h3></div>${d.comparacion.map((c,i)=>`<div class="finding ${i===0?'f-green':'f-neutral'}"><b>${i===0?'🥇 ':i===1?'🥈 ':'🥉 '}${esc(c.oferta)} — ${c.porcentaje??''}%</b><p>${esc(c.veredicto)}</p></div>`).join('')}</div>`:''}
+    ${group('var(--green)','Fortalezas',d.fortalezas,'f-green')}
+    ${group('var(--amber)','Oportunidades de mejora',d.oportunidades,'f-amber')}
+    ${group('var(--red)','Brechas',d.brechas,'f-red')}
+    ${group('var(--faint)','Información insuficiente',d.insuficiente,'f-neutral')}
+    ${(d.claves&&d.claves.length)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Las claves de esta oferta</h3></div>
+      <div class="card"><div class="kw-legend">
+        <span><i class="kw-dot" style="background:var(--green)"></i> Presente</span>
+        <span><i class="kw-dot" style="background:var(--amber)"></i> Relacionada</span>
+        <span><i class="kw-dot" style="background:var(--faint)"></i> No identificada</span></div>${claves}</div></div>`:''}
+    ${(d.cv&&d.cv.length)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Potencia tu CV</h3></div>${cvRecs}</div>`:''}
+    ${(d.entrevista&&d.entrevista.length)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Prepárate para la entrevista</h3></div>${qs}</div>`:''}
+    <div class="summary-hero" style="margin-top:1.6rem"><p class="kicker">Recomendación Workea</p>
+      <div class="verdict" style="margin-top:.6rem"><span class="v-emoji">${emo}</span>
+        <div><h3>${esc(d.recomendacion?.titulo||'')}</h3><p>${esc(d.recomendacion?.detalle||'')}</p></div></div></div>
+    ${modoPlan!=='esencial'?`<div class="real-cta" style="margin-top:1.4rem"><div><h3>¿Tu LinkedIn refleja todo esto? 🔵</h3><p>Acabas de analizar tu postulación. Ahora descubre si tu perfil de LinkedIn comunica lo mismo que tu CV — antes de que lo vea el reclutador.</p></div><a class="btn btn-brand" href="https://mpago.la/2pt7YtA" target="_blank" rel="noopener">Obtener Workea Profile Check →</a></div><p style="text-align:center;font-size:.85rem;color:var(--muted);margin-top:1rem">¿Quieres acompañamiento personalizado? Conoce las <a class="btn-link" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener">asesorías de Tu Partner Laboral →</a></p>`:''}
+    ${(modoPlan!=='esencial' && accessCode.toUpperCase().startsWith('EXP-'))?`<div class="note-card" style="margin-top:1.4rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+      <div>
+        <b>📩 Enviar mi informe a Workea</b>
+        <p style="font-size:.85rem;margin-top:.2rem;color:var(--muted)">Como parte de tu Informe Workea Experto, envíanos tu informe con un clic — es importante para que podamos preparar tu Estrategia Workea personalizada al cierre de tu período.</p>
+      </div>
+      <button class="btn btn-ghost" onclick="enviarInforme()" style="white-space:nowrap;flex-shrink:0">Enviar mi informe →</button>
+    </div>`:''}
+    ${modoPlan==='esencial'?`<div class="real-cta"><div><h3>Este fue tu Informe Esencial 🩵</h3><p>Ya sabes si vale la pena postular. El <b>Workea Match</b> ($2.990, precio de acceso anticipado) te da 7 días de acceso ilimitado y agrega el análisis detallado, las palabras clave, las recomendaciones para tu CV, tu preparación de entrevista y el plan de acción priorizado — al instante.</p></div><button class="btn btn-wa" onclick="comprarMatch(this)">Obtener Informe Workea Match →</button></div>`:''}`;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById('scr-results').classList.remove('hidden');
+  renderStepper(6); window.scrollTo({top:0});
+  const cel = document.querySelector('#resultsMount .offer-header h3');
+  if(cel){ document.title = ('Informe-Workea-'+cel.textContent.trim()).replace(/\s+/g,'-').replace(/[^\wáéíóúñÁÉÍÓÚÑ\-]/g,''); }
+}
+
+async function comprarMatch(btn){
+  const textoOriginal = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Generando tu pago...';
+  try {
+    const r = await fetch('/api/crear-pago', { method: 'POST' });
+    const data = await r.json();
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      alert('No se pudo iniciar el pago. Intenta de nuevo.');
+      btn.disabled = false;
+      btn.textContent = textoOriginal;
+    }
+  } catch (err) {
+    alert('No se pudo iniciar el pago. Intenta de nuevo.');
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+  }
+}
+
+</script>
+</body>
+</html>
