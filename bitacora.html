@@ -365,15 +365,13 @@
 
   function renderGoalsBar(){
     const bar = document.getElementById('goals-bar');
-    if(objetivos.length === 0){
-      bar.style.display = 'none';
-      return;
-    }
     bar.style.display = 'flex';
     const chips = objetivos.map(o => `
       <button class="goal-chip ${objetivoSeleccionado === o.id ? 'active' : ''}" onclick="seleccionarObjetivo('${o.id}')">${escapeHtml(o.cargo_objetivo)}</button>
     `).join('');
-    const todosChip = `<button class="goal-chip ${!objetivoSeleccionado ? 'active' : ''}" onclick="seleccionarObjetivo(null)">Todos</button>`;
+    const todosChip = objetivos.length > 0
+      ? `<button class="goal-chip ${!objetivoSeleccionado ? 'active' : ''}" onclick="seleccionarObjetivo(null)">Todos</button>`
+      : `<span style="font-size:11.5px; color:var(--ink-faint);">¿Qué cargos estás buscando?</span>`;
 
     bar.innerHTML = `
       ${todosChip}${chips}
