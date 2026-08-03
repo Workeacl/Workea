@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workea Bitácora</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --cian:#2be0f8; --azul:#1999f1; --violeta:#7b5cf0; --navy:#0a1430;
+    --grad: linear-gradient(120deg, var(--cian), var(--azul) 55%, var(--violeta));
+    --bg:#f5f6fb; --card:#ffffff; --ink:#0a1430; --ink-soft:#5b6478; --ink-faint:#6d7690;
+    --line:#e7e9f2; --good:#28c98a; --bad:#ef5a72;
+    --radius:16px; --shadow:0 4px 16px rgba(10,20,48,0.05);
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--bg); color:var(--ink); }
+  :focus-visible{ outline:2.5px solid var(--azul); outline-offset:2px; border-radius:6px; }
+
+  .topbar{
+    background:var(--navy); color:#fff; padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:15px; }
+  .brand-mark{ width:28px;height:28px;border-radius:8px; background:var(--grad);
+    display:flex;align-items:center;justify-content:center; font-weight:800; color:var(--navy); font-size:13px; }
+  .btn-primary{
+    background:var(--grad); color:#fff; border:none; font-weight:700; font-size:13px;
+    padding:10px 16px; border-radius:11px; cursor:pointer;
+  }
+  .btn-ghost{ background:none; border:1px solid var(--line); color:var(--ink-soft);
+    font-weight:600; font-size:12.5px; padding:8px 13px; border-radius:10px; cursor:pointer; }
+
+  .content{ max-width:900px; margin:0 auto; padding:28px 20px 60px; }
+
+  .gate{
+    max-width:420px; margin:80px auto; text-align:center; background:var(--card);
+    border:1px solid var(--line); border-radius:20px; padding:36px 28px; box-shadow:var(--shadow);
+  }
+  .gate h2{ font-size:18px; margin:0 0 8px; }
+  .gate p{ font-size:13.5px; color:var(--ink-soft); line-height:1.5; }
+  .gate a{ color:var(--azul); font-weight:700; text-decoration:none; }
+
+  #app-view{ display:none; }
+
+  .process-card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 16px; display:flex; align-items:center; gap:12px; margin-bottom:10px;
+    cursor:pointer; box-shadow:var(--shadow);
+  }
+  .logo-chip{ width:36px;height:36px;border-radius:10px; background:var(--grad);
+    color:#fff; font-weight:800; font-size:13px; display:flex;align-items:center;justify-content:center; flex-shrink:0; }
+  .process-role{ font-size:13.5px; font-weight:700; }
+  .process-company{ font-size:12px; color:var(--ink-soft); }
+  .state-badge{ margin-left:auto; font-size:11px; font-weight:700; padding:5px 10px; border-radius:100px;
+    background:rgba(25,153,241,0.14); color:#0d6db8; white-space:nowrap; }
+
+  .empty-msg{ text-align:center; padding:50px 20px; color:var(--ink-soft); font-size:13.5px; }
+
+  .empty-state{
+    max-width:460px; margin:40px auto 0; text-align:center;
+    padding:36px 30px; background:var(--card); border:1px solid var(--line);
+    border-radius:22px; box-shadow:var(--shadow);
+  }
+  .empty-icon{
+    width:56px; height:56px; border-radius:16px; margin:0 auto 16px;
+    background:var(--grad); display:flex; align-items:center; justify-content:center; font-size:24px;
+  }
+  .empty-title{ font-size:19px; font-weight:800; letter-spacing:-0.01em; }
+  .empty-sub{ font-size:13.5px; color:var(--ink-soft); line-height:1.55; margin-top:10px; }
+  .empty-ways{ margin-top:26px; padding-top:20px; border-top:1px solid var(--line); text-align:left; display:flex; flex-direction:column; gap:12px; }
+  .empty-way{ font-size:12.5px; color:var(--ink-soft); display:flex; align-items:flex-start; gap:8px; line-height:1.4; }
+  .empty-way-ic{ flex-shrink:0; }
+  .empty-video-link{ display:inline-block; margin-top:12px; font-size:12px; font-weight:700; color:var(--ink-soft); cursor:pointer; }
+  .empty-video-link:hover{ color:var(--azul); }
+  .howit-step{ display:flex; gap:12px; margin-bottom:18px; }
+  .howit-num{
+    width:26px; height:26px; border-radius:50%; background:var(--grad); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0;
+  }
+  .howit-title{ font-size:13.5px; font-weight:700; }
+  .howit-desc{ font-size:12px; color:var(--ink-soft); margin-top:2px; line-height:1.4; }
+
+  .modal-overlay{ position:fixed; inset:0; background:rgba(10,20,48,0.45);
+    display:none; align-items:center; justify-content:center; z-index:50; padding:20px; }
+  .modal-overlay.show{ display:flex; }
+  .modal{ background:#fff; border-radius:20px; width:100%; max-width:420px; padding:24px;
+    box-shadow:0 30px 60px rgba(10,20,48,0.25); }
+  .modal h3{ margin:0 0 16px; font-size:16px; }
+  .field{ margin-bottom:12px; }
+  .field label{ display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); margin-bottom:5px; }
+  .field input{ width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:10px;
+    font-size:13px; font-family:inherit; }
+  .modal-actions{ display:flex; gap:8px; margin-top:16px; }
+
+  .ficha-back{ display:flex; align-items:center; gap:8px; margin-bottom:16px; cursor:pointer;
+    color:var(--ink-soft); font-size:13px; font-weight:600; }
+  .ficha-title{ font-size:19px; font-weight:800; }
+  .ficha-company{ font-size:13px; color:var(--ink-soft); margin-bottom:20px; }
+
+  .timeline{ margin-top:16px; }
+  .tl-item{ display:flex; gap:12px; padding-bottom:16px; position:relative; }
+  .tl-item::before{ content:""; position:absolute; left:15px; top:30px; bottom:0; width:2px; background:var(--line); }
+  .tl-item:last-child::before{ display:none; }
+  .tl-icon{ width:30px;height:30px;border-radius:50%; background:var(--bg); border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center; font-size:13px; flex-shrink:0; }
+  .tl-title{ font-size:13px; font-weight:700; }
+  .tl-date{ font-size:11px; color:var(--ink-soft); }
+
+  .state-buttons{ display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+  .state-btn{ background:#fff; border:1.5px solid var(--line); border-radius:100px; padding:8px 13px;
+    font-size:12px; font-weight:600; cursor:pointer; }
+  .state-btn:hover{ border-color:var(--azul); color:var(--azul); }
+
+  .toast{ position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(12px);
+    background:var(--navy); color:#fff; padding:12px 18px; border-radius:12px; font-size:13px; font-weight:600;
+    opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; z-index:60; }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .error-text{ color:var(--bad); font-size:12px; margin-top:8px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <svg width="30" height="22" viewBox="0 0 100 74" aria-hidden="true">
+      <defs><linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/>
+      </linearGradient></defs>
+      <path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wg)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Workea Bitácora
+  </div>
+  <button class="btn-ghost" id="btn-add" style="display:none;" onclick="openModal()">＋ Agregar postulación</button>
+</div>
+
+<div class="content">
+
+  <!-- Gate: se muestra si no hay sesión activa -->
+  <div class="gate" id="gate">
+    <h2>Inicia sesión para ver tu Bitácora</h2>
+    <p>Bitácora usa la misma cuenta de Workea que ya usas en Mi Cuenta. <a href="/cuenta.html">Inicia sesión ahí →</a> y vuelve a esta página.</p>
+  </div>
+
+  <!-- Vista principal -->
+  <div id="app-view">
+    <div id="view-list">
+      <div id="process-list"></div>
+    </div>
+
+    <div id="view-ficha" style="display:none;"></div>
+  </div>
+
+</div>
+
+<!-- Modal: agregar postulación (manual, por ahora) -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalBg(event)">
+  <div class="modal">
+    <h3>Agregar postulación</h3>
+    <div class="field"><label>Empresa</label><input type="text" id="input-empresa" placeholder="Ej: Fintech X"></div>
+    <div class="field"><label>Cargo</label><input type="text" id="input-cargo" placeholder="Ej: Backend Developer"></div>
+    <div class="error-text" id="add-error" style="display:none;"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="crearPostulacion()">Guardar</button>
+      <button class="btn-ghost" onclick="closeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Modal: cómo funciona -->
+<div class="modal-overlay" id="howit-overlay" onclick="if(event.target.id==='howit-overlay')closeHowit()">
+  <div class="modal">
+    <h3>Cómo funciona tu Bitácora</h3>
+    <div class="howit-step">
+      <div class="howit-num">1</div>
+      <div><div class="howit-title">Agregas una postulación</div><div class="howit-desc">Desde un análisis de Match, un link, o solo el nombre de la empresa y el cargo.</div></div>
+    </div>
+    <div class="howit-step">
+      <div class="howit-num">2</div>
+      <div><div class="howit-title">Actualizas el estado con un tap</div><div class="howit-desc">Te contactaron, te citaron a entrevista, llegó una oferta — sin formularios.</div></div>
+    </div>
+    <div class="howit-step" style="margin-bottom:0;">
+      <div class="howit-num">3</div>
+      <div><div class="howit-title">Ves tu historia y tu progreso</div><div class="howit-desc">Una línea de tiempo por proceso, y patrones de tu búsqueda con el tiempo.</div></div>
+    </div>
+    <button class="btn-primary" style="width:100%; justify-content:center; margin-top:20px;" onclick="closeHowit(); openModal();">Empezar</button>
+  </div>
+</div>
+
+<script>
+  // Mismos valores que usa cuenta.html
+  const SUPABASE_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_A7q5busm8Pms9sW8L03L3w_WQpVqgze';
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let session = null;
+  let postulaciones = [];
+  let fichaActivaId = null;
+
+  const ESTADO_LABEL = {
+    postule: '📨 Postulé', me_contactaron: '📞 Me contactaron',
+    entrevista_rrhh: '🎤 Entrevista RRHH', entrevista_tecnica: '💻 Entrevista técnica',
+    entrevista_final: '👥 Entrevista final', evaluacion: '📝 Evaluación',
+    oferta_recibida: '🎉 Oferta recibida', rechazado: '❌ Rechazado',
+    cancele_proceso: '🚫 Cancelé proceso'
+  };
+  const SIGUIENTES_ESTADOS = {
+    postule: ['me_contactaron', 'entrevista_rrhh'],
+    me_contactaron: ['entrevista_rrhh', 'entrevista_tecnica'],
+    entrevista_rrhh: ['entrevista_tecnica', 'evaluacion'],
+    entrevista_tecnica: ['entrevista_final', 'evaluacion'],
+    entrevista_final: ['evaluacion'],
+    evaluacion: []
+  };
+  const TERMINALES = ['oferta_recibida', 'rechazado', 'cancele_proceso'];
+
+  async function init(){
+    const { data } = await sb.auth.getSession();
+    session = data.session;
+    if(!session){
+      document.getElementById('gate').style.display = 'block';
+      return;
+    }
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app-view').style.display = 'block';
+    document.getElementById('btn-add').style.display = 'inline-block';
+    await cargarPostulaciones();
+  }
+
+  async function apiCall(path, options = {}){
+    const res = await fetch('/api/bitacora/' + path, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + session.access_token,
+        ...(options.headers || {})
+      }
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Error de servidor');
+    return data;
+  }
+
+  async function cargarPostulaciones(){
+    try{
+      const data = await apiCall('listar-postulaciones');
+      postulaciones = data.postulaciones || [];
+      renderList();
+    } catch(err){
+      showToast('Error cargando tu bitácora: ' + err.message);
+    }
+  }
+
+  function renderList(){
+    const el = document.getElementById('process-list');
+    if(postulaciones.length === 0){
+      el.innerHTML = `<div class="empty-state">
+        <div class="empty-icon">📖</div>
+        <div class="empty-title">Tu bitácora empieza aquí</div>
+        <div class="empty-sub">Cada postulación que agregues arma tu historia: en qué etapa vas, cuánto llevas buscando, y qué patrones funcionan mejor para ti. Hoy está vacía porque recién empiezas — es normal, no porque falte algo.</div>
+        <button class="btn-primary" style="margin-top:18px;" onclick="openModal()">＋ Agregar tu primera postulación</button>
+        <div class="empty-video-link" onclick="openHowit()">¿Cómo funciona?</div>
+        <div class="empty-ways">
+          <div class="empty-way"><span class="empty-way-ic">✍️</span> Por ahora, agrega empresa y cargo — pronto sumamos pegar el link y elegir desde Match</div>
+        </div>
+      </div>`;
+      return;
+    }
+    el.innerHTML = postulaciones.map(p => `
+      <div class="process-card" tabindex="0" role="button" onclick="abrirFicha('${p.id}')">
+        <div class="logo-chip">${(p.empresa||'??').slice(0,2).toUpperCase()}</div>
+        <div>
+          <div class="process-role">${escapeHtml(p.cargo)}</div>
+          <div class="process-company">${escapeHtml(p.empresa)}</div>
+        </div>
+        <div class="state-badge">${ESTADO_LABEL[p.estado_actual] || p.estado_actual}</div>
+      </div>
+    `).join('');
+  }
+
+  function abrirFicha(id){
+    fichaActivaId = id;
+    const p = postulaciones.find(x => x.id === id);
+    if(!p) return;
+    document.getElementById('view-list').style.display = 'none';
+    document.getElementById('view-ficha').style.display = 'block';
+
+    const eventos = (p.timeline_eventos || []);
+    const timelineHtml = eventos.map(ev => `
+      <div class="tl-item">
+        <div class="tl-icon">${(ESTADO_LABEL[ev.tipo_evento] || ev.etiqueta_libre || ev.tipo_evento).split(' ')[0]}</div>
+        <div>
+          <div class="tl-title">${escapeHtml(ev.etiqueta_libre || ESTADO_LABEL[ev.tipo_evento] || ev.tipo_evento)}</div>
+          <div class="tl-date">${new Date(ev.fecha).toLocaleDateString('es-CL', {day:'numeric', month:'short'})}</div>
+        </div>
+      </div>
+    `).join('');
+
+    const siguientes = (SIGUIENTES_ESTADOS[p.estado_actual] || []).map(est =>
+      `<button class="state-btn" onclick="cambiarEstado('${est}')">${ESTADO_LABEL[est]}</button>`
+    ).join('');
+    const terminalesHtml = TERMINALES.map(est =>
+      `<button class="state-btn" onclick="cambiarEstado('${est}')">${ESTADO_LABEL[est]}</button>`
+    ).join('');
+
+    document.getElementById('view-ficha').innerHTML = `
+      <div class="ficha-back" tabindex="0" role="button" onclick="cerrarFicha()">← Volver a tus procesos</div>
+      <div class="ficha-title">${escapeHtml(p.cargo)}</div>
+      <div class="ficha-company">${escapeHtml(p.empresa)}</div>
+      <div class="timeline">${timelineHtml || '<div class="empty-msg">Sin eventos todavía</div>'}</div>
+      <div class="state-buttons">${siguientes}${terminalesHtml}</div>
+    `;
+  }
+
+  function cerrarFicha(){
+    document.getElementById('view-ficha').style.display = 'none';
+    document.getElementById('view-list').style.display = 'block';
+    fichaActivaId = null;
+  }
+
+  async function cambiarEstado(tipo_evento){
+    try{
+      await apiCall('actualizar-estado', {
+        method: 'POST',
+        body: JSON.stringify({ postulacion_id: fichaActivaId, tipo_evento })
+      });
+      showToast('Estado actualizado');
+      await cargarPostulaciones();
+      abrirFicha(fichaActivaId);
+    } catch(err){
+      showToast('No se pudo actualizar: ' + err.message);
+    }
+  }
+
+  function openHowit(){ document.getElementById('howit-overlay').classList.add('show'); }
+  function closeHowit(){ document.getElementById('howit-overlay').classList.remove('show'); }
+  function openModal(){
+    document.getElementById('modal-overlay').classList.add('show');
+    document.getElementById('add-error').style.display = 'none';
+    document.getElementById('input-empresa').value = '';
+    document.getElementById('input-cargo').value = '';
+  }
+  function closeModal(){ document.getElementById('modal-overlay').classList.remove('show'); }
+  function closeModalBg(e){ if(e.target.id === 'modal-overlay') closeModal(); }
+
+  async function crearPostulacion(){
+    const empresa = document.getElementById('input-empresa').value.trim();
+    const cargo = document.getElementById('input-cargo').value.trim();
+    const errEl = document.getElementById('add-error');
+    if(!empresa || !cargo){
+      errEl.textContent = 'Empresa y cargo son obligatorios';
+      errEl.style.display = 'block';
+      return;
+    }
+    try{
+      await apiCall('crear-postulacion', {
+        method: 'POST',
+        body: JSON.stringify({ empresa, cargo, origen: 'manual' })
+      });
+      closeModal();
+      showToast('Postulación agregada');
+      await cargarPostulaciones();
+    } catch(err){
+      errEl.textContent = err.message;
+      errEl.style.display = 'block';
+    }
+  }
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._t);
+    window._t = setTimeout(()=> t.classList.remove('show'), 2600);
+  }
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  init();
+</script>
+
+</body>
+</html>
