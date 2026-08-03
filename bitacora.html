@@ -118,6 +118,10 @@
     opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; z-index:60; }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
   .error-text{ color:var(--bad); font-size:12px; margin-top:8px; }
+  .icon-btn{ background:none; border:none; font-size:15px; cursor:pointer; padding:6px; border-radius:8px; flex-shrink:0; }
+  .icon-btn:hover{ background:var(--bg); }
+  .edit-row{ display:flex; gap:8px; margin-top:6px; }
+  .link-btn{ background:none; border:none; color:var(--azul); font-size:11.5px; font-weight:700; cursor:pointer; padding:0; }
 </style>
 </head>
 <body>
@@ -271,13 +275,14 @@
       return;
     }
     el.innerHTML = postulaciones.map(p => `
-      <div class="process-card" tabindex="0" role="button" onclick="abrirFicha('${p.id}')">
-        <div class="logo-chip">${(p.empresa||'??').slice(0,2).toUpperCase()}</div>
-        <div>
+      <div class="process-card">
+        <div class="logo-chip" tabindex="0" role="button" onclick="abrirFicha('${p.id}')">${(p.empresa||'??').slice(0,2).toUpperCase()}</div>
+        <div style="flex:1; cursor:pointer;" tabindex="0" role="button" onclick="abrirFicha('${p.id}')">
           <div class="process-role">${escapeHtml(p.cargo)}</div>
           <div class="process-company">${escapeHtml(p.empresa)}</div>
         </div>
         <div class="state-badge">${ESTADO_LABEL[p.estado_actual] || p.estado_actual}</div>
+        <button class="icon-btn" title="Eliminar" onclick="eliminarPostulacion('${p.id}', event)">🗑️</button>
       </div>
     `).join('');
   }
@@ -290,13 +295,14 @@
     document.getElementById('view-ficha').style.display = 'block';
 
     const eventos = (p.timeline_eventos || []);
-    const timelineHtml = eventos.map(ev => `
+    const timelineHtml = eventos.map((ev, i) => `
       <div class="tl-item">
         <div class="tl-icon">${(ESTADO_LABEL[ev.tipo_evento] || ev.etiqueta_libre || ev.tipo_evento).split(' ')[0]}</div>
-        <div>
+        <div style="flex:1;">
           <div class="tl-title">${escapeHtml(ev.etiqueta_libre || ESTADO_LABEL[ev.tipo_evento] || ev.tipo_evento)}</div>
           <div class="tl-date">${new Date(ev.fecha).toLocaleDateString('es-CL', {day:'numeric', month:'short'})}</div>
         </div>
+        ${i === 0 ? `<button class="link-btn" onclick="deshacerEvento('${ev.id}')">Deshacer</button>` : ''}
       </div>
     `).join('');
 
@@ -309,11 +315,79 @@
 
     document.getElementById('view-ficha').innerHTML = `
       <div class="ficha-back" tabindex="0" role="button" onclick="cerrarFicha()">← Volver a tus procesos</div>
-      <div class="ficha-title">${escapeHtml(p.cargo)}</div>
-      <div class="ficha-company">${escapeHtml(p.empresa)}</div>
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+        <div id="ficha-titulos">
+          <div class="ficha-title">${escapeHtml(p.cargo)}</div>
+          <div class="ficha-company">${escapeHtml(p.empresa)}</div>
+        </div>
+        <button class="icon-btn" title="Editar empresa/cargo" onclick="toggleEditarFicha()">✏️</button>
+      </div>
+      <div id="edit-ficha-form" style="display:none; margin:10px 0;">
+        <div class="field"><label>Empresa</label><input type="text" id="edit-empresa" value="${escapeHtml(p.empresa)}"></div>
+        <div class="field"><label>Cargo</label><input type="text" id="edit-cargo" value="${escapeHtml(p.cargo)}"></div>
+        <div class="error-text" id="edit-error" style="display:none;"></div>
+        <div class="edit-row">
+          <button class="btn-primary" onclick="guardarEdicionFicha()">Guardar</button>
+          <button class="btn-ghost" onclick="toggleEditarFicha()">Cancelar</button>
+        </div>
+      </div>
       <div class="timeline">${timelineHtml || '<div class="empty-msg">Sin eventos todavía</div>'}</div>
       <div class="state-buttons">${siguientes}${terminalesHtml}</div>
+      <button class="btn-ghost" style="margin-top:20px; color:var(--bad); border-color:#f3c9d0;" onclick="eliminarPostulacion('${p.id}')">🗑️ Eliminar esta postulación</button>
     `;
+  }
+
+  function toggleEditarFicha(){
+    const form = document.getElementById('edit-ficha-form');
+    form.style.display = form.style.display === 'block' ? 'none' : 'block';
+  }
+
+  async function guardarEdicionFicha(){
+    const empresa = document.getElementById('edit-empresa').value.trim();
+    const cargo = document.getElementById('edit-cargo').value.trim();
+    const errEl = document.getElementById('edit-error');
+    if(!empresa || !cargo){
+      errEl.textContent = 'Empresa y cargo son obligatorios';
+      errEl.style.display = 'block';
+      return;
+    }
+    try{
+      await apiCall('editar-postulacion', {
+        method: 'POST',
+        body: JSON.stringify({ postulacion_id: fichaActivaId, empresa, cargo })
+      });
+      showToast('Actualizado');
+      await cargarPostulaciones();
+      abrirFicha(fichaActivaId);
+    } catch(err){
+      errEl.textContent = err.message;
+      errEl.style.display = 'block';
+    }
+  }
+
+  async function deshacerEvento(evento_id){
+    if(!confirm('¿Deshacer este cambio de estado?')) return;
+    try{
+      await apiCall('eliminar-evento', { method: 'POST', body: JSON.stringify({ evento_id }) });
+      showToast('Deshecho');
+      await cargarPostulaciones();
+      abrirFicha(fichaActivaId);
+    } catch(err){
+      showToast('No se pudo deshacer: ' + err.message);
+    }
+  }
+
+  async function eliminarPostulacion(id, event){
+    if(event) event.stopPropagation();
+    if(!confirm('¿Eliminar esta postulación por completo? No se puede deshacer.')) return;
+    try{
+      await apiCall('eliminar-postulacion', { method: 'POST', body: JSON.stringify({ postulacion_id: id }) });
+      showToast('Postulación eliminada');
+      if(fichaActivaId === id) cerrarFicha();
+      await cargarPostulaciones();
+    } catch(err){
+      showToast('No se pudo eliminar: ' + err.message);
+    }
   }
 
   function cerrarFicha(){
