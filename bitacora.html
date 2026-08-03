@@ -137,6 +137,41 @@
   .progress-dot.current{ background:var(--violeta); box-shadow:0 0 0 4px rgba(123,92,240,0.18); }
   .progress-line{ flex:1; height:2px; background:var(--line); }
   .progress-line.done{ background:var(--azul); }
+
+  .top-nav{ display:flex; gap:4px; background:rgba(255,255,255,0.08); border-radius:10px; padding:3px; }
+  .nav-link{ background:none; border:none; color:#c7cde0; font-size:12.5px; font-weight:700; padding:7px 14px; border-radius:8px; cursor:pointer; font-family:inherit; }
+  .nav-link.active{ background:var(--grad); color:var(--navy); }
+
+  .cal-card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; box-shadow:var(--shadow); max-width:640px; }
+  .cal-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .cal-title{ font-size:16px; font-weight:800; }
+  .cal-nav-btns{ display:flex; gap:6px; }
+  .cal-grid{ display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; }
+  .cal-head-row{ margin-bottom:6px; }
+  .cal-head-row div{ font-size:10.5px; font-weight:700; color:var(--ink-faint); text-align:center; text-transform:uppercase; }
+  .cal-day{
+    aspect-ratio:1/1; border-radius:10px; background:var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-size:12px; font-weight:600; color:var(--ink); gap:3px; position:relative; cursor:pointer;
+  }
+  .cal-day:hover{ background:#eceffa; }
+  .cal-day.selected{ background:var(--navy); color:#fff; }
+  .cal-day.muted{ background:none; cursor:default; }
+  .cal-day.today{ box-shadow:inset 0 0 0 2px var(--violeta); }
+  .cal-dot{ width:6px; height:6px; border-radius:50%; }
+  .cal-dot.view{ background:var(--ink-faint); }
+  .cal-dot.apply{ background:var(--azul); }
+  .cal-dot.interview{ background:var(--violeta); }
+  .cal-count{ font-size:9px; font-weight:800; color:#fff; background:var(--violeta); min-width:14px; height:14px; border-radius:100px; display:flex; align-items:center; justify-content:center; padding:0 3px; }
+  .cal-legend{ display:flex; gap:14px; margin-top:14px; flex-wrap:wrap; font-size:11px; color:var(--ink-soft); }
+  .cal-legend span{ display:inline-flex; align-items:center; gap:5px; }
+  .day-detail{ margin-top:16px; padding-top:16px; border-top:1px solid var(--line); }
+  .day-detail-title{ font-size:12.5px; font-weight:700; color:var(--ink-soft); margin-bottom:10px; }
+  .agenda-item{ display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .agenda-item:last-child{ border-bottom:none; }
+  .agenda-icon{ width:32px; height:32px; border-radius:9px; background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+  .agenda-title{ font-size:13px; font-weight:700; }
+  .agenda-sub{ font-size:11.5px; color:var(--ink-soft); margin-top:1px; }
 </style>
 </head>
 <body>
@@ -151,7 +186,13 @@
     </svg>
     Workea Bitácora
   </div>
-  <button class="btn-ghost" id="btn-add" style="display:none;" onclick="openModal()">＋ Agregar postulación</button>
+  <div style="display:flex; align-items:center; gap:16px;">
+    <div class="top-nav" id="top-nav">
+      <button class="nav-link active" onclick="goToView('list')">Inicio</button>
+      <button class="nav-link" onclick="goToView('calendar')">Calendario</button>
+    </div>
+    <button class="btn-ghost" id="btn-add" style="display:none;" onclick="openModal()">＋ Agregar postulación</button>
+  </div>
 </div>
 
 <div class="content">
@@ -170,6 +211,8 @@
     </div>
 
     <div id="view-ficha" style="display:none;"></div>
+
+    <div id="view-calendar" style="display:none;"></div>
   </div>
 
 </div>
@@ -452,6 +495,123 @@
     } catch(err){
       showToast('No se pudo eliminar: ' + err.message);
     }
+  }
+
+  // ===== Navegación entre vistas =====
+  let calMes = new Date().getMonth();
+  let calAnio = new Date().getFullYear();
+  let calDiaSeleccionado = null;
+
+  function goToView(view){
+    document.getElementById('view-list').style.display = view === 'list' ? 'block' : 'none';
+    document.getElementById('view-ficha').style.display = 'none';
+    document.getElementById('view-calendar').style.display = view === 'calendar' ? 'block' : 'none';
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.querySelector('.nav-link[onclick="goToView(\'' + view + '\')"]')?.classList.add('active');
+    if(view === 'calendar'){ calDiaSeleccionado = null; renderCalendario(); }
+  }
+
+  const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const TIPO_ICONO = { analisis:'👁️', postule:'📨', me_contactaron:'📞', entrevista_rrhh:'🎤', entrevista_tecnica:'💻', entrevista_final:'👥', evaluacion:'📝', oferta_recibida:'🎉', rechazado:'❌', cancele_proceso:'🚫', otro_paso:'🔧' };
+  const TIPO_CATEGORIA = {
+    analisis:'view',
+    postule:'apply', me_contactaron:'apply',
+    entrevista_rrhh:'interview', entrevista_tecnica:'interview', entrevista_final:'interview', evaluacion:'interview',
+    oferta_recibida:'interview', rechazado:'interview', cancele_proceso:'interview', otro_paso:'interview'
+  };
+
+  function eventosPorDia(){
+    const mapa = {};
+    postulaciones.forEach(p => {
+      (p.timeline_eventos || []).forEach(ev => {
+        const f = new Date(ev.fecha + 'T00:00:00');
+        if(f.getFullYear() !== calAnio || f.getMonth() !== calMes) return;
+        const dia = f.getDate();
+        if(!mapa[dia]) mapa[dia] = [];
+        mapa[dia].push({ ...ev, empresa: p.empresa, cargo: p.cargo });
+      });
+    });
+    return mapa;
+  }
+
+  function renderCalendario(){
+    const el = document.getElementById('view-calendar');
+    const mapa = eventosPorDia();
+    const hoy = new Date();
+    const primerDiaSemana = (new Date(calAnio, calMes, 1).getDay() + 6) % 7; // lunes=0
+    const diasEnMes = new Date(calAnio, calMes + 1, 0).getDate();
+
+    let celdas = '';
+    for(let i = 0; i < primerDiaSemana; i++) celdas += '<div class="cal-day muted"></div>';
+    for(let d = 1; d <= diasEnMes; d++){
+      const eventos = mapa[d] || [];
+      const esHoy = hoy.getFullYear() === calAnio && hoy.getMonth() === calMes && hoy.getDate() === d;
+      let marca = '';
+      if(eventos.length === 1){
+        marca = `<span class="cal-dot ${TIPO_CATEGORIA[eventos[0].tipo_evento] || 'apply'}"></span>`;
+      } else if(eventos.length > 1){
+        marca = `<span class="cal-count">${eventos.length}</span>`;
+      }
+      celdas += `<div class="cal-day ${esHoy ? 'today' : ''} ${calDiaSeleccionado === d ? 'selected' : ''}" onclick="seleccionarDia(${d}, this)">
+        <span>${d}</span>${marca}
+      </div>`;
+    }
+
+    el.innerHTML = `
+      <div class="cal-card">
+        <div class="cal-header">
+          <div class="cal-title">${MESES[calMes]} ${calAnio}</div>
+          <div class="cal-nav-btns">
+            <button class="btn-ghost" onclick="cambiarMes(-1)">←</button>
+            <button class="btn-ghost" onclick="cambiarMes(1)">→</button>
+          </div>
+        </div>
+        <div class="cal-grid cal-head-row">
+          <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+        </div>
+        <div class="cal-grid">${celdas}</div>
+        <div class="cal-legend">
+          <span><span class="cal-dot view"></span> Análisis</span>
+          <span><span class="cal-dot apply"></span> Postulación / contacto</span>
+          <span><span class="cal-dot interview"></span> Entrevista / evaluación / cierre</span>
+        </div>
+        <div class="day-detail" id="cal-day-detail" style="display:none;"></div>
+      </div>
+    `;
+  }
+
+  function cambiarMes(delta){
+    calMes += delta;
+    if(calMes < 0){ calMes = 11; calAnio--; }
+    if(calMes > 11){ calMes = 0; calAnio++; }
+    calDiaSeleccionado = null;
+    renderCalendario();
+  }
+
+  function seleccionarDia(dia, el){
+    calDiaSeleccionado = dia;
+    const mapa = eventosPorDia();
+    const eventos = mapa[dia] || [];
+    const panel = document.getElementById('cal-day-detail');
+
+    document.querySelectorAll('.cal-day').forEach(c => c.classList.remove('selected'));
+    if(el) el.classList.add('selected');
+
+    let html = `<div class="day-detail-title">${dia} de ${MESES[calMes]}</div>`;
+    if(eventos.length === 0){
+      html += '<div class="empty-msg" style="padding:12px 0;">Sin eventos este día</div>';
+    } else {
+      eventos.forEach(ev => {
+        const sub = [ev.empresa, ev.cargo].filter(Boolean).join(' · ');
+        html += `<div class="agenda-item">
+          <div class="agenda-icon">${TIPO_ICONO[ev.tipo_evento] || '📌'}</div>
+          <div><div class="agenda-title">${escapeHtml(ev.etiqueta_libre || ESTADO_LABEL[ev.tipo_evento] || ev.tipo_evento)}</div>
+          <div class="agenda-sub">${escapeHtml(sub)}${ev.modalidad ? ' · ' + escapeHtml(ev.modalidad) : ''}${ev.hora ? ' · ' + escapeHtml(ev.hora) : ''}</div></div>
+        </div>`;
+      });
+    }
+    panel.innerHTML = html;
+    panel.style.display = 'block';
   }
 
   function cerrarFicha(){
