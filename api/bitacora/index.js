@@ -50,7 +50,16 @@ module.exports = async (req, res) => {
         ...p,
         timeline_eventos: (p.timeline_eventos || []).sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
       }));
-      return res.status(200).json({ postulaciones });
+
+      const { data: objetivos, error: objError } = await supabase
+        .from('bitacora_objetivos')
+        .select('*')
+        .eq('activo', true)
+        .order('creado_en', { ascending: true });
+
+      if (objError) return res.status(500).json({ error: objError.message });
+
+      return res.status(200).json({ postulaciones, objetivos: objetivos || [] });
     }
 
     if (req.method !== 'POST') {
