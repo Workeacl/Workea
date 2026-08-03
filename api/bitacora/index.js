@@ -172,6 +172,90 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ok: true });
     }
 
+    // ---------- generar_insight ----------
+    if (accion === 'generar_insight') {
+      // Traemos las postulaciones del usuario (mismo shape que el listado)
+      const { data: postus, error: postuError } = await supabase
+        .from('postulaciones')
+        .select('empresa, cargo, modalidad, estado_actual, origen, timeline_eventos ( tipo_evento, fecha )')
+        .order('fecha_ultima_actividad', { ascending: false });
+
+      if (postuError) return res.status(500).json({ error: postuError.message });
+
+      const postulaciones = postus || [];
+
+      // Con pocos datos, no forzamos un "patrón" — devolvemos un mensaje
+      // motivacional simple, sin llamar al modelo (cero costo, y evita
+      // conclusiones prematuras/falsas con datos insuficientes).
+      if (postulaciones.length < 3) {
+        return res.status(200).json({
+          texto: postulaciones.length === 0
+            ? 'Aún no hay datos para mostrar un patrón — a medida que registres postulaciones, vas a empezar a ver qué te está funcionando mejor.'
+            : `Vas construyendo tu bitácora 🌱 — con ${postulaciones.length} postulación${postulaciones.length === 1 ? '' : 'es'} registrada${postulaciones.length === 1 ? '' : 's'}, todavía es pronto para ver un patrón. Sigue registrando y vuelve a pedir el análisis más adelante.`,
+          evidencia: [],
+          esGenerico: true
+        });
+      }
+
+      // Armamos un resumen compacto y verificable de los datos reales
+      const resumen = postulaciones.map(p => {
+        const entrevistas = (p.timeline_eventos || []).filter(e =>
+          ['entrevista_rrhh', 'entrevista_tecnica', 'entrevista_final'].includes(e.tipo_evento)
+        ).length;
+        return `- ${p.empresa} · ${p.cargo} · modalidad: ${p.modalidad || 'sin especificar'} · estado actual: ${p.estado_actual} · eventos de entrevista: ${entrevistas} · origen: ${p.origen}`;
+      }).join('\n');
+
+      const prompt = `Estos son los datos reales de búsqueda de empleo de un usuario (${postulaciones.length} postulaciones):
+
+${resumen}
+
+Identifica UN patrón real y útil basado ÚNICAMENTE en estos datos (nunca inventes información que no esté aquí). Responde en JSON puro, sin texto adicional ni markdown, con este formato exacto:
+{"texto": "una frase corta y cercana (máx 220 caracteres) describiendo el patrón, en español de Chile, tono cálido no corporativo", "evidencia": ["dato concreto 1 que respalda el patrón", "dato concreto 2", "dato concreto 3 (opcional)"]}
+
+Los ítems de "evidencia" deben ser hechos verificables directamente de la lista de arriba (nombres de empresa, conteos, modalidades) — nunca opiniones ni suposiciones.`;
+
+      const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-5-haiku-20241022',
+          max_tokens: 400,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!aiRes.ok) {
+        const errText = await aiRes.text();
+        console.error('Anthropic API error:', errText);
+        return res.status(200).json({
+          texto: 'No pudimos generar tu insight en este momento — inténtalo de nuevo en un rato.',
+          evidencia: [],
+          esGenerico: true
+        });
+      }
+
+      const aiData = await aiRes.json();
+      const textoRespuesta = aiData?.content?.[0]?.text || '{}';
+
+      let parsed;
+      try {
+        // Por si el modelo agrega texto extra alrededor del JSON
+        const match = textoRespuesta.match(/\{[\s\S]*\}/);
+        parsed = JSON.parse(match ? match[0] : textoRespuesta);
+      } catch (e) {
+        parsed = { texto: textoRespuesta.slice(0, 220), evidencia: [] };
+      }
+
+      return res.status(200).json({
+        texto: parsed.texto || 'No pudimos generar un insight claro esta vez.',
+        evidencia: Array.isArray(parsed.evidencia) ? parsed.evidencia : []
+      });
+    }
+
     return res.status(400).json({ error: 'Acción desconocida: ' + accion });
 
   } catch (err) {
