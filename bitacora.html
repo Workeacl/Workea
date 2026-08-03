@@ -172,6 +172,15 @@
   .agenda-icon{ width:32px; height:32px; border-radius:9px; background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
   .agenda-title{ font-size:13px; font-weight:700; }
   .agenda-sub{ font-size:11.5px; color:var(--ink-soft); margin-top:1px; }
+
+  .insight-card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px; box-shadow:var(--shadow); display:flex; gap:14px; align-items:flex-start; margin-bottom:20px; }
+  .insight-glyph{ width:38px; height:38px; border-radius:11px; background:linear-gradient(120deg, rgba(43,224,248,0.16), rgba(123,92,240,0.16)); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+  .insight-eyebrow{ font-size:11px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.05em; font-weight:700; }
+  .insight-text{ font-size:14px; line-height:1.5; margin-top:4px; font-weight:500; }
+  .insight-link{ font-size:12px; font-weight:700; color:var(--azul); margin-top:8px; cursor:pointer; }
+  .insight-evidence{ margin-top:10px; padding-top:10px; border-top:1px solid var(--line); }
+  .evidence-row{ font-size:12px; color:var(--ink-soft); padding:4px 0; }
+  .insight-empty{ background:var(--card); border:1px dashed var(--line); border-radius:16px; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 </style>
 </head>
 <body>
@@ -206,6 +215,7 @@
   <!-- Vista principal -->
   <div id="app-view">
     <div id="view-list">
+      <div id="insight-card"></div>
       <div id="kpi-row" class="kpi-grid"></div>
       <div id="process-list"></div>
     </div>
@@ -319,13 +329,15 @@
     'agregar-objetivo': 'agregar_objetivo',
     'editar-postulacion': 'editar_postulacion',
     'eliminar-postulacion': 'eliminar_postulacion',
-    'eliminar-evento': 'eliminar_evento'
+    'eliminar-evento': 'eliminar_evento',
+    'generar-insight': 'generar_insight'
   };
 
   async function cargarPostulaciones(){
     try{
       const data = await apiCall('listar-postulaciones');
       postulaciones = data.postulaciones || [];
+      renderInsightInicial();
       renderKpis();
       renderList();
     } catch(err){
@@ -335,6 +347,51 @@
 
   const ESTADOS_ENTREVISTA = ['entrevista_rrhh', 'entrevista_tecnica', 'entrevista_final'];
   const ESTADOS_TERMINALES = ['oferta_recibida', 'rechazado', 'cancele_proceso'];
+
+  // ===== Insight de IA =====
+  function renderInsightInicial(){
+    const el = document.getElementById('insight-card');
+    if(postulaciones.length === 0){ el.innerHTML = ''; return; }
+    el.innerHTML = `
+      <div class="insight-empty">
+        <div style="font-size:12.5px; color:var(--ink-soft);">💡 Descubre patrones en tu búsqueda, basados en tus propios datos.</div>
+        <button class="btn-ghost" onclick="generarInsight()" id="btn-insight">Generar insight</button>
+      </div>`;
+  }
+
+  async function generarInsight(){
+    const el = document.getElementById('insight-card');
+    el.innerHTML = `<div class="insight-empty"><div style="font-size:12.5px; color:var(--ink-soft);">💡 Analizando tus datos…</div></div>`;
+    try{
+      const data = await apiCall('generar-insight', { method:'POST', body: JSON.stringify({}) });
+      renderInsightResultado(data);
+    } catch(err){
+      el.innerHTML = `<div class="insight-empty"><div style="font-size:12.5px; color:var(--bad);">No se pudo generar: ${escapeHtml(err.message)}</div></div>`;
+    }
+  }
+
+  function renderInsightResultado(data){
+    const el = document.getElementById('insight-card');
+    const evidenciaHtml = (data.evidencia||[]).map(e => `<div class="evidence-row">${escapeHtml(e)}</div>`).join('');
+    el.innerHTML = `
+      <div class="insight-card">
+        <div class="insight-glyph">${data.esGenerico ? '🌱' : '💡'}</div>
+        <div style="flex:1;">
+          <div class="insight-eyebrow">${data.esGenerico ? 'Tu bitácora' : 'Patrón detectado'}</div>
+          <div class="insight-text">${escapeHtml(data.texto)}</div>
+          ${evidenciaHtml ? `<div class="insight-evidence" id="insight-evidence" style="display:none;">${evidenciaHtml}</div>
+          <div class="insight-link" onclick="toggleEvidencia()" id="insight-link">Ver por qué →</div>` : ''}
+        </div>
+      </div>`;
+  }
+
+  function toggleEvidencia(){
+    const ev = document.getElementById('insight-evidence');
+    const link = document.getElementById('insight-link');
+    const abierto = ev.style.display === 'block';
+    ev.style.display = abierto ? 'none' : 'block';
+    link.textContent = abierto ? 'Ver por qué →' : 'Ocultar ←';
+  }
 
   function renderKpis(){
     const el = document.getElementById('kpi-row');
