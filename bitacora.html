@@ -181,6 +181,13 @@
   .insight-evidence{ margin-top:10px; padding-top:10px; border-top:1px solid var(--line); }
   .evidence-row{ font-size:12px; color:var(--ink-soft); padding:4px 0; }
   .insight-empty{ background:var(--card); border:1px dashed var(--line); border-radius:16px; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+
+  .goals-bar{ background:var(--card); border-bottom:1px solid var(--line); padding:10px 24px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .goal-chip{ font-size:12px; font-weight:700; color:var(--ink-soft); background:var(--bg); border:1px solid var(--line); padding:6px 13px; border-radius:100px; cursor:pointer; }
+  .goal-chip.active{ background:var(--grad); color:#fff; border-color:transparent; }
+  .goal-chip.add{ background:none; border:1px dashed var(--line); color:var(--ink-faint); }
+  .goal-add-form{ display:flex; gap:6px; align-items:center; }
+  .goal-add-form input{ padding:6px 10px; border:1.5px solid var(--line); border-radius:100px; font-size:12px; font-family:inherit; width:170px; }
 </style>
 </head>
 <body>
@@ -203,6 +210,8 @@
     <button class="btn-ghost" id="btn-add" style="display:none;" onclick="openModal()">＋ Agregar postulación</button>
   </div>
 </div>
+
+<div class="goals-bar" id="goals-bar" style="display:none;"></div>
 
 <div class="content">
 
@@ -273,6 +282,8 @@
   let session = null;
   let postulaciones = [];
   let fichaActivaId = null;
+  let objetivos = [];
+  let objetivoSeleccionado = null; // null = "Todos"
 
   const ESTADO_LABEL = {
     postule: '📨 Postulé', me_contactaron: '📞 Me contactaron',
@@ -337,11 +348,66 @@
     try{
       const data = await apiCall('listar-postulaciones');
       postulaciones = data.postulaciones || [];
+      objetivos = data.objetivos || [];
+      renderGoalsBar();
       renderInsightInicial();
       renderKpis();
       renderList();
     } catch(err){
       showToast('Error cargando tu bitácora: ' + err.message);
+    }
+  }
+
+  function postulacionesFiltradas(){
+    if(!objetivoSeleccionado) return postulaciones;
+    return postulaciones.filter(p => p.objetivo_id === objetivoSeleccionado);
+  }
+
+  function renderGoalsBar(){
+    const bar = document.getElementById('goals-bar');
+    if(objetivos.length === 0){
+      bar.style.display = 'none';
+      return;
+    }
+    bar.style.display = 'flex';
+    const chips = objetivos.map(o => `
+      <button class="goal-chip ${objetivoSeleccionado === o.id ? 'active' : ''}" onclick="seleccionarObjetivo('${o.id}')">${escapeHtml(o.cargo_objetivo)}</button>
+    `).join('');
+    const todosChip = `<button class="goal-chip ${!objetivoSeleccionado ? 'active' : ''}" onclick="seleccionarObjetivo(null)">Todos</button>`;
+
+    bar.innerHTML = `
+      ${todosChip}${chips}
+      <button class="goal-chip add" onclick="mostrarFormObjetivo()" id="add-goal-btn">＋</button>
+      <div class="goal-add-form" id="goal-add-form" style="display:none;">
+        <input type="text" id="goal-add-input" placeholder="Ej: Fullstack Developer">
+        <button class="btn-ghost" style="padding:6px 10px; font-size:11.5px;" onclick="guardarNuevoObjetivo()">Agregar</button>
+      </div>
+    `;
+  }
+
+  function seleccionarObjetivo(id){
+    objetivoSeleccionado = id;
+    renderGoalsBar();
+    renderKpis();
+    renderList();
+  }
+
+  function mostrarFormObjetivo(){
+    document.getElementById('add-goal-btn').style.display = 'none';
+    document.getElementById('goal-add-form').style.display = 'flex';
+    document.getElementById('goal-add-input').focus();
+  }
+
+  async function guardarNuevoObjetivo(){
+    const input = document.getElementById('goal-add-input');
+    const val = input.value.trim();
+    if(!val) return;
+    try{
+      await apiCall('agregar-objetivo', { method:'POST', body: JSON.stringify({ cargo_objetivo: val }) });
+      showToast('"' + val + '" agregado');
+      await cargarPostulaciones();
+    } catch(err){
+      showToast('No se pudo agregar: ' + err.message);
     }
   }
 
@@ -395,13 +461,14 @@
 
   function renderKpis(){
     const el = document.getElementById('kpi-row');
-    if(postulaciones.length === 0){ el.innerHTML = ''; return; }
+    const lista = postulacionesFiltradas();
+    if(lista.length === 0){ el.innerHTML = ''; return; }
 
-    const total = postulaciones.length;
-    const entrevistas = postulaciones.filter(p => ESTADOS_ENTREVISTA.includes(p.estado_actual)
+    const total = lista.length;
+    const entrevistas = lista.filter(p => ESTADOS_ENTREVISTA.includes(p.estado_actual)
       || (p.timeline_eventos||[]).some(e => ESTADOS_ENTREVISTA.includes(e.tipo_evento))).length;
-    const activos = postulaciones.filter(p => !ESTADOS_TERMINALES.includes(p.estado_actual)).length;
-    const ofertas = postulaciones.filter(p => p.estado_actual === 'oferta_recibida').length;
+    const activos = lista.filter(p => !ESTADOS_TERMINALES.includes(p.estado_actual)).length;
+    const ofertas = lista.filter(p => p.estado_actual === 'oferta_recibida').length;
 
     el.innerHTML = `
       <div class="kpi-card"><div class="kpi-num">${total}</div><div class="kpi-label">Postulaciones</div></div>
@@ -426,7 +493,12 @@
       </div>`;
       return;
     }
-    el.innerHTML = postulaciones.map(p => `
+    const lista = postulacionesFiltradas();
+    if(lista.length === 0){
+      el.innerHTML = `<div class="empty-msg">No hay postulaciones para este objetivo todavía.</div>`;
+      return;
+    }
+    el.innerHTML = lista.map(p => `
       <div class="process-card">
         <div class="logo-chip" tabindex="0" role="button" onclick="abrirFicha('${p.id}')">${(p.empresa||'??').slice(0,2).toUpperCase()}</div>
         <div style="flex:1; cursor:pointer;" tabindex="0" role="button" onclick="abrirFicha('${p.id}')">
@@ -714,7 +786,7 @@
     try{
       await apiCall('crear-postulacion', {
         method: 'POST',
-        body: JSON.stringify({ empresa, cargo, origen: 'manual' })
+        body: JSON.stringify({ empresa, cargo, origen: 'manual', objetivo_id: objetivoSeleccionado })
       });
       closeModal();
       showToast('Postulación agregada');
