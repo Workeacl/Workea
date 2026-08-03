@@ -122,6 +122,21 @@
   .icon-btn:hover{ background:var(--bg); }
   .edit-row{ display:flex; gap:8px; margin-top:6px; }
   .link-btn{ background:none; border:none; color:var(--azul); font-size:11.5px; font-weight:700; cursor:pointer; padding:0; }
+
+  .kpi-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:20px; }
+  .kpi-card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; box-shadow:var(--shadow); }
+  .kpi-num{ font-size:24px; font-weight:800; letter-spacing:-0.02em; }
+  .kpi-label{ font-size:12px; color:var(--ink-soft); margin-top:3px; }
+  .kpi-card.accent{ background:var(--navy); border:none; }
+  .kpi-card.accent .kpi-num, .kpi-card.accent .kpi-label{ color:#fff; }
+  @media (max-width:640px){ .kpi-grid{ grid-template-columns:1fr 1fr; } }
+
+  .progress-track{ display:flex; align-items:center; margin:18px 0; max-width:420px; }
+  .progress-dot{ width:10px; height:10px; border-radius:50%; background:var(--line); flex-shrink:0; }
+  .progress-dot.done{ background:var(--azul); }
+  .progress-dot.current{ background:var(--violeta); box-shadow:0 0 0 4px rgba(123,92,240,0.18); }
+  .progress-line{ flex:1; height:2px; background:var(--line); }
+  .progress-line.done{ background:var(--azul); }
 </style>
 </head>
 <body>
@@ -150,6 +165,7 @@
   <!-- Vista principal -->
   <div id="app-view">
     <div id="view-list">
+      <div id="kpi-row" class="kpi-grid"></div>
       <div id="process-list"></div>
     </div>
 
@@ -235,28 +251,64 @@
     await cargarPostulaciones();
   }
 
-  async function apiCall(path, options = {}){
-    const res = await fetch('/api/bitacora/' + path, {
-      ...options,
+  async function apiCall(accion, options = {}){
+    const isGet = accion === 'listar-postulaciones';
+    const url = isGet ? '/api/bitacora' : '/api/bitacora';
+    const opts = {
+      method: isGet ? 'GET' : 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + session.access_token,
-        ...(options.headers || {})
+        'Authorization': 'Bearer ' + session.access_token
       }
-    });
+    };
+    if (!isGet) {
+      const bodyObj = options.body ? JSON.parse(options.body) : {};
+      opts.body = JSON.stringify({ accion: ACCION_MAP[accion] || accion, ...bodyObj });
+    }
+    const res = await fetch(url, opts);
     const data = await res.json();
     if(!res.ok) throw new Error(data.error || 'Error de servidor');
     return data;
   }
+  const ACCION_MAP = {
+    'crear-postulacion': 'crear_postulacion',
+    'actualizar-estado': 'actualizar_estado',
+    'agregar-objetivo': 'agregar_objetivo',
+    'editar-postulacion': 'editar_postulacion',
+    'eliminar-postulacion': 'eliminar_postulacion',
+    'eliminar-evento': 'eliminar_evento'
+  };
 
   async function cargarPostulaciones(){
     try{
       const data = await apiCall('listar-postulaciones');
       postulaciones = data.postulaciones || [];
+      renderKpis();
       renderList();
     } catch(err){
       showToast('Error cargando tu bitácora: ' + err.message);
     }
+  }
+
+  const ESTADOS_ENTREVISTA = ['entrevista_rrhh', 'entrevista_tecnica', 'entrevista_final'];
+  const ESTADOS_TERMINALES = ['oferta_recibida', 'rechazado', 'cancele_proceso'];
+
+  function renderKpis(){
+    const el = document.getElementById('kpi-row');
+    if(postulaciones.length === 0){ el.innerHTML = ''; return; }
+
+    const total = postulaciones.length;
+    const entrevistas = postulaciones.filter(p => ESTADOS_ENTREVISTA.includes(p.estado_actual)
+      || (p.timeline_eventos||[]).some(e => ESTADOS_ENTREVISTA.includes(e.tipo_evento))).length;
+    const activos = postulaciones.filter(p => !ESTADOS_TERMINALES.includes(p.estado_actual)).length;
+    const ofertas = postulaciones.filter(p => p.estado_actual === 'oferta_recibida').length;
+
+    el.innerHTML = `
+      <div class="kpi-card"><div class="kpi-num">${total}</div><div class="kpi-label">Postulaciones</div></div>
+      <div class="kpi-card"><div class="kpi-num">${entrevistas}</div><div class="kpi-label">Entrevistas</div></div>
+      <div class="kpi-card"><div class="kpi-num">${activos}</div><div class="kpi-label">Procesos activos</div></div>
+      <div class="kpi-card accent"><div class="kpi-num">${ofertas}</div><div class="kpi-label">Ofertas 🎉</div></div>
+    `;
   }
 
   function renderList(){
@@ -313,6 +365,17 @@
       `<button class="state-btn" onclick="cambiarEstado('${est}')">${ESTADO_LABEL[est]}</button>`
     ).join('');
 
+    const ORDEN_ESTADOS = ['postule', 'me_contactaron', 'entrevista_rrhh', 'entrevista_tecnica', 'entrevista_final', 'evaluacion'];
+    const pasoActual = ORDEN_ESTADOS.indexOf(p.estado_actual);
+    const esTerminal = TERMINALES.includes(p.estado_actual);
+    let progressHtml = '';
+    ORDEN_ESTADOS.forEach((est, i) => {
+      const done = esTerminal || i < pasoActual;
+      const current = !esTerminal && i === pasoActual;
+      progressHtml += `<div class="progress-dot ${done ? 'done' : (current ? 'current' : '')}"></div>`;
+      if(i < ORDEN_ESTADOS.length - 1) progressHtml += `<div class="progress-line ${done ? 'done' : ''}"></div>`;
+    });
+
     document.getElementById('view-ficha').innerHTML = `
       <div class="ficha-back" tabindex="0" role="button" onclick="cerrarFicha()">← Volver a tus procesos</div>
       <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
@@ -322,6 +385,7 @@
         </div>
         <button class="icon-btn" title="Editar empresa/cargo" onclick="toggleEditarFicha()">✏️</button>
       </div>
+      <div class="progress-track">${progressHtml}</div>
       <div id="edit-ficha-form" style="display:none; margin:10px 0;">
         <div class="field"><label>Empresa</label><input type="text" id="edit-empresa" value="${escapeHtml(p.empresa)}"></div>
         <div class="field"><label>Cargo</label><input type="text" id="edit-cargo" value="${escapeHtml(p.cargo)}"></div>
