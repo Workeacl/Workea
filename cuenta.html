@@ -199,7 +199,10 @@ td{padding:.8rem 1.3rem;border-top:1px solid var(--line)}
       <h1 id="dashSaludo">Hola 👋</h1>
       <p>Tus análisis guardados y el estado de tu plan.</p>
     </div>
-    <a class="btn btn-brand" href="/">+ Analizar nueva oferta</a>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <a class="btn btn-ghost" href="/bitacora.html">📖 Mi Bitácora</a>
+      <a class="btn btn-brand" href="/">+ Analizar nueva oferta</a>
+    </div>
   </div>
 
   <div class="dash-grid">
@@ -483,8 +486,6 @@ async function canjearCodigo(){
   if(!c){ msg.innerHTML='<div class="error-box">⚠️ Código no encontrado. Revisa que esté bien escrito.</div>'; return; }
   if(c.estado !== 'libre'){ msg.innerHTML='<div class="error-box">⚠️ Este código ya fue usado.</div>'; return; }
 
-  // Si el código ya fue usado antes en un análisis (sin canjear en Mi cuenta),
-  // "vence" ya viene fijado desde ese primer uso — no lo recalculamos.
   const dias = c.plan === 'experto' ? 30 : 7;
   const vence = c.vence ? new Date(c.vence) : new Date(Date.now() + dias*24*60*60*1000);
 
