@@ -162,7 +162,7 @@ Responde en JSON puro:
   ]
 }`;
 
-      const resultado = await llamarClaude(prompt, 500);
+      const resultado = await llamarClaude(prompt, 700);
       return res.status(200).json({ preguntas: resultado.preguntas || [] });
     }
 
@@ -274,7 +274,7 @@ Responde en JSON puro:
 
 No inventes datos del candidato que no estén en el CV.`;
 
-      const resultado = await llamarClaude(prompt, 600);
+      const resultado = await llamarClaude(prompt, 750);
 
       const { data, error } = await supabase.from('cv_ordenes')
         .update({
