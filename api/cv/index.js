@@ -17,7 +17,7 @@ const { getSupabaseForRequest } = require('../bitacora/_supabaseClient');
 const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 
-async function llamarClaude(prompt, maxTokens = 800) {
+async function llamarClaude(prompt, maxTokens = 1000) {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -36,11 +36,27 @@ async function llamarClaude(prompt, maxTokens = 800) {
     throw new Error('Anthropic API error: ' + errText);
   }
   const data = await res.json();
-  const texto = data?.content?.[0]?.text || '{}';
-  const match = texto.match(/\{[\s\S]*\}/);
+  let texto = data?.content?.[0]?.text || '{}';
+
+  // Quitar bloques de código markdown si el modelo los agregó (```json ... ```)
+  texto = texto.replace(/```json/gi, '').replace(/```/g, '').trim();
+
+  // Si terminó por límite de tokens, avisamos algo más útil que un JSON roto
+  if (data?.stop_reason === 'max_tokens') {
+    console.error('Respuesta cortada por max_tokens. Texto parcial:', texto);
+    throw new Error('La respuesta del modelo quedó incompleta — intenta de nuevo (puede que tu CV sea muy largo)');
+  }
+
   try {
-    return JSON.parse(match ? match[0] : texto);
+    return JSON.parse(texto);
   } catch (e) {
+    const match = texto.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        return JSON.parse(match[0]);
+      } catch (e2) { /* sigue al log de abajo */ }
+    }
+    console.error('No se pudo parsear la respuesta del modelo:', texto);
     throw new Error('No se pudo interpretar la respuesta del modelo');
   }
 }
@@ -170,7 +186,7 @@ Responde en JSON puro, sin texto adicional, con este formato exacto:
 
 El score y las alertas deben poder justificarse con el contenido real del CV. No inventes logros ni cifras que no estén en el texto.`;
 
-      const diagnostico = await llamarClaude(prompt, 700);
+      const diagnostico = await llamarClaude(prompt, 900);
 
       const { data, error } = await supabase.from('cv_ordenes')
         .update({ diagnostico, estado: 'diagnosticado' })
