@@ -162,7 +162,7 @@ Responde en JSON puro:
   ]
 }`;
 
-      const resultado = await llamarClaude(prompt, 700);
+      const resultado = await llamarClaude(prompt, 1200);
       return res.status(200).json({ preguntas: resultado.preguntas || [] });
     }
 
@@ -186,7 +186,7 @@ Responde en JSON puro, sin texto adicional, con este formato exacto:
 
 El score y las alertas deben poder justificarse con el contenido real del CV. No inventes logros ni cifras que no estén en el texto.`;
 
-      const diagnostico = await llamarClaude(prompt, 900);
+      const diagnostico = await llamarClaude(prompt, 1300);
 
       const { data, error } = await supabase.from('cv_ordenes')
         .update({ diagnostico, estado: 'diagnosticado' })
@@ -231,7 +231,7 @@ Responde en JSON puro con este formato:
   "habilidades": ["habilidad 1", "habilidad 2"]
 }`;
 
-      const cv_optimizado = await llamarClaude(prompt, 1400);
+      const cv_optimizado = await llamarClaude(prompt, 3200);
 
       const { data, error } = await supabase.from('cv_ordenes')
         .update({
@@ -274,7 +274,7 @@ Responde en JSON puro:
 
 No inventes datos del candidato que no estén en el CV.`;
 
-      const resultado = await llamarClaude(prompt, 750);
+      const resultado = await llamarClaude(prompt, 1000);
 
       const { data, error } = await supabase.from('cv_ordenes')
         .update({
