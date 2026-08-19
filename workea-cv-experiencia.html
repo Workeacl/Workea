@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workea CV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --brand:#6c53ee;--grad:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0);
+  --brand-strong:#5138d6;--navy:#0a1430;
+  --brand-tint:#f0edfe;
+  --ink:#101b38;--muted:#5a6785;--faint:#8f9ab3;
+  --bg:#f6f8fc;--surface:#ffffff;--line:#e3e6f0;
+  --green:#2f9e6d;--green-bg:#e9f7f0;
+  --amber:#8a6508;--amber-bg:#fdf6e3;
+  --red:#9c3f3f;--red-bg:#fdeeee;
+  --shadow:0 1px 2px rgba(16,27,56,.05),0 8px 24px rgba(16,27,56,.07);
+  --shadow-lg:0 2px 4px rgba(16,27,56,.06),0 18px 48px rgba(16,27,56,.12);
+  --r:16px;--display:'Bricolage Grotesque',sans-serif;--body:'Instrument Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);line-height:1.15;letter-spacing:-.01em}
+button{font-family:var(--body);cursor:pointer;border:none;background:none}
+:focus-visible{outline:2.5px solid var(--brand-strong);outline-offset:2px}
+
+.topbar{background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.tb-logo{display:flex;align-items:center;gap:.5rem;font-family:var(--display);font-weight:700;font-size:1rem}
+.tb-logo svg{width:26px;height:19px}
+
+.stage{max-width:640px;margin:0 auto;padding:2.6rem 1.4rem 5rem}
+.screen{display:none;animation:fadeUp .25s ease both}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-weight:700;font-size:.88rem;padding:.8rem 1.6rem;border-radius:999px}
+.btn-brand{background:var(--grad);color:#fff}
+.btn-ghost{color:var(--navy);background:#fff;border:1.5px solid var(--line)}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.45;pointer-events:none}
+
+.gate{max-width:420px;margin:80px auto;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:2.2rem 1.8rem;box-shadow:var(--shadow-lg)}
+.gate h2{font-size:1.1rem;margin-bottom:.5rem}
+.gate p{font-size:.85rem;color:var(--muted);line-height:1.5}
+.gate a{color:var(--brand-strong);font-weight:700}
+
+.upload-box{background:var(--surface);border:2px dashed var(--line);border-radius:var(--r);padding:3rem 1.5rem;text-align:center;box-shadow:var(--shadow);cursor:pointer}
+.upload-box:hover{border-color:var(--brand-strong)}
+.upload-box .ic{font-size:2.2rem;margin-bottom:.8rem}
+.upload-box h3{font-size:1.05rem;margin-bottom:.3rem}
+.upload-box p{font-size:.83rem;color:var(--muted)}
+.file-chip{margin-top:1rem;display:inline-flex;align-items:center;gap:.5rem;background:var(--brand-tint);color:var(--brand-strong);font-size:.83rem;font-weight:600;padding:.5rem .9rem;border-radius:999px}
+.plan-select{display:flex;gap:.6rem;margin-top:1.6rem;flex-wrap:wrap}
+.plan-pill{flex:1;min-width:150px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:.9rem 1rem;cursor:pointer;text-align:center}
+.plan-pill.active{border-color:var(--brand-strong);background:var(--brand-tint)}
+.plan-pill .pp-name{font-size:.82rem;font-weight:700}
+.plan-pill .pp-price{font-size:.72rem;color:var(--muted);margin-top:.15rem}
+.plan-notice{font-size:.75rem;color:var(--faint);margin-top:.6rem;text-align:center}
+
+.loading-wrap{text-align:center;padding:4rem 1rem}
+.spinner{width:44px;height:44px;border:4px solid var(--line);border-top-color:var(--brand-strong);border-radius:50%;margin:0 auto 1.4rem;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-wrap h3{font-size:1.05rem;margin-bottom:.3rem}
+.loading-wrap p{font-size:.85rem;color:var(--muted)}
+
+.score-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.8rem;text-align:center;margin-bottom:1.4rem}
+.score-num{font-family:var(--display);font-size:2.4rem;font-weight:800}
+.score-label{font-size:.85rem;color:var(--muted);margin-top:.3rem}
+.diag-list{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.4rem 1.5rem;margin-bottom:1rem}
+.diag-list h4{font-size:.85rem;font-weight:700;margin-bottom:.8rem}
+.diag-row{display:flex;gap:.6rem;align-items:flex-start;font-size:.84rem;margin-bottom:.6rem;line-height:1.5}
+.diag-row:last-child{margin-bottom:0}
+.diag-row .ic{flex-shrink:0}
+
+.qa-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-lg);padding:1.8rem}
+.qa-eyebrow{font-size:.72rem;font-weight:700;color:var(--brand-strong);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
+.qa-context{font-size:.82rem;color:var(--muted);background:var(--bg);border-radius:10px;padding:.7rem .9rem;margin-bottom:1.1rem}
+.qa-question{font-size:1.05rem;font-weight:700;margin-bottom:1rem}
+.qa-input{width:100%;font-family:var(--body);font-size:.9rem;padding:.85rem 1rem;border:1.5px solid var(--line);border-radius:12px;margin-bottom:1rem}
+.qa-actions{display:flex;gap:.6rem}
+.qa-progress{font-size:.75rem;color:var(--faint);margin-top:1rem;text-align:center}
+
+.opt-block{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.4rem 1.5rem;margin-bottom:1rem}
+.opt-block h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--faint);margin-bottom:.7rem}
+.opt-role{font-size:.9rem;font-weight:700;margin-bottom:.4rem}
+.opt-bullet{font-size:.84rem;color:var(--ink);line-height:1.5;margin-bottom:.4rem;padding-left:1rem;position:relative}
+.opt-bullet::before{content:"•";position:absolute;left:0;color:var(--brand-strong)}
+
+.tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
+.tpl-pick{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:.9rem;text-align:center;cursor:pointer}
+.tpl-pick.active{border-color:var(--brand-strong);box-shadow:0 0 0 2px var(--brand-tint)}
+.tpl-pick .tp-swatch{height:56px;border-radius:8px;margin-bottom:.5rem}
+.tpl-pick .tp-name{font-size:.78rem;font-weight:700}
+
+.final-card{background:var(--navy);color:#fff;border-radius:var(--r);padding:2.2rem 1.8rem;text-align:center;box-shadow:var(--shadow-lg)}
+.final-card .fc-ic{font-size:2.4rem;margin-bottom:.8rem}
+.final-card h2{font-size:1.3rem;margin-bottom:.4rem}
+.final-card p{font-size:.85rem;color:#b9c6e8;margin-bottom:1.4rem}
+.msg-box{background:rgba(255,255,255,.08);border-radius:12px;padding:1rem 1.2rem;text-align:left;font-size:.85rem;line-height:1.55;margin-bottom:1rem}
+.tips-box{text-align:left;font-size:.82rem;color:#c7d2ee;margin-bottom:1.4rem}
+.tips-box div{margin-bottom:.4rem}
+
+.section-title{font-size:1.3rem;margin-bottom:.3rem}
+.section-sub{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
+.error-text{color:var(--red);font-size:.83rem;margin-top:.8rem;text-align:center}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--navy);color:#fff;padding:11px 18px;border-radius:12px;font-size:.83rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-logo">
+    <svg viewBox="0 0 100 74"><defs><linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wg)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Workea CV
+  </div>
+</div>
+
+<div class="gate" id="gate">
+  <h2>Inicia sesión para usar Workea CV</h2>
+  <p>Usa la misma cuenta de Workea que ya usas en Mi Cuenta. <a href="/cuenta.html">Inicia sesión ahí →</a> y vuelve a esta página.</p>
+</div>
+
+<div class="stage" id="app-stage" style="display:none;">
+
+  <div class="screen active" id="scr-upload">
+    <h2 class="section-title">Sube tu CV</h2>
+    <p class="section-sub">Aceptamos PDF o Word.</p>
+
+    <div class="upload-box" onclick="document.getElementById('file-input').click()">
+      <input type="file" id="file-input" accept=".pdf,.docx" style="display:none;" onchange="onFileChosen(event)">
+      <div class="ic">📎</div>
+      <h3 id="upload-title">Arrastra tu CV aquí</h3>
+      <p id="upload-sub">o toca para elegir el archivo</p>
+      <div class="file-chip" id="file-chip" style="display:none;"></div>
+    </div>
+
+    <div class="plan-select">
+      <div class="plan-pill" onclick="elegirPlan('diagnostico', this)"><div class="pp-name">Diagnóstico</div><div class="pp-price">$3.490</div></div>
+      <div class="plan-pill active" onclick="elegirPlan('optimizado', this)"><div class="pp-name">Optimizado</div><div class="pp-price">$8.990</div></div>
+      <div class="plan-pill" onclick="elegirPlan('pro', this)"><div class="pp-name">Pro</div><div class="pp-price">$11.990</div></div>
+    </div>
+    <p class="plan-notice">⚠️ Prototipo: el pago aún no está conectado — cualquier plan que elijas acá corre gratis por ahora.</p>
+
+    <button class="btn btn-brand btn-block" style="margin-top:1.2rem;" id="btn-analizar" disabled onclick="iniciarAnalisis()">Analizar mi CV →</button>
+    <div class="error-text" id="upload-error" style="display:none;"></div>
+  </div>
+
+  <div class="screen" id="scr-loading">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <h3 id="loading-text">Leyendo tu CV…</h3>
+      <p>Esto toma unos segundos</p>
+    </div>
+  </div>
+
+  <div class="screen" id="scr-diag">
+    <h2 class="section-title">Tu diagnóstico</h2>
+    <p class="section-sub">Basado en el contenido real de tu CV.</p>
+    <div id="diag-content"></div>
+    <button class="btn btn-brand btn-block" onclick="continuarDesdeDiagnostico()">Continuar →</button>
+  </div>
+
+  <div class="screen" id="scr-preguntas">
+    <h2 class="section-title">Antes de reescribir…</h2>
+    <p class="section-sub">Nunca inventamos números — si no lo sabes, lo dejamos igual de bien pero sin cifra.</p>
+    <div id="qa-mount"></div>
+  </div>
+
+  <div class="screen" id="scr-optimizado">
+    <h2 class="section-title">Tu CV optimizado</h2>
+    <p class="section-sub">Solo con tus propios datos — nada inventado.</p>
+    <div id="opt-content"></div>
+    <button class="btn btn-brand btn-block" onclick="continuarDesdeOptimizado()">Continuar →</button>
+  </div>
+
+  <div class="screen" id="scr-plantilla">
+    <h2 class="section-title">Elige tu plantilla</h2>
+    <p class="section-sub">Mismo contenido, el diseño que prefieras.</p>
+    <div class="tpl-grid">
+      <div class="tpl-pick active" onclick="elegirTplUI('minimal', this)"><div class="tp-swatch" style="background:#f6f8fc;border:1px solid #e3e6f0"></div><div class="tp-name">Minimal</div></div>
+      <div class="tpl-pick" onclick="elegirTplUI('professional', this)"><div class="tp-swatch" style="background:#0a1430"></div><div class="tp-name">Professional</div></div>
+      <div class="tpl-pick" onclick="elegirTplUI('harvard', this)"><div class="tp-swatch" style="background:#fff;border:1.5px solid #111"></div><div class="tp-name">Harvard</div></div>
+      <div class="tpl-pick" onclick="elegirTplUI('executive', this)"><div class="tp-swatch" style="background:linear-gradient(120deg,#0a1430,#1f2a4a)"></div><div class="tp-name">Executive</div></div>
+      <div class="tpl-pick" onclick="elegirTplUI('tech', this)"><div class="tp-swatch" style="background:#101418"></div><div class="tp-name">Tech</div></div>
+      <div class="tpl-pick" onclick="elegirTplUI('creative', this)"><div class="tp-swatch" style="background:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0)"></div><div class="tp-name">Creative</div></div>
+    </div>
+    <button class="btn btn-brand btn-block" style="margin-top:1.6rem;" onclick="finalizar()">Generar mi CV →</button>
+  </div>
+
+  <div class="screen" id="scr-final">
+    <div class="final-card" id="final-card"></div>
+    <div style="text-align:center;margin-top:1.6rem;">
+      <button class="btn btn-ghost" onclick="location.reload()">Empezar de nuevo</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const SUPABASE_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_A7q5busm8Pms9sW8L03L3w_WQpVqgze';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let session = null;
+  let planActual = 'optimizado';
+  let archivoBase64 = null;
+  let archivoTipo = null;
+  let ordenActual = null;
+  let preguntasPendientes = [];
+  let respuestasAcumuladas = [];
+  let preguntaIdx = 0;
+  let plantillaSeleccionada = 'minimal';
+
+  async function init(){
+    const { data } = await sb.auth.getSession();
+    session = data.session;
+    if(!session){ return; }
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app-stage').style.display = 'block';
+  }
+
+  async function apiCall(accion, extra = {}, metodo = 'POST'){
+    const opts = {
+      method: metodo,
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token }
+    };
+    let url = '/api/cv';
+    if(metodo === 'GET'){
+      url += '?' + new URLSearchParams(extra).toString();
+    } else {
+      opts.body = JSON.stringify({ accion, ...extra });
+    }
+    const res = await fetch(url, opts);
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Error de servidor');
+    return data;
+  }
+
+  function irScreen(id){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function elegirPlan(plan, btn){
+    planActual = plan;
+    document.querySelectorAll('.plan-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function onFileChosen(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const ext = file.name.split('.').pop().toLowerCase();
+    archivoTipo = ext === 'docx' ? 'docx' : 'pdf';
+
+    const reader = new FileReader();
+    reader.onload = function(){
+      archivoBase64 = reader.result.split(',')[1];
+      document.getElementById('upload-title').textContent = 'CV cargado ✓';
+      document.getElementById('upload-sub').textContent = 'Listo para analizar';
+      const chip = document.getElementById('file-chip');
+      chip.textContent = '📄 ' + file.name;
+      chip.style.display = 'inline-flex';
+      document.getElementById('btn-analizar').disabled = false;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function iniciarAnalisis(){
+    const errEl = document.getElementById('upload-error');
+    errEl.style.display = 'none';
+    irScreen('scr-loading');
+    document.getElementById('loading-text').textContent = 'Leyendo tu CV…';
+    try{
+      const { texto } = await apiCall('extraer_texto', { archivo_base64: archivoBase64, tipo: archivoTipo });
+
+      const { orden } = await apiCall('crear_orden', { cv_original: texto, plan: planActual });
+      ordenActual = orden;
+
+      document.getElementById('loading-text').textContent = 'Analizando tu CV…';
+      const { orden: ordenDiag } = await apiCall('diagnosticar', { orden_id: ordenActual.id });
+      ordenActual = ordenDiag;
+
+      renderDiagnostico(ordenActual.diagnostico);
+      irScreen('scr-diag');
+    } catch(err){
+      irScreen('scr-upload');
+      errEl.textContent = err.message;
+      errEl.style.display = 'block';
+    }
+  }
+
+  function renderDiagnostico(d){
+    const el = document.getElementById('diag-content');
+    const color = d.score >= 70 ? 'var(--green)' : (d.score >= 50 ? 'var(--amber)' : 'var(--red)');
+    let html = '<div class="score-card"><div class="score-num" style="color:'+color+'">'+d.score+'%</div><div class="score-label">Compatibilidad ATS estimada</div></div>';
+
+    if(d.alertas && d.alertas.length){
+      html += '<div class="diag-list"><h4>⚠️ A mejorar</h4>' +
+        d.alertas.map(a => '<div class="diag-row"><span class="ic">🔸</span> '+escapeHtml(a)+'</div>').join('') +
+        '</div>';
+    }
+    if(d.fortalezas && d.fortalezas.length){
+      html += '<div class="diag-list"><h4>✅ Ya está bien</h4>' +
+        d.fortalezas.map(f => '<div class="diag-row"><span class="ic">✔️</span> '+escapeHtml(f)+'</div>').join('') +
+        '</div>';
+    }
+    if(d.keywords_faltantes && d.keywords_faltantes.length){
+      html += '<div class="diag-list"><h4>🔑 Palabras clave que faltan</h4>' +
+        d.keywords_faltantes.map(k => '<div class="diag-row"><span class="ic">•</span> '+escapeHtml(k)+'</div>').join('') +
+        '</div>';
+    }
+    el.innerHTML = html;
+  }
+
+  async function continuarDesdeDiagnostico(){
+    if(planActual === 'diagnostico'){
+      irScreen('scr-final');
+      document.getElementById('final-card').innerHTML =
+        '<div class="fc-ic">📋</div><h2>Tu diagnóstico está listo</h2><p>Puedes revisarlo arriba en cualquier momento.</p>';
+      return;
+    }
+    irScreen('scr-loading');
+    document.getElementById('loading-text').textContent = 'Buscando qué podríamos preguntarte…';
+    try{
+      const { preguntas } = await apiCall('generar_preguntas', { orden_id: ordenActual.id });
+      preguntasPendientes = preguntas || [];
+      respuestasAcumuladas = [];
+      preguntaIdx = 0;
+
+      if(preguntasPendientes.length === 0){
+        await ejecutarOptimizacion();
+      } else {
+        renderPregunta();
+        irScreen('scr-preguntas');
+      }
+    } catch(err){
+      showToast('Error: ' + err.message);
+      irScreen('scr-diag');
+    }
+  }
+
+  function renderPregunta(){
+    const p = preguntasPendientes[preguntaIdx];
+    document.getElementById('qa-mount').innerHTML =
+      '<div class="qa-card">' +
+        '<div class="qa-eyebrow">Pregunta '+(preguntaIdx + 1)+' de '+preguntasPendientes.length+'</div>' +
+        '<div class="qa-context">Tu CV dice: "'+escapeHtml(p.contexto)+'"</div>' +
+        '<div class="qa-question">'+escapeHtml(p.pregunta)+'</div>' +
+        '<input type="text" class="qa-input" id="qa-input" placeholder="Escribe tu respuesta">' +
+        '<div class="qa-actions">' +
+          '<button class="btn btn-brand" style="flex:1;" onclick="responderPregunta(false)">Guardar y continuar</button>' +
+          '<button class="btn btn-ghost" onclick="responderPregunta(true)">Omitir</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  async function responderPregunta(omitir){
+    const p = preguntasPendientes[preguntaIdx];
+    const valor = omitir ? '' : document.getElementById('qa-input').value.trim();
+    respuestasAcumuladas.push({ pregunta: p.pregunta, respuesta: valor });
+    preguntaIdx++;
+    if(preguntaIdx < preguntasPendientes.length){
+      renderPregunta();
+    } else {
+      await ejecutarOptimizacion();
+    }
+  }
+
+  async function ejecutarOptimizacion(){
+    irScreen('scr-loading');
+    document.getElementById('loading-text').textContent = 'Reescribiendo tu CV…';
+    try{
+      const { orden } = await apiCall('optimizar', { orden_id: ordenActual.id, respuestas: respuestasAcumuladas });
+      ordenActual = orden;
+      renderOptimizado(ordenActual.cv_optimizado);
+      irScreen('scr-optimizado');
+    } catch(err){
+      showToast('Error: ' + err.message);
+      irScreen('scr-diag');
+    }
+  }
+
+  function renderOptimizado(cv){
+    const el = document.getElementById('opt-content');
+    let html = '<div class="opt-block"><h4>Resumen profesional</h4><p style="font-size:.85rem;line-height:1.55;">'+escapeHtml(cv.resumen_profesional || '')+'</p></div>';
+
+    (cv.experiencia || []).forEach(exp => {
+      html += '<div class="opt-block">' +
+        '<div class="opt-role">'+escapeHtml(exp.cargo || '')+' · '+escapeHtml(exp.empresa || '')+'</div>' +
+        (exp.bullets || []).map(b => '<div class="opt-bullet">'+escapeHtml(b)+'</div>').join('') +
+        '</div>';
+    });
+
+    if(cv.habilidades && cv.habilidades.length){
+      html += '<div class="opt-block"><h4>Habilidades</h4><p style="font-size:.85rem;">'+cv.habilidades.map(escapeHtml).join(' · ')+'</p></div>';
+    }
+    el.innerHTML = html;
+  }
+
+  async function continuarDesdeOptimizado(){
+    irScreen('scr-loading');
+    document.getElementById('loading-text').textContent = 'Redactando tu mensaje de presentación…';
+    try{
+      const { orden } = await apiCall('generar_mensaje', { orden_id: ordenActual.id });
+      ordenActual = orden;
+
+      if(planActual === 'pro'){
+        irScreen('scr-plantilla');
+      } else {
+        mostrarFinal();
+      }
+    } catch(err){
+      showToast('Error: ' + err.message);
+      irScreen('scr-optimizado');
+    }
+  }
+
+  function elegirTplUI(tpl, btn){
+    plantillaSeleccionada = tpl;
+    document.querySelectorAll('.tpl-pick').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  async function finalizar(){
+    try{
+      const { orden } = await apiCall('elegir_plantilla', { orden_id: ordenActual.id, plantilla: plantillaSeleccionada });
+      ordenActual = orden;
+      mostrarFinal();
+    } catch(err){
+      showToast('Error: ' + err.message);
+    }
+  }
+
+  function mostrarFinal(){
+    const o = ordenActual;
+    let html = '<div class="fc-ic">🎉</div><h2>Tu CV está listo</h2><p>Esto es lo que generamos para ti.</p>';
+    if(o.mensaje_presentacion){
+      html += '<div class="msg-box">'+escapeHtml(o.mensaje_presentacion)+'</div>';
+    }
+    if(o.tips_postulacion && o.tips_postulacion.length){
+      html += '<div class="tips-box">'+o.tips_postulacion.map(t => '<div>💡 '+escapeHtml(t)+'</div>').join('')+'</div>';
+    }
+    html += '<p style="font-size:.75rem;color:#8ba0d6;">La descarga en PDF con diseño todavía no está conectada — por ahora, el contenido queda guardado en tu orden.</p>';
+    document.getElementById('final-card').innerHTML = html;
+    irScreen('scr-final');
+  }
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._t);
+    window._t = setTimeout(()=> t.classList.remove('show'), 3000);
+  }
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  init();
+</script>
+
+</body>
+</html>
