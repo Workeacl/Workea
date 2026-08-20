@@ -102,6 +102,8 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 .msg-box{background:rgba(255,255,255,.08);border-radius:12px;padding:1rem 1.2rem;text-align:left;font-size:.85rem;line-height:1.55;margin-bottom:1rem}
 .tips-box{text-align:left;font-size:.82rem;color:#c7d2ee;margin-bottom:1.4rem}
 .tips-box div{margin-bottom:.4rem}
+.dl-row{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+.dl-btn{background:#fff;color:var(--navy);font-weight:700;font-size:.82rem;padding:.75rem 1.2rem;border-radius:999px;display:inline-flex;gap:.4rem;align-items:center}
 
 .section-title{font-size:1.3rem;margin-bottom:.3rem}
 .section-sub{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
@@ -144,6 +146,13 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       <div class="plan-pill" onclick="elegirPlan('pro', this)"><div class="pp-name">Pro</div><div class="pp-price">$11.990</div></div>
     </div>
     <p class="plan-notice">⚠️ Prototipo: el pago aún no está conectado — cualquier plan que elijas acá corre gratis por ahora.</p>
+
+    <div style="margin-top:1.4rem;">
+      <label style="font-size:.78rem;font-weight:600;color:var(--muted);display:block;margin-bottom:.4rem;">Para el encabezado de tu CV final (opcional, recomendado)</label>
+      <input type="text" id="contact-nombre" placeholder="Tu nombre completo" style="width:100%;font-family:var(--body);font-size:.9rem;padding:.75rem .9rem;border:1.5px solid var(--line);border-radius:10px;margin-bottom:.5rem;">
+      <input type="text" id="contact-correo" placeholder="Correo" style="width:100%;font-family:var(--body);font-size:.9rem;padding:.75rem .9rem;border:1.5px solid var(--line);border-radius:10px;margin-bottom:.5rem;">
+      <input type="text" id="contact-telefono" placeholder="Teléfono (opcional)" style="width:100%;font-family:var(--body);font-size:.9rem;padding:.75rem .9rem;border:1.5px solid var(--line);border-radius:10px;">
+    </div>
 
     <button class="btn btn-brand btn-block" style="margin-top:1.2rem;" id="btn-analizar" disabled onclick="iniciarAnalisis()">Analizar mi CV →</button>
     <div class="error-text" id="upload-error" style="display:none;"></div>
@@ -448,9 +457,81 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     if(o.tips_postulacion && o.tips_postulacion.length){
       html += '<div class="tips-box">'+o.tips_postulacion.map(t => '<div>💡 '+escapeHtml(t)+'</div>').join('')+'</div>';
     }
-    html += '<p style="font-size:.75rem;color:#8ba0d6;">La descarga en PDF con diseño todavía no está conectada — por ahora, el contenido queda guardado en tu orden.</p>';
+    html += '<p style="font-size:.75rem;color:#8ba0d6;">Tu CV con diseño está listo para descargar.</p>';
+    html += '<div class="dl-row" style="margin-top:1rem;"><button class="dl-btn" onclick="abrirCVFinal()">📄 Ver y descargar mi CV</button></div>';
     document.getElementById('final-card').innerHTML = html;
     irScreen('scr-final');
+  }
+
+  const PLANTILLA_ESTILOS = {
+    minimal:      { accent: '#1999f1', fondo: '#fff', fuente: "'Instrument Sans', sans-serif" },
+    professional: { accent: '#0a1430', fondo: '#fff', fuente: "'Instrument Sans', sans-serif" },
+    harvard:      { accent: '#111111', fondo: '#fff', fuente: "Georgia, serif" },
+    executive:    { accent: '#0a1430', fondo: '#fff', fuente: "Georgia, serif" },
+    tech:         { accent: '#0a1430', fondo: '#fff', fuente: "'Courier New', monospace" },
+    creative:     { accent: 'linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0)', fondo: '#fff', fuente: "'Instrument Sans', sans-serif" }
+  };
+
+  function abrirCVFinal(){
+    const cv = ordenActual.cv_optimizado || {};
+    const nombre = document.getElementById('contact-nombre')?.value.trim() || 'Tu Nombre';
+    const correo = document.getElementById('contact-correo')?.value.trim() || '';
+    const telefono = document.getElementById('contact-telefono')?.value.trim() || '';
+    const plantilla = (planActual === 'pro') ? plantillaSeleccionada : 'minimal';
+    const est = PLANTILLA_ESTILOS[plantilla] || PLANTILLA_ESTILOS.minimal;
+
+    const contactoLinea = [correo, telefono].filter(Boolean).join(' · ');
+
+    const expHtml = (cv.experiencia || []).map(exp => `
+      <div style="margin-bottom:18px;">
+        <div style="display:flex;justify-content:space-between;font-weight:700;font-size:14px;">
+          <span>${escapeHtml(exp.cargo || '')}</span><span style="font-weight:600;color:#666;">${escapeHtml(exp.periodo || '')}</span>
+        </div>
+        <div style="font-size:13px;color:#555;margin-bottom:6px;">${escapeHtml(exp.empresa || '')}</div>
+        <ul style="margin:0 0 0 18px;padding:0;">
+          ${(exp.bullets || []).map(b => `<li style="font-size:13px;line-height:1.6;margin-bottom:4px;">${escapeHtml(b)}</li>`).join('')}
+        </ul>
+      </div>`).join('');
+
+    const habilidadesHtml = (cv.habilidades && cv.habilidades.length)
+      ? `<div style="margin-top:20px;"><h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:8px;">Habilidades</h3><p style="font-size:13px;">${(cv.habilidades || []).map(escapeHtml).join(' · ')}</p></div>`
+      : '';
+
+    const htmlCompleto = `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><title>${escapeHtml(nombre)} — CV</title>
+<style>
+  @media print { .no-print{ display:none !important; } body{ padding:0 !important; } }
+  body{ font-family:${est.fuente}; color:#1a1a2e; max-width:740px; margin:0 auto; padding:40px 30px; line-height:1.5; }
+  .barra-superior{ background:${est.accent}; height:8px; margin:-40px -30px 30px; }
+  h1{ font-size:26px; margin:0 0 4px; }
+  .rol{ color:#555; font-size:14px; margin-bottom:6px; }
+  .contacto{ font-size:12.5px; color:#777; margin-bottom:24px; }
+  h3{ font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:#888; margin:22px 0 8px; }
+  .print-bar{ position:sticky; top:0; background:#0a1430; color:#fff; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; margin:-40px -30px 30px; font-family:sans-serif; }
+  .print-bar button{ background:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0); color:#fff; border:none; font-weight:700; padding:8px 16px; border-radius:999px; cursor:pointer; font-size:13px; }
+</style></head>
+<body>
+  <div class="print-bar no-print">
+    <span>Workea CV — vista previa</span>
+    <button onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
+  </div>
+  <div class="barra-superior"></div>
+  <h1>${escapeHtml(nombre)}</h1>
+  <div class="rol">${escapeHtml((cv.experiencia && cv.experiencia[0] && cv.experiencia[0].cargo) || '')}</div>
+  <div class="contacto">${escapeHtml(contactoLinea)}</div>
+
+  <h3>Resumen profesional</h3>
+  <p style="font-size:13px;">${escapeHtml(cv.resumen_profesional || '')}</p>
+
+  <h3>Experiencia</h3>
+  ${expHtml}
+
+  ${habilidadesHtml}
+</body></html>`;
+
+    const ventana = window.open('', '_blank');
+    ventana.document.write(htmlCompleto);
+    ventana.document.close();
   }
 
   function showToast(msg){
