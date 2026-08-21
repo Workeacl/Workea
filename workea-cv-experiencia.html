@@ -515,6 +515,9 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     <span>Workea CV — vista previa</span>
     <button onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
   </div>
+  <p class="no-print" style="font-size:11.5px; color:#888; font-family:sans-serif; margin:-20px -30px 20px; padding:8px 30px; background:#f6f8fc;">
+    💡 En el diálogo de impresión, busca "Más ajustes" y desmarca "Encabezados y pies de página" para que tu PDF quede limpio, sin fecha ni URL.
+  </p>
   <div class="barra-superior"></div>
   <h1>${escapeHtml(nombre)}</h1>
   <div class="rol">${escapeHtml((cv.experiencia && cv.experiencia[0] && cv.experiencia[0].cargo) || '')}</div>
