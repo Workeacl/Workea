@@ -529,9 +529,9 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
   ${habilidadesHtml}
 </body></html>`;
 
-    const ventana = window.open('', '_blank');
-    ventana.document.write(htmlCompleto);
-    ventana.document.close();
+    const blob = new Blob([htmlCompleto], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
   }
 
   function showToast(msg){
