@@ -381,6 +381,54 @@ No inventes datos del candidato que no estén en el CV.`;
       return res.status(200).json({ orden: data });
     }
 
+    // ---------- generar_banco_historias ----------
+    // Extrae 3-4 experiencias reales del CV en formato STAR, para que
+    // Entrevistas deje de usar preguntas genéricas y use la experiencia
+    // real de la persona como base de práctica.
+    if (accion === 'generar_banco_historias') {
+      if (orden.plan === 'diagnostico') {
+        return res.status(403).json({ error: 'El plan Diagnóstico no incluye Banco de Historias' });
+      }
+      if (!orden.cv_optimizado) {
+        return res.status(400).json({ error: 'Primero optimiza tu CV antes de generar el banco de historias' });
+      }
+
+      const prompt = `Eres una psicóloga laboral. Lee este CV y extrae entre 3 y 4 experiencias reales que se puedan contar como historias completas en formato STAR (Situación, Desafío, Acción, Resultado) — útiles para practicar entrevistas.
+
+CV:
+"""
+${orden.cv_original}
+"""
+
+Usa ÚNICAMENTE información real del CV — si un elemento STAR no está claro en el texto, complétalo de forma genérica pero honesta (ej. "Resultado no especificado en el CV — te recomendamos cuantificarlo antes de tu entrevista"), nunca inventes cifras o detalles que no estén ahí.
+
+IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior.
+
+Responde en JSON puro:
+{
+  "historias": [
+    {
+      "titulo": "nombre corto de la historia, ej: Liderazgo de equipo en Fintech X",
+      "situacion": "qué estaba pasando",
+      "desafio": "qué problema o reto había",
+      "accion": "qué hizo la persona específicamente",
+      "resultado": "qué ocurrió (o nota honesta si el CV no lo especifica)",
+      "competencias": ["competencia 1", "competencia 2"]
+    }
+  ]
+}`;
+
+      const resultado = await llamarClaude(prompt, 1600);
+      const historias = resultado.historias || [];
+
+      const { data, error } = await supabase.from('cv_ordenes')
+        .update({ banco_historias: historias })
+        .eq('id', orden_id).select().single();
+
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ orden: data });
+    }
+
     // ---------- elegir_plantilla ----------
     if (accion === 'elegir_plantilla') {
       if (orden.plan !== 'pro') {
