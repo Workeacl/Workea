@@ -167,6 +167,8 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       <input type="text" id="contact-nombre" placeholder="Tu nombre completo">
       <input type="text" id="contact-correo" placeholder="Correo">
       <input type="text" id="contact-telefono" placeholder="Teléfono (opcional)">
+      <input type="text" id="contact-ciudad" placeholder="Ciudad (ej: Santiago, Chile)">
+      <input type="text" id="contact-linkedin" placeholder="LinkedIn (opcional, ej: linkedin.com/in/tu-nombre)">
     </div>
 
     <button class="btn btn-brand btn-block" style="margin-top:1.2rem;" id="btn-analizar" disabled onclick="iniciarAnalisis()">Analizar mi CV →</button>
@@ -533,9 +535,11 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     const nombre = document.getElementById('contact-nombre')?.value.trim() || 'Tu Nombre';
     const correo = document.getElementById('contact-correo')?.value.trim() || '';
     const telefono = document.getElementById('contact-telefono')?.value.trim() || '';
+    const ciudad = document.getElementById('contact-ciudad')?.value.trim() || '';
+    const linkedin = document.getElementById('contact-linkedin')?.value.trim() || '';
     const plantilla = (planActual === 'pro') ? plantillaSeleccionada : 'minimal';
     const est = PLANTILLA_ESTILOS[plantilla] || PLANTILLA_ESTILOS.minimal;
-    const contactoLinea = [correo, telefono].filter(Boolean).join(' · ');
+    const contactoLinea = [correo, telefono, ciudad, linkedin].filter(Boolean).join(' · ');
 
     const expHtml = (cv.experiencia || []).map(exp => `
       <div style="margin-bottom:18px;">
