@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workea · Practica tu entrevista</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --grad:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0);
+  --brand-strong:#5138d6;--navy:#0a1430;
+  --brand-tint:#f0edfe;
+  --ink:#101b38;--muted:#5a6785;--faint:#8f9ab3;
+  --bg:#f6f8fc;--surface:#ffffff;--line:#e3e6f0;
+  --green:#2f9e6d;--green-bg:#e9f7f0;
+  --amber:#8a6508;--amber-bg:#fdf6e3;
+  --red:#9c3f3f;--red-bg:#fdeeee;
+  --shadow:0 1px 2px rgba(16,27,56,.05),0 8px 24px rgba(16,27,56,.07);
+  --shadow-lg:0 2px 4px rgba(16,27,56,.06),0 18px 48px rgba(16,27,56,.12);
+  --r:16px;--display:'Bricolage Grotesque',sans-serif;--body:'Instrument Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);line-height:1.15;letter-spacing:-.01em}
+button{font-family:var(--body);cursor:pointer;border:none;background:none}
+:focus-visible{outline:2.5px solid var(--brand-strong);outline-offset:2px}
+
+.topbar{background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;padding:14px 20px}
+.tb-logo{display:flex;align-items:center;gap:.5rem;font-family:var(--display);font-weight:700;font-size:1rem;max-width:680px;margin:0 auto}
+.tb-logo svg{width:26px;height:19px}
+
+.stage{max-width:680px;margin:0 auto;padding:2.6rem 1.4rem 5rem}
+.screen{display:none;animation:fadeUp .25s ease both}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-weight:700;font-size:.88rem;padding:.8rem 1.6rem;border-radius:999px}
+.btn-brand{background:var(--grad);color:#fff}
+.btn-ghost{color:var(--navy);background:#fff;border:1.5px solid var(--line)}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.45;pointer-events:none}
+
+.section-title{font-size:1.4rem;margin-bottom:.3rem}
+.section-sub{font-size:.88rem;color:var(--muted);margin-bottom:1.6rem}
+
+.q-list{display:flex;flex-direction:column;gap:.7rem}
+.sesion-resumen{background:var(--brand-tint);color:var(--brand-strong);border-radius:12px;padding:.8rem 1.1rem;font-size:.85rem;margin-bottom:1rem;}
+.q-item{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:1.1rem 1.3rem;cursor:pointer;display:flex;gap:.8rem;align-items:flex-start;box-shadow:var(--shadow);transition:border-color .15s}
+.q-item:hover{border-color:var(--brand-strong)}
+.q-num{width:26px;height:26px;border-radius:50%;background:var(--brand-tint);color:var(--brand-strong);font-weight:700;font-size:.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.q-text{font-size:.92rem;font-weight:600;line-height:1.4}
+
+.answer-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-lg);padding:1.8rem}
+.answer-q{font-size:.78rem;font-weight:700;color:var(--brand-strong);text-transform:uppercase;letter-spacing:.03em;margin-bottom:.5rem}
+.answer-q-text{font-size:1.05rem;font-weight:700;margin-bottom:1.2rem;line-height:1.4}
+.answer-textarea{width:100%;font-family:var(--body);font-size:.9rem;padding:.9rem 1rem;border:1.5px solid var(--line);border-radius:12px;min-height:160px;resize:vertical;line-height:1.5}
+.char-hint{font-size:.75rem;color:var(--faint);margin-top:.4rem}
+
+.loading-wrap{text-align:center;padding:4rem 1rem}
+.spinner{width:44px;height:44px;border:4px solid var(--line);border-top-color:var(--brand-strong);border-radius:50%;margin:0 auto 1.4rem;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.score-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.8rem;text-align:center;margin-bottom:1.4rem}
+.score-num{font-family:var(--display);font-size:2.4rem;font-weight:800}
+.score-label{font-size:.85rem;color:var(--muted);margin-top:.3rem}
+
+.star-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1.4rem}
+.star-item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.1rem}
+.star-item.si{border-left:4px solid var(--green)}
+.star-item.no{border-left:4px solid var(--red)}
+.star-head{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:.85rem;margin-bottom:.4rem}
+.star-badge{font-size:.68rem;font-weight:700;padding:.15rem .5rem;border-radius:100px}
+.star-badge.si{background:var(--green-bg);color:var(--green)}
+.star-badge.no{background:var(--red-bg);color:var(--red)}
+.star-nota{font-size:.8rem;color:var(--muted);line-height:1.45}
+
+.sugerencia-card{background:var(--brand-tint);border-radius:14px;padding:1.2rem 1.4rem;margin-bottom:1.6rem}
+.sugerencia-card h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--brand-strong);margin-bottom:.5rem}
+.sugerencia-card p{font-size:.88rem;color:var(--ink);line-height:1.5}
+
+.partner-bridge{background:var(--navy);color:#fff;border-radius:var(--r);padding:1.8rem 1.6rem;text-align:center;box-shadow:var(--shadow-lg);margin-top:.6rem}
+.partner-bridge .pb-ic{font-size:1.8rem;margin-bottom:.6rem}
+.partner-bridge h3{font-size:1.05rem;margin-bottom:.5rem}
+.partner-bridge p{font-size:.85rem;color:#b9c6e8;margin-bottom:1.2rem;line-height:1.5}
+
+.error-text{color:var(--red);font-size:.83rem;margin-top:.8rem;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-logo">
+    <svg viewBox="0 0 100 74"><defs><linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wg)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Workea · Practica tu entrevista
+  </div>
+</div>
+
+<div class="stage">
+
+  <!-- 0. BLOQUEADO -->
+  <div class="screen active" id="scr-locked">
+    <div class="answer-card" style="text-align:center;">
+      <div style="font-size:2rem;margin-bottom:.8rem;">🔒</div>
+      <h2 style="font-size:1.15rem;margin-bottom:.6rem;">Practicar entrevistas es un beneficio incluido</h2>
+      <p style="font-size:.88rem;color:var(--muted);line-height:1.55;margin-bottom:1.4rem;">
+        Esta herramienta viene incluida cuando generas tu CV con el plan <b>Optimizado</b> o <b>Pro</b> en Workea CV — no está disponible por separado.
+      </p>
+      <a class="btn btn-brand btn-block" href="/workea-cv-planes.html">Ver planes de Workea CV →</a>
+    </div>
+  </div>
+
+  <!-- 1. ELEGIR PREGUNTA -->
+  <div class="screen" id="scr-preguntas">
+    <h2 class="section-title">Elige una pregunta para practicar</h2>
+    <p class="section-sub">Preguntas típicas de entrevista conductual. Responde como lo harías de verdad — te damos feedback con el método STAR.</p>
+    <div class="sesion-resumen" id="sesion-resumen" style="display:none;"></div>
+    <div class="q-list" id="q-list"></div>
+  </div>
+
+  <!-- 2. RESPONDER -->
+  <div class="screen" id="scr-responder">
+    <div class="answer-card">
+      <div class="answer-q">Pregunta</div>
+      <div class="answer-q-text" id="pregunta-elegida-text"></div>
+      <textarea class="answer-textarea" id="respuesta-input" placeholder="Escribe tu respuesta como si estuvieras en la entrevista…"></textarea>
+      <div class="char-hint">Mínimo 20 caracteres. Mientras más detalle, mejor el feedback.</div>
+      <div class="error-text" id="respuesta-error" style="display:none;"></div>
+      <button class="btn btn-brand btn-block" style="margin-top:1rem;" onclick="evaluarRespuesta()">Evaluar mi respuesta →</button>
+      <button class="btn btn-ghost btn-block" style="margin-top:.6rem;" onclick="volverAPreguntas()">← Elegir otra pregunta</button>
+    </div>
+  </div>
+
+  <!-- 3. CARGANDO -->
+  <div class="screen" id="scr-loading">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <h3 style="font-size:1.05rem;">Analizando tu respuesta…</h3>
+      <p style="font-size:.85rem;color:var(--muted);">Esto toma unos segundos</p>
+    </div>
+  </div>
+
+  <!-- 4. RESULTADO -->
+  <div class="screen" id="scr-resultado">
+    <h2 class="section-title">Tu evaluación</h2>
+    <p class="section-sub">Desglose según el método STAR (Situación, Tarea, Acción, Resultado).</p>
+    <div id="resultado-content"></div>
+
+    <div class="partner-bridge">
+      <div class="pb-ic">💬</div>
+      <h3>La IA evalúa la estructura. Un reclutador evalúa cómo lo cuentas en persona.</h3>
+      <p>Practiquemos juntas antes de tu entrevista real — feedback en vivo, con alguien que ha estado del otro lado de la mesa.</p>
+      <a class="btn btn-brand" href="#" style="background:#fff;color:var(--navy);">Agendar sesión con Arantxa →</a>
+    </div>
+
+    <button class="btn btn-ghost btn-block" style="margin-top:1.4rem;" onclick="volverAPreguntas()">Practicar otra pregunta</button>
+  </div>
+
+</div>
+
+<script>
+  const PREGUNTAS = [
+    "Cuéntame sobre una situación donde tuviste que liderar o resolver un problema complejo bajo presión.",
+    "¿Cómo manejas los desacuerdos o prioridades cambiantes con tu equipo o jefatura?",
+    "Describe un proyecto donde mejoraste un proceso o resultado de forma significativa.",
+    "¿Por qué te interesa este rol y qué aportarías desde el primer mes?",
+    "Háblame de un error que cometiste y qué aprendiste de esa experiencia."
+  ];
+
+  let preguntaActual = '';
+  let resultadosSesion = []; // [{indice, score}]
+
+  function renderPreguntas(){
+    const el = document.getElementById('q-list');
+    el.innerHTML = PREGUNTAS.map((p, i) => {
+      const hecha = resultadosSesion.find(r => r.indice === i);
+      return `
+      <div class="q-item" tabindex="0" role="button" onclick="elegirPregunta(${i})">
+        <div class="q-num" ${hecha ? 'style="background:var(--green-bg);color:var(--green);"' : ''}>${hecha ? '✓' : (i + 1)}</div>
+        <div class="q-text">${escapeHtml(p)}${hecha ? '<div style="font-size:.75rem;color:var(--muted);font-weight:500;margin-top:.2rem;">Practicada · '+hecha.score+'%</div>' : ''}</div>
+      </div>`;
+    }).join('');
+
+    const resumenEl = document.getElementById('sesion-resumen');
+    if(resultadosSesion.length >= 2){
+      const prom = Math.round(resultadosSesion.reduce((a,r) => a + r.score, 0) / resultadosSesion.length);
+      resumenEl.style.display = 'block';
+      resumenEl.innerHTML = `<b>${resultadosSesion.length} preguntas practicadas</b> en esta sesión · promedio ${prom}%`;
+    } else {
+      resumenEl.style.display = 'none';
+    }
+  }
+
+  let preguntaIdx = -1;
+
+  function elegirPregunta(i){
+    preguntaIdx = i;
+    preguntaActual = PREGUNTAS[i];
+    document.getElementById('pregunta-elegida-text').textContent = preguntaActual;
+    document.getElementById('respuesta-input').value = '';
+    document.getElementById('respuesta-error').style.display = 'none';
+    irScreen('scr-responder');
+  }
+
+  function volverAPreguntas(){
+    renderPreguntas();
+    irScreen('scr-preguntas');
+  }
+
+  function irScreen(id){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  async function evaluarRespuesta(){
+    const respuesta = document.getElementById('respuesta-input').value.trim();
+    const errEl = document.getElementById('respuesta-error');
+    errEl.style.display = 'none';
+
+    if(respuesta.length < 20){
+      errEl.textContent = 'Cuenta un poco más — necesitamos al menos 20 caracteres para evaluar.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    irScreen('scr-loading');
+    try{
+      const res = await fetch('/api/entrevistas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accion: 'evaluar', pregunta: preguntaActual, respuesta })
+      });
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.error || 'Error de servidor');
+
+      renderResultado(data.evaluacion);
+      resultadosSesion = resultadosSesion.filter(r => r.indice !== preguntaIdx);
+      resultadosSesion.push({ indice: preguntaIdx, score: data.evaluacion.score });
+      irScreen('scr-resultado');
+    } catch(err){
+      irScreen('scr-responder');
+      errEl.textContent = err.message;
+      errEl.style.display = 'block';
+    }
+  }
+
+  function renderResultado(ev){
+    const el = document.getElementById('resultado-content');
+    const color = ev.score >= 70 ? 'var(--green)' : (ev.score >= 50 ? 'var(--amber)' : 'var(--red)');
+
+    const items = [
+      { key: 'situacion', label: 'Situación' },
+      { key: 'tarea', label: 'Tarea' },
+      { key: 'accion', label: 'Acción' },
+      { key: 'resultado', label: 'Resultado' }
+    ];
+
+    let html = '<div class="score-card"><div class="score-num" style="color:'+color+'">'+ev.score+'%</div><div class="score-label">Fortaleza de tu respuesta (estructura STAR)</div></div>';
+
+    html += '<div class="star-grid">';
+    items.forEach(it => {
+      const d = ev[it.key] || {};
+      const cls = d.presente ? 'si' : 'no';
+      html += '<div class="star-item '+cls+'">' +
+        '<div class="star-head">'+it.label+' <span class="star-badge '+cls+'">'+(d.presente ? 'Presente' : 'Falta')+'</span></div>' +
+        '<div class="star-nota">'+escapeHtml(d.nota || '')+'</div>' +
+      '</div>';
+    });
+    html += '</div>';
+
+    if(ev.sugerencia_principal){
+      html += '<div class="sugerencia-card"><h4>💡 Lo más importante a mejorar</h4><p>'+escapeHtml(ev.sugerencia_principal)+'</p></div>';
+    }
+
+    el.innerHTML = html;
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  function verificarAcceso(){
+    const params = new URLSearchParams(window.location.search);
+    const ordenId = params.get('orden_id');
+    const plan = params.get('plan');
+    const planesValidos = ['optimizado', 'pro'];
+
+    if(!ordenId || !planesValidos.includes(plan)){
+      return false;
+    }
+    document.getElementById('scr-locked').classList.remove('active');
+    document.getElementById('scr-preguntas').classList.add('active');
+    return true;
+  }
+
+  if(verificarAcceso()){
+    renderPreguntas();
+  }
+</script>
+
+</body>
+</html>
