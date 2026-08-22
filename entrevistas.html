@@ -54,6 +54,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 .answer-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-lg);padding:1.8rem}
 .answer-q{font-size:.78rem;font-weight:700;color:var(--brand-strong);text-transform:uppercase;letter-spacing:.03em;margin-bottom:.5rem}
 .answer-q-text{font-size:1.05rem;font-weight:700;margin-bottom:1.2rem;line-height:1.4}
+.qa-context{font-size:.8rem;color:var(--muted);background:var(--bg);border-radius:10px;padding:.6rem .8rem;margin-bottom:1rem;margin-top:-.6rem;}
 .answer-textarea{width:100%;font-family:var(--body);font-size:.9rem;padding:.9rem 1rem;border:1.5px solid var(--line);border-radius:12px;min-height:160px;resize:vertical;line-height:1.5}
 .char-hint{font-size:.75rem;color:var(--faint);margin-top:.4rem}
 
@@ -123,6 +124,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     <div class="answer-card">
       <div class="answer-q">Pregunta</div>
       <div class="answer-q-text" id="pregunta-elegida-text"></div>
+      <div class="qa-context" id="pregunta-contexto" style="display:none;"></div>
       <textarea class="answer-textarea" id="respuesta-input" placeholder="Escribe tu respuesta como si estuvieras en la entrevista…"></textarea>
       <div class="char-hint">Mínimo 20 caracteres. Mientras más detalle, mejor el feedback.</div>
       <div class="error-text" id="respuesta-error" style="display:none;"></div>
@@ -167,17 +169,41 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     "Háblame de un error que cometiste y qué aprendiste de esa experiencia."
   ];
 
+  let historiasReales = [];
+  try{
+    const params = new URLSearchParams(window.location.search);
+    const historiasParam = params.get('historias');
+    if(historiasParam){
+      historiasReales = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(historiasParam)))));
+    }
+  } catch(e){ historiasReales = []; }
+
   let preguntaActual = '';
   let resultadosSesion = []; // [{indice, score}]
 
+  function listaCombinada(){
+    const deHistorias = historiasReales.map(h => ({
+      tipo: 'historia',
+      pregunta: 'Cuéntame sobre esta experiencia: ' + (h.titulo || ''),
+      contexto: [h.situacion, h.desafio].filter(Boolean).join(' '),
+      etiqueta: '🧠 Tu experiencia real'
+    }));
+    const genericas = PREGUNTAS.map(p => ({ tipo: 'generica', pregunta: p, contexto: '', etiqueta: null }));
+    return [...deHistorias, ...genericas];
+  }
+
   function renderPreguntas(){
     const el = document.getElementById('q-list');
-    el.innerHTML = PREGUNTAS.map((p, i) => {
+    const lista = listaCombinada();
+    el.innerHTML = lista.map((item, i) => {
       const hecha = resultadosSesion.find(r => r.indice === i);
       return `
       <div class="q-item" tabindex="0" role="button" onclick="elegirPregunta(${i})">
         <div class="q-num" ${hecha ? 'style="background:var(--green-bg);color:var(--green);"' : ''}>${hecha ? '✓' : (i + 1)}</div>
-        <div class="q-text">${escapeHtml(p)}${hecha ? '<div style="font-size:.75rem;color:var(--muted);font-weight:500;margin-top:.2rem;">Practicada · '+hecha.score+'%</div>' : ''}</div>
+        <div class="q-text">
+          ${item.etiqueta ? '<div style="font-size:.7rem;font-weight:700;color:var(--brand-strong);margin-bottom:.2rem;">'+item.etiqueta+'</div>' : ''}
+          ${escapeHtml(item.pregunta)}${hecha ? '<div style="font-size:.75rem;color:var(--muted);font-weight:500;margin-top:.2rem;">Practicada · '+hecha.score+'%</div>' : ''}
+        </div>
       </div>`;
     }).join('');
 
@@ -195,8 +221,16 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 
   function elegirPregunta(i){
     preguntaIdx = i;
-    preguntaActual = PREGUNTAS[i];
+    const item = listaCombinada()[i];
+    preguntaActual = item.pregunta;
     document.getElementById('pregunta-elegida-text').textContent = preguntaActual;
+    const ctxEl = document.getElementById('pregunta-contexto');
+    if(item.contexto){
+      ctxEl.textContent = item.contexto;
+      ctxEl.style.display = 'block';
+    } else {
+      ctxEl.style.display = 'none';
+    }
     document.getElementById('respuesta-input').value = '';
     document.getElementById('respuesta-error').style.display = 'none';
     irScreen('scr-responder');
