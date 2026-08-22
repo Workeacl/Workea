@@ -219,9 +219,6 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
   let archivoBase64 = null;
   let archivoTipo = null;
   let ordenActual = null;
-  let preguntasPendientes = [];
-  let respuestasAcumuladas = [];
-  let preguntaIdx = 0;
   let plantillaSeleccionada = 'minimal';
 
   const PLAN_LABEL = { diagnostico: 'Plan Diagnóstico', optimizado: 'Plan Optimizado', pro: 'Plan Pro' };
@@ -396,17 +393,23 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       </div>`;
   }
 
+  let areasInsight = [];
+  let areaIdx = 0;
+  let hallazgosConfirmados = [];
+  let ultimoInsight = null;
+
   async function empezarOptimizacion(){
-    document.getElementById('optimizador-content').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p style="font-size:.85rem;color:var(--muted);">Buscando qué podríamos preguntarte…</p></div>';
+    document.getElementById('optimizador-content').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p style="font-size:.85rem;color:var(--muted);">Buscando fortalezas que tu CV no está mostrando…</p></div>';
     try{
-      const { preguntas } = await apiCall('/api/cv', 'generar_preguntas', { orden_id: ordenActual.id });
-      preguntasPendientes = preguntas || [];
-      respuestasAcumuladas = [];
-      preguntaIdx = 0;
-      if(preguntasPendientes.length === 0){
-        await ejecutarOptimizacion();
+      const { areas } = await apiCall('/api/cv', 'generar_insight_cv', { orden_id: ordenActual.id });
+      areasInsight = areas || [];
+      hallazgosConfirmados = [];
+      areaIdx = 0;
+
+      if(areasInsight.length === 0){
+        await ejecutarOptimizacion([]);
       } else {
-        renderPregunta();
+        renderInsightIntro();
       }
     } catch(err){
       showToast('Error: ' + err.message);
@@ -414,39 +417,102 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     }
   }
 
-  function renderPregunta(){
-    const p = preguntasPendientes[preguntaIdx];
+  function renderInsightIntro(){
     document.getElementById('optimizador-content').innerHTML = `
       <div class="qa-card">
-        <div class="qa-eyebrow">Pregunta ${preguntaIdx + 1} de ${preguntasPendientes.length}</div>
-        <div class="qa-context">Tu CV dice: "${escapeHtml(p.contexto)}"</div>
-        <div class="qa-question">${escapeHtml(p.pregunta)}</div>
-        <input type="text" class="qa-input" id="qa-input" placeholder="Escribe tu respuesta">
-        <div class="qa-actions">
-          <button class="btn btn-brand" style="flex:1;" onclick="responderPregunta(false)">Guardar y continuar</button>
-          <button class="btn btn-ghost" onclick="responderPregunta(true)">Omitir</button>
-        </div>
+        <div class="qa-eyebrow">✨ Workea Insight</div>
+        <h3 style="font-size:1.05rem;margin-bottom:.7rem;">Descubre lo que tu CV todavía no está mostrando</h3>
+        <p style="font-size:.86rem;color:var(--muted);line-height:1.55;margin-bottom:1.2rem;">Tu CV muestra tu experiencia, pero hay información que podría estar haciendo que tu perfil se perciba menos estratégico de lo que realmente es. Detectamos ${areasInsight.length} posibles fortalezas — confírmalas con un par de taps.</p>
+        ${areasInsight.map(a => `<div style="background:var(--bg);border-radius:10px;padding:.8rem 1rem;margin-bottom:.6rem;">
+          <div style="font-size:.85rem;font-weight:700;">🔎 ${escapeHtml(a.titulo)}</div>
+          <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem;">${escapeHtml(a.contexto)}</div>
+        </div>`).join('')}
+        <button class="btn btn-brand btn-block" style="margin-top:.6rem;" onclick="renderPreguntaInsight()">Descubrir mis fortalezas ocultas →</button>
       </div>`;
   }
 
-  async function responderPregunta(omitir){
-    const p = preguntasPendientes[preguntaIdx];
-    const valor = omitir ? '' : document.getElementById('qa-input').value.trim();
-    respuestasAcumuladas.push({ pregunta: p.pregunta, respuesta: valor });
-    preguntaIdx++;
-    if(preguntaIdx < preguntasPendientes.length){
-      renderPregunta();
+  function renderPreguntaInsight(){
+    const a = areasInsight[areaIdx];
+    const opciones = (a.opciones && a.opciones.length) ? a.opciones : ['Sí', 'No'];
+    document.getElementById('optimizador-content').innerHTML = `
+      <div class="qa-card">
+        <div class="qa-eyebrow">Fortaleza ${areaIdx + 1} de ${areasInsight.length} · ${escapeHtml(a.titulo)}</div>
+        <div class="qa-question">${escapeHtml(a.pregunta)}</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:1rem;">
+          ${opciones.map((op, i) => `<button class="btn btn-ghost" style="justify-content:flex-start;text-align:left;" onclick="responderInsight('${escapeHtml(op).replace(/'/g,"\\'")}')">${escapeHtml(op)}</button>`).join('')}
+        </div>
+        <button class="btn btn-ghost btn-block" style="margin-top:1rem;font-size:.78rem;color:var(--faint);border:none;" onclick="responderInsight(null)">No estoy segura / omitir</button>
+      </div>`;
+  }
+
+  function responderInsight(respuesta){
+    const a = areasInsight[areaIdx];
+    if(respuesta){
+      hallazgosConfirmados.push({ titulo: a.titulo, pregunta: a.pregunta, respuesta });
+    }
+    areaIdx++;
+    if(areaIdx < areasInsight.length){
+      renderPreguntaInsight();
     } else {
-      await ejecutarOptimizacion();
+      sintetizarYMostrarInsight();
     }
   }
 
-  async function ejecutarOptimizacion(){
+  async function sintetizarYMostrarInsight(){
+    document.getElementById('optimizador-content').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p style="font-size:.85rem;color:var(--muted);">Analizando cómo se lee tu perfil…</p></div>';
+    try{
+      if(hallazgosConfirmados.length === 0){
+        // Nadie confirmó nada — vamos directo a optimizar sin hallazgos extra
+        await ejecutarOptimizacion([]);
+        return;
+      }
+      const data = await apiCall('/api/cv', 'sintetizar_insight', { orden_id: ordenActual.id, respuestas: hallazgosConfirmados });
+      ultimoInsight = data;
+      renderResultadoInsight(data);
+    } catch(err){
+      showToast('Error: ' + err.message);
+      await ejecutarOptimizacion([]);
+    }
+  }
+
+  function renderResultadoInsight(data){
+    const hallazgos = data.hallazgos || [];
+    const lr = data.lectura_reclutador;
+    let html = `<div class="qa-card">
+      <div class="qa-eyebrow">✨ Hallazgos</div>
+      <h3 style="font-size:1.02rem;margin-bottom:1rem;">Encontramos ${hallazgos.length} fortaleza${hallazgos.length === 1 ? '' : 's'} que tu CV no estaba comunicando</h3>`;
+
+    hallazgos.forEach((h, i) => {
+      html += `<div style="background:var(--green-bg);border-radius:10px;padding:.8rem 1rem;margin-bottom:.6rem;">
+        <div style="font-size:.85rem;font-weight:700;color:var(--green);">${i+1}. ${escapeHtml(h.titulo)}</div>
+        <div style="font-size:.8rem;color:var(--ink);margin-top:.2rem;">${escapeHtml(h.descripcion)}</div>
+      </div>`;
+    });
+
+    if(lr){
+      html += `<div style="background:var(--bg);border-radius:12px;padding:1rem 1.1rem;margin-top:1rem;">
+        <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--faint);margin-bottom:.7rem;">👀 Así te leería un reclutador hoy</div>
+        <div style="font-size:.82rem;margin-bottom:.5rem;"><b>Primera impresión:</b> ${escapeHtml(lr.primera_impresion || '')}</div>
+        <div style="font-size:.82rem;margin-bottom:.5rem;"><b>Nivel percibido:</b> ${escapeHtml(lr.nivel_percibido || '')}</div>
+        <div style="font-size:.82rem;margin-bottom:.5rem;"><b>Lo más atractivo:</b> ${escapeHtml(lr.atractivo || '')}</div>
+        <div style="font-size:.82rem;margin-bottom:.5rem;"><b>Podría generar dudas:</b> ${escapeHtml(lr.dudas || '')}</div>
+        <div style="font-size:.82rem;"><b>Deberías reforzar:</b> ${escapeHtml(lr.reforzar || '')}</div>
+      </div>`;
+    }
+
+    html += `<p style="font-size:.78rem;color:var(--muted);margin-top:1.1rem;font-style:italic;">No inventamos experiencia. Te ayudamos a descubrir qué experiencia ya tienes y no estás contando.</p>
+      <button class="btn btn-brand btn-block" style="margin-top:1rem;" onclick="ejecutarOptimizacion(ultimoInsight.hallazgos)">Sí, incorporar y optimizar mi CV →</button>
+    </div>`;
+
+    document.getElementById('optimizador-content').innerHTML = html;
+  }
+
+  async function ejecutarOptimizacion(hallazgos){
     document.getElementById('optimizador-content').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p style="font-size:.85rem;color:var(--muted);">Reescribiendo tu CV…</p></div>';
     try{
-      const { orden } = await apiCall('/api/cv', 'optimizar', { orden_id: ordenActual.id, respuestas: respuestasAcumuladas });
+      const { orden } = await apiCall('/api/cv', 'optimizar', { orden_id: ordenActual.id, hallazgos: hallazgos || [] });
       ordenActual = orden;
-      renderOptimizadorResultado();
+      renderOptimizadorResultado(hallazgos && hallazgos.length > 0);
       desbloquearMensaje();
     } catch(err){
       showToast('Error: ' + err.message);
@@ -454,16 +520,30 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     }
   }
 
-  function renderOptimizadorResultado(){
+  function renderOptimizadorResultado(conHallazgos){
     const cv = ordenActual.cv_optimizado || {};
     const el = document.getElementById('optimizador-content');
-    let html = '<div class="opt-block"><h4>Resumen profesional</h4><p style="font-size:.85rem;line-height:1.55;">'+escapeHtml(cv.resumen_profesional || '')+'</p></div>';
+    let html = '';
+    if(conHallazgos){
+      html += '<div style="background:var(--green-bg);color:var(--green);border-radius:10px;padding:.7rem 1rem;font-size:.8rem;font-weight:600;margin-bottom:1rem;">🟢 Esta versión incorpora las fortalezas que tú confirmaste en Workea Insight</div>';
+    }
+    html += '<div class="opt-block"><h4>Resumen profesional</h4><p style="font-size:.85rem;line-height:1.55;">'+escapeHtml(cv.resumen_profesional || '')+'</p></div>';
     (cv.experiencia || []).forEach(exp => {
       html += '<div class="opt-block"><div class="opt-role">'+escapeHtml(exp.cargo || '')+' · '+escapeHtml(exp.empresa || '')+'</div>' +
         (exp.bullets || []).map(b => '<div class="opt-bullet">'+escapeHtml(b)+'</div>').join('') + '</div>';
     });
     if(cv.habilidades && cv.habilidades.length){
       html += '<div class="opt-block"><h4>Habilidades</h4><p style="font-size:.85rem;">'+cv.habilidades.map(escapeHtml).join(' · ')+'</p></div>';
+    }
+    if(cv.herramientas && cv.herramientas.length){
+      html += '<div class="opt-block"><h4>Herramientas</h4><p style="font-size:.85rem;">'+cv.herramientas.map(escapeHtml).join(' · ')+'</p></div>';
+    }
+    if(cv.idiomas && cv.idiomas.length){
+      html += '<div class="opt-block"><h4>Idiomas</h4><p style="font-size:.85rem;">'+cv.idiomas.map(escapeHtml).join(' · ')+'</p></div>';
+    }
+    if(cv.cursos_certificaciones && cv.cursos_certificaciones.length){
+      html += '<div class="opt-block"><h4>Cursos y certificaciones</h4>' +
+        cv.cursos_certificaciones.map(c => '<div class="opt-bullet">'+escapeHtml(c)+'</div>').join('') + '</div>';
     }
 
     if(planActual === 'pro'){
@@ -585,6 +665,15 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     const habilidadesHtml = (cv.habilidades && cv.habilidades.length)
       ? `<div style="margin-top:20px;"><h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:8px;">Habilidades</h3><p style="font-size:13px;">${(cv.habilidades || []).map(escapeHtml).join(' · ')}</p></div>` : '';
 
+    const herramientasHtml = (cv.herramientas && cv.herramientas.length)
+      ? `<div style="margin-top:20px;"><h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:8px;">Herramientas</h3><p style="font-size:13px;">${(cv.herramientas || []).map(escapeHtml).join(' · ')}</p></div>` : '';
+
+    const idiomasHtml = (cv.idiomas && cv.idiomas.length)
+      ? `<div style="margin-top:20px;"><h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:8px;">Idiomas</h3><p style="font-size:13px;">${(cv.idiomas || []).map(escapeHtml).join(' · ')}</p></div>` : '';
+
+    const cursosHtml = (cv.cursos_certificaciones && cv.cursos_certificaciones.length)
+      ? `<div style="margin-top:20px;"><h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:8px;">Cursos y certificaciones</h3><ul style="margin:0 0 0 18px;padding:0;">${cv.cursos_certificaciones.map(c => '<li style="font-size:13px;line-height:1.6;margin-bottom:4px;">'+escapeHtml(c)+'</li>').join('')}</ul></div>` : '';
+
     const htmlCompleto = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${escapeHtml(nombre)} — CV</title>
 <style>
   @media print { .no-print{ display:none !important; } body{ padding:0 !important; } }
@@ -604,6 +693,9 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
   <h3>Resumen profesional</h3><p style="font-size:13px;">${escapeHtml(cv.resumen_profesional || '')}</p>
   <h3>Experiencia</h3>${expHtml}
   ${habilidadesHtml}
+  ${herramientasHtml}
+  ${idiomasHtml}
+  ${cursosHtml}
 </body></html>`;
 
     const blob = new Blob([htmlCompleto], { type: 'text/html' });
