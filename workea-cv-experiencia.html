@@ -293,17 +293,28 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     document.getElementById('btn-analizar').disabled = true;
     document.getElementById('btn-analizar').textContent = 'Analizando…';
 
+    let texto, orden;
     try{
-      const { texto } = await apiCall('/api/cv', 'extraer_texto', { archivo_base64: archivoBase64, tipo: archivoTipo });
-      const { orden } = await apiCall('/api/cv', 'crear_orden', { cv_original: texto, plan: planActual });
-      ordenActual = orden;
+      const r1 = await apiCall('/api/cv', 'extraer_texto', { archivo_base64: archivoBase64, tipo: archivoTipo });
+      texto = r1.texto;
+      const r2 = await apiCall('/api/cv', 'crear_orden', { cv_original: texto, plan: planActual });
+      orden = r2.orden;
+    } catch(err){
+      document.getElementById('btn-analizar').disabled = false;
+      document.getElementById('btn-analizar').textContent = 'Analizar mi CV →';
+      errEl.textContent = err.message;
+      errEl.style.display = 'block';
+      return;
+    }
 
-      document.getElementById('paso-subir').style.display = 'none';
-      document.getElementById('workspace').style.display = 'block';
-      const badge = document.getElementById('tb-plan-badge');
-      badge.textContent = PLAN_LABEL[planActual];
-      badge.style.display = 'inline-block';
+    ordenActual = orden;
+    document.getElementById('paso-subir').style.display = 'none';
+    document.getElementById('workspace').style.display = 'block';
+    const badge = document.getElementById('tb-plan-badge');
+    badge.textContent = PLAN_LABEL[planActual];
+    badge.style.display = 'inline-block';
 
+    try{
       const { orden: ordenDiag } = await apiCall('/api/cv', 'diagnosticar', { orden_id: ordenActual.id });
       ordenActual = ordenDiag;
       renderDiagnostico();
@@ -316,12 +327,33 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
         renderMensajeBloqueado(true);
       }
       renderEntrevistasPanel();
-
     } catch(err){
-      document.getElementById('btn-analizar').disabled = false;
-      document.getElementById('btn-analizar').textContent = 'Analizar mi CV →';
-      errEl.textContent = err.message;
-      errEl.style.display = 'block';
+      document.getElementById('diagnostico-content').innerHTML =
+        '<div class="locked-panel"><div class="lp-ic">⚠️</div><h3>No pudimos generar tu diagnóstico</h3>' +
+        '<p>'+escapeHtml(err.message)+'</p>' +
+        '<button class="btn btn-brand" onclick="reintentarDiagnostico()">Reintentar →</button></div>';
+    }
+  }
+
+  async function reintentarDiagnostico(){
+    document.getElementById('diagnostico-content').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p style="font-size:.85rem;color:var(--muted);">Analizando tu CV…</p></div>';
+    try{
+      const { orden: ordenDiag } = await apiCall('/api/cv', 'diagnosticar', { orden_id: ordenActual.id });
+      ordenActual = ordenDiag;
+      renderDiagnostico();
+      if(planActual === 'diagnostico'){
+        renderOptimizadorBloqueado();
+        renderMensajeBloqueado();
+      } else {
+        renderOptimizadorInicial();
+        renderMensajeBloqueado(true);
+      }
+      renderEntrevistasPanel();
+    } catch(err){
+      document.getElementById('diagnostico-content').innerHTML =
+        '<div class="locked-panel"><div class="lp-ic">⚠️</div><h3>No pudimos generar tu diagnóstico</h3>' +
+        '<p>'+escapeHtml(err.message)+'</p>' +
+        '<button class="btn btn-brand" onclick="reintentarDiagnostico()">Reintentar →</button></div>';
     }
   }
 
