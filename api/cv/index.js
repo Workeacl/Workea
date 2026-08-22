@@ -156,35 +156,93 @@ module.exports = async (req, res) => {
     const { data: orden, error: ordenError } = await supabase.from('cv_ordenes').select('*').eq('id', orden_id).single();
     if (ordenError || !orden) return res.status(404).json({ error: 'Orden no encontrada' });
 
-    // ---------- generar_preguntas ----------
-    // Detecta bullets/logros sin cifras o datos concretos, y genera
-    // preguntas puntuales para pedírselos al usuario antes de optimizar
-    // (nunca se inventan solos). Se salta si el plan es 'diagnostico'.
-    if (accion === 'generar_preguntas') {
+    // ---------- generar_insight_cv (Workea Insight, paso 1) ----------
+    // En vez de preguntar por cifras sueltas, detecta fortalezas que el CV
+    // insinúa pero no comunica con claridad, y arma UNA pregunta cerrada
+    // (opción múltiple o sí/no) por cada una — rápido de responder, nunca
+    // un formulario largo.
+    if (accion === 'generar_insight_cv') {
       if (orden.plan === 'diagnostico') {
-        return res.status(403).json({ error: 'El plan Diagnóstico no incluye este paso' });
+        return res.status(403).json({ error: 'El plan Diagnóstico no incluye Workea Insight' });
       }
 
-      const prompt = `Lee este CV y detecta hasta 3 logros o bullets que serían más fuertes con un dato concreto (número de personas, porcentaje, monto, tiempo) que hoy no está escrito.
+      const prompt = `Eres una psicóloga laboral especializada en reclutamiento. Lee este CV y detecta entre 3 y 4 fortalezas reales que probablemente existen en la experiencia de esta persona, pero que el CV no comunica con claridad (quedan implícitas, minimizadas, o mezcladas con otras tareas).
+
+CV:
+"""
+${orden.cv_original}
+"""
+${orden.oferta_referencia ? `\nOferta de referencia:\n"""\n${orden.oferta_referencia}\n"""` : ''}
+
+Para cada fortaleza detectada, escribe una explicación breve de por qué crees que está ahí pero no se ve, y UNA pregunta cerrada (opción múltiple con 2-4 alternativas, o sí/no) que permita confirmarla con un solo tap — nunca pidas texto libre.
+
+No inventes fortalezas que no tengan ninguna base en el CV — cada una debe poder señalarse a una frase o dato real del texto.
+
+IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior.
+
+Responde en JSON puro:
+{
+  "areas": [
+    {
+      "titulo": "nombre corto de la fortaleza, ej: Gestión de clientes",
+      "contexto": "por qué crees que está ahí pero no se ve, en 1-2 frases, citando algo real del CV",
+      "pregunta": "la pregunta cerrada para confirmarlo",
+      "opciones": ["opción 1", "opción 2", "opción 3 (si aplica)"]
+    }
+  ]
+}`;
+
+      const resultado = await llamarClaude(prompt, 1400);
+      return res.status(200).json({ areas: resultado.areas || [] });
+    }
+
+    // ---------- sintetizar_insight (Workea Insight, paso 2) ----------
+    // Con las respuestas ya confirmadas por el usuario, arma los hallazgos
+    // finales + una simulación de cómo un reclutador leería el perfil hoy.
+    if (accion === 'sintetizar_insight') {
+      if (orden.plan === 'diagnostico') {
+        return res.status(403).json({ error: 'El plan Diagnóstico no incluye Workea Insight' });
+      }
+      const { respuestas = [] } = req.body;
+
+      const respuestasTexto = respuestas.length
+        ? respuestas.map(r => `- ${r.titulo}: pregunta "${r.pregunta}" → respuesta confirmada: ${r.respuesta}`).join('\n')
+        : '(el usuario no confirmó ninguna)';
+
+      const prompt = `Con base en este CV y en las fortalezas que el usuario acaba de confirmar (nunca inventes nada fuera de esto), genera:
+
+1. Un resumen de los hallazgos confirmados — solo los que el usuario efectivamente confirmó, no los que quedaron sin responder.
+2. Una simulación honesta de cómo un reclutador leería este perfil HOY, antes de optimizarlo — sé real, no artificialmente positivo.
 
 CV:
 """
 ${orden.cv_original}
 """
 
-Para cada uno, genera una pregunta corta y directa para pedirle ese dato al usuario. Si el CV ya tiene suficientes datos cuantificados, devuelve una lista vacía — no fuerces preguntas innecesarias.
+Fortalezas exploradas y respuesta del usuario:
+${respuestasTexto}
 
-IMPORTANTE sobre el formato: cada texto dentro del JSON debe ser una sola cadena, sin comillas dobles (") dentro del texto mismo — si necesitas nombrar una alternativa o sinónimo, sepáralo con "/" o "o" sin comillas (ejemplo correcto: RRHH o Recursos Humanos — NO: "RRHH" o "Recursos Humanos"). Responde con JSON válido y nada más.
+IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior.
 
 Responde en JSON puro:
 {
-  "preguntas": [
-    {"contexto": "cita textual corta del bullet original", "pregunta": "pregunta directa y corta"}
-  ]
+  "hallazgos": [
+    {"titulo": "nombre de la fortaleza confirmada", "descripcion": "explicación breve de qué revela y por qué es valiosa"}
+  ],
+  "lectura_reclutador": {
+    "primera_impresion": "una frase de cómo se percibe el perfil a primera vista",
+    "nivel_percibido": "ej: Semi Senior con potencial a Senior",
+    "atractivo": "lo más atractivo del perfil tal como está hoy",
+    "dudas": "qué podría generar dudas o preguntas en un reclutador",
+    "reforzar": "qué es lo más importante a reforzar"
+  }
 }`;
 
       const resultado = await llamarClaude(prompt, 1200);
-      return res.status(200).json({ preguntas: resultado.preguntas || [] });
+      return res.status(200).json({
+        hallazgos: resultado.hallazgos || [],
+        lectura_reclutador: resultado.lectura_reclutador || null
+      });
     }
 
     // ---------- diagnosticar ----------
@@ -220,30 +278,35 @@ El score y las alertas deben poder justificarse con el contenido real del CV. No
     }
 
     // ---------- optimizar ----------
-    // Recibe las respuestas del usuario a las preguntas de datos faltantes
-    // (o un array vacío si las omitió todas) y reescribe el CV con eso.
+    // Recibe los hallazgos confirmados en Workea Insight (o respuestas del
+    // formato anterior, por compatibilidad) y reescribe el CV con eso.
     if (accion === 'optimizar') {
       if (orden.plan === 'diagnostico') {
         return res.status(403).json({ error: 'El plan Diagnóstico no incluye optimización' });
       }
-      const { respuestas = [] } = req.body;
+      const { respuestas = [], hallazgos = [] } = req.body;
 
       const respuestasTexto = respuestas.length
         ? respuestas.map(r => `- ${r.pregunta} → ${r.respuesta || '(sin responder, no usar cifra)'}`).join('\n')
-        : '(el usuario no proporcionó datos adicionales)';
+        : '';
+      const hallazgosTexto = hallazgos.length
+        ? hallazgos.map(h => `- ${h.titulo}: ${h.descripcion}`).join('\n')
+        : '';
+      const infoConfirmada = [respuestasTexto, hallazgosTexto].filter(Boolean).join('\n') || '(el usuario no confirmó información adicional)';
 
       const prompt = `Reescribe este CV de forma profesional y optimizada para ATS. Reglas estrictas:
-- NUNCA inventes logros, cifras o experiencia que no estén en el CV original o en las respuestas del usuario.
-- Si una respuesta del usuario da un dato concreto, úsalo. Si dice "sin responder", mejora la redacción sin agregar número.
+- NUNCA inventes logros, cifras o experiencia que no estén en el CV original o en la información confirmada por el usuario abajo.
+- Si hay un hallazgo confirmado (una fortaleza que el CV no comunicaba con claridad), incorpóralo de forma natural en el resumen profesional y/o en el bullet de experiencia correspondiente — esa información SÍ está autorizada a usarse, porque el propio usuario la confirmó.
 - Mejora verbos de acción, claridad y estructura, pero el contenido factual debe venir siempre del usuario.
+- Revisa el CV completo y no omitas ninguna sección que tenga: cursos/certificaciones, herramientas o software específico, e idiomas — cada una va en su propio campo del JSON, no las mezcles ni las dejes fuera.
 
 CV original:
 """
 ${orden.cv_original}
 """
 
-Datos adicionales que el usuario confirmó:
-${respuestasTexto}
+Información adicional confirmada por el usuario:
+${infoConfirmada}
 
 IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior.
 
@@ -253,7 +316,10 @@ Responde en JSON puro con este formato:
   "experiencia": [
     {"cargo": "...", "empresa": "...", "periodo": "...", "bullets": ["bullet reescrito 1", "bullet reescrito 2"]}
   ],
-  "habilidades": ["habilidad 1", "habilidad 2"]
+  "habilidades": ["habilidad 1", "habilidad 2"],
+  "herramientas": ["herramienta o software mencionado, ej: LinkedIn Recruiter, Excel avanzado — solo si el CV original las menciona"],
+  "idiomas": ["idioma y nivel, ej: Inglés avanzado — solo si el CV original los menciona"],
+  "cursos_certificaciones": ["nombre del curso o certificación (institución, año) — solo si el CV original los menciona"]
 }`;
 
       const cv_optimizado = await llamarClaude(prompt, 3200);
