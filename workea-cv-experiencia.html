@@ -30,11 +30,9 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 .topbar{background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
 .tb-logo{display:flex;align-items:center;gap:.5rem;font-family:var(--display);font-weight:700;font-size:1rem}
 .tb-logo svg{width:26px;height:19px}
+.tb-plan-badge{font-size:.72rem;font-weight:700;background:var(--brand-tint);color:var(--brand-strong);padding:.35rem .8rem;border-radius:999px}
 
-.stage{max-width:640px;margin:0 auto;padding:2.6rem 1.4rem 5rem}
-.screen{display:none;animation:fadeUp .25s ease both}
-.screen.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.stage{max-width:760px;margin:0 auto;padding:2rem 1.4rem 5rem}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-weight:700;font-size:.88rem;padding:.8rem 1.6rem;border-radius:999px}
 .btn-brand{background:var(--grad);color:#fff}
@@ -47,66 +45,81 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 .gate p{font-size:.85rem;color:var(--muted);line-height:1.5}
 .gate a{color:var(--brand-strong);font-weight:700}
 
-.upload-box{background:var(--surface);border:2px dashed var(--line);border-radius:var(--r);padding:3rem 1.5rem;text-align:center;box-shadow:var(--shadow);cursor:pointer}
+/* ---- Paso 0: subir CV ---- */
+.upload-box{background:var(--surface);border:2px dashed var(--line);border-radius:var(--r);padding:2.6rem 1.5rem;text-align:center;box-shadow:var(--shadow);cursor:pointer}
 .upload-box:hover{border-color:var(--brand-strong)}
-.upload-box .ic{font-size:2.2rem;margin-bottom:.8rem}
-.upload-box h3{font-size:1.05rem;margin-bottom:.3rem}
-.upload-box p{font-size:.83rem;color:var(--muted)}
+.upload-box .ic{font-size:2rem;margin-bottom:.7rem}
+.upload-box h3{font-size:1rem;margin-bottom:.3rem}
+.upload-box p{font-size:.82rem;color:var(--muted)}
 .file-chip{margin-top:1rem;display:inline-flex;align-items:center;gap:.5rem;background:var(--brand-tint);color:var(--brand-strong);font-size:.83rem;font-weight:600;padding:.5rem .9rem;border-radius:999px}
-.plan-select{display:flex;gap:.6rem;margin-top:1.6rem;flex-wrap:wrap}
+.plan-select{display:flex;gap:.6rem;margin-top:1.4rem;flex-wrap:wrap}
 .plan-pill{flex:1;min-width:150px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:.9rem 1rem;cursor:pointer;text-align:center}
 .plan-pill.active{border-color:var(--brand-strong);background:var(--brand-tint)}
 .plan-pill .pp-name{font-size:.82rem;font-weight:700}
 .plan-pill .pp-price{font-size:.72rem;color:var(--muted);margin-top:.15rem}
 .plan-notice{font-size:.75rem;color:var(--faint);margin-top:.6rem;text-align:center}
+.contact-fields input{width:100%;font-family:var(--body);font-size:.9rem;padding:.75rem .9rem;border:1.5px solid var(--line);border-radius:10px;margin-bottom:.5rem}
 
-.loading-wrap{text-align:center;padding:4rem 1rem}
-.spinner{width:44px;height:44px;border:4px solid var(--line);border-top-color:var(--brand-strong);border-radius:50%;margin:0 auto 1.4rem;animation:spin .8s linear infinite}
+/* ---- Tabs ---- */
+.tabbar{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:5px;margin-bottom:1.4rem;box-shadow:var(--shadow);flex-wrap:wrap}
+.tab-btn{flex:1;min-width:110px;font-size:.82rem;font-weight:700;padding:.65rem .8rem;border-radius:10px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:.35rem;}
+.tab-btn.active{background:var(--grad);color:#fff}
+.tab-btn.locked{opacity:.55;cursor:not-allowed}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadeUp .25s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.locked-panel{background:var(--surface);border:1.5px dashed var(--line);border-radius:var(--r);padding:2.4rem 1.6rem;text-align:center}
+.locked-panel .lp-ic{font-size:1.8rem;margin-bottom:.7rem}
+.locked-panel h3{font-size:1.02rem;margin-bottom:.5rem}
+.locked-panel p{font-size:.85rem;color:var(--muted);line-height:1.5;margin-bottom:1.2rem}
+
+.loading-wrap{text-align:center;padding:3rem 1rem}
+.spinner{width:40px;height:40px;border:4px solid var(--line);border-top-color:var(--brand-strong);border-radius:50%;margin:0 auto 1.2rem;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-wrap h3{font-size:1.05rem;margin-bottom:.3rem}
-.loading-wrap p{font-size:.85rem;color:var(--muted)}
 
-.score-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.8rem;text-align:center;margin-bottom:1.4rem}
-.score-num{font-family:var(--display);font-size:2.4rem;font-weight:800}
+.score-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.6rem;text-align:center;margin-bottom:1.2rem}
+.score-num{font-family:var(--display);font-size:2.2rem;font-weight:800}
 .score-label{font-size:.85rem;color:var(--muted);margin-top:.3rem}
-.diag-list{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.4rem 1.5rem;margin-bottom:1rem}
-.diag-list h4{font-size:.85rem;font-weight:700;margin-bottom:.8rem}
-.diag-row{display:flex;gap:.6rem;align-items:flex-start;font-size:.84rem;margin-bottom:.6rem;line-height:1.5}
+.diag-list{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.3rem 1.4rem;margin-bottom:1rem}
+.diag-list h4{font-size:.85rem;font-weight:700;margin-bottom:.7rem}
+.diag-row{display:flex;gap:.6rem;align-items:flex-start;font-size:.84rem;margin-bottom:.55rem;line-height:1.5}
 .diag-row:last-child{margin-bottom:0}
 .diag-row .ic{flex-shrink:0}
 
-.qa-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-lg);padding:1.8rem}
+.qa-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-lg);padding:1.6rem}
 .qa-eyebrow{font-size:.72rem;font-weight:700;color:var(--brand-strong);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
 .qa-context{font-size:.82rem;color:var(--muted);background:var(--bg);border-radius:10px;padding:.7rem .9rem;margin-bottom:1.1rem}
-.qa-question{font-size:1.05rem;font-weight:700;margin-bottom:1rem}
+.qa-question{font-size:1.02rem;font-weight:700;margin-bottom:1rem}
 .qa-input{width:100%;font-family:var(--body);font-size:.9rem;padding:.85rem 1rem;border:1.5px solid var(--line);border-radius:12px;margin-bottom:1rem}
 .qa-actions{display:flex;gap:.6rem}
 .qa-progress{font-size:.75rem;color:var(--faint);margin-top:1rem;text-align:center}
 
-.opt-block{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.4rem 1.5rem;margin-bottom:1rem}
+.opt-block{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.3rem 1.4rem;margin-bottom:1rem}
 .opt-block h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--faint);margin-bottom:.7rem}
 .opt-role{font-size:.9rem;font-weight:700;margin-bottom:.4rem}
 .opt-bullet{font-size:.84rem;color:var(--ink);line-height:1.5;margin-bottom:.4rem;padding-left:1rem;position:relative}
 .opt-bullet::before{content:"•";position:absolute;left:0;color:var(--brand-strong)}
 
-.tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
-.tpl-pick{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:.9rem;text-align:center;cursor:pointer}
+.tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-top:1rem}
+.tpl-pick{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:.8rem;text-align:center;cursor:pointer}
 .tpl-pick.active{border-color:var(--brand-strong);box-shadow:0 0 0 2px var(--brand-tint)}
-.tpl-pick .tp-swatch{height:56px;border-radius:8px;margin-bottom:.5rem}
-.tpl-pick .tp-name{font-size:.78rem;font-weight:700}
+.tpl-pick .tp-swatch{height:48px;border-radius:8px;margin-bottom:.4rem}
+.tpl-pick .tp-name{font-size:.75rem;font-weight:700}
 
-.final-card{background:var(--navy);color:#fff;border-radius:var(--r);padding:2.2rem 1.8rem;text-align:center;box-shadow:var(--shadow-lg)}
-.final-card .fc-ic{font-size:2.4rem;margin-bottom:.8rem}
-.final-card h2{font-size:1.3rem;margin-bottom:.4rem}
-.final-card p{font-size:.85rem;color:#b9c6e8;margin-bottom:1.4rem}
-.msg-box{background:rgba(255,255,255,.08);border-radius:12px;padding:1rem 1.2rem;text-align:left;font-size:.85rem;line-height:1.55;margin-bottom:1rem}
-.tips-box{text-align:left;font-size:.82rem;color:#c7d2ee;margin-bottom:1.4rem}
+.msg-box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.3rem 1.4rem;line-height:1.55;font-size:.88rem;margin-bottom:1rem}
+.tips-box{background:var(--brand-tint);border-radius:var(--r);padding:1.1rem 1.3rem;font-size:.85rem;color:var(--ink)}
 .tips-box div{margin-bottom:.4rem}
-.dl-row{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
-.dl-btn{background:#fff;color:var(--navy);font-weight:700;font-size:.82rem;padding:.75rem 1.2rem;border-radius:999px;display:inline-flex;gap:.4rem;align-items:center}
 
-.section-title{font-size:1.3rem;margin-bottom:.3rem}
-.section-sub{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
+.dl-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.2rem}
+.dl-btn{background:var(--navy);color:#fff;font-weight:700;font-size:.82rem;padding:.8rem 1.3rem;border-radius:999px;display:inline-flex;gap:.4rem;align-items:center;flex:1;justify-content:center}
+.dl-btn.entrevistas{background:var(--grad)}
+
+.entrevistas-frame{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);height:640px}
+.entrevistas-frame iframe{width:100%;height:100%;border:none}
+
+.section-title{font-size:1.2rem;margin-bottom:.3rem}
+.section-sub{font-size:.84rem;color:var(--muted);margin-bottom:1.3rem}
 .error-text{color:var(--red);font-size:.83rem;margin-top:.8rem;text-align:center}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--navy);color:#fff;padding:11px 18px;border-radius:12px;font-size:.83rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -119,6 +132,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     <svg viewBox="0 0 100 74"><defs><linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wg)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
     Workea CV
   </div>
+  <div class="tb-plan-badge" id="tb-plan-badge" style="display:none;"></div>
 </div>
 
 <div class="gate" id="gate">
@@ -128,9 +142,10 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 
 <div class="stage" id="app-stage" style="display:none;">
 
-  <div class="screen active" id="scr-upload">
+  <!-- PASO 0: subir CV (se oculta una vez hay una orden creada) -->
+  <div id="paso-subir">
     <h2 class="section-title">Sube tu CV</h2>
-    <p class="section-sub">Aceptamos PDF o Word.</p>
+    <p class="section-sub">Aceptamos PDF o Word. Analizamos, optimizamos y — según tu plan — te dejamos listo hasta para practicar tu entrevista.</p>
 
     <div class="upload-box" onclick="document.getElementById('file-input').click()">
       <input type="file" id="file-input" accept=".pdf,.docx" style="display:none;" onchange="onFileChosen(event)">
@@ -147,63 +162,44 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     </div>
     <p class="plan-notice">⚠️ Prototipo: el pago aún no está conectado — cualquier plan que elijas acá corre gratis por ahora.</p>
 
-    <div style="margin-top:1.4rem;">
+    <div class="contact-fields" style="margin-top:1.2rem;">
       <label style="font-size:.78rem;font-weight:600;color:var(--muted);display:block;margin-bottom:.4rem;">Para el encabezado de tu CV final (opcional, recomendado)</label>
-      <input type="text" id="contact-nombre" placeholder="Tu nombre completo" style="width:100%;font-family:var(--body);font-size:.9rem;padding:.75rem .9rem;border:1.5px solid var(--line);border-radius:10px;margin-bottom:.5rem;">
-      <input type="text" id="contact-correo" placeholder="Correo" style="width:100%;font-family:var(--body);font-size:.9rem;padding:.75rem .9rem;border:1.5px solid var(--line);border-radius:10px;margin-bottom:.5rem;">
-      <input type="text" id="contact-telefono" placeholder="Teléfono (opcional)" style="width:100%;font-family:var(--body);font-size:.9rem;padding:.75rem .9rem;border:1.5px solid var(--line);border-radius:10px;">
+      <input type="text" id="contact-nombre" placeholder="Tu nombre completo">
+      <input type="text" id="contact-correo" placeholder="Correo">
+      <input type="text" id="contact-telefono" placeholder="Teléfono (opcional)">
     </div>
 
     <button class="btn btn-brand btn-block" style="margin-top:1.2rem;" id="btn-analizar" disabled onclick="iniciarAnalisis()">Analizar mi CV →</button>
     <div class="error-text" id="upload-error" style="display:none;"></div>
   </div>
 
-  <div class="screen" id="scr-loading">
-    <div class="loading-wrap">
-      <div class="spinner"></div>
-      <h3 id="loading-text">Leyendo tu CV…</h3>
-      <p>Esto toma unos segundos</p>
+  <!-- WORKSPACE: aparece una vez hay una orden creada -->
+  <div id="workspace" style="display:none;">
+    <div class="tabbar">
+      <button class="tab-btn active" id="tabbtn-diagnostico" onclick="irTab('diagnostico')">🔍 Diagnóstico</button>
+      <button class="tab-btn" id="tabbtn-optimizador" onclick="irTab('optimizador')">🚀 Optimizador</button>
+      <button class="tab-btn" id="tabbtn-mensaje" onclick="irTab('mensaje')">💬 Mensaje</button>
+      <button class="tab-btn locked" id="tabbtn-entrevistas" onclick="irTab('entrevistas')">🎤 Entrevistas 🔒</button>
     </div>
-  </div>
 
-  <div class="screen" id="scr-diag">
-    <h2 class="section-title">Tu diagnóstico</h2>
-    <p class="section-sub">Basado en el contenido real de tu CV.</p>
-    <div id="diag-content"></div>
-    <button class="btn btn-brand btn-block" onclick="continuarDesdeDiagnostico()">Continuar →</button>
-  </div>
-
-  <div class="screen" id="scr-preguntas">
-    <h2 class="section-title">Antes de reescribir…</h2>
-    <p class="section-sub">Nunca inventamos números — si no lo sabes, lo dejamos igual de bien pero sin cifra.</p>
-    <div id="qa-mount"></div>
-  </div>
-
-  <div class="screen" id="scr-optimizado">
-    <h2 class="section-title">Tu CV optimizado</h2>
-    <p class="section-sub">Solo con tus propios datos — nada inventado.</p>
-    <div id="opt-content"></div>
-    <button class="btn btn-brand btn-block" onclick="continuarDesdeOptimizado()">Continuar →</button>
-  </div>
-
-  <div class="screen" id="scr-plantilla">
-    <h2 class="section-title">Elige tu plantilla</h2>
-    <p class="section-sub">Mismo contenido, el diseño que prefieras.</p>
-    <div class="tpl-grid">
-      <div class="tpl-pick active" onclick="elegirTplUI('minimal', this)"><div class="tp-swatch" style="background:#f6f8fc;border:1px solid #e3e6f0"></div><div class="tp-name">Minimal</div></div>
-      <div class="tpl-pick" onclick="elegirTplUI('professional', this)"><div class="tp-swatch" style="background:#0a1430"></div><div class="tp-name">Professional</div></div>
-      <div class="tpl-pick" onclick="elegirTplUI('harvard', this)"><div class="tp-swatch" style="background:#fff;border:1.5px solid #111"></div><div class="tp-name">Harvard</div></div>
-      <div class="tpl-pick" onclick="elegirTplUI('executive', this)"><div class="tp-swatch" style="background:linear-gradient(120deg,#0a1430,#1f2a4a)"></div><div class="tp-name">Executive</div></div>
-      <div class="tpl-pick" onclick="elegirTplUI('tech', this)"><div class="tp-swatch" style="background:#101418"></div><div class="tp-name">Tech</div></div>
-      <div class="tpl-pick" onclick="elegirTplUI('creative', this)"><div class="tp-swatch" style="background:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0)"></div><div class="tp-name">Creative</div></div>
+    <!-- TAB: Diagnóstico -->
+    <div class="tab-panel active" id="tab-diagnostico">
+      <div id="diagnostico-content"><div class="loading-wrap"><div class="spinner"></div><p style="font-size:.85rem;color:var(--muted);">Leyendo y analizando tu CV…</p></div></div>
     </div>
-    <button class="btn btn-brand btn-block" style="margin-top:1.6rem;" onclick="finalizar()">Generar mi CV →</button>
-  </div>
 
-  <div class="screen" id="scr-final">
-    <div class="final-card" id="final-card"></div>
-    <div style="text-align:center;margin-top:1.6rem;">
-      <button class="btn btn-ghost" onclick="location.reload()">Empezar de nuevo</button>
+    <!-- TAB: Optimizador -->
+    <div class="tab-panel" id="tab-optimizador">
+      <div id="optimizador-content"></div>
+    </div>
+
+    <!-- TAB: Mensaje -->
+    <div class="tab-panel" id="tab-mensaje">
+      <div id="mensaje-content"></div>
+    </div>
+
+    <!-- TAB: Entrevistas -->
+    <div class="tab-panel" id="tab-entrevistas">
+      <div id="entrevistas-content"></div>
     </div>
   </div>
 
@@ -226,6 +222,8 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
   let preguntaIdx = 0;
   let plantillaSeleccionada = 'minimal';
 
+  const PLAN_LABEL = { diagnostico: 'Plan Diagnóstico', optimizado: 'Plan Optimizado', pro: 'Plan Pro' };
+
   async function init(){
     const { data } = await sb.auth.getSession();
     session = data.session;
@@ -234,27 +232,16 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     document.getElementById('app-stage').style.display = 'block';
   }
 
-  async function apiCall(accion, extra = {}, metodo = 'POST'){
+  async function apiCall(path, accion, extra = {}){
     const opts = {
-      method: metodo,
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token }
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+      body: JSON.stringify({ accion, ...extra })
     };
-    let url = '/api/cv';
-    if(metodo === 'GET'){
-      url += '?' + new URLSearchParams(extra).toString();
-    } else {
-      opts.body = JSON.stringify({ accion, ...extra });
-    }
-    const res = await fetch(url, opts);
+    const res = await fetch(path, opts);
     const data = await res.json();
     if(!res.ok) throw new Error(data.error || 'Error de servidor');
     return data;
-  }
-
-  function irScreen(id){
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    window.scrollTo({top:0, behavior:'smooth'});
   }
 
   function elegirPlan(plan, btn){
@@ -268,7 +255,6 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     if(!file) return;
     const ext = file.name.split('.').pop().toLowerCase();
     archivoTipo = ext === 'docx' ? 'docx' : 'pdf';
-
     const reader = new FileReader();
     reader.onload = function(){
       archivoBase64 = reader.result.split(',')[1];
@@ -282,93 +268,131 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     reader.readAsDataURL(file);
   }
 
+  // ===== Tabs =====
+  function irTab(tab){
+    if(tab === 'entrevistas' && document.getElementById('tabbtn-entrevistas').classList.contains('locked')) return;
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('tabbtn-' + tab).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function desbloquearTab(tab){
+    const btn = document.getElementById('tabbtn-' + tab);
+    btn.classList.remove('locked');
+    if(tab === 'entrevistas') btn.textContent = '🎤 Entrevistas';
+  }
+
+  // ===== Paso 0 → crear orden + diagnosticar =====
   async function iniciarAnalisis(){
     const errEl = document.getElementById('upload-error');
     errEl.style.display = 'none';
-    irScreen('scr-loading');
-    document.getElementById('loading-text').textContent = 'Leyendo tu CV…';
-    try{
-      const { texto } = await apiCall('extraer_texto', { archivo_base64: archivoBase64, tipo: archivoTipo });
+    document.getElementById('btn-analizar').disabled = true;
+    document.getElementById('btn-analizar').textContent = 'Analizando…';
 
-      const { orden } = await apiCall('crear_orden', { cv_original: texto, plan: planActual });
+    try{
+      const { texto } = await apiCall('/api/cv', 'extraer_texto', { archivo_base64: archivoBase64, tipo: archivoTipo });
+      const { orden } = await apiCall('/api/cv', 'crear_orden', { cv_original: texto, plan: planActual });
       ordenActual = orden;
 
-      document.getElementById('loading-text').textContent = 'Analizando tu CV…';
-      const { orden: ordenDiag } = await apiCall('diagnosticar', { orden_id: ordenActual.id });
-      ordenActual = ordenDiag;
+      document.getElementById('paso-subir').style.display = 'none';
+      document.getElementById('workspace').style.display = 'block';
+      const badge = document.getElementById('tb-plan-badge');
+      badge.textContent = PLAN_LABEL[planActual];
+      badge.style.display = 'inline-block';
 
-      renderDiagnostico(ordenActual.diagnostico);
-      irScreen('scr-diag');
+      const { orden: ordenDiag } = await apiCall('/api/cv', 'diagnosticar', { orden_id: ordenActual.id });
+      ordenActual = ordenDiag;
+      renderDiagnostico();
+
+      if(planActual === 'diagnostico'){
+        renderOptimizadorBloqueado();
+        renderMensajeBloqueado();
+      } else {
+        renderOptimizadorInicial();
+        renderMensajeBloqueado(true);
+      }
+      renderEntrevistasPanel();
+
     } catch(err){
-      irScreen('scr-upload');
+      document.getElementById('btn-analizar').disabled = false;
+      document.getElementById('btn-analizar').textContent = 'Analizar mi CV →';
       errEl.textContent = err.message;
       errEl.style.display = 'block';
     }
   }
 
-  function renderDiagnostico(d){
-    const el = document.getElementById('diag-content');
+  // ===== TAB Diagnóstico =====
+  function renderDiagnostico(){
+    const d = ordenActual.diagnostico;
+    const el = document.getElementById('diagnostico-content');
     const color = d.score >= 70 ? 'var(--green)' : (d.score >= 50 ? 'var(--amber)' : 'var(--red)');
     let html = '<div class="score-card"><div class="score-num" style="color:'+color+'">'+d.score+'%</div><div class="score-label">Compatibilidad ATS estimada</div></div>';
 
     if(d.alertas && d.alertas.length){
-      html += '<div class="diag-list"><h4>⚠️ A mejorar</h4>' +
-        d.alertas.map(a => '<div class="diag-row"><span class="ic">🔸</span> '+escapeHtml(a)+'</div>').join('') +
-        '</div>';
+      html += '<div class="diag-list"><h4>⚠️ A mejorar</h4>' + d.alertas.map(a => '<div class="diag-row"><span class="ic">🔸</span> '+escapeHtml(a)+'</div>').join('') + '</div>';
     }
     if(d.fortalezas && d.fortalezas.length){
-      html += '<div class="diag-list"><h4>✅ Ya está bien</h4>' +
-        d.fortalezas.map(f => '<div class="diag-row"><span class="ic">✔️</span> '+escapeHtml(f)+'</div>').join('') +
-        '</div>';
+      html += '<div class="diag-list"><h4>✅ Ya está bien</h4>' + d.fortalezas.map(f => '<div class="diag-row"><span class="ic">✔️</span> '+escapeHtml(f)+'</div>').join('') + '</div>';
     }
     if(d.keywords_faltantes && d.keywords_faltantes.length){
-      html += '<div class="diag-list"><h4>🔑 Palabras clave que faltan</h4>' +
-        d.keywords_faltantes.map(k => '<div class="diag-row"><span class="ic">•</span> '+escapeHtml(k)+'</div>').join('') +
-        '</div>';
+      html += '<div class="diag-list"><h4>🔑 Palabras clave que faltan</h4>' + d.keywords_faltantes.map(k => '<div class="diag-row"><span class="ic">•</span> '+escapeHtml(k)+'</div>').join('') + '</div>';
     }
     el.innerHTML = html;
   }
 
-  async function continuarDesdeDiagnostico(){
-    if(planActual === 'diagnostico'){
-      irScreen('scr-final');
-      document.getElementById('final-card').innerHTML =
-        '<div class="fc-ic">📋</div><h2>Tu diagnóstico está listo</h2><p>Puedes revisarlo arriba en cualquier momento.</p>';
-      return;
-    }
-    irScreen('scr-loading');
-    document.getElementById('loading-text').textContent = 'Buscando qué podríamos preguntarte…';
+  // ===== TAB Optimizador =====
+  function renderOptimizadorBloqueado(){
+    document.getElementById('optimizador-content').innerHTML = `
+      <div class="locked-panel">
+        <div class="lp-ic">🔒</div>
+        <h3>Disponible en plan Optimizado o Pro</h3>
+        <p>Tu plan actual es Diagnóstico. Para reescribir tu CV con tus propios datos, necesitas Optimizado o Pro.</p>
+      </div>`;
+  }
+
+  function renderOptimizadorInicial(){
+    document.getElementById('optimizador-content').innerHTML = `
+      <div class="locked-panel">
+        <div class="lp-ic">🚀</div>
+        <h3>Listo para optimizar tu CV</h3>
+        <p>Te haremos un par de preguntas rápidas sobre datos que faltan, y reescribimos tu CV con eso — nunca inventamos cifras.</p>
+        <button class="btn btn-brand" onclick="empezarOptimizacion()">Optimizar mi CV →</button>
+      </div>`;
+  }
+
+  async function empezarOptimizacion(){
+    document.getElementById('optimizador-content').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p style="font-size:.85rem;color:var(--muted);">Buscando qué podríamos preguntarte…</p></div>';
     try{
-      const { preguntas } = await apiCall('generar_preguntas', { orden_id: ordenActual.id });
+      const { preguntas } = await apiCall('/api/cv', 'generar_preguntas', { orden_id: ordenActual.id });
       preguntasPendientes = preguntas || [];
       respuestasAcumuladas = [];
       preguntaIdx = 0;
-
       if(preguntasPendientes.length === 0){
         await ejecutarOptimizacion();
       } else {
         renderPregunta();
-        irScreen('scr-preguntas');
       }
     } catch(err){
       showToast('Error: ' + err.message);
-      irScreen('scr-diag');
+      renderOptimizadorInicial();
     }
   }
 
   function renderPregunta(){
     const p = preguntasPendientes[preguntaIdx];
-    document.getElementById('qa-mount').innerHTML =
-      '<div class="qa-card">' +
-        '<div class="qa-eyebrow">Pregunta '+(preguntaIdx + 1)+' de '+preguntasPendientes.length+'</div>' +
-        '<div class="qa-context">Tu CV dice: "'+escapeHtml(p.contexto)+'"</div>' +
-        '<div class="qa-question">'+escapeHtml(p.pregunta)+'</div>' +
-        '<input type="text" class="qa-input" id="qa-input" placeholder="Escribe tu respuesta">' +
-        '<div class="qa-actions">' +
-          '<button class="btn btn-brand" style="flex:1;" onclick="responderPregunta(false)">Guardar y continuar</button>' +
-          '<button class="btn btn-ghost" onclick="responderPregunta(true)">Omitir</button>' +
-        '</div>' +
-      '</div>';
+    document.getElementById('optimizador-content').innerHTML = `
+      <div class="qa-card">
+        <div class="qa-eyebrow">Pregunta ${preguntaIdx + 1} de ${preguntasPendientes.length}</div>
+        <div class="qa-context">Tu CV dice: "${escapeHtml(p.contexto)}"</div>
+        <div class="qa-question">${escapeHtml(p.pregunta)}</div>
+        <input type="text" class="qa-input" id="qa-input" placeholder="Escribe tu respuesta">
+        <div class="qa-actions">
+          <button class="btn btn-brand" style="flex:1;" onclick="responderPregunta(false)">Guardar y continuar</button>
+          <button class="btn btn-ghost" onclick="responderPregunta(true)">Omitir</button>
+        </div>
+      </div>`;
   }
 
   async function responderPregunta(omitir){
@@ -384,92 +408,124 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
   }
 
   async function ejecutarOptimizacion(){
-    irScreen('scr-loading');
-    document.getElementById('loading-text').textContent = 'Reescribiendo tu CV…';
+    document.getElementById('optimizador-content').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p style="font-size:.85rem;color:var(--muted);">Reescribiendo tu CV…</p></div>';
     try{
-      const { orden } = await apiCall('optimizar', { orden_id: ordenActual.id, respuestas: respuestasAcumuladas });
+      const { orden } = await apiCall('/api/cv', 'optimizar', { orden_id: ordenActual.id, respuestas: respuestasAcumuladas });
       ordenActual = orden;
-      renderOptimizado(ordenActual.cv_optimizado);
-      irScreen('scr-optimizado');
+      renderOptimizadorResultado();
+      desbloquearMensaje();
     } catch(err){
       showToast('Error: ' + err.message);
-      irScreen('scr-diag');
+      renderOptimizadorInicial();
     }
   }
 
-  function renderOptimizado(cv){
-    const el = document.getElementById('opt-content');
+  function renderOptimizadorResultado(){
+    const cv = ordenActual.cv_optimizado || {};
+    const el = document.getElementById('optimizador-content');
     let html = '<div class="opt-block"><h4>Resumen profesional</h4><p style="font-size:.85rem;line-height:1.55;">'+escapeHtml(cv.resumen_profesional || '')+'</p></div>';
-
     (cv.experiencia || []).forEach(exp => {
-      html += '<div class="opt-block">' +
-        '<div class="opt-role">'+escapeHtml(exp.cargo || '')+' · '+escapeHtml(exp.empresa || '')+'</div>' +
-        (exp.bullets || []).map(b => '<div class="opt-bullet">'+escapeHtml(b)+'</div>').join('') +
-        '</div>';
+      html += '<div class="opt-block"><div class="opt-role">'+escapeHtml(exp.cargo || '')+' · '+escapeHtml(exp.empresa || '')+'</div>' +
+        (exp.bullets || []).map(b => '<div class="opt-bullet">'+escapeHtml(b)+'</div>').join('') + '</div>';
     });
-
     if(cv.habilidades && cv.habilidades.length){
       html += '<div class="opt-block"><h4>Habilidades</h4><p style="font-size:.85rem;">'+cv.habilidades.map(escapeHtml).join(' · ')+'</p></div>';
     }
-    el.innerHTML = html;
-  }
 
-  async function continuarDesdeOptimizado(){
-    irScreen('scr-loading');
-    document.getElementById('loading-text').textContent = 'Redactando tu mensaje de presentación…';
-    try{
-      const { orden } = await apiCall('generar_mensaje', { orden_id: ordenActual.id });
-      ordenActual = orden;
-
-      if(planActual === 'pro'){
-        irScreen('scr-plantilla');
-      } else {
-        mostrarFinal();
-      }
-    } catch(err){
-      showToast('Error: ' + err.message);
-      irScreen('scr-optimizado');
+    if(planActual === 'pro'){
+      html += `<div class="opt-block">
+        <h4>Elige tu plantilla</h4>
+        <div class="tpl-grid" id="tpl-grid">
+          <div class="tpl-pick active" onclick="elegirTplUI('minimal', this)"><div class="tp-swatch" style="background:#f6f8fc;border:1px solid #e3e6f0"></div><div class="tp-name">Minimal</div></div>
+          <div class="tpl-pick" onclick="elegirTplUI('professional', this)"><div class="tp-swatch" style="background:#0a1430"></div><div class="tp-name">Professional</div></div>
+          <div class="tpl-pick" onclick="elegirTplUI('harvard', this)"><div class="tp-swatch" style="background:#fff;border:1.5px solid #111"></div><div class="tp-name">Harvard</div></div>
+          <div class="tpl-pick" onclick="elegirTplUI('executive', this)"><div class="tp-swatch" style="background:linear-gradient(120deg,#0a1430,#1f2a4a)"></div><div class="tp-name">Executive</div></div>
+          <div class="tpl-pick" onclick="elegirTplUI('tech', this)"><div class="tp-swatch" style="background:#101418"></div><div class="tp-name">Tech</div></div>
+          <div class="tpl-pick" onclick="elegirTplUI('creative', this)"><div class="tp-swatch" style="background:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0)"></div><div class="tp-name">Creative</div></div>
+        </div>
+      </div>`;
     }
+
+    html += '<div class="dl-row"><button class="dl-btn" onclick="abrirCVFinal()">📄 Ver y descargar mi CV</button></div>';
+    el.innerHTML = html;
   }
 
   function elegirTplUI(tpl, btn){
     plantillaSeleccionada = tpl;
     document.querySelectorAll('.tpl-pick').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
+    apiCall('/api/cv', 'elegir_plantilla', { orden_id: ordenActual.id, plantilla: tpl }).catch(()=>{});
   }
 
-  async function finalizar(){
+  // ===== TAB Mensaje =====
+  function renderMensajeBloqueado(pendienteDeOptimizar){
+    document.getElementById('mensaje-content').innerHTML = `
+      <div class="locked-panel">
+        <div class="lp-ic">🔒</div>
+        <h3>${pendienteDeOptimizar ? 'Primero optimiza tu CV' : 'Disponible en plan Optimizado o Pro'}</h3>
+        <p>${pendienteDeOptimizar ? 'Genera tu CV optimizado en la pestaña anterior, y el mensaje de presentación se desbloquea solo.' : 'Tu plan actual es Diagnóstico.'}</p>
+      </div>`;
+  }
+
+  function desbloquearMensaje(){
+    document.getElementById('mensaje-content').innerHTML = `
+      <div class="locked-panel">
+        <div class="lp-ic">💬</div>
+        <h3>Genera tu mensaje de presentación</h3>
+        <p>Un mensaje corto para LinkedIn o un formulario de postulación, más tips de estrategia para este caso.</p>
+        <button class="btn btn-brand" onclick="generarMensaje()">Generar mensaje →</button>
+      </div>`;
+  }
+
+  async function generarMensaje(){
+    document.getElementById('mensaje-content').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p style="font-size:.85rem;color:var(--muted);">Redactando tu mensaje…</p></div>';
     try{
-      const { orden } = await apiCall('elegir_plantilla', { orden_id: ordenActual.id, plantilla: plantillaSeleccionada });
+      const { orden } = await apiCall('/api/cv', 'generar_mensaje', { orden_id: ordenActual.id });
       ordenActual = orden;
-      mostrarFinal();
+      renderMensajeResultado();
+      if(planActual === 'optimizado' || planActual === 'pro'){
+        desbloquearTab('entrevistas');
+        renderEntrevistasPanel();
+      }
     } catch(err){
       showToast('Error: ' + err.message);
+      desbloquearMensaje();
     }
   }
 
-  function mostrarFinal(){
-    const o = ordenActual;
-    let html = '<div class="fc-ic">🎉</div><h2>Tu CV está listo</h2><p>Esto es lo que generamos para ti.</p>';
-    if(o.mensaje_presentacion){
-      html += '<div class="msg-box">'+escapeHtml(o.mensaje_presentacion)+'</div>';
+  function renderMensajeResultado(){
+    const el = document.getElementById('mensaje-content');
+    let html = '<div class="msg-box">'+escapeHtml(ordenActual.mensaje_presentacion || '')+'</div>';
+    if(ordenActual.tips_postulacion && ordenActual.tips_postulacion.length){
+      html += '<div class="tips-box">'+ordenActual.tips_postulacion.map(t => '<div>💡 '+escapeHtml(t)+'</div>').join('')+'</div>';
     }
-    if(o.tips_postulacion && o.tips_postulacion.length){
-      html += '<div class="tips-box">'+o.tips_postulacion.map(t => '<div>💡 '+escapeHtml(t)+'</div>').join('')+'</div>';
-    }
-    html += '<p style="font-size:.75rem;color:#8ba0d6;">Tu CV con diseño está listo para descargar.</p>';
-    html += '<div class="dl-row" style="margin-top:1rem;"><button class="dl-btn" onclick="abrirCVFinal()">📄 Ver y descargar mi CV</button></div>';
-    document.getElementById('final-card').innerHTML = html;
-    irScreen('scr-final');
+    el.innerHTML = html;
   }
 
+  // ===== TAB Entrevistas =====
+  function renderEntrevistasPanel(){
+    const el = document.getElementById('entrevistas-content');
+    const desbloqueada = (planActual === 'optimizado' || planActual === 'pro') && ordenActual.estado === 'completo';
+    if(!desbloqueada){
+      el.innerHTML = `
+        <div class="locked-panel">
+          <div class="lp-ic">🔒</div>
+          <h3>Practicar entrevistas es un beneficio incluido</h3>
+          <p>Se desbloquea cuando generas tu mensaje de presentación con plan Optimizado o Pro.</p>
+        </div>`;
+      return;
+    }
+    el.innerHTML = `<div class="entrevistas-frame"><iframe src="/entrevistas.html?orden_id=${ordenActual.id}&plan=${planActual}"></iframe></div>`;
+  }
+
+  // ===== Descarga final del CV =====
   const PLANTILLA_ESTILOS = {
-    minimal:      { accent: '#1999f1', fondo: '#fff', fuente: "'Instrument Sans', sans-serif" },
-    professional: { accent: '#0a1430', fondo: '#fff', fuente: "'Instrument Sans', sans-serif" },
-    harvard:      { accent: '#111111', fondo: '#fff', fuente: "Georgia, serif" },
-    executive:    { accent: '#0a1430', fondo: '#fff', fuente: "Georgia, serif" },
-    tech:         { accent: '#0a1430', fondo: '#fff', fuente: "'Courier New', monospace" },
-    creative:     { accent: 'linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0)', fondo: '#fff', fuente: "'Instrument Sans', sans-serif" }
+    minimal:{accent:'#1999f1',fuente:"'Instrument Sans', sans-serif"},
+    professional:{accent:'#0a1430',fuente:"'Instrument Sans', sans-serif"},
+    harvard:{accent:'#111111',fuente:"Georgia, serif"},
+    executive:{accent:'#0a1430',fuente:"Georgia, serif"},
+    tech:{accent:'#0a1430',fuente:"'Courier New', monospace"},
+    creative:{accent:'linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0)',fuente:"'Instrument Sans', sans-serif"}
   };
 
   function abrirCVFinal(){
@@ -479,7 +535,6 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     const telefono = document.getElementById('contact-telefono')?.value.trim() || '';
     const plantilla = (planActual === 'pro') ? plantillaSeleccionada : 'minimal';
     const est = PLANTILLA_ESTILOS[plantilla] || PLANTILLA_ESTILOS.minimal;
-
     const contactoLinea = [correo, telefono].filter(Boolean).join(' · ');
 
     const expHtml = (cv.experiencia || []).map(exp => `
@@ -488,47 +543,30 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
           <span>${escapeHtml(exp.cargo || '')}</span><span style="font-weight:600;color:#666;">${escapeHtml(exp.periodo || '')}</span>
         </div>
         <div style="font-size:13px;color:#555;margin-bottom:6px;">${escapeHtml(exp.empresa || '')}</div>
-        <ul style="margin:0 0 0 18px;padding:0;">
-          ${(exp.bullets || []).map(b => `<li style="font-size:13px;line-height:1.6;margin-bottom:4px;">${escapeHtml(b)}</li>`).join('')}
-        </ul>
+        <ul style="margin:0 0 0 18px;padding:0;">${(exp.bullets || []).map(b => '<li style="font-size:13px;line-height:1.6;margin-bottom:4px;">'+escapeHtml(b)+'</li>').join('')}</ul>
       </div>`).join('');
 
     const habilidadesHtml = (cv.habilidades && cv.habilidades.length)
-      ? `<div style="margin-top:20px;"><h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:8px;">Habilidades</h3><p style="font-size:13px;">${(cv.habilidades || []).map(escapeHtml).join(' · ')}</p></div>`
-      : '';
+      ? `<div style="margin-top:20px;"><h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:8px;">Habilidades</h3><p style="font-size:13px;">${(cv.habilidades || []).map(escapeHtml).join(' · ')}</p></div>` : '';
 
-    const htmlCompleto = `<!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8"><title>${escapeHtml(nombre)} — CV</title>
+    const htmlCompleto = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${escapeHtml(nombre)} — CV</title>
 <style>
   @media print { .no-print{ display:none !important; } body{ padding:0 !important; } }
   body{ font-family:${est.fuente}; color:#1a1a2e; max-width:740px; margin:0 auto; padding:40px 30px; line-height:1.5; }
   .barra-superior{ background:${est.accent}; height:8px; margin:-40px -30px 30px; }
-  h1{ font-size:26px; margin:0 0 4px; }
-  .rol{ color:#555; font-size:14px; margin-bottom:6px; }
-  .contacto{ font-size:12.5px; color:#777; margin-bottom:24px; }
+  h1{ font-size:26px; margin:0 0 4px; } .rol{ color:#555; font-size:14px; margin-bottom:6px; } .contacto{ font-size:12.5px; color:#777; margin-bottom:24px; }
   h3{ font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:#888; margin:22px 0 8px; }
   .print-bar{ position:sticky; top:0; background:#0a1430; color:#fff; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; margin:-40px -30px 30px; font-family:sans-serif; }
   .print-bar button{ background:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0); color:#fff; border:none; font-weight:700; padding:8px 16px; border-radius:999px; cursor:pointer; font-size:13px; }
-</style></head>
-<body>
-  <div class="print-bar no-print">
-    <span>Workea CV — vista previa</span>
-    <button onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
-  </div>
-  <p class="no-print" style="font-size:11.5px; color:#888; font-family:sans-serif; margin:-20px -30px 20px; padding:8px 30px; background:#f6f8fc;">
-    💡 En el diálogo de impresión, busca "Más ajustes" y desmarca "Encabezados y pies de página" para que tu PDF quede limpio, sin fecha ni URL.
-  </p>
+</style></head><body>
+  <div class="print-bar no-print"><span>Workea CV — vista previa</span><button onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button></div>
+  <p class="no-print" style="font-size:11.5px; color:#888; font-family:sans-serif; margin:-20px -30px 20px; padding:8px 30px; background:#f6f8fc;">💡 En el diálogo de impresión, busca "Más ajustes" y desmarca "Encabezados y pies de página".</p>
   <div class="barra-superior"></div>
   <h1>${escapeHtml(nombre)}</h1>
   <div class="rol">${escapeHtml((cv.experiencia && cv.experiencia[0] && cv.experiencia[0].cargo) || '')}</div>
   <div class="contacto">${escapeHtml(contactoLinea)}</div>
-
-  <h3>Resumen profesional</h3>
-  <p style="font-size:13px;">${escapeHtml(cv.resumen_profesional || '')}</p>
-
-  <h3>Experiencia</h3>
-  ${expHtml}
-
+  <h3>Resumen profesional</h3><p style="font-size:13px;">${escapeHtml(cv.resumen_profesional || '')}</p>
+  <h3>Experiencia</h3>${expHtml}
   ${habilidadesHtml}
 </body></html>`;
 
