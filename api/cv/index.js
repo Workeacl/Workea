@@ -17,7 +17,7 @@ const { getSupabaseForRequest } = require('../bitacora/_supabaseClient');
 const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 
-async function llamarClaude(prompt, maxTokens = 1000) {
+async function llamarClaudeUnaVez(prompt, maxTokens) {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -37,14 +37,11 @@ async function llamarClaude(prompt, maxTokens = 1000) {
   }
   const data = await res.json();
   let texto = data?.content?.[0]?.text || '{}';
-
-  // Quitar bloques de código markdown si el modelo los agregó (```json ... ```)
   texto = texto.replace(/```json/gi, '').replace(/```/g, '').trim();
 
-  // Si terminó por límite de tokens, avisamos algo más útil que un JSON roto
   if (data?.stop_reason === 'max_tokens') {
     console.error('Respuesta cortada por max_tokens. Texto parcial:', texto);
-    throw new Error('La respuesta del modelo quedó incompleta — intenta de nuevo (puede que tu CV sea muy largo)');
+    throw new Error('__INCOMPLETA__');
   }
 
   try {
@@ -54,10 +51,32 @@ async function llamarClaude(prompt, maxTokens = 1000) {
     if (match) {
       try {
         return JSON.parse(match[0]);
-      } catch (e2) { /* sigue al log de abajo */ }
+      } catch (e2) { /* sigue abajo */ }
     }
     console.error('No se pudo parsear la respuesta del modelo:', texto);
-    throw new Error('No se pudo interpretar la respuesta del modelo');
+    throw new Error('__MAL_FORMADO__');
+  }
+}
+
+// Reintenta una vez si la respuesta vino incompleta o mal formada — en la
+// práctica, un segundo intento casi siempre sale limpio, y evita mostrarle
+// el error al usuario por un problema pasajero del modelo.
+async function llamarClaude(prompt, maxTokens = 1000) {
+  try {
+    return await llamarClaudeUnaVez(prompt, maxTokens);
+  } catch (e) {
+    if (e.message === '__INCOMPLETA__' || e.message === '__MAL_FORMADO__') {
+      console.error('Primer intento falló (' + e.message + '), reintentando una vez…');
+      try {
+        return await llamarClaudeUnaVez(prompt, maxTokens);
+      } catch (e2) {
+        if (e2.message === '__INCOMPLETA__') {
+          throw new Error('La respuesta del modelo quedó incompleta — intenta de nuevo (puede que tu CV sea muy largo)');
+        }
+        throw new Error('No se pudo interpretar la respuesta del modelo, incluso tras reintentar');
+      }
+    }
+    throw e;
   }
 }
 
@@ -155,6 +174,8 @@ ${orden.cv_original}
 
 Para cada uno, genera una pregunta corta y directa para pedirle ese dato al usuario. Si el CV ya tiene suficientes datos cuantificados, devuelve una lista vacía — no fuerces preguntas innecesarias.
 
+IMPORTANTE sobre el formato: cada texto dentro del JSON debe ser una sola cadena, sin comillas dobles (") dentro del texto mismo — si necesitas nombrar una alternativa o sinónimo, sepáralo con "/" o "o" sin comillas (ejemplo correcto: RRHH o Recursos Humanos — NO: "RRHH" o "Recursos Humanos"). Responde con JSON válido y nada más.
+
 Responde en JSON puro:
 {
   "preguntas": [
@@ -175,6 +196,8 @@ CV:
 ${orden.cv_original}
 """
 ${orden.oferta_referencia ? `\nOferta de referencia:\n"""\n${orden.oferta_referencia}\n"""` : ''}
+
+IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior — si necesitas nombrar una alternativa o sinónimo, sepáralo con "o" o "/" sin comillas (ejemplo correcto: RRHH o Recursos Humanos — NO: "RRHH" o "Recursos Humanos").
 
 Responde en JSON puro, sin texto adicional, con este formato exacto:
 {
@@ -222,6 +245,8 @@ ${orden.cv_original}
 Datos adicionales que el usuario confirmó:
 ${respuestasTexto}
 
+IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior.
+
 Responde en JSON puro con este formato:
 {
   "resumen_profesional": "texto reescrito del resumen",
@@ -265,6 +290,8 @@ CV optimizado:
 ${JSON.stringify(orden.cv_optimizado)}
 """
 ${orden.oferta_referencia ? `\nOferta:\n"""\n${orden.oferta_referencia}\n"""\nEmpresa: ${orden.empresa_referencia || 'no especificada'}` : ''}
+
+IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior.
 
 Responde en JSON puro:
 {
