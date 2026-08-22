@@ -181,6 +181,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       <button class="tab-btn active" id="tabbtn-diagnostico" onclick="irTab('diagnostico')">🔍 Diagnóstico</button>
       <button class="tab-btn" id="tabbtn-optimizador" onclick="irTab('optimizador')">🚀 Optimizador</button>
       <button class="tab-btn" id="tabbtn-mensaje" onclick="irTab('mensaje')">💬 Mensaje</button>
+      <button class="tab-btn locked" id="tabbtn-historias" onclick="irTab('historias')">🧠 Historias 🔒</button>
       <button class="tab-btn locked" id="tabbtn-entrevistas" onclick="irTab('entrevistas')">🎤 Entrevistas 🔒</button>
     </div>
 
@@ -197,6 +198,11 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     <!-- TAB: Mensaje -->
     <div class="tab-panel" id="tab-mensaje">
       <div id="mensaje-content"></div>
+    </div>
+
+    <!-- TAB: Historias -->
+    <div class="tab-panel" id="tab-historias">
+      <div id="historias-content"></div>
     </div>
 
     <!-- TAB: Entrevistas -->
@@ -319,9 +325,11 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       if(planActual === 'diagnostico'){
         renderOptimizadorBloqueado();
         renderMensajeBloqueado();
+        renderHistoriasBloqueado();
       } else {
         renderOptimizadorInicial();
         renderMensajeBloqueado(true);
+        renderHistoriasBloqueado(true);
       }
       renderEntrevistasPanel();
     } catch(err){
@@ -341,9 +349,11 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       if(planActual === 'diagnostico'){
         renderOptimizadorBloqueado();
         renderMensajeBloqueado();
+        renderHistoriasBloqueado();
       } else {
         renderOptimizadorInicial();
         renderMensajeBloqueado(true);
+        renderHistoriasBloqueado(true);
       }
       renderEntrevistasPanel();
     } catch(err){
@@ -514,6 +524,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       ordenActual = orden;
       renderOptimizadorResultado(hallazgos && hallazgos.length > 0);
       desbloquearMensaje();
+      desbloquearHistorias();
     } catch(err){
       showToast('Error: ' + err.message);
       renderOptimizadorInicial();
@@ -616,6 +627,59 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     el.innerHTML = html;
   }
 
+  // ===== TAB Historias =====
+  function renderHistoriasBloqueado(pendienteDeOptimizar){
+    document.getElementById('historias-content').innerHTML = `
+      <div class="locked-panel">
+        <div class="lp-ic">🔒</div>
+        <h3>${pendienteDeOptimizar ? 'Primero optimiza tu CV' : 'Disponible en plan Optimizado o Pro'}</h3>
+        <p>${pendienteDeOptimizar ? 'Optimiza tu CV en la pestaña anterior, y tu banco de historias se desbloquea solo.' : 'Tu plan actual es Diagnóstico.'}</p>
+      </div>`;
+  }
+
+  function desbloquearHistorias(){
+    document.getElementById('tabbtn-historias').classList.remove('locked');
+    document.getElementById('tabbtn-historias').textContent = '🧠 Historias';
+    document.getElementById('historias-content').innerHTML = `
+      <div class="locked-panel">
+        <div class="lp-ic">🧠</div>
+        <h3>Arma tu banco de historias</h3>
+        <p>Extraemos 3-4 experiencias reales de tu CV en formato STAR, listas para contar en una entrevista — y las usamos para que la pestaña de Entrevistas practique con tu experiencia real, no con preguntas genéricas.</p>
+        <button class="btn btn-brand" onclick="generarHistorias()">Generar mi banco de historias →</button>
+      </div>`;
+  }
+
+  async function generarHistorias(){
+    document.getElementById('historias-content').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p style="font-size:.85rem;color:var(--muted);">Extrayendo tus experiencias reales…</p></div>';
+    try{
+      const { orden } = await apiCall('/api/cv', 'generar_banco_historias', { orden_id: ordenActual.id });
+      ordenActual = orden;
+      renderHistoriasResultado();
+      renderEntrevistasPanel();
+    } catch(err){
+      showToast('Error: ' + err.message);
+      desbloquearHistorias();
+    }
+  }
+
+  function renderHistoriasResultado(){
+    const historias = ordenActual.banco_historias || [];
+    const el = document.getElementById('historias-content');
+    if(historias.length === 0){
+      el.innerHTML = '<div class="locked-panel"><p>No encontramos suficientes historias completas en tu CV todavía.</p></div>';
+      return;
+    }
+    el.innerHTML = historias.map((h, i) => `
+      <div class="opt-block">
+        <div class="opt-role">🧠 ${escapeHtml(h.titulo || 'Historia ' + (i+1))}</div>
+        <div style="font-size:.83rem;margin-top:.6rem;"><b>Situación:</b> ${escapeHtml(h.situacion || '')}</div>
+        <div style="font-size:.83rem;margin-top:.4rem;"><b>Desafío:</b> ${escapeHtml(h.desafio || '')}</div>
+        <div style="font-size:.83rem;margin-top:.4rem;"><b>Acción:</b> ${escapeHtml(h.accion || '')}</div>
+        <div style="font-size:.83rem;margin-top:.4rem;"><b>Resultado:</b> ${escapeHtml(h.resultado || '')}</div>
+        ${(h.competencias && h.competencias.length) ? '<div style="font-size:.78rem;margin-top:.6rem;color:var(--brand-strong);">'+h.competencias.map(escapeHtml).join(' · ')+'</div>' : ''}
+      </div>`).join('');
+  }
+
   // ===== TAB Entrevistas =====
   function renderEntrevistasPanel(){
     const el = document.getElementById('entrevistas-content');
@@ -629,7 +693,10 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
         </div>`;
       return;
     }
-    el.innerHTML = `<div class="entrevistas-frame"><iframe src="/entrevistas.html?orden_id=${ordenActual.id}&plan=${planActual}"></iframe></div>`;
+    const historiasParam = (ordenActual.banco_historias && ordenActual.banco_historias.length)
+      ? '&historias=' + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(ordenActual.banco_historias)))))
+      : '';
+    el.innerHTML = `<div class="entrevistas-frame"><iframe src="/entrevistas.html?orden_id=${ordenActual.id}&plan=${planActual}${historiasParam}"></iframe></div>`;
   }
 
   // ===== Descarga final del CV =====
