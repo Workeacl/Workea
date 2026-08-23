@@ -169,6 +169,10 @@ a{color:inherit;text-decoration:none}
 .sim-card li::before{content:"✔";color:var(--green);font-weight:800}
 .riesgo-card{background:var(--amber-bg);border:1px solid var(--amber-ln);border-radius:12px;padding:1rem 1.2rem;margin-bottom:.6rem;font-size:.9rem;color:var(--amber)}
 .oculta-card{background:var(--green-bg);border:1px solid var(--green-ln);border-radius:12px;padding:1rem 1.2rem;margin-bottom:.6rem;font-size:.9rem;color:#1c6b47}
+.oferta-card{display:flex;justify-content:space-between;align-items:center;gap:1rem;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:.9rem 1.1rem;margin-bottom:.6rem;flex-wrap:wrap}
+.oferta-card .of-info b{font-size:.93rem;display:block}
+.oferta-card .of-info span{font-size:.82rem;color:var(--muted)}
+.oferta-aviso{display:flex;gap:.6rem;align-items:flex-start;background:var(--amber-bg);border:1px solid var(--amber-ln);border-radius:10px;padding:.75rem 1rem;margin-top:.8rem;font-size:.8rem;color:var(--amber)}
 .plan-q{display:grid;grid-template-columns:auto 1fr;gap:1rem;margin-bottom:.9rem;align-items:start}
 .plan-q .q-badge{background:var(--grad);color:#fff;font-family:var(--display);font-weight:800;font-size:.8rem;padding:.4rem .7rem;border-radius:10px;white-space:nowrap}
 .plan-q ul{list-style:none}
@@ -236,6 +240,7 @@ a{color:inherit;text-decoration:none}
       <div class="inc-item"><span class="ii-ico">⚡</span><div><b>Brechas priorizadas</b><p>Qué atacar primero: alto impacto, impacto medio y largo plazo.</p></div></div>
       <div class="inc-item"><span class="ii-ico">🔮</span><div><b>Simulación de crecimiento</b><p>Qué pasaría con tus oportunidades si desarrollas cada habilidad clave.</p></div></div>
       <div class="inc-item"><span class="ii-ico">⚠️</span><div><b>Riesgos y oportunidades ocultas</b><p>Lo que casi nadie te dice: qué limita tu crecimiento y qué caminos no habías considerado.</p></div></div>
+      <div class="inc-item"><span class="ii-ico">💼</span><div><b>Ofertas reales, ahora mismo</b><p>Buscamos vacantes vigentes que calzan con tu perfil, con link directo para postular.</p></div></div>
       <div class="inc-item"><span class="ii-ico">📅</span><div><b>Plan de acción de 12 meses</b><p>Una hoja de ruta trimestre a trimestre, no una lista de buenas intenciones.</p></div></div>
       <div class="inc-item"><span class="ii-ico">💬</span><div><b>El consejo de la reclutadora</b><p>Un análisis natural y honesto, como si estuvieras sentada/o frente a una especialista.</p></div></div>
     </div>
@@ -415,6 +420,10 @@ function showScreen(id){
   window.scrollTo({top:0});
 }
 function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function safeLink(u){
+  const s=String(u||'').trim();
+  return /^https?:\/\//i.test(s) ? s : '#';
+}
 
 function checkAccess(){
   const v=document.getElementById('accessInput').value.trim();
@@ -490,7 +499,7 @@ function pickMulti(btn){
 
 async function runCareer(){
   showScreen('scr-loading');
-  const msgs=['Leyendo tu trayectoria profesional','Identificando tus fortalezas','Mapeando cargos a tu alcance','Explorando caminos de crecimiento','Priorizando tus brechas','Detectando riesgos y oportunidades ocultas','Armando tu plan de 12 meses','Escribiendo el consejo final'];
+  const msgs=['Leyendo tu trayectoria profesional','Identificando tus fortalezas','Mapeando cargos a tu alcance','Explorando caminos de crecimiento','Priorizando tus brechas','Detectando riesgos y oportunidades ocultas','Buscando ofertas reales para ti','Armando tu plan de 12 meses','Escribiendo el consejo final'];
   let i=0;
   const msgEl=document.getElementById('loadMsg'), bar=document.getElementById('loadBar');
   msgEl.textContent=msgs[0]; bar.style.width='8%';
@@ -557,6 +566,12 @@ function renderResults(d){
 
   const riesgos=(d.riesgos||[]).map(r=>`<div class="riesgo-card">⚠️ ${esc(r)}</div>`).join('');
   const ocultas=(d.oportunidades_ocultas||[]).map(o=>`<div class="oculta-card">💎 ${esc(o)}</div>`).join('');
+
+  const ofertasReales=(d.oportunidades_reales||[]).map(o=>`
+    <div class="oferta-card">
+      <div class="of-info"><b>${esc(o.cargo)}</b><span>${esc(o.empresa||'')}${o.portal?' · '+esc(o.portal):''}</span></div>
+      <a class="btn btn-ghost" href="${safeLink(o.link)}" target="_blank" rel="noopener" style="font-size:.8rem;padding:.5rem 1rem;flex-shrink:0">Ver oferta →</a>
+    </div>`).join('');
 
   const plan=(d.plan_12_meses||[]).map(t=>`
     <div class="plan-q">
@@ -630,6 +645,12 @@ function renderResults(d){
 
     ${riesgos?`<div class="res-card"><h3>⚠️ Riesgos que debes conocer</h3>${riesgos}</div>`:''}
     ${ocultas?`<div class="res-card"><h3>💎 Oportunidades que quizás no habías considerado</h3>${ocultas}</div>`:''}
+
+    ${ofertasReales?`<div class="res-card">
+      <h3>💼 Oportunidades reales para ti, ahora mismo</h3>
+      ${ofertasReales}
+      <div class="oferta-aviso">⚠️ <span>${esc(d.oportunidades_reales_aviso||'Estas ofertas se encontraron mediante búsqueda en el momento. Verifica que sigan vigentes y confirma la legitimidad de la empresa antes de postular o compartir tus datos.')}</span></div>
+    </div>`:''}
 
     <div class="res-card">
       <h3>📅 Tu plan de acción · próximos 12 meses</h3>
