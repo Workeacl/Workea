@@ -418,7 +418,7 @@ Responde en JSON puro:
   ]
 }`;
 
-      const resultado = await llamarClaude(prompt, 1600);
+      const resultado = await llamarClaude(prompt, 3000);
       const historias = resultado.historias || [];
 
       const { data, error } = await supabase.from('cv_ordenes')
