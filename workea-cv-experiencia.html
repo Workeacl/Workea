@@ -178,11 +178,11 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
   <!-- WORKSPACE: aparece una vez hay una orden creada -->
   <div id="workspace" style="display:none;">
     <div class="tabbar">
-      <button class="tab-btn active" id="tabbtn-diagnostico" onclick="irTab('diagnostico')">🔍 Diagnóstico</button>
-      <button class="tab-btn" id="tabbtn-optimizador" onclick="irTab('optimizador')">🚀 Optimizador</button>
-      <button class="tab-btn" id="tabbtn-mensaje" onclick="irTab('mensaje')">💬 Mensaje</button>
-      <button class="tab-btn locked" id="tabbtn-historias" onclick="irTab('historias')">🧠 Historias 🔒</button>
-      <button class="tab-btn locked" id="tabbtn-entrevistas" onclick="irTab('entrevistas')">🎤 Entrevistas 🔒</button>
+      <button class="tab-btn active" id="tabbtn-diagnostico" onclick="irTab('diagnostico')">1 · 🔍 Diagnóstico</button>
+      <button class="tab-btn" id="tabbtn-optimizador" onclick="irTab('optimizador')">2 · 🚀 Optimizador</button>
+      <button class="tab-btn" id="tabbtn-mensaje" onclick="irTab('mensaje')">3 · 💬 Mensaje</button>
+      <button class="tab-btn locked" id="tabbtn-historias" onclick="irTab('historias')">4 · 🧠 Historias 🔒</button>
+      <button class="tab-btn locked" id="tabbtn-entrevistas" onclick="irTab('entrevistas')">5 · 🎤 Entrevistas 🔒</button>
     </div>
 
     <!-- TAB: Diagnóstico -->
@@ -286,7 +286,16 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
   function desbloquearTab(tab){
     const btn = document.getElementById('tabbtn-' + tab);
     btn.classList.remove('locked');
-    if(tab === 'entrevistas') btn.textContent = '🎤 Entrevistas';
+    if(tab === 'entrevistas') btn.textContent = '5 · 🎤 Entrevistas';
+  }
+
+  // Banner reutilizable de "siguiente paso" — para que en una pantalla de
+  // pestañas quede claro que hay más por hacer, no se termina ahí.
+  function siguientePasoHtml(tab, icono, texto){
+    return `<div style="background:var(--brand-tint);border-radius:12px;padding:1rem 1.2rem;margin-top:1.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+      <span style="font-size:.85rem;color:var(--ink);">${texto}</span>
+      <button class="btn btn-brand" style="flex-shrink:0;" onclick="irTab('${tab}')">${icono} Continuar →</button>
+    </div>`;
   }
 
   // ===== Paso 0 → crear orden + diagnosticar =====
@@ -572,6 +581,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     }
 
     html += '<div class="dl-row"><button class="dl-btn" onclick="abrirCVFinal()">📄 Ver e imprimir a PDF</button><button class="dl-btn" style="background:#2b579a;" onclick="descargarWord()">📝 Descargar en Word</button></div>';
+    html += siguientePasoHtml('mensaje', '💬', 'Tu CV ya está listo — ahora genera tu mensaje de presentación para postular.');
     el.innerHTML = html;
   }
 
@@ -624,6 +634,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     if(ordenActual.tips_postulacion && ordenActual.tips_postulacion.length){
       html += '<div class="tips-box">'+ordenActual.tips_postulacion.map(t => '<div>💡 '+escapeHtml(t)+'</div>').join('')+'</div>';
     }
+    html += siguientePasoHtml('historias', '🧠', 'Ahora arma tu banco de historias reales — te va a servir para preparar tu entrevista.');
     el.innerHTML = html;
   }
 
@@ -639,7 +650,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 
   function desbloquearHistorias(){
     document.getElementById('tabbtn-historias').classList.remove('locked');
-    document.getElementById('tabbtn-historias').textContent = '🧠 Historias';
+    document.getElementById('tabbtn-historias').textContent = '4 · 🧠 Historias';
     document.getElementById('historias-content').innerHTML = `
       <div class="locked-panel">
         <div class="lp-ic">🧠</div>
@@ -669,7 +680,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       el.innerHTML = '<div class="locked-panel"><p>No encontramos suficientes historias completas en tu CV todavía.</p></div>';
       return;
     }
-    el.innerHTML = historias.map((h, i) => `
+    let html = historias.map((h, i) => `
       <div class="opt-block">
         <div class="opt-role">🧠 ${escapeHtml(h.titulo || 'Historia ' + (i+1))}</div>
         <div style="font-size:.83rem;margin-top:.6rem;"><b>Situación:</b> ${escapeHtml(h.situacion || '')}</div>
@@ -678,6 +689,16 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
         <div style="font-size:.83rem;margin-top:.4rem;"><b>Resultado:</b> ${escapeHtml(h.resultado || '')}</div>
         ${(h.competencias && h.competencias.length) ? '<div style="font-size:.78rem;margin-top:.6rem;color:var(--brand-strong);">'+h.competencias.map(escapeHtml).join(' · ')+'</div>' : ''}
       </div>`).join('');
+
+    const entrevistasDesbloqueada = !document.getElementById('tabbtn-entrevistas').classList.contains('locked');
+    if(entrevistasDesbloqueada){
+      html += siguientePasoHtml('entrevistas', '🎤', 'Ya tienes todo listo — practica tu entrevista usando estas historias reales.');
+    } else {
+      html += `<div style="background:var(--bg);border-radius:12px;padding:1rem 1.2rem;margin-top:1.2rem;font-size:.85rem;color:var(--muted);">
+        Genera tu mensaje de presentación en la pestaña anterior para desbloquear Entrevistas.
+      </div>`;
+    }
+    el.innerHTML = html;
   }
 
   // ===== TAB Entrevistas =====
