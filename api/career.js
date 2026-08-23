@@ -1,5 +1,10 @@
 // api/career.js — Workea Career (Ruta Profesional)
 // Independiente de los demás endpoints
+//
+// CAMBIO: se agregó búsqueda web real (tool nativo de Anthropic) para
+// incluir 3-5 ofertas laborales REALES y actuales en el informe, bajo
+// el campo "oportunidades_reales". No se guarda nada, no se mantiene
+// una base de datos propia de ofertas — se busca fresco en cada informe.
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Metodo no permitido' });
@@ -51,6 +56,7 @@ export default async function handler(req, res) {
     'Si no hay orientacion indicada, infierela del CV: senales de busqueda de cambio (industrias muy distintas, gaps, mensajes explicitos) sugieren tratar el caso como cambio o exploracion; una trayectoria lineal y consistente sugiere tratarlo como crecimiento.',
     'IMPORTANTE sobre datos de mercado: cuando fundamentes una recomendacion, usa formulaciones honestas como "la gran mayoria de las ofertas para este cargo piden..." o "es uno de los requisitos mas frecuentes del mercado" — NUNCA inventes porcentajes especificos.',
     'Los rangos salariales son referenciales del mercado chileno en CLP salvo que el CV indique otro pais.',
+    'IMPORTANTE sobre oportunidades_reales: usa la herramienta de busqueda web para encontrar entre 3 y 5 ofertas laborales REALES y vigentes ahora mismo que calcen con el perfil (basadas en cargos_hoy y mapa_carrera). Busca UNICAMENTE en portales laborales reconocidos y confiables (LinkedIn, Laborum, Trabajando.com, Computrabajo, GetOnBoard, Indeed, o el sitio oficial de carreras de una empresa conocida) — nunca en sitios desconocidos, foros, o paginas sin reputacion establecida, para evitar recomendar publicaciones fraudulentas o de baja calidad. Cada una debe tener un link real que hayas encontrado en la busqueda — NUNCA inventes una oferta, una empresa o un link que no hayas visto realmente en los resultados de busqueda. Si no encuentras suficientes ofertas relevantes, vigentes y de fuentes confiables, incluye menos (incluso 0) — es preferible una lista corta y real que una larga con datos inventados o de fuentes dudosas.',
     'Responde UNICAMENTE con JSON valido, sin markdown. Estructura exacta:',
     '{"titulo":"frase de 1 linea sobre el momento profesional de la persona",',
     '"resumen":"2-3 lineas sobre su situacion y potencial",',
@@ -62,9 +68,11 @@ export default async function handler(req, res) {
     '"simulaciones":[{"habilidad":"","beneficios":["beneficio concreto 1","beneficio 2","beneficio 3"]}],',
     '"riesgos":["riesgo concreto detectado en el CV, ej anios haciendo lo mismo, falta de logros cuantificables"],',
     '"oportunidades_ocultas":["camino lateral que la persona probablemente no ha considerado, con fundamento"],',
+    '"oportunidades_reales":[{"cargo":"","empresa":"","portal":"nombre del sitio donde esta publicada, ej LinkedIn, Laborum, GetOnBoard","link":"URL real encontrada en la busqueda"}],',
+    '"oportunidades_reales_aviso":"Estas ofertas se encontraron mediante busqueda en el momento. Verifica que sigan vigentes y confirma la legitimidad de la empresa antes de postular o compartir tus datos.",',
     '"plan_12_meses":[{"trimestre":"Q1","acciones":["accion 1","accion 2"]},{"trimestre":"Q2","acciones":[""]},{"trimestre":"Q3","acciones":[""]},{"trimestre":"Q4","acciones":[""]}],',
     '"consejo_reclutadora":"parrafo natural de 5-7 lineas, en primera persona, como si la persona estuviera sentada frente a ti. Menciona al menos un detalle CONCRETO de su CV o trayectoria (una empresa, un logro, un patron que viste). Prioriza lo que mas impacto tendria. Prohibido sonar generico o como plantilla."}',
-    'Personaliza TODO al caso especifico de esta persona: usa detalles concretos de su CV (nombres de empresas, tecnologias, anios, logros) en vez de generalidades. Incluye: 3 cargos_hoy con salarios referenciales, 2 caminos en mapa_carrera bien diferenciados segun el perfil real, 5-6 brechas repartidas en niveles con razones especificas a su trayectoria, 2-3 simulaciones de las habilidades de MAYOR impacto con beneficios concretos, 2 riesgos basados en patrones reales de SU CV, 1-2 oportunidades ocultas conectadas a su experiencia real, y 2-3 acciones especificas por trimestre. Cada texto puede tener 2-3 lineas si aporta especificidad real — evita el relleno generico pero no sacrifiques el detalle que hace que la persona sienta que es SU informe.',
+    'Personaliza TODO al caso especifico de esta persona: usa detalles concretos de su CV (nombres de empresas, tecnologias, anios, logros) en vez de generalidades. Incluye: 3 cargos_hoy con salarios referenciales, 2 caminos en mapa_carrera bien diferenciados segun el perfil real, 5-6 brechas repartidas en niveles con razones especificas a su trayectoria, 2-3 simulaciones de las habilidades de MAYOR impacto con beneficios concretos, 2 riesgos basados en patrones reales de SU CV, 1-2 oportunidades ocultas conectadas a su experiencia real, 3-5 oportunidades_reales encontradas por busqueda web (o menos si no hay suficientes reales), y 2-3 acciones especificas por trimestre. Cada texto puede tener 2-3 lineas si aporta especificidad real — evita el relleno generico pero no sacrifiques el detalle que hace que la persona sienta que es SU informe.',
     'El consejo_reclutadora es la joya del informe: debe sentirse escrito para ESTA persona, no una plantilla.'
   ];
   const system = systemParts.join(' ');
@@ -79,11 +87,12 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 7000,
+        max_tokens: 7500,
         system,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [{
           role: 'user',
-          content: 'CV DE LA PERSONA:\n' + cvStr + '\n\nCONTEXTO ADICIONAL:\n' + ctxStr + '\n\nConstruye la ruta profesional en JSON.'
+          content: 'CV DE LA PERSONA:\n' + cvStr + '\n\nCONTEXTO ADICIONAL:\n' + ctxStr + '\n\nConstruye la ruta profesional en JSON, incluyendo oportunidades_reales encontradas por busqueda web.'
         }]
       })
     });
