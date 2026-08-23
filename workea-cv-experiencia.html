@@ -571,7 +571,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       </div>`;
     }
 
-    html += '<div class="dl-row"><button class="dl-btn" onclick="abrirCVFinal()">📄 Ver y descargar mi CV</button></div>';
+    html += '<div class="dl-row"><button class="dl-btn" onclick="abrirCVFinal()">📄 Ver e imprimir a PDF</button><button class="dl-btn" style="background:#2b579a;" onclick="descargarWord()">📝 Descargar en Word</button></div>';
     el.innerHTML = html;
   }
 
@@ -709,7 +709,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     creative:{accent:'linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0)',fuente:"'Instrument Sans', sans-serif"}
   };
 
-  function abrirCVFinal(){
+  function generarCuerpoCV(){
     const cv = ordenActual.cv_optimizado || {};
     const nombre = document.getElementById('contact-nombre')?.value.trim() || 'Tu Nombre';
     const correo = document.getElementById('contact-correo')?.value.trim() || '';
@@ -741,33 +741,56 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     const cursosHtml = (cv.cursos_certificaciones && cv.cursos_certificaciones.length)
       ? `<div style="margin-top:20px;"><h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:8px;">Cursos y certificaciones</h3><ul style="margin:0 0 0 18px;padding:0;">${cv.cursos_certificaciones.map(c => '<li style="font-size:13px;line-height:1.6;margin-bottom:4px;">'+escapeHtml(c)+'</li>').join('')}</ul></div>` : '';
 
+    const cuerpo = `
+      <div style="background:${est.accent};height:8px;margin:0 0 30px;"></div>
+      <h1 style="font-size:26px;margin:0 0 4px;">${escapeHtml(nombre)}</h1>
+      <div style="color:#555;font-size:14px;margin-bottom:6px;">${escapeHtml((cv.experiencia && cv.experiencia[0] && cv.experiencia[0].cargo) || '')}</div>
+      <div style="font-size:12.5px;color:#777;margin-bottom:24px;">${escapeHtml(contactoLinea)}</div>
+      <h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin:22px 0 8px;">Resumen profesional</h3>
+      <p style="font-size:13px;">${escapeHtml(cv.resumen_profesional || '')}</p>
+      <h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin:22px 0 8px;">Experiencia</h3>
+      ${expHtml}
+      ${habilidadesHtml}
+      ${herramientasHtml}
+      ${idiomasHtml}
+      ${cursosHtml}`;
+
+    return { cuerpo, nombre, plantilla, est };
+  }
+
+  function abrirCVFinal(){
+    const { cuerpo, nombre, est } = generarCuerpoCV();
     const htmlCompleto = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${escapeHtml(nombre)} — CV</title>
 <style>
   @media print { .no-print{ display:none !important; } body{ padding:0 !important; } }
   body{ font-family:${est.fuente}; color:#1a1a2e; max-width:740px; margin:0 auto; padding:40px 30px; line-height:1.5; }
-  .barra-superior{ background:${est.accent}; height:8px; margin:-40px -30px 30px; }
-  h1{ font-size:26px; margin:0 0 4px; } .rol{ color:#555; font-size:14px; margin-bottom:6px; } .contacto{ font-size:12.5px; color:#777; margin-bottom:24px; }
-  h3{ font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:#888; margin:22px 0 8px; }
-  .print-bar{ position:sticky; top:0; background:#0a1430; color:#fff; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; margin:-40px -30px 30px; font-family:sans-serif; }
+  .print-bar{ position:sticky; top:0; background:#0a1430; color:#fff; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; margin:-40px -30px 0; font-family:sans-serif; }
   .print-bar button{ background:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0); color:#fff; border:none; font-weight:700; padding:8px 16px; border-radius:999px; cursor:pointer; font-size:13px; }
 </style></head><body>
   <div class="print-bar no-print"><span>Workea CV — vista previa</span><button onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button></div>
   <p class="no-print" style="font-size:12px; color:#4a5568; font-family:sans-serif; margin:0 -30px 24px; padding:10px 30px; background:#f6f8fc; border-bottom:1px solid #e2e8f0;">💡 En el diálogo de impresión, busca "Más ajustes" y desmarca "Encabezados y pies de página" para que tu PDF quede limpio.</p>
-  <div class="barra-superior"></div>
-  <h1>${escapeHtml(nombre)}</h1>
-  <div class="rol">${escapeHtml((cv.experiencia && cv.experiencia[0] && cv.experiencia[0].cargo) || '')}</div>
-  <div class="contacto">${escapeHtml(contactoLinea)}</div>
-  <h3>Resumen profesional</h3><p style="font-size:13px;">${escapeHtml(cv.resumen_profesional || '')}</p>
-  <h3>Experiencia</h3>${expHtml}
-  ${habilidadesHtml}
-  ${herramientasHtml}
-  ${idiomasHtml}
-  ${cursosHtml}
+  ${cuerpo}
 </body></html>`;
 
     const blob = new Blob([htmlCompleto], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
+  }
+
+  function descargarWord(){
+    const { cuerpo, nombre, est } = generarCuerpoCV();
+    const htmlWord = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8"><title>${escapeHtml(nombre)} — CV</title>
+<style>body{ font-family:${est.fuente}; color:#1a1a2e; line-height:1.5; }</style>
+</head><body>${cuerpo}</body></html>`;
+
+    const blob = new Blob(['\ufeff', htmlWord], { type: 'application/msword' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = (nombre || 'CV').replace(/\s+/g, '_') + '_Workea.doc';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   function showToast(msg){
