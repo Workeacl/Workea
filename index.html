@@ -359,6 +359,43 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 }
 @media(min-width:901px){.stepper-mobile{display:none}}
 @media(max-width:900px){.plans-grid{grid-template-columns:repeat(2,1fr)}#metodologia>div{grid-template-columns:1fr!important;text-align:left}}@media(max-width:540px){.plans-grid{grid-template-columns:1fr}}
+
+/* ===== CSS NUEVO — familia Workea + mockup interactivo ===== */
+.mockup-tabs{display:flex;gap:.4rem;margin-bottom:1.1rem;padding-bottom:1rem;border-bottom:1px dashed var(--line)}
+.mockup-tab{font-size:.78rem;font-weight:700;padding:.45rem .8rem;border-radius:999px;color:var(--muted);border:1px solid transparent}
+.mockup-tab.active{background:var(--brand-tint);color:var(--brand-strong);border-color:var(--brand-tint-2)}
+.mockup-panel{display:none}
+.mockup-panel.active{display:block;animation:fadeUp .25s ease both}
+.mockup-example-tag{font-size:.7rem;color:var(--faint);font-style:italic;display:block;margin-top:1rem;text-align:right}
+.family-strip{padding:2.8rem 1.5rem 3.5rem;background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.family-head{max-width:38rem;margin:0 auto 2rem;text-align:center}
+.family-kicker{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin-bottom:.6rem}
+.family-head h2{font-size:clamp(1.4rem,2.8vw,1.9rem);font-weight:700}
+.family-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;max-width:1120px;margin:0 auto}
+.family-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:1.7rem;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s;display:block;text-decoration:none;color:inherit}
+.family-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.family-card.dashed{border-style:dashed}
+.family-icon{width:48px;height:48px;border-radius:14px;background:var(--brand-tint);display:flex;align-items:center;justify-content:center;margin-bottom:1.1rem;font-size:1.3rem}
+.family-card h3{font-size:1.1rem;margin-bottom:.5rem}
+.family-card p{font-size:.9rem;color:var(--muted);margin-bottom:1rem}
+.family-price{font-size:.85rem;font-weight:700;color:var(--brand-strong)}
+@media(max-width:900px){.family-grid{grid-template-columns:1fr}}
+
+.eco-row{display:grid;gap:1.2rem;max-width:1060px;margin:0 auto 1.2rem}
+.eco-row-2{grid-template-columns:1.2fr 1fr}
+.eco-row-even{grid-template-columns:1fr 1fr;margin-top:0}
+.benefits-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem}
+.footer-cols{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:2.5rem;width:100%}
+.mockup-tabs{flex-wrap:wrap}
+@media(max-width:900px){
+  .eco-row-2,.eco-row-even{grid-template-columns:1fr}
+  .benefits-4{grid-template-columns:repeat(2,1fr)}
+  .footer-cols{grid-template-columns:1fr 1fr;gap:1.6rem}
+}
+@media(max-width:540px){
+  .benefits-4{grid-template-columns:1fr}
+  .footer-cols{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -370,9 +407,9 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
     </a>
     <div class="nav-links">
-      <a href="#como-funciona">Cómo funciona</a>
-      <a href="#beneficios">Beneficios</a>
-      <a href="#planes">Planes</a>
+      <a href="/workea-cv-planes.html">Workea CV</a>
+      <a href="/career.html">Career</a>
+      <a href="/bitacora.html">Bitácora</a>
       <a href="/cuenta.html">Mi cuenta</a>
       <button class="btn btn-primary" onclick="startApp()">Analizar una oferta</button>
     </div>
@@ -380,79 +417,127 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
   <header class="hero">
     <div>
-      <span class="eyebrow">✦ No postules a ciegas</span>
-      <h1>¿Encontraste una oferta laboral? <em>Entiéndela</em> antes de postular.</h1>
-      <p class="sub">Workea analiza la oferta, la compara con tu experiencia y te muestra qué destacar, qué preparar y cómo presentar tu postulación con estrategia.</p>
+      <span class="eyebrow">✦ Estrategia real, no otro CV genérico</span>
+      <h1>Postula con <em>estrategia</em>.</h1>
+      <p class="sub">Workea te ayuda a entender las ofertas, potenciar tu CV, encontrar oportunidades que realmente encajen contigo y tomar mejores decisiones para tu carrera.</p>
       <div class="hero-ctas">
-        <button class="btn btn-primary" onclick="startApp()">Analizar una oferta →</button>
-        <a class="btn btn-ghost" href="#como-funciona">Cómo funciona</a>
+        <a class="btn btn-primary" href="/workea-cv-planes.html">Empezar con mi CV →</a>
+        <button class="btn btn-ghost" onclick="startApp()">Analizar una oferta</button>
       </div>
     </div>
     <div class="demo-card" aria-label="Ejemplo de análisis Workea">
       <span class="demo-float">Análisis Workea</span>
-      <div class="dc-head">
-        <div>
-          <h3>Analista de Marketing Digital</h3>
-          <p>TiendaViva (e-commerce) · Santiago, híbrido</p>
-        </div>
-        <span class="dc-badge">Compatibilidad 72%</span>
+      <div class="mockup-tabs">
+        <button class="mockup-tab active" onclick="mockTab('cv', this)">📄 CV</button>
+        <button class="mockup-tab" onclick="mockTab('match', this)">🎯 Match</button>
+        <button class="mockup-tab" onclick="mockTab('career', this)">🧭 Career</button>
+        <button class="mockup-tab" onclick="mockTab('bitacora', this)">📖 Bitácora</button>
       </div>
-      <div class="dc-row"><span class="dc-dot" style="background:var(--green)"></span><p><b>Coincide:</b> campañas en redes sociales y email marketing con resultados de venta.</p></div>
-      <div class="dc-row"><span class="dc-dot" style="background:var(--amber)"></span><p><b>Mejorable:</b> tu experiencia vendiendo online existe, pero tu CV no la llama "e-commerce".</p></div>
-      <div class="dc-row"><span class="dc-dot" style="background:var(--red)"></span><p><b>No se identifica:</b> Google Ads ni Google Analytics.</p></div>
-      <div class="dc-reading"><b>Lectura Workea:</b> postula, pero ajusta tu presentación. Tu experiencia es pertinente; tu CV aún no la comunica del todo.</div>
+
+      <div class="mockup-panel active" id="mock-cv">
+        <div class="dc-head">
+          <div><h3>Titular profesional</h3><p>Recomendación basada en tu experiencia real</p></div>
+        </div>
+        <p style="font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:.4rem">Antes</p>
+        <div style="background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem;margin-bottom:.8rem;font-size:.85rem;color:var(--muted)">Publicista</div>
+        <p style="font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--brand-strong);margin-bottom:.4rem">Recomendación Workea</p>
+        <div style="background:var(--brand-tint);border:1px solid var(--brand-tint-2);border-radius:10px;padding:.8rem 1rem;font-size:.85rem;color:var(--brand-deep);font-weight:500">Analista de Marketing Digital · 3 años gestionando campañas, contenido y email marketing para marcas de consumo</div>
+        <div class="dc-reading" style="margin-top:.9rem"><b>Por qué importa:</b> el titular describe la función que la oferta busca, usando solo experiencia que ya tienes.</div>
+      </div>
+
+      <div class="mockup-panel" id="mock-match">
+        <div class="dc-head">
+          <div>
+            <h3>Analista de Marketing Digital</h3>
+            <p>TiendaViva (e-commerce) · Santiago, híbrido</p>
+          </div>
+          <span class="dc-badge">Compatibilidad 72%</span>
+        </div>
+        <div class="dc-row"><span class="dc-dot" style="background:var(--green)"></span><p><b>Coincide:</b> campañas en redes sociales y email marketing con resultados de venta.</p></div>
+        <div class="dc-row"><span class="dc-dot" style="background:var(--amber)"></span><p><b>Mejorable:</b> tu experiencia vendiendo online existe, pero tu CV no la llama "e-commerce".</p></div>
+        <div class="dc-reading"><b>Lectura Workea:</b> postula, pero ajusta tu presentación.</div>
+      </div>
+
+      <div class="mockup-panel" id="mock-career">
+        <div class="dc-head">
+          <div><h3>Tu ruta profesional</h3><p>Nivel percibido hoy</p></div>
+          <span class="dc-badge" style="background:var(--brand-tint);color:var(--brand-deep);border-color:var(--brand-tint-2)">Semi-senior → Senior</span>
+        </div>
+        <div class="dc-row"><span class="dc-dot" style="background:var(--green)"></span><p><b>A tu alcance hoy:</b> Product Manager Senior, Growth Lead.</p></div>
+        <div class="dc-row"><span class="dc-dot" style="background:var(--amber)"></span><p><b>Brecha priorizada:</b> liderazgo de equipos multidisciplinarios.</p></div>
+        <div class="dc-reading"><b>Oportunidad que quizás no habías considerado:</b> tu experiencia en datos te abre camino hacia Product Analytics.</div>
+      </div>
+
+      <div class="mockup-panel" id="mock-bitacora">
+        <div class="dc-head">
+          <div><h3>Tus procesos activos</h3><p>3 postulaciones · 1 entrevista esta semana</p></div>
+        </div>
+        <div class="dc-row"><span class="dc-dot" style="background:var(--brand)"></span><p><b>TiendaViva</b> — Analista de Marketing Digital · Entrevista técnica, jueves</p></div>
+        <div class="dc-row"><span class="dc-dot" style="background:var(--amber)"></span><p><b>Agencia Prisma</b> — Community Manager · En revisión</p></div>
+        <div class="dc-row"><span class="dc-dot" style="background:var(--green)"></span><p><b>Dulce Sur</b> — Encargada de Marketing · Postulado hoy</p></div>
+      </div>
+
+      <span class="mockup-example-tag">Ejemplo ilustrativo — no son datos de un usuario real</span>
     </div>
   </header>
 
   <section class="problem" id="problema">
     <div>
-      <h2>Postular sin entender la oferta es postular a ciegas.</h2>
-      <p>La mayoría de las personas envía el mismo CV a todas las ofertas y espera. El resultado: silencio, dudas y la sensación de que "algo falta".</p>
-      <p>El problema casi nunca es la experiencia. Es que la oferta pide algo específico y el CV cuenta otra historia.</p>
+      <h2>Buscar trabajo sin estrategia se siente como avanzar a ciegas.</h2>
+      <p>La mayoría de las personas envía el mismo CV a todas las ofertas, sin saber si realmente comunica lo que hicieron, y espera. El resultado: silencio, dudas y la sensación de que "algo falta".</p>
+      <p>El problema casi nunca es la experiencia. Es que nadie le ha mostrado cómo contarla, cómo elegir bien, o cómo no perder el hilo de todo lo que está postulando.</p>
     </div>
     <div class="stat-list">
-      <div class="stat-item"><b>"Postulo y nadie responde."</b><span>Sin saber qué filtró tu postulación, no puedes mejorarla.</span></div>
-      <div class="stat-item"><b>"No sé si cumplo con lo que piden."</b><span>Las ofertas mezclan requisitos excluyentes con deseables, sin distinguirlos.</span></div>
       <div class="stat-item"><b>"Tengo la experiencia, pero no sé cómo mostrarla."</b><span>La experiencia que no se comunica es experiencia que no existe para quien revisa.</span></div>
+      <div class="stat-item"><b>"Postulo y nadie responde."</b><span>Sin saber qué filtró tu postulación, no puedes mejorarla.</span></div>
+      <div class="stat-item"><b>"Perdí la cuenta de a quién le postulé."</b><span>Sin un lugar donde registrar cada proceso, es fácil perder el control.</span></div>
     </div>
   </section>
 
-  <section class="section" id="como-funciona">
-    <div class="section-head">
-      <h2>Cómo funciona</h2>
-      <p>Tres pasos para pasar de "creo que podría servir" a "sé exactamente cómo presentarme".</p>
+  <section class="section" id="ecosistema">
+    <div class="section-head" style="text-align:center;margin:0 auto 2.6rem;max-width:40rem">
+      <span class="eyebrow">Un lugar para cada etapa</span>
+      <h2>Sin importar dónde estés en tu búsqueda, hay algo aquí para ti.</h2>
+      <p>Cuatro formas de avanzar, según lo que necesites resolver hoy.</p>
     </div>
-    <div class="steps">
-      <div class="step-card">
-        <div class="step-icon">🔍</div>
-        <h3>1 · Analiza la oferta</h3>
-        <p>Pega el enlace, el texto o sube una captura. Workea separa lo crítico de lo deseable y te muestra qué busca realmente la empresa.</p>
-      </div>
-      <div class="step-card">
-        <div class="step-icon">⚖️</div>
-        <h3>2 · Compara tu experiencia</h3>
-        <p>Sube tu CV y descubre tus fortalezas, tus oportunidades de mejora y las brechas que conviene revisar antes de postular.</p>
-      </div>
-      <div class="step-card">
+
+    <div class="eco-row eco-row-2">
+      <a href="/workea-cv-planes.html" class="step-card" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;background:var(--navy);border-color:transparent;color:#fff">
+        <span style="display:inline-flex;align-self:flex-start;background:rgba(255,255,255,.12);color:var(--cyan);font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.3rem .8rem;border-radius:999px;margin-bottom:1rem">El más completo</span>
+        <div class="step-icon" style="background:var(--grad)">📄</div>
+        <h3 style="color:#fff">Workea CV</h3>
+        <p style="color:#c9d6ef;flex:1">A veces no es tu experiencia — es cómo la cuentas. Descubrimos fortalezas que tu CV no está comunicando y lo reescribimos con tus propios datos, nunca inventados.</p>
+        <span style="margin-top:1rem;font-weight:700;font-size:.88rem;color:#fff">Desde $3.490 →</span>
+      </a>
+
+      <a href="#" onclick="startApp();return false" class="step-card" style="text-decoration:none;color:inherit;display:flex;flex-direction:column">
+        <span style="display:inline-flex;align-self:flex-start;background:var(--green-bg);color:var(--green);font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.3rem .8rem;border-radius:999px;margin-bottom:1rem">Empieza aquí · gratis</span>
         <div class="step-icon">🎯</div>
-        <h3>3 · Postula con estrategia</h3>
-        <p>Recibe recomendaciones concretas para tu CV y una guía de preparación para la entrevista, basadas en tu experiencia real.</p>
-      </div>
+        <h3>Workea Match</h3>
+        <p style="flex:1">Postular a ciegas cuesta tiempo y ansiedad. Sabe si calzas con una oferta específica antes de enviar tu CV.</p>
+        <span style="margin-top:1rem;font-weight:700;font-size:.88rem;color:var(--brand-strong)">Gratis para empezar →</span>
+      </a>
     </div>
-  </section>
 
-  <section class="section" id="beneficios" style="padding-top:0">
-    <div class="section-head">
-      <h2>Más que un porcentaje: una lectura completa</h2>
-      <p>Workea no te evalúa. Te ayuda a entender la oportunidad y a tomar una decisión informada.</p>
+    <div class="eco-row eco-row-even">
+      <a href="/career.html" class="step-card" style="text-decoration:none;color:inherit;display:flex;flex-direction:column">
+        <div class="step-icon">🧭</div>
+        <h3>Workea Career</h3>
+        <p style="flex:1">No todo cambio de trabajo es un avance. Entiende hacia dónde puedes crecer de verdad: brechas, caminos posibles y ofertas reales que calzan con tu perfil hoy.</p>
+        <span style="margin-top:1rem;font-weight:700;font-size:.88rem;color:var(--brand-strong)">$4.990 →</span>
+      </a>
+
+      <a href="/bitacora.html" class="step-card" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;border-style:dashed">
+        <div class="step-icon">📖</div>
+        <h3>Workea Bitácora</h3>
+        <p style="flex:1">Se acabaron los correos perdidos y las hojas de cálculo confusas. Lleva un control minucioso de cada postulación, entrevista y próximo paso, en un solo lugar.</p>
+        <span style="margin-top:1rem;font-weight:700;font-size:.88rem;color:var(--brand-strong)">Gratis →</span>
+      </a>
     </div>
-    <div class="benefits">
-      <div class="benefit"><div class="b-ico">🧭</div><div><h4>Entiende qué es realmente excluyente</h4><p>Distingue los requisitos que funcionan como filtro de los que solo suman puntos.</p></div></div>
-      <div class="benefit"><div class="b-ico">💰</div><div><h4>Sueldo referencial y nivel de calce</h4><p>Sabe si el sueldo de la oferta está alineado con el mercado y si tu perfil está sobre, bajo o alineado con el nivel del cargo.</p></div></div>
-      <div class="benefit"><div class="b-ico">💬</div><div><h4>Explicaciones, no solo números</h4><p>Cada resultado viene con el porqué: qué coincide, qué falta comunicar y qué preparar.</p></div></div>
-      <div class="benefit"><div class="b-ico">✍️</div><div><h4>Mejora tu CV sin inventar nada</h4><p>Las recomendaciones se basan solo en tu experiencia real. Nada de keyword stuffing.</p></div></div>
-      <div class="benefit"><div class="b-ico">🎤</div><div><h4>Llega preparado a la entrevista</h4><p>Preguntas probables, qué evalúa cada una y qué deberías tener listo para responder.</p></div></div>
-    </div>
+
+    <p style="text-align:center;margin-top:1.4rem;font-size:.85rem;">
+      <a href="/match-planes.html" style="color:var(--muted);text-decoration:underline">¿Necesitas analizar varias ofertas a la vez? Ver planes de Workea Match →</a>
+    </p>
   </section>
 
   <!-- MIRADA PROFESIONAL -->
@@ -468,130 +553,42 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     </div>
   </section>
 
-  <section class="section" id="planes" style="padding-top:0">
-    <div class="section-head">
-      <h2>Elige el nivel de análisis que necesitas</h2>
-      <p>No todos los candidatos necesitan el mismo nivel de orientación. Todos los Informes Workea tienen un mismo objetivo: ayudarte a tomar mejores decisiones antes de postular. La diferencia está en la profundidad del análisis y el nivel de estrategia que recibirás.</p>
+  <section class="section" id="filosofia" style="padding-top:0">
+    <div class="section-head" style="max-width:44rem;margin:0 auto 2.2rem;text-align:center">
+      <span class="eyebrow">Nuestra filosofía</span>
+      <h2>Workea no decide por ti. Te ayuda a decidir mejor.</h2>
+      <p>La tecnología te entrega análisis, patrones y recomendaciones — pero el control, la autenticidad y la decisión final siempre son tuyos.</p>
     </div>
-    <div class="plans-grid">
-
-      <div class="plan-card">
-        <p class="plan-name">🩵 Informe Workea Esencial</p>
-        <p class="plan-goal">¿Vale la pena postular a esta oferta?</p>
-        <p class="plan-price">Gratis</p>
-        <ul class="plan-feats">
-          <li>Análisis de 1 CV y 1 oferta laboral</li>
-          <li>WorkScore: tu compatibilidad con la oferta</li>
-          <li>Principales fortalezas y oportunidades de mejora</li>
-          <li>Recomendación final: postula, ajusta antes, o esta oferta probablemente no es tu mejor opción</li>
-        </ul>
-        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> si realmente calzas con el cargo, qué podría dejarte fuera del proceso y si vale la pena postular.</p>
-        <button class="btn btn-ghost" onclick="startEsencial()">Obtener mi Informe Esencial gratis</button>
-        <p class="plan-note">1 informe gratis por persona · resultado al instante · sin registro</p>
+    <div class="benefits-4">
+      <div class="benefit" style="flex-direction:column;align-items:flex-start">
+        <div class="b-ico" style="margin-bottom:.8rem">🧠</div>
+        <h4>Criterio profesional</h4>
+        <p>Información útil y contextual para que tomes tus propias decisiones con convicción, no una respuesta genérica.</p>
       </div>
-
-      <div class="plan-card featured">
-        <span class="plan-badge">🚀 ACCESO ANTICIPADO</span>
-        <p class="plan-name">💙 Informe Workea Match</p>
-        <p class="plan-goal">¿Qué tan bien calzo con esta oportunidad?</p>
-        <p class="plan-price"><span style="text-decoration:line-through;color:var(--faint);font-size:1rem;font-weight:600">$4.990</span> $2.990 <span>/ informe</span></p>
-        <ul class="plan-feats">
-          <li>Todo lo del Informe Esencial, más:</li>
-          <li>7 días de acceso para analizar todas las ofertas que necesites</li>
-          <li>Análisis detallado de tu CV y de cada oferta</li>
-          <li>Palabras clave que faltan y competencias relevantes</li>
-          <li>Riesgos de descarte y experiencias que deberías destacar</li>
-          <li>Sueldo referencial de mercado y si tu perfil está sobre, bajo o alineado con el nivel del cargo</li>
-          <li>Checklist antes de postular</li>
-          <li class="plus">🎯 Plan de Acción Workea: recomendaciones concretas y priorizadas. No solo sabrás qué cambiar: sabrás qué hacer primero.</li>
-        </ul>
-        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> a qué oferta conviene postular primero, qué cambios tienen mayor impacto y cómo aumentar tus posibilidades de ser llamado a entrevista.</p>
-        <button class="btn btn-brand" onclick="comprarMatch(this)">Obtener Informe Workea Match →</button>
-        <p class="plan-note">7 días de acceso · Precio de acceso anticipado · Pago seguro con Mercado Pago<br>Tras pagar, serás redirigida/o automáticamente al formulario de activación de tu código 🔑</p>
-        <div style="margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--line)">
-          <button class="btn btn-ghost" onclick="irActivarCodigo()" style="width:100%;justify-content:center;font-size:.85rem">¿Ya tienes un código? Actívalo aquí</button>
-        </div>
+      <div class="benefit" style="flex-direction:column;align-items:flex-start">
+        <div class="b-ico" style="margin-bottom:.8rem">🔍</div>
+        <h4>Análisis objetivo</h4>
+        <p>Herramientas que analizan tu perfil y las oportunidades sin venderte promesas mágicas ni resultados garantizados.</p>
       </div>
-
-      <div class="plan-card">
-        <span class="plan-badge" style="background:var(--navy)">PRÓXIMAMENTE</span>
-        <p class="plan-name">💜 Informe Workea Experto</p>
-        <p class="plan-goal">¿Cuál es mi mejor estrategia para encontrar trabajo?</p>
-        <p class="plan-price" style="color:var(--faint);font-size:1.1rem">Precio por confirmar</p>
-        <ul class="plan-feats">
-          <li>Todo lo del Informe Workea Match, más:</li>
-          <li>30 días de acceso ilimitado para analizar todas las ofertas que necesites</li>
-          <li>📊 Insights Workea: habilidades más pedidas en tus ofertas, requisitos que se repiten, qué está limitando tus posibilidades</li>
-          <li>Fortalezas que hoy no estás comunicando</li>
-          <li>Riesgos y señales de alerta detectadas en las ofertas</li>
-          <li class="plus">🎯 Estrategia Workea: hoja de ruta personalizada elaborada por una especialista en selección, con acciones priorizadas para conseguir entrevistas</li>
-        </ul>
-        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> qué cargos tienen mayor compatibilidad contigo, qué habilidades potenciar y dónde vale la pena invertir tu tiempo.</p>
-        <a class="btn btn-ghost experto-wait" href="#">Avísame cuando esté disponible →</a>
-        <p class="plan-note">Lo estamos afinando junto a los primeros usuarios. Únete a la lista de espera y sé de las primeras personas en acceder.</p>
+      <div class="benefit" style="flex-direction:column;align-items:flex-start">
+        <div class="b-ico" style="margin-bottom:.8rem">👁️</div>
+        <h4>Claridad</h4>
+        <p>Menos incertidumbre, menos ansiedad, y transparencia sobre qué buscan realmente las empresas.</p>
       </div>
-
-      <div class="plan-card">
-        <span class="plan-badge" style="background:var(--navy)">PRÓXIMAMENTE</span>
-        <p class="plan-name">🔵 Workea Profile Check</p>
-        <p class="plan-goal">¿Qué tan optimizado está tu perfil de LinkedIn?</p>
-        <p class="plan-price" style="color:var(--faint)">$2.990 <span>/ análisis</span></p>
-        <ul class="plan-feats">
-          <li>Score general de optimización (0-100%)</li>
-          <li>Análisis del titular, "Acerca de" y experiencia</li>
-          <li>Palabras clave detectadas en tu perfil</li>
-          <li>Coherencia general del perfil</li>
-          <li class="plus">🏆 Tus 3 prioridades concretas de mejora</li>
-        </ul>
-        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> cómo te ve un reclutador, qué está comunicando tu perfil y qué cambiar primero.</p>
-        <a class="btn btn-ghost experto-wait" href="#">Avísame cuando esté disponible →</a>
-        <p class="plan-note">Lo estamos afinando junto a los primeros usuarios. Únete a la lista de espera.</p>
-      </div>
-
-    </div>
-
-    <div class="kw-legend" style="justify-content:center;margin-top:1.6rem;gap:1.6rem">
-      <span>🔒 Pago seguro vía Mercado Pago</span>
-      <span>👩‍💼 Estrategia Experto revisada por especialista real en selección</span>
-      <span>✨ Sin suscripciones automáticas: pagas solo lo que usas</span>
-    </div>
-
-    <div style="max-width:46rem;margin:2.8rem auto 0">
-      <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1.2rem;text-align:center">Preguntas frecuentes</h3>
-
-      <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .6rem">Sobre los pagos y el acceso</p>
-
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué pasa justo después de pagar?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Mercado Pago te redirigirá automáticamente al formulario de activación de Workea. Completa tus datos (nombre, correo y número de comprobante) y en menos de 1 minuto recibirás tu código personal por correo. Si cerraste la ventana antes de completar el formulario, escríbenos a workea@tupartnerlaboral.cl con tu comprobante y te enviamos el acceso de inmediato.</p></div></div>
-      </div>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Pagué desde la cuenta de otra persona?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem">No hay problema: tu código se envía al correo que TÚ indiques en el formulario de activación, pagues desde la cuenta que pagues. Solo incluye el número de operación o el correo de la cuenta con que se pagó para que podamos validar la compra.</p></div></div>
-      </div>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Tengo que suscribirme?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem">No. Cada producto de Workea es un pago único, sin mensualidades ni renovaciones automáticas: el Esencial es gratis; el Workea Match activa 7 días de acceso ilimitado; el Workea Profile Check entrega tu diagnóstico al instante; y el Informe Workea Experto (próximamente) cubrirá 30 días con Estrategia incluida.</p></div></div>
-      </div>
-
-      <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .6rem">Sobre los análisis</p>
-
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Cómo recibo mi Informe Workea Match?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Tras confirmar tu pago, recibirás tu código personal por correo. Lo activas en la plataforma y tienes 7 días para analizar todas las ofertas que quieras — una por una o hasta 3 comparadas a la vez. Cada informe queda disponible en pantalla para descargar en PDF.</p></div></div>
-      </div>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Puedo analizar una oferta de LinkedIn u otro portal?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem">¡Sí! La forma más confiable es <b>copiar y pegar el texto completo de la oferta</b> (cargo, requisitos y responsabilidades): funciona con cualquier portal. Los enlaces directos a veces no se pueden leer porque algunos sitios como LinkedIn bloquean el acceso externo. También puedes subir el PDF de la oferta o una captura de pantalla directamente en la plataforma.</p></div></div>
-      </div>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué hace diferente el Informe Workea Experto?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem"><b>Disponible próximamente.</b> Incluirá 30 días de acceso ilimitado para analizar todas tus ofertas, más una Estrategia Workea elaborada por una especialista en selección al cierre del período: dónde invertir tu tiempo, qué potenciar y cómo aumentar tus posibilidades de conseguir entrevistas. Criterio profesional, no solo más texto.</p></div></div>
-      </div>
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Para qué sirve el Workea Profile Check?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem">El Workea Profile Check analiza tu perfil de LinkedIn de forma independiente — sin necesitar una oferta específica. Recibirás un score de optimización, el análisis de tu titular, sección "Acerca de" y experiencia, las palabras clave detectadas y tus 3 prioridades concretas de mejora. Es el paso natural después de optimizar tu postulación: asegurarte de que tu LinkedIn comunica lo mismo.</p></div></div>
-      </div>
-
-      <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .6rem">Sobre tus datos</p>
-
-      <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué pasa con mi CV, mi perfil y mis datos?<span class="chev">▾</span></button>
-        <div class="q-body"><div class="qb"><p style="margin-top:1rem">Tu información se usa únicamente para generar tu análisis. No se comparte con empresas ni reclutadores, y puedes pedir su eliminación cuando quieras escribiendo a workea@tupartnerlaboral.cl.</p></div></div>
+      <div class="benefit" style="flex-direction:column;align-items:flex-start">
+        <div class="b-ico" style="margin-bottom:.8rem">🎯</div>
+        <h4>Estrategia</h4>
+        <p>No postular más por desesperación — postular mejor, con posicionamiento preciso y relevante.</p>
       </div>
     </div>
+  </section>
+
+  <section class="section" id="planes" style="padding-top:0;text-align:center">
+    <div class="section-head" style="margin:0 auto">
+      <h2>¿Quieres ver los niveles de análisis de Workea Match?</h2>
+      <p>Desde el Informe Esencial gratis hasta el plan de acción priorizado del Informe Match.</p>
+    </div>
+    <a class="btn btn-primary" href="/match-planes.html">Ver planes de Workea Match →</a>
   </section>
 
   <section class="section" style="padding-top:0">
@@ -604,28 +601,46 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     </div>
   </section>
 
-  <section class="final-cta">
-    <h2>Antes de postular, entiende.</h2>
-    <p>Tu próxima postulación puede ser la primera que hagas con estrategia.</p>
-    <button class="btn btn-primary" onclick="startApp()">Analizar una oferta →</button>
+  <section class="final-cta" style="background:var(--navy);border-radius:28px;margin:0 1.5rem;color:#fff">
+    <h2 style="color:#fff">Postula con estrategia.</h2>
+    <p style="color:#9fabd4;max-width:32rem;margin:0 auto 1.6rem">Empieza gratis, sin tarjeta de crédito ni compromiso.</p>
+    <button class="btn btn-brand" onclick="startApp()">Comenzar gratis →</button>
+    <p style="margin-top:1.1rem"><a href="#ecosistema" style="color:#9fabd4;font-size:.85rem;text-decoration:underline">Ver todos los productos de Workea ↑</a></p>
+    <div class="kw-legend" style="justify-content:center;margin-top:1.6rem;color:#c9d6ef">
+      <span style="color:#c9d6ef">✓ Sin tarjeta de crédito</span>
+      <span style="color:#c9d6ef">✓ Análisis gratuito de ofertas</span>
+      <span style="color:#c9d6ef">✓ Tus datos no se comparten con terceros</span>
+    </div>
   </section>
 
   <footer>
-    <div class="footer-in">
-      <a class="logo" href="#" onclick="return false">
-        <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
-      </a>
-      <p class="footer-tag">Experiencia humana <b>+</b> tecnología inteligente · <a class="btn-link" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener" style="font-size:.85rem">Asesorías Tu Partner Laboral</a></p>
-      <div style="display:flex;gap:.9rem;align-items:center">
-        <!--
-        <a href="https://www.instagram.com/tupartnerlaboralcl" target="_blank" rel="noopener" aria-label="Instagram Tu Partner Laboral" style="color:var(--faint);transition:color .15s" onmouseover="this.style.color='var(--brand)'" onmouseout="this.style.color='var(--faint)'">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-        </a>
-        <a href="https://www.tiktok.com/@tupartnerlaboral" target="_blank" rel="noopener" aria-label="TikTok Tu Partner Laboral" style="color:var(--faint);transition:color .15s" onmouseover="this.style.color='var(--brand)'" onmouseout="this.style.color='var(--faint)'">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82c-.87-.96-1.35-2.2-1.35-3.5h-3.02v14.08c0 1.5-1.22 2.72-2.72 2.72a2.72 2.72 0 01-2.72-2.72 2.72 2.72 0 012.72-2.72c.28 0 .55.04.8.12V11.5a5.8 5.8 0 00-.8-.06 5.76 5.76 0 00-5.76 5.76A5.76 5.76 0 009.51 23a5.76 5.76 0 005.76-5.76V9.4a8.8 8.8 0 005.1 1.63V7.99a5.5 5.5 0 01-3.77-2.17z"/></svg>
-        </a> -->
+    <div class="footer-in" style="flex-direction:column;align-items:flex-start;gap:2.5rem;padding-top:3rem">
+      <div class="footer-cols">
+        <div>
+          <a class="logo" href="#" onclick="return false">
+            <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgradf" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgradf)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+          </a>
+          <p style="font-size:.88rem;color:var(--muted);margin-top:1rem;max-width:22rem">Experiencia humana + tecnología inteligente para tu búsqueda laboral.</p>
+          <a href="https://www.instagram.com/tupartnerlaboralcl" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;margin-top:1rem;font-size:.85rem;color:var(--muted)">📷 @tupartnerlaboralcl</a>
+        </div>
+        <div>
+          <p style="font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:.9rem">Producto</p>
+          <div style="display:flex;flex-direction:column;gap:.6rem;font-size:.9rem">
+            <a href="/" style="color:var(--muted)">Workea Match</a>
+            <a href="/workea-cv-planes.html" style="color:var(--muted)">Workea CV</a>
+            <a href="/career.html" style="color:var(--muted)">Workea Career</a>
+            <a href="/bitacora.html" style="color:var(--muted)">Bitácora de Postulaciones</a>
+          </div>
+        </div>
+        <div>
+          <p style="font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:.9rem">Conecta</p>
+          <div style="display:flex;flex-direction:column;gap:.6rem;font-size:.9rem">
+            <a href="https://tupartnerlaboral.cl" target="_blank" rel="noopener" style="color:var(--muted)">Asesorías Tu Partner Laboral</a>
+            <a href="mailto:workea@tupartnerlaboral.cl" style="color:var(--muted)">Contacto</a>
+          </div>
+        </div>
       </div>
-      <p>© 2026 Workea · Tu Partner Laboral</p>
+      <p style="border-top:1px solid var(--line);padding-top:1.5rem;width:100%;font-size:.85rem;color:var(--faint)">© 2026 Workea · Tu Partner Laboral</p>
     </div>
   </footer>
 </div>
@@ -1255,6 +1270,22 @@ const STEPS = [
   {id:'scr-summary', label:'Resultado'}
 ];
 
+/* ================= mockup interactivo del hero ================= */
+function mockTab(tab, btn){
+  document.querySelectorAll('.mockup-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.mockup-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('mock-' + tab).classList.add('active');
+}
+
+/* ================= conexión con match-planes.html ================= */
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const go = params.get('go');
+  if(go === 'esencial'){ startEsencial(); }
+  if(go === 'activar'){ irActivarCodigo(); }
+});
+
 /* ================= navegación ================= */
 function startApp(){
   document.getElementById('landing').classList.add('hidden');
@@ -1264,7 +1295,6 @@ function startApp(){
 }
 function irActivarCodigo(){
   startApp();
-  // Ocultar lo que no aplica a quien ya tiene código, para evitar confusión
   const banner = document.getElementById('demoBanner');
   const ejemplo = document.getElementById('demoEjemploStrip');
   if(banner) banner.style.display = 'none';
@@ -1464,7 +1494,6 @@ function toggleQ(btn){ btn.parentElement.classList.toggle('open'); }
 function enviarInforme(){
   const mount = document.getElementById('resultsMount');
   if(!mount) return;
-  // Recopilar el texto del informe
   const cargo = mount.querySelector('.offer-header h3')?.textContent || 'Cargo analizado';
   const empresa = mount.querySelector('.company')?.textContent || '';
   const compat = mount.querySelector('.ring-num')?.textContent || '';
