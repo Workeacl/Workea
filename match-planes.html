@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workea Match · Planes</title>
+<meta name="description" content="Elige el nivel de análisis de compatibilidad que necesitas: desde el Informe Esencial gratis hasta el Informe Match con plan de acción priorizado.">
+<link rel="canonical" href="https://workea.cl/match-planes.html">
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#6c53ee;--cyan:#12cdf0;--grad:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0);
+  --brand-strong:#5138d6;
+  --brand-deep:#0a1430;--navy:#0a1430;--partner-blue:#51608a;
+  --brand-tint:#f0edfe;--brand-tint-2:#ded7fc;
+  --ink:#101b38;--muted:#5a6785;--faint:#8f9ab3;
+  --bg:#f6f8fc;--surface:#ffffff;--line:#e3e6f0;
+  --green:#2f9e6d;--green-bg:#e9f7f0;--green-line:#bfe5d2;
+  --amber:#c9930f;--amber-bg:#fdf6e3;--amber-line:#f0dfae;
+  --red:#c65454;--red-bg:#fdeeee;--red-line:#f0c9c9;
+  --neutral-bg:#eef0f6;--neutral-line:#dcdfe9;
+  --r:16px;
+  --shadow:0 1px 2px rgba(16,27,56,.05),0 8px 24px rgba(16,27,56,.07);
+  --shadow-lg:0 2px 4px rgba(16,27,56,.06),0 18px 48px rgba(16,27,56,.12);
+  --display:'Bricolage Grotesque',sans-serif;--body:'Instrument Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;letter-spacing:-.01em}
+button{font-family:var(--body);cursor:pointer;border:none;background:none}
+a{color:inherit;text-decoration:none}
+
+.logo{display:flex;align-items:center;gap:.65rem;text-decoration:none}
+.logo .logo-w{width:40px;height:30px;flex-shrink:0}
+.logo .lt{display:flex;flex-direction:column;line-height:1.05}
+.logo .lt b{font-family:var(--body);font-weight:700;font-size:1.2rem;letter-spacing:-.015em;color:var(--navy)}
+.logo .lt b em{font-style:normal;color:inherit}
+.logo .lt span{font-size:.58rem;color:var(--partner-blue);font-weight:700;letter-spacing:.05em}
+
+.top-nav{display:flex;justify-content:space-between;align-items:center;max-width:1120px;margin:0 auto;padding:1.4rem 1.5rem}
+.top-nav .back{font-size:.88rem;font-weight:600;color:var(--muted)}
+.top-nav .back:hover{color:var(--brand-deep)}
+
+.btn{display:inline-flex;align-items:center;gap:.5rem;font-weight:600;font-size:.95rem;padding:.8rem 1.4rem;border-radius:999px;transition:transform .15s,box-shadow .15s,background .15s}
+.btn-primary{background:var(--brand-deep);color:#fff;box-shadow:0 4px 14px rgba(10,20,48,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(10,20,48,.3)}
+.btn-brand{background:var(--grad);color:#fff}
+.btn-brand:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn-ghost{color:var(--brand-deep);background:transparent;border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--brand);background:var(--brand-tint)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none!important}
+
+.section{max-width:1120px;margin:0 auto;padding:1rem 1.5rem 4rem}
+.section-head{max-width:42rem;margin:0 auto 2.5rem;text-align:center}
+.section-head h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;margin-bottom:.7rem}
+.section-head p{color:var(--muted);font-size:1.05rem}
+
+.plans-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.3rem;align-items:stretch}
+.plan-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:1.9rem 1.7rem;display:flex;flex-direction:column;box-shadow:var(--shadow);position:relative}
+.plan-card.featured{border:2px solid transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--grad) border-box;box-shadow:var(--shadow-lg)}
+.plan-badge{position:absolute;top:-.85rem;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.07em;padding:.32rem .95rem;border-radius:999px;white-space:nowrap}
+.plan-name{font-family:var(--display);font-size:1.25rem;font-weight:700;color:var(--navy)}
+.plan-goal{font-size:.84rem;color:var(--brand-strong);font-weight:700;margin:.15rem 0 .9rem}
+.plan-price{font-family:var(--display);font-size:2rem;font-weight:800;color:var(--ink);line-height:1}
+.plan-price span{font-size:.82rem;color:var(--muted);font-weight:500}
+.plan-feats{list-style:none;margin:1.2rem 0 1.5rem;display:flex;flex-direction:column;gap:.55rem;flex:1}
+.plan-feats li{display:flex;gap:.55rem;font-size:.88rem;color:var(--muted);align-items:flex-start}
+.plan-feats li::before{content:"✓";color:var(--green);font-weight:800;flex-shrink:0}
+.plan-feats li.plus::before{content:"★";color:var(--brand-strong)}
+.plan-note{font-size:.78rem;color:var(--faint);margin-top:.9rem;text-align:center}
+.plan-card .btn{justify-content:center;width:100%;font-size:.86rem;padding:.7rem 1rem}
+
+.kw-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.kw-legend span{display:inline-flex;align-items:center;gap:.45rem;font-size:.85rem;color:var(--muted);font-weight:500}
+
+.q-item{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:.7rem;overflow:hidden}
+.q-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;gap:1rem;text-align:left;padding:1.05rem 1.3rem;font-size:.96rem;font-weight:600;color:var(--ink)}
+.q-toggle .chev{transition:transform .2s;color:var(--faint);flex-shrink:0}
+.q-item.open .chev{transform:rotate(180deg)}
+.q-body{display:none;padding:0 1.3rem 1.2rem;border-top:1px dashed var(--line)}
+.q-item.open .q-body{display:block}
+.q-body .qb{margin-top:1rem}
+.q-body .qb p{font-size:.9rem;color:var(--muted)}
+
+footer{border-top:1px solid var(--line);background:var(--surface);margin-top:2rem}
+.footer-in{max-width:1120px;margin:0 auto;padding:2.2rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.footer-in p{font-size:.85rem;color:var(--faint)}
+
+@media(max-width:900px){
+  .plans-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:540px){
+  .plans-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="logo" href="/">
+    <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+  </a>
+  <a class="back" href="/">← Volver al inicio</a>
+</nav>
+
+<section class="section">
+  <div class="section-head">
+    <h2>Elige el nivel de análisis que necesitas</h2>
+    <p>No todos los candidatos necesitan el mismo nivel de orientación. Todos los Informes Workea tienen un mismo objetivo: ayudarte a tomar mejores decisiones antes de postular. La diferencia está en la profundidad del análisis y el nivel de estrategia que recibirás.</p>
+  </div>
+  <div class="plans-grid">
+
+    <div class="plan-card">
+      <p class="plan-name">🩵 Informe Workea Esencial</p>
+      <p class="plan-goal">¿Vale la pena postular a esta oferta?</p>
+      <p class="plan-price">Gratis</p>
+      <ul class="plan-feats">
+        <li>Análisis de 1 CV y 1 oferta laboral</li>
+        <li>WorkScore: tu compatibilidad con la oferta</li>
+        <li>Principales fortalezas y oportunidades de mejora</li>
+        <li>Recomendación final: postula, ajusta antes, o esta oferta probablemente no es tu mejor opción</li>
+      </ul>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> si realmente calzas con el cargo, qué podría dejarte fuera del proceso y si vale la pena postular.</p>
+      <a class="btn btn-ghost" href="/?go=esencial">Obtener mi Informe Esencial gratis</a>
+      <p class="plan-note">1 informe gratis por persona · resultado al instante · sin registro</p>
+    </div>
+
+    <div class="plan-card featured">
+      <span class="plan-badge">🚀 ACCESO ANTICIPADO</span>
+      <p class="plan-name">💙 Informe Workea Match</p>
+      <p class="plan-goal">¿Qué tan bien calzo con esta oportunidad?</p>
+      <p class="plan-price"><span style="text-decoration:line-through;color:var(--faint);font-size:1rem;font-weight:600">$4.990</span> $2.990 <span>/ informe</span></p>
+      <ul class="plan-feats">
+        <li>Todo lo del Informe Esencial, más:</li>
+        <li>7 días de acceso para analizar todas las ofertas que necesites</li>
+        <li>Análisis detallado de tu CV y de cada oferta</li>
+        <li>Palabras clave que faltan y competencias relevantes</li>
+        <li>Riesgos de descarte y experiencias que deberías destacar</li>
+        <li>Sueldo referencial de mercado y si tu perfil está sobre, bajo o alineado con el nivel del cargo</li>
+        <li>Checklist antes de postular</li>
+        <li class="plus">🎯 Plan de Acción Workea: recomendaciones concretas y priorizadas. No solo sabrás qué cambiar: sabrás qué hacer primero.</li>
+      </ul>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> a qué oferta conviene postular primero, qué cambios tienen mayor impacto y cómo aumentar tus posibilidades de ser llamado a entrevista.</p>
+      <button class="btn btn-brand" onclick="comprarMatch(this)">Obtener Informe Workea Match →</button>
+      <p class="plan-note">7 días de acceso · Precio de acceso anticipado · Pago seguro con Mercado Pago<br>Tras pagar, serás redirigida/o automáticamente al formulario de activación de tu código 🔑</p>
+      <div style="margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--line)">
+        <a class="btn btn-ghost" href="/?go=activar" style="width:100%;justify-content:center;font-size:.85rem">¿Ya tienes un código? Actívalo aquí</a>
+      </div>
+    </div>
+
+    <div class="plan-card">
+      <span class="plan-badge" style="background:var(--navy)">PRÓXIMAMENTE</span>
+      <p class="plan-name">💜 Informe Workea Experto</p>
+      <p class="plan-goal">¿Cuál es mi mejor estrategia para encontrar trabajo?</p>
+      <p class="plan-price" style="color:var(--faint);font-size:1.1rem">Precio por confirmar</p>
+      <ul class="plan-feats">
+        <li>Todo lo del Informe Workea Match, más:</li>
+        <li>30 días de acceso ilimitado para analizar todas las ofertas que necesites</li>
+        <li>📊 Insights Workea: habilidades más pedidas en tus ofertas, requisitos que se repiten, qué está limitando tus posibilidades</li>
+        <li>Fortalezas que hoy no estás comunicando</li>
+        <li>Riesgos y señales de alerta detectadas en las ofertas</li>
+        <li class="plus">🎯 Estrategia Workea: hoja de ruta personalizada elaborada por una especialista en selección, con acciones priorizadas para conseguir entrevistas</li>
+      </ul>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> qué cargos tienen mayor compatibilidad contigo, qué habilidades potenciar y dónde vale la pena invertir tu tiempo.</p>
+      <a class="btn btn-ghost" href="mailto:workea@tupartnerlaboral.cl?subject=Lista%20de%20espera%20%E2%80%94%20Informe%20Experto&body=%C2%A1Hola!%20Quiero%20que%20me%20avisen%20cuando%20el%20Informe%20Workea%20Experto%20est%C3%A9%20disponible.%0A%0A%C2%A1Gracias!">Avísame cuando esté disponible →</a>
+      <p class="plan-note">Lo estamos afinando junto a los primeros usuarios. Únete a la lista de espera y sé de las primeras personas en acceder.</p>
+    </div>
+
+    <div class="plan-card">
+      <span class="plan-badge" style="background:var(--navy)">PRÓXIMAMENTE</span>
+      <p class="plan-name">🔵 Workea Profile Check</p>
+      <p class="plan-goal">¿Qué tan optimizado está tu perfil de LinkedIn?</p>
+      <p class="plan-price" style="color:var(--faint)">$2.990 <span>/ análisis</span></p>
+      <ul class="plan-feats">
+        <li>Score general de optimización (0-100%)</li>
+        <li>Análisis del titular, "Acerca de" y experiencia</li>
+        <li>Palabras clave detectadas en tu perfil</li>
+        <li>Coherencia general del perfil</li>
+        <li class="plus">🏆 Tus 3 prioridades concretas de mejora</li>
+      </ul>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem"><b>Al finalizar sabrás:</b> cómo te ve un reclutador, qué está comunicando tu perfil y qué cambiar primero.</p>
+      <a class="btn btn-ghost" href="mailto:workea@tupartnerlaboral.cl?subject=Lista%20de%20espera%20%E2%80%94%20Profile%20Check&body=%C2%A1Hola!%20Quiero%20que%20me%20avisen%20cuando%20Workea%20Profile%20Check%20est%C3%A9%20disponible.%0A%0A%C2%A1Gracias!">Avísame cuando esté disponible →</a>
+      <p class="plan-note">Lo estamos afinando junto a los primeros usuarios. Únete a la lista de espera.</p>
+    </div>
+
+  </div>
+
+  <div class="kw-legend" style="justify-content:center;margin-top:1.6rem;gap:1.6rem">
+    <span>🔒 Pago seguro vía Mercado Pago</span>
+    <span>👩‍💼 Estrategia Experto revisada por especialista real en selección</span>
+    <span>✨ Sin suscripciones automáticas: pagas solo lo que usas</span>
+  </div>
+
+  <div style="max-width:46rem;margin:2.8rem auto 0">
+    <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1.2rem;text-align:center">Preguntas frecuentes</h3>
+
+    <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .6rem">Sobre los pagos y el acceso</p>
+
+    <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué pasa justo después de pagar?<span class="chev">▾</span></button>
+      <div class="q-body"><div class="qb"><p>Mercado Pago te redirigirá automáticamente al formulario de activación de Workea. Completa tus datos (nombre, correo y número de comprobante) y en menos de 1 minuto recibirás tu código personal por correo. Si cerraste la ventana antes de completar el formulario, escríbenos a workea@tupartnerlaboral.cl con tu comprobante y te enviamos el acceso de inmediato.</p></div></div>
+    </div>
+    <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Pagué desde la cuenta de otra persona?<span class="chev">▾</span></button>
+      <div class="q-body"><div class="qb"><p>No hay problema: tu código se envía al correo que TÚ indiques en el formulario de activación, pagues desde la cuenta que pagues. Solo incluye el número de operación o el correo de la cuenta con que se pagó para que podamos validar la compra.</p></div></div>
+    </div>
+    <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Tengo que suscribirme?<span class="chev">▾</span></button>
+      <div class="q-body"><div class="qb"><p>No. Cada producto de Workea es un pago único, sin mensualidades ni renovaciones automáticas: el Esencial es gratis; el Workea Match activa 7 días de acceso ilimitado; el Workea Profile Check entrega tu diagnóstico al instante; y el Informe Workea Experto (próximamente) cubrirá 30 días con Estrategia incluida.</p></div></div>
+    </div>
+
+    <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .6rem">Sobre los análisis</p>
+
+    <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Cómo recibo mi Informe Workea Match?<span class="chev">▾</span></button>
+      <div class="q-body"><div class="qb"><p>Tras confirmar tu pago, recibirás tu código personal por correo. Lo activas en la plataforma y tienes 7 días para analizar todas las ofertas que quieras — una por una o hasta 3 comparadas a la vez. Cada informe queda disponible en pantalla para descargar en PDF.</p></div></div>
+    </div>
+    <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Puedo analizar una oferta de LinkedIn u otro portal?<span class="chev">▾</span></button>
+      <div class="q-body"><div class="qb"><p>¡Sí! La forma más confiable es <b>copiar y pegar el texto completo de la oferta</b> (cargo, requisitos y responsabilidades): funciona con cualquier portal. Los enlaces directos a veces no se pueden leer porque algunos sitios como LinkedIn bloquean el acceso externo. También puedes subir el PDF de la oferta o una captura de pantalla directamente en la plataforma.</p></div></div>
+    </div>
+    <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué hace diferente el Informe Workea Experto?<span class="chev">▾</span></button>
+      <div class="q-body"><div class="qb"><p><b>Disponible próximamente.</b> Incluirá 30 días de acceso ilimitado para analizar todas tus ofertas, más una Estrategia Workea elaborada por una especialista en selección al cierre del período: dónde invertir tu tiempo, qué potenciar y cómo aumentar tus posibilidades de conseguir entrevistas. Criterio profesional, no solo más texto.</p></div></div>
+    </div>
+    <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Para qué sirve el Workea Profile Check?<span class="chev">▾</span></button>
+      <div class="q-body"><div class="qb"><p>El Workea Profile Check analiza tu perfil de LinkedIn de forma independiente — sin necesitar una oferta específica. Recibirás un score de optimización, el análisis de tu titular, sección "Acerca de" y experiencia, las palabras clave detectadas y tus 3 prioridades concretas de mejora. Es el paso natural después de optimizar tu postulación: asegurarte de que tu LinkedIn comunica lo mismo.</p></div></div>
+    </div>
+
+    <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin:1.4rem 0 .6rem">Sobre tus datos</p>
+
+    <div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">¿Qué pasa con mi CV, mi perfil y mis datos?<span class="chev">▾</span></button>
+      <div class="q-body"><div class="qb"><p>Tu información se usa únicamente para generar tu análisis. No se comparte con empresas ni reclutadores, y puedes pedir su eliminación cuando quieras escribiendo a workea@tupartnerlaboral.cl.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-in">
+    <a class="logo" href="/">
+      <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true"><defs><linearGradient id="wgrad2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/></linearGradient></defs><path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgrad2)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+    </a>
+    <p>© 2026 Workea · Tu Partner Laboral</p>
+  </div>
+</footer>
+
+<script>
+function toggleQ(btn){ btn.parentElement.classList.toggle('open'); }
+
+/* Réplica exacta de comprarMatch() del sitio principal — mismo endpoint real de pago */
+async function comprarMatch(btn){
+  const textoOriginal = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Generando tu pago...';
+  try {
+    const r = await fetch('/api/crear-pago', { method: 'POST' });
+    const data = await r.json();
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      alert('No se pudo iniciar el pago. Intenta de nuevo.');
+      btn.disabled = false;
+      btn.textContent = textoOriginal;
+    }
+  } catch (err) {
+    alert('No se pudo iniciar el pago. Intenta de nuevo.');
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+  }
+}
+</script>
+
+</body>
+</html>
