@@ -23,6 +23,17 @@
     display:flex; align-items:center; justify-content:space-between;
   }
   .brand{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:15px; }
+  .workea-switcher{
+    background:#fff; border-bottom:1px solid var(--line); padding:8px 24px;
+    display:flex; gap:6px; overflow-x:auto;
+  }
+  .ws-link{
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    font-size:12.5px; font-weight:700; color:var(--ink-soft);
+    padding:6px 12px; border-radius:999px; white-space:nowrap; text-decoration:none; flex-shrink:0;
+  }
+  .ws-link:hover{ background:var(--bg); }
+  .ws-link.active{ background:var(--navy); color:#fff; }
   .brand-mark{ width:28px;height:28px;border-radius:8px; background:var(--grad);
     display:flex;align-items:center;justify-content:center; font-weight:800; color:var(--navy); font-size:13px; }
   .btn-primary{
@@ -226,6 +237,13 @@
   </div>
 </div>
 
+<div class="workea-switcher">
+  <a href="/" class="ws-link">🎯 Match</a>
+  <a href="/workea-cv-planes.html" class="ws-link">📄 CV</a>
+  <a href="/career.html" class="ws-link">🧭 Career</a>
+  <a href="/bitacora.html" class="ws-link active">📖 Bitácora</a>
+</div>
+
 <div class="goals-bar" id="goals-bar" style="display:none;"></div>
 
 <div class="content">
@@ -266,6 +284,18 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Modal: reflexión de entrevista (siempre opcional) -->
+<div class="modal-overlay" id="reflexion-modal" onclick="if(event.target.id==='reflexion-modal')cerrarReflexion()">
+  <div class="modal">
+    <h3>Notas de esta entrevista</h3>
+    <div id="reflexion-body"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="guardarReflexion()">Guardar</button>
+      <button class="btn-ghost" onclick="cerrarReflexion()">Cancelar</button>
+    </div>
+  </div>
+</div>
 
 <!-- Modal: cómo funciona -->
 <div class="modal-overlay" id="howit-overlay" onclick="if(event.target.id==='howit-overlay')closeHowit()">
@@ -357,6 +387,7 @@
     'editar-postulacion': 'editar_postulacion',
     'eliminar-postulacion': 'eliminar_postulacion',
     'eliminar-evento': 'eliminar_evento',
+    'guardar-reflexion': 'guardar_reflexion',
     'generar-insight': 'generar_insight'
   };
 
@@ -533,16 +564,23 @@
     document.getElementById('view-ficha').style.display = 'block';
 
     const eventos = (p.timeline_eventos || []);
-    const timelineHtml = eventos.map((ev, i) => `
+    const timelineHtml = eventos.map((ev, i) => {
+      const esEntrevistaEv = ESTADOS_ENTREVISTA.includes(ev.tipo_evento);
+      const reflexionBtn = esEntrevistaEv
+        ? `<button class="link-btn" onclick="abrirReflexion('${ev.id}', ${ev.reflexion ? 'true' : 'false'})">${ev.reflexion ? '📝 Ver notas' : '+ Notas de esta entrevista'}</button>`
+        : '';
+      return `
       <div class="tl-item">
         <div class="tl-icon">${(ESTADO_LABEL[ev.tipo_evento] || ev.etiqueta_libre || ev.tipo_evento).split(' ')[0]}</div>
         <div style="flex:1;">
           <div class="tl-title">${escapeHtml(ev.etiqueta_libre || ESTADO_LABEL[ev.tipo_evento] || ev.tipo_evento)}</div>
           <div class="tl-date">${new Date(ev.fecha).toLocaleDateString('es-CL', {day:'numeric', month:'short'})}</div>
+          ${reflexionBtn}
         </div>
         ${i === 0 ? `<button class="link-btn" onclick="deshacerEvento('${ev.id}')">Deshacer</button>` : ''}
       </div>
-    `).join('');
+    `;
+    }).join('');
 
     const siguientes = (SIGUIENTES_ESTADOS[p.estado_actual] || []).map(est =>
       `<button class="state-btn" onclick="cambiarEstado('${est}')">${ESTADO_LABEL[est]}</button>`
@@ -581,6 +619,25 @@
           <div class="ficha-company">${escapeHtml(p.empresa)}</div>
         </div>
         <button class="icon-btn" title="Editar empresa/cargo" onclick="toggleEditarFicha()">✏️</button>
+      </div>
+      <div style="margin:6px 0 0;">
+        <button class="link-btn" onclick="toggleReclutadorSueldo()">${p.reclutador || p.sueldo ? '📇 Ver reclutador y sueldo' : '+ Agregar reclutador y sueldo (opcional)'}</button>
+      </div>
+      <div id="reclutador-sueldo-form" style="display:none; margin:10px 0; padding:12px; background:var(--bg); border-radius:10px;">
+        <p style="font-size:12px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px;">Datos del reclutador (opcional)</p>
+        <div class="field"><label>Nombre</label><input type="text" id="rs-nombre" value="${escapeHtml(p.reclutador?.nombre || '')}"></div>
+        <div class="field"><label>Correo</label><input type="text" id="rs-email" value="${escapeHtml(p.reclutador?.email || '')}"></div>
+        <div class="field"><label>LinkedIn</label><input type="text" id="rs-linkedin" value="${escapeHtml(p.reclutador?.linkedin || '')}"></div>
+        <div class="field"><label>Teléfono</label><input type="text" id="rs-telefono" value="${escapeHtml(p.reclutador?.telefono || '')}"></div>
+        <p style="font-size:12px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; margin:14px 0 8px;">Seguimiento salarial (opcional)</p>
+        <div class="field"><label>Sueldo publicado</label><input type="text" id="rs-publicado" value="${escapeHtml(p.sueldo?.publicado || '')}"></div>
+        <div class="field"><label>Tu expectativa</label><input type="text" id="rs-expectativa" value="${escapeHtml(p.sueldo?.expectativa || '')}"></div>
+        <div class="field"><label>Lo conversado</label><input type="text" id="rs-conversado" value="${escapeHtml(p.sueldo?.conversado || '')}"></div>
+        <div class="field"><label>Oferta final</label><input type="text" id="rs-oferta_final" value="${escapeHtml(p.sueldo?.oferta_final || '')}"></div>
+        <div class="edit-row" style="margin-top:10px;">
+          <button class="btn-primary" onclick="guardarReclutadorSueldo()">Guardar</button>
+          <button class="btn-ghost" onclick="toggleReclutadorSueldo()">Cancelar</button>
+        </div>
       </div>
       <div class="progress-track">${progressHtml}</div>
       ${banerPractica}
@@ -624,6 +681,95 @@
     } catch(err){
       errEl.textContent = err.message;
       errEl.style.display = 'block';
+    }
+  }
+
+  function toggleReclutadorSueldo(){
+    const form = document.getElementById('reclutador-sueldo-form');
+    form.style.display = form.style.display === 'block' ? 'none' : 'block';
+  }
+
+  async function guardarReclutadorSueldo(){
+    const reclutador = {
+      nombre: document.getElementById('rs-nombre').value.trim(),
+      email: document.getElementById('rs-email').value.trim(),
+      linkedin: document.getElementById('rs-linkedin').value.trim(),
+      telefono: document.getElementById('rs-telefono').value.trim()
+    };
+    const sueldo = {
+      publicado: document.getElementById('rs-publicado').value.trim(),
+      expectativa: document.getElementById('rs-expectativa').value.trim(),
+      conversado: document.getElementById('rs-conversado').value.trim(),
+      oferta_final: document.getElementById('rs-oferta_final').value.trim()
+    };
+    // Si todo quedó vacío, no guardamos objetos vacíos innecesariamente
+    const reclutadorFinal = Object.values(reclutador).some(v => v) ? reclutador : null;
+    const sueldoFinal = Object.values(sueldo).some(v => v) ? sueldo : null;
+    try{
+      await apiCall('editar-postulacion', {
+        method: 'POST',
+        body: JSON.stringify({ postulacion_id: fichaActivaId, reclutador: reclutadorFinal, sueldo: sueldoFinal })
+      });
+      showToast('Guardado');
+      await cargarPostulaciones();
+      abrirFicha(fichaActivaId);
+    } catch(err){
+      showToast('No se pudo guardar: ' + err.message);
+    }
+  }
+
+  let reflexionEventoId = null;
+  function abrirReflexion(evento_id, tieneReflexion){
+    reflexionEventoId = evento_id;
+    const p = postulaciones.find(x => x.id === fichaActivaId);
+    const ev = (p?.timeline_eventos || []).find(e => e.id === evento_id);
+    const r = ev?.reflexion || {};
+    const html = `
+      <div class="field"><label>¿Con quién hablaste?</label><input type="text" id="rf-con-quien" value="${escapeHtml(r.conQuien || '')}"></div>
+      <div class="field"><label>¿Qué se conversó?</label><textarea id="rf-conversado" rows="2">${escapeHtml(r.conversado || '')}</textarea></div>
+      <div class="field"><label>¿Qué salió bien?</label><textarea id="rf-bien" rows="2">${escapeHtml(r.bien || '')}</textarea></div>
+      <div class="field"><label>¿Qué mejorar la próxima vez?</label><textarea id="rf-mejorar" rows="2">${escapeHtml(r.mejorar || '')}</textarea></div>
+      <div class="field"><label>¿Cómo te sentiste?</label>
+        <select id="rf-sentir">
+          <option value="">Sin elegir</option>
+          <option value="😊" ${r.sentir === '😊' ? 'selected' : ''}>😊 Bien</option>
+          <option value="😐" ${r.sentir === '😐' ? 'selected' : ''}>😐 Neutral</option>
+          <option value="😟" ${r.sentir === '😟' ? 'selected' : ''}>😟 Difícil</option>
+        </select>
+      </div>
+      <div class="field"><label>Próximo paso prometido</label><input type="text" id="rf-proximo" value="${escapeHtml(r.proximo || '')}"></div>
+      <div class="field"><label>Sueldo conversado (si salió el tema)</label><input type="text" id="rf-sueldo" value="${escapeHtml(r.sueldo || '')}"></div>
+    `;
+    document.getElementById('reflexion-body').innerHTML = html;
+    document.getElementById('reflexion-modal').classList.add('show');
+  }
+
+  function cerrarReflexion(){
+    document.getElementById('reflexion-modal').classList.remove('show');
+    reflexionEventoId = null;
+  }
+
+  async function guardarReflexion(){
+    const reflexion = {
+      conQuien: document.getElementById('rf-con-quien').value.trim(),
+      conversado: document.getElementById('rf-conversado').value.trim(),
+      bien: document.getElementById('rf-bien').value.trim(),
+      mejorar: document.getElementById('rf-mejorar').value.trim(),
+      sentir: document.getElementById('rf-sentir').value,
+      proximo: document.getElementById('rf-proximo').value.trim(),
+      sueldo: document.getElementById('rf-sueldo').value.trim()
+    };
+    try{
+      await apiCall('guardar-reflexion', {
+        method: 'POST',
+        body: JSON.stringify({ evento_id: reflexionEventoId, reflexion })
+      });
+      showToast('Notas guardadas');
+      cerrarReflexion();
+      await cargarPostulaciones();
+      abrirFicha(fichaActivaId);
+    } catch(err){
+      showToast('No se pudo guardar: ' + err.message);
     }
   }
 
@@ -842,7 +988,7 @@
       return;
     }
 
-    const encabezados = ['Empresa', 'Cargo', 'Estado actual', 'Modalidad', 'Seniority', 'Compatibilidad', 'Origen', 'Fecha creación', 'Última actividad'];
+    const encabezados = ['Empresa', 'Cargo', 'Estado actual', 'Modalidad', 'Seniority', 'Compatibilidad', 'Origen', 'Fecha creación', 'Última actividad', 'Reclutador', 'Correo reclutador', 'Sueldo publicado', 'Tu expectativa', 'Sueldo conversado', 'Oferta final'];
 
     const filas = postulaciones.map(p => [
       p.empresa || '',
@@ -853,7 +999,13 @@
       p.compatibilidad ? p.compatibilidad + '%' : '',
       p.origen || '',
       p.fecha_creacion ? new Date(p.fecha_creacion).toLocaleDateString('es-CL') : '',
-      p.fecha_ultima_actividad ? new Date(p.fecha_ultima_actividad).toLocaleDateString('es-CL') : ''
+      p.fecha_ultima_actividad ? new Date(p.fecha_ultima_actividad).toLocaleDateString('es-CL') : '',
+      p.reclutador?.nombre || '',
+      p.reclutador?.email || '',
+      p.sueldo?.publicado || '',
+      p.sueldo?.expectativa || '',
+      p.sueldo?.conversado || '',
+      p.sueldo?.oferta_final || ''
     ]);
 
     // Formato CSV estándar, con BOM UTF-8 para que Excel muestre tildes y ñ correctamente
