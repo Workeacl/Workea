@@ -23,7 +23,7 @@ const ESTADOS_ACTIVOS = ['postule', 'me_contactaron', 'entrevista_rrhh', 'entrev
 const ESTADOS_ENTREVISTA = ['entrevista_rrhh', 'entrevista_tecnica', 'entrevista_final'];
 const ESTADOS_CERRADOS = ['rechazado', 'cancele_proceso'];
 const TIPOS_ESTADO = ['postule', 'me_contactaron', 'entrevista_rrhh', 'entrevista_tecnica', 'entrevista_final', 'evaluacion', 'oferta_recibida', 'rechazado', 'cancele_proceso'];
-const CAMPOS_EDITABLES = ['empresa', 'cargo', 'modalidad', 'seniority', 'link_oferta'];
+const CAMPOS_EDITABLES = ['empresa', 'cargo', 'modalidad', 'seniority', 'link_oferta', 'reclutador', 'sueldo'];
 
 module.exports = async (req, res) => {
   try {
@@ -179,6 +179,21 @@ module.exports = async (req, res) => {
         await supabase.from('postulaciones').update({ estado_actual: restantes[0].tipo_evento }).eq('id', postulacionId);
       }
       return res.status(200).json({ ok: true });
+    }
+
+    // ---------- guardar_reflexion ----------
+    // Notas opcionales sobre una entrevista puntual (con quién hablaste, cómo
+    // te sentiste, qué salió bien, etc). Vive en el evento, no en la
+    // postulación completa. Nunca es obligatorio.
+    if (accion === 'guardar_reflexion') {
+      const { evento_id, reflexion } = req.body;
+      if (!evento_id) return res.status(400).json({ error: 'evento_id es obligatorio' });
+      if (!reflexion || typeof reflexion !== 'object') return res.status(400).json({ error: 'reflexion es obligatoria' });
+
+      const { data, error } = await supabase.from('timeline_eventos')
+        .update({ reflexion }).eq('id', evento_id).select().single();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ evento: data });
     }
 
     // ---------- generar_insight ----------
