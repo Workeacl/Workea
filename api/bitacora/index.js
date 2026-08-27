@@ -231,8 +231,8 @@ Los ítems de "evidencia" deben ser hechos verificables directamente de la lista
           'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-          model: 'claude-3-5-haiku-20241022',
-          max_tokens: 400,
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 700,
           messages: [{ role: 'user', content: prompt }]
         })
       });
@@ -248,7 +248,8 @@ Los ítems de "evidencia" deben ser hechos verificables directamente de la lista
       }
 
       const aiData = await aiRes.json();
-      const textoRespuesta = aiData?.content?.[0]?.text || '{}';
+      let textoRespuesta = aiData?.content?.[0]?.text || '{}';
+      textoRespuesta = textoRespuesta.replace(/```json/gi, '').replace(/```/g, '').trim();
 
       let parsed;
       try {
@@ -256,6 +257,7 @@ Los ítems de "evidencia" deben ser hechos verificables directamente de la lista
         const match = textoRespuesta.match(/\{[\s\S]*\}/);
         parsed = JSON.parse(match ? match[0] : textoRespuesta);
       } catch (e) {
+        console.error('No se pudo parsear la respuesta del modelo:', textoRespuesta);
         parsed = { texto: textoRespuesta.slice(0, 220), evidencia: [] };
       }
 
