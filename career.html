@@ -259,7 +259,7 @@ a{color:inherit;text-decoration:none}
       <p class="pb-name">Workea Career</p>
       <p class="pb-price">$4.990</p>
       <p class="pb-sub">Tu ruta profesional completa · resultado al instante</p>
-      <a class="btn btn-brand" href="#" id="btnComprar" style="justify-content:center;width:100%">Descubrir mi ruta →</a>
+      <button class="btn btn-brand" onclick="comprarCareer(this)" style="justify-content:center;width:100%">Descubrir mi ruta →</button>
       <p style="font-size:.76rem;color:var(--faint);margin-top:.6rem">Pago seguro con Mercado Pago · Tras pagar recibirás tu código por correo</p>
       <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line)">
         <button class="btn btn-ghost" onclick="showScreen('scr-access')" style="width:100%;justify-content:center;font-size:.88rem">¿Ya tienes un código? Actívalo aquí</button>
@@ -418,9 +418,23 @@ a{color:inherit;text-decoration:none}
 <script>
 if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-const CAREER_CODIGO = 'WORKEA2026';
+let codigoIngresado = '';
 let tab='text', fileData=null;
 const respuestas = { q0:'', q4:'', q6:[], q7:'', q8:'' };
+
+// Si llega desde el link de activación (tras pagar), el código viene
+// prellenado en la URL.
+(function leerCodigoDeActivacion(){
+  const params = new URLSearchParams(window.location.search);
+  const codigo = params.get('codigo');
+  if(codigo){
+    codigoIngresado = codigo;
+    document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('accessInput');
+      if(input){ input.value = codigo; }
+    });
+  }
+})();
 
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
@@ -430,6 +444,31 @@ function showScreen(id){
   window.scrollTo({top:0});
 }
 function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+async function comprarCareer(btn){
+  const textoOriginal = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Generando tu pago...';
+  try {
+    const r = await fetch('/api/crear-pago', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ producto: 'career' })
+    });
+    const data = await r.json();
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      alert(data.error || 'No se pudo iniciar el pago. Intenta de nuevo.');
+      btn.disabled = false;
+      btn.textContent = textoOriginal;
+    }
+  } catch (err) {
+    alert('No se pudo iniciar el pago. Intenta de nuevo.');
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+  }
+}
 function safeLink(u){
   const s=String(u||'').trim();
   return /^https?:\/\//i.test(s) ? s : '#';
@@ -437,13 +476,16 @@ function safeLink(u){
 
 function checkAccess(){
   const v=document.getElementById('accessInput').value.trim();
-  if(v===CAREER_CODIGO){
+  const esMaestro = v.toUpperCase()==='WORKEA2026';
+  const esCar = v.toUpperCase().startsWith('CAR-');
+  if(esMaestro || esCar){
+    codigoIngresado = v;
     showScreen('scr-input');
     document.getElementById('accessConfirm').innerHTML=
       '<div style="display:flex;align-items:center;gap:.6rem;background:var(--green-bg);border:1px solid var(--green-ln);border-radius:12px;padding:.75rem 1.1rem;margin-bottom:1.2rem;font-size:.9rem;color:#1c6b47"><span>✅</span><span><b>Sesión iniciada.</b> Ingresa tu CV para construir tu ruta profesional.</span></div>';
   } else {
     document.getElementById('accessError').innerHTML=
-      '<div class="error-box">⚠️ <span>Código incorrecto. Si no lo recuerdas, escríbenos a workea@tupartnerlaboral.cl.</span></div>';
+      '<div class="error-box">⚠️ <span>Ese código no tiene el formato de Workea Career. Si no lo recuerdas, escríbenos a workea@tupartnerlaboral.cl.</span></div>';
   }
 }
 
@@ -530,7 +572,7 @@ async function runCareer(){
 
   try{
     const r=await fetch('/api/career',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({cv,contexto,codigo:CAREER_CODIGO})});
+      body:JSON.stringify({cv,contexto,codigo:codigoIngresado})});
     const data=await r.json();
     clearInterval(iv);
     if(!r.ok||data.error) throw new Error(data.error||'Error del servidor');
