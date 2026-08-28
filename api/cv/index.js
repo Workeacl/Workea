@@ -1,455 +1,317 @@
-// api/cv/index.js
+// api/bitacora/index.js
 //
-// Endpoint único de Workea CV — mismo patrón que api/bitacora/index.js:
-// todas las acciones en un solo archivo para no sumar funciones nuevas
-// al conteo del plan Hobby de Vercel (hoy: 7 raíz + bitacora/index.js +
-// este = 9, con margen).
+// Endpoint único de Bitácora — reemplaza los 7 archivos separados que
+// teníamos antes (crear-postulacion.js, actualizar-estado.js, etc.).
+// El plan Hobby de Vercel permite máximo 12 funciones serverless por
+// proyecto; tener un archivo por acción nos hizo pasarnos del límite.
+// Acá, todas las acciones viven en una sola función y se distinguen
+// por el campo `accion` (en el body para POST, o en la query ?accion=
+// para GET).
 //
-// Rutas:
-//   POST /api/cv   { accion: 'crear_orden', cv_original, plan, oferta_referencia?, empresa_referencia? }
-//   POST /api/cv   { accion: 'diagnosticar', orden_id }
-//   POST /api/cv   { accion: 'optimizar', orden_id, respuestas: [{pregunta, respuesta}] }
-//   POST /api/cv   { accion: 'generar_mensaje', orden_id }
-//   POST /api/cv   { accion: 'elegir_plantilla', orden_id, plantilla }
-//   GET  /api/cv?orden_id=...   (trae una orden completa)
+// Rutas desde el frontend:
+//   GET  /api/bitacora?accion=listar&estado=activo
+//   POST /api/bitacora   body: { accion: 'crear_postulacion', ... }
+//   POST /api/bitacora   body: { accion: 'actualizar_estado', ... }
+//   POST /api/bitacora   body: { accion: 'agregar_objetivo', ... }
+//   POST /api/bitacora   body: { accion: 'editar_postulacion', ... }
+//   POST /api/bitacora   body: { accion: 'eliminar_postulacion', ... }
+//   POST /api/bitacora   body: { accion: 'eliminar_evento', ... }
 
-const { getSupabaseForRequest } = require('../bitacora/_supabaseClient');
-const pdfParse = require('pdf-parse');
-const mammoth = require('mammoth');
+const { getSupabaseForRequest } = require('./_supabaseClient');
 
-async function llamarClaudeUnaVez(prompt, maxTokens) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': process.env.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: maxTokens,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error('Anthropic API error: ' + errText);
-  }
-  const data = await res.json();
-  let texto = data?.content?.[0]?.text || '{}';
-  texto = texto.replace(/```json/gi, '').replace(/```/g, '').trim();
-
-  if (data?.stop_reason === 'max_tokens') {
-    console.error('Respuesta cortada por max_tokens. Texto parcial:', texto);
-    throw new Error('__INCOMPLETA__');
-  }
-
-  try {
-    return JSON.parse(texto);
-  } catch (e) {
-    const match = texto.match(/\{[\s\S]*\}/);
-    if (match) {
-      try {
-        return JSON.parse(match[0]);
-      } catch (e2) { /* sigue abajo */ }
-    }
-    console.error('No se pudo parsear la respuesta del modelo:', texto);
-    throw new Error('__MAL_FORMADO__');
-  }
-}
-
-// Reintenta una vez si la respuesta vino incompleta o mal formada — en la
-// práctica, un segundo intento casi siempre sale limpio, y evita mostrarle
-// el error al usuario por un problema pasajero del modelo.
-async function llamarClaude(prompt, maxTokens = 1000) {
-  try {
-    return await llamarClaudeUnaVez(prompt, maxTokens);
-  } catch (e) {
-    if (e.message === '__INCOMPLETA__' || e.message === '__MAL_FORMADO__') {
-      console.error('Primer intento falló (' + e.message + '), reintentando una vez…');
-      try {
-        return await llamarClaudeUnaVez(prompt, maxTokens);
-      } catch (e2) {
-        if (e2.message === '__INCOMPLETA__') {
-          throw new Error('La respuesta del modelo quedó incompleta — intenta de nuevo (puede que tu CV sea muy largo)');
-        }
-        throw new Error('No se pudo interpretar la respuesta del modelo, incluso tras reintentar');
-      }
-    }
-    throw e;
-  }
-}
+const ESTADOS_ACTIVOS = ['postule', 'me_contactaron', 'entrevista_rrhh', 'entrevista_tecnica', 'entrevista_final', 'evaluacion'];
+const ESTADOS_ENTREVISTA = ['entrevista_rrhh', 'entrevista_tecnica', 'entrevista_final'];
+const ESTADOS_CERRADOS = ['rechazado', 'cancele_proceso'];
+const TIPOS_ESTADO = ['postule', 'me_contactaron', 'entrevista_rrhh', 'entrevista_tecnica', 'entrevista_final', 'evaluacion', 'oferta_recibida', 'rechazado', 'cancele_proceso'];
+const CAMPOS_EDITABLES = ['empresa', 'cargo', 'modalidad', 'seniority', 'link_oferta', 'sitio_web', 'reclutador', 'sueldo', 'interes'];
 
 module.exports = async (req, res) => {
   try {
     const { supabase, error: authError } = getSupabaseForRequest(req);
     if (authError) return res.status(401).json({ error: authError });
 
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError || !userData?.user) return res.status(401).json({ error: 'Sesión inválida o expirada' });
-    const usuarioId = userData.user.id;
-
-    // ---------- GET: traer una orden ----------
+    // ---------- GET: listar postulaciones ----------
     if (req.method === 'GET') {
-      const { orden_id } = req.query || {};
-      if (!orden_id) return res.status(400).json({ error: 'orden_id es obligatorio' });
+      let query = supabase
+        .from('postulaciones')
+        .select('*, timeline_eventos ( * )')
+        .order('fecha_ultima_actividad', { ascending: false });
 
-      const { data, error } = await supabase.from('cv_ordenes').select('*').eq('id', orden_id).single();
-      if (error) return res.status(404).json({ error: 'Orden no encontrada' });
-      return res.status(200).json({ orden: data });
+      const estado = req.query?.estado;
+      if (estado === 'activo') query = query.in('estado_actual', ESTADOS_ACTIVOS);
+      if (estado === 'entrevistas') query = query.in('estado_actual', ESTADOS_ENTREVISTA);
+      if (estado === 'oferta') query = query.eq('estado_actual', 'oferta_recibida');
+      if (estado === 'cerrados') query = query.in('estado_actual', ESTADOS_CERRADOS);
+
+      const { data, error } = await query;
+      if (error) return res.status(500).json({ error: error.message });
+
+      const postulaciones = (data || []).map((p) => ({
+        ...p,
+        timeline_eventos: (p.timeline_eventos || []).sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+      }));
+
+      const { data: objetivos, error: objError } = await supabase
+        .from('bitacora_objetivos')
+        .select('*')
+        .eq('activo', true)
+        .order('creado_en', { ascending: true });
+
+      if (objError) return res.status(500).json({ error: objError.message });
+
+      return res.status(200).json({ postulaciones, objetivos: objetivos || [] });
     }
 
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Método no permitido' });
+    }
 
     const { accion } = req.body || {};
     if (!accion) return res.status(400).json({ error: 'Falta el campo "accion"' });
 
-    // ---------- extraer_texto ----------
-    // El frontend sube el archivo como base64 (sin necesidad de un
-    // servicio de storage aparte — para el volumen de un CV es liviano).
-    if (accion === 'extraer_texto') {
-      const { archivo_base64, tipo } = req.body;
-      if (!archivo_base64 || !tipo) return res.status(400).json({ error: 'archivo_base64 y tipo son obligatorios' });
+    // ---------- crear_postulacion ----------
+    if (accion === 'crear_postulacion') {
+      const {
+        empresa, cargo, origen = 'manual', link_oferta = null, modalidad = null,
+        seniority = null, compatibilidad = null, cv_usado_id = null,
+        palabras_clave = null, objetivo_id = null
+      } = req.body;
 
-      const buffer = Buffer.from(archivo_base64, 'base64');
-      let texto = '';
+      if (!empresa || !cargo) return res.status(400).json({ error: 'empresa y cargo son obligatorios' });
 
-      try {
-        if (tipo === 'pdf') {
-          const resultado = await pdfParse(buffer);
-          texto = resultado.text;
-        } else if (tipo === 'docx') {
-          const resultado = await mammoth.extractRawText({ buffer });
-          texto = resultado.value;
-        } else {
-          return res.status(400).json({ error: 'Tipo de archivo no soportado (usa pdf o docx)' });
-        }
-      } catch (e) {
-        return res.status(422).json({ error: 'No pudimos leer ese archivo. ¿Está dañado o protegido con contraseña?' });
-      }
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError || !userData?.user) return res.status(401).json({ error: userError?.message || 'Sesión inválida' });
 
-      texto = texto.trim();
-      if (!texto || texto.length < 40) {
-        return res.status(422).json({ error: 'El archivo no parece tener texto legible (¿es una imagen escaneada?)' });
-      }
-
-      return res.status(200).json({ texto });
-    }
-
-    // ---------- crear_orden ----------
-    if (accion === 'crear_orden') {
-      const { cv_original, plan, oferta_referencia = null, empresa_referencia = null } = req.body;
-      if (!cv_original || !plan) return res.status(400).json({ error: 'cv_original y plan son obligatorios' });
-
-      const { data, error } = await supabase.from('cv_ordenes').insert({
-        usuario_id: usuarioId, cv_original, plan, oferta_referencia, empresa_referencia
+      const { data, error } = await supabase.from('postulaciones').insert({
+        usuario_id: userData.user.id, empresa, cargo, origen, link_oferta, modalidad,
+        seniority, compatibilidad, cv_usado_id, palabras_clave, objetivo_id, estado_actual: 'postule'
       }).select().single();
 
       if (error) return res.status(500).json({ error: error.message });
-      return res.status(201).json({ orden: data });
+
+      await supabase.from('timeline_eventos').insert({ postulacion_id: data.id, tipo_evento: 'postule' });
+      return res.status(201).json({ postulacion: data });
     }
 
-    // A partir de acá, todas las acciones operan sobre una orden existente
-    const { orden_id } = req.body;
-    if (!orden_id) return res.status(400).json({ error: 'orden_id es obligatorio' });
+    // ---------- actualizar_estado ----------
+    if (accion === 'actualizar_estado') {
+      const { postulacion_id, tipo_evento, fecha = null, hora = null, modalidad = null, etiqueta_libre = null, nota = null } = req.body;
 
-    const { data: orden, error: ordenError } = await supabase.from('cv_ordenes').select('*').eq('id', orden_id).single();
-    if (ordenError || !orden) return res.status(404).json({ error: 'Orden no encontrada' });
+      if (!postulacion_id || !tipo_evento) return res.status(400).json({ error: 'postulacion_id y tipo_evento son obligatorios' });
+      if (tipo_evento === 'otro_paso' && !etiqueta_libre) return res.status(400).json({ error: 'etiqueta_libre es obligatoria para "otro_paso"' });
 
-    // ---------- generar_insight_cv (Workea Insight, paso 1) ----------
-    // En vez de preguntar por cifras sueltas, detecta fortalezas que el CV
-    // insinúa pero no comunica con claridad, y arma UNA pregunta cerrada
-    // (opción múltiple o sí/no) por cada una — rápido de responder, nunca
-    // un formulario largo.
-    if (accion === 'generar_insight_cv') {
-      if (orden.plan === 'diagnostico') {
-        return res.status(403).json({ error: 'El plan Diagnóstico no incluye Workea Insight' });
+      const insertPayload = { postulacion_id, tipo_evento, modalidad, etiqueta_libre, nota };
+      if (fecha) insertPayload.fecha = fecha;
+      if (hora) insertPayload.hora = hora;
+
+      const { data, error } = await supabase.from('timeline_eventos').insert(insertPayload).select().single();
+      if (error) {
+        const status = error.code === '42501' ? 403 : 500;
+        return res.status(status).json({ error: error.message });
+      }
+      return res.status(201).json({ evento: data });
+    }
+
+    // ---------- agregar_objetivo ----------
+    if (accion === 'agregar_objetivo') {
+      const { cargo_objetivo } = req.body;
+      if (!cargo_objetivo || !cargo_objetivo.trim()) return res.status(400).json({ error: 'cargo_objetivo es obligatorio' });
+
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError || !userData?.user) return res.status(401).json({ error: userError?.message || 'Sesión inválida' });
+
+      const { data, error } = await supabase.from('bitacora_objetivos')
+        .insert({ usuario_id: userData.user.id, cargo_objetivo: cargo_objetivo.trim() }).select().single();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(201).json({ objetivo: data });
+    }
+
+    // ---------- editar_objetivo ----------
+    if (accion === 'editar_objetivo') {
+      const { objetivo_id, cargo_objetivo } = req.body;
+      if (!objetivo_id) return res.status(400).json({ error: 'objetivo_id es obligatorio' });
+      if (!cargo_objetivo || !cargo_objetivo.trim()) return res.status(400).json({ error: 'cargo_objetivo es obligatorio' });
+
+      const { data, error } = await supabase.from('bitacora_objetivos')
+        .update({ cargo_objetivo: cargo_objetivo.trim() }).eq('id', objetivo_id).select().single();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ objetivo: data });
+    }
+
+    // ---------- eliminar_objetivo ----------
+    // Las postulaciones que tenían este objetivo quedan con objetivo_id = null
+    // (no se borran, solo pierden la etiqueta).
+    if (accion === 'eliminar_objetivo') {
+      const { objetivo_id } = req.body;
+      if (!objetivo_id) return res.status(400).json({ error: 'objetivo_id es obligatorio' });
+
+      await supabase.from('postulaciones').update({ objetivo_id: null }).eq('objetivo_id', objetivo_id);
+
+      const { error } = await supabase.from('bitacora_objetivos').delete().eq('id', objetivo_id);
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ ok: true });
+    }
+
+    // ---------- editar_postulacion ----------
+    if (accion === 'editar_postulacion') {
+      const { postulacion_id, ...cambios } = req.body;
+      if (!postulacion_id) return res.status(400).json({ error: 'postulacion_id es obligatorio' });
+
+      const update = {};
+      for (const campo of CAMPOS_EDITABLES) {
+        if (cambios[campo] !== undefined) update[campo] = cambios[campo];
+      }
+      if (Object.keys(update).length === 0) return res.status(400).json({ error: 'No hay campos para actualizar' });
+      if ('empresa' in update && !update.empresa.trim()) return res.status(400).json({ error: 'Empresa no puede quedar vacía' });
+      if ('cargo' in update && !update.cargo.trim()) return res.status(400).json({ error: 'Cargo no puede quedar vacío' });
+
+      const { data, error } = await supabase.from('postulaciones').update(update).eq('id', postulacion_id).select().single();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ postulacion: data });
+    }
+
+    // ---------- eliminar_postulacion ----------
+    if (accion === 'eliminar_postulacion') {
+      const { postulacion_id } = req.body;
+      if (!postulacion_id) return res.status(400).json({ error: 'postulacion_id es obligatorio' });
+
+      const { error, count } = await supabase.from('postulaciones').delete({ count: 'exact' }).eq('id', postulacion_id);
+      if (error) return res.status(500).json({ error: error.message });
+      if (count === 0) return res.status(404).json({ error: 'Postulación no encontrada' });
+      return res.status(200).json({ ok: true });
+    }
+
+    // ---------- eliminar_evento ----------
+    if (accion === 'eliminar_evento') {
+      const { evento_id } = req.body;
+      if (!evento_id) return res.status(400).json({ error: 'evento_id es obligatorio' });
+
+      const { data: evento, error: findError } = await supabase.from('timeline_eventos').select('postulacion_id').eq('id', evento_id).single();
+      if (findError || !evento) return res.status(404).json({ error: 'Evento no encontrado' });
+      const postulacionId = evento.postulacion_id;
+
+      const { error: delError } = await supabase.from('timeline_eventos').delete().eq('id', evento_id);
+      if (delError) return res.status(500).json({ error: delError.message });
+
+      const { data: restantes } = await supabase.from('timeline_eventos')
+        .select('tipo_evento, fecha, creado_en')
+        .eq('postulacion_id', postulacionId)
+        .in('tipo_evento', TIPOS_ESTADO)
+        .order('fecha', { ascending: false })
+        .order('creado_en', { ascending: false })
+        .limit(1);
+
+      if (restantes && restantes.length > 0) {
+        await supabase.from('postulaciones').update({ estado_actual: restantes[0].tipo_evento }).eq('id', postulacionId);
+      }
+      return res.status(200).json({ ok: true });
+    }
+
+    // ---------- guardar_reflexion ----------
+    // Notas opcionales sobre una entrevista puntual (con quién hablaste, cómo
+    // te sentiste, qué salió bien, etc). Vive en el evento, no en la
+    // postulación completa. Nunca es obligatorio.
+    if (accion === 'guardar_reflexion') {
+      const { evento_id, reflexion } = req.body;
+      if (!evento_id) return res.status(400).json({ error: 'evento_id es obligatorio' });
+      if (!reflexion || typeof reflexion !== 'object') return res.status(400).json({ error: 'reflexion es obligatoria' });
+
+      const { data, error } = await supabase.from('timeline_eventos')
+        .update({ reflexion }).eq('id', evento_id).select().single();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ evento: data });
+    }
+
+    // ---------- generar_insight ----------
+    if (accion === 'generar_insight') {
+      // Traemos las postulaciones del usuario (mismo shape que el listado)
+      const { data: postus, error: postuError } = await supabase
+        .from('postulaciones')
+        .select('empresa, cargo, modalidad, estado_actual, origen, timeline_eventos ( tipo_evento, fecha )')
+        .order('fecha_ultima_actividad', { ascending: false });
+
+      if (postuError) return res.status(500).json({ error: postuError.message });
+
+      const postulaciones = postus || [];
+
+      // Con pocos datos, no forzamos un "patrón" — devolvemos un mensaje
+      // motivacional simple, sin llamar al modelo (cero costo, y evita
+      // conclusiones prematuras/falsas con datos insuficientes).
+      if (postulaciones.length < 3) {
+        return res.status(200).json({
+          texto: postulaciones.length === 0
+            ? 'Aún no hay datos para mostrar un patrón — a medida que registres postulaciones, vas a empezar a ver qué te está funcionando mejor.'
+            : `Vas construyendo tu bitácora 🌱 — con ${postulaciones.length} postulación${postulaciones.length === 1 ? '' : 'es'} registrada${postulaciones.length === 1 ? '' : 's'}, todavía es pronto para ver un patrón. Sigue registrando y vuelve a pedir el análisis más adelante.`,
+          evidencia: [],
+          esGenerico: true
+        });
       }
 
-      const prompt = `Eres una psicóloga laboral especializada en reclutamiento. Lee este CV y detecta entre 3 y 4 fortalezas reales que probablemente existen en la experiencia de esta persona, pero que el CV no comunica con claridad (quedan implícitas, minimizadas, o mezcladas con otras tareas).
+      // Armamos un resumen compacto y verificable de los datos reales
+      const resumen = postulaciones.map(p => {
+        const entrevistas = (p.timeline_eventos || []).filter(e =>
+          ['entrevista_rrhh', 'entrevista_tecnica', 'entrevista_final'].includes(e.tipo_evento)
+        ).length;
+        return `- ${p.empresa} · ${p.cargo} · modalidad: ${p.modalidad || 'sin especificar'} · estado actual: ${p.estado_actual} · eventos de entrevista: ${entrevistas} · origen: ${p.origen}`;
+      }).join('\n');
 
-CV:
-"""
-${orden.cv_original}
-"""
-${orden.oferta_referencia ? `\nOferta de referencia:\n"""\n${orden.oferta_referencia}\n"""` : ''}
+      const prompt = `Estos son los datos reales de búsqueda de empleo de un usuario (${postulaciones.length} postulaciones):
 
-Para cada fortaleza detectada, escribe una explicación breve de por qué crees que está ahí pero no se ve, y UNA pregunta cerrada (opción múltiple con 2-4 alternativas, o sí/no) que permita confirmarla con un solo tap — nunca pidas texto libre.
+${resumen}
 
-No inventes fortalezas que no tengan ninguna base en el CV — cada una debe poder señalarse a una frase o dato real del texto.
+Identifica UN patrón real y útil basado ÚNICAMENTE en estos datos (nunca inventes información que no esté aquí). Responde en JSON puro, sin texto adicional ni markdown, con este formato exacto:
+{"texto": "una frase corta y cercana (máx 220 caracteres) describiendo el patrón, en español de Chile, tono cálido no corporativo", "evidencia": ["dato concreto 1 que respalda el patrón", "dato concreto 2", "dato concreto 3 (opcional)"]}
 
-IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior.
+Los ítems de "evidencia" deben ser hechos verificables directamente de la lista de arriba (nombres de empresa, conteos, modalidades) — nunca opiniones ni suposiciones.`;
 
-Responde en JSON puro:
-{
-  "areas": [
-    {
-      "titulo": "nombre corto de la fortaleza, ej: Gestión de clientes",
-      "contexto": "por qué crees que está ahí pero no se ve, en 1-2 frases, citando algo real del CV",
-      "pregunta": "la pregunta cerrada para confirmarlo",
-      "opciones": ["opción 1", "opción 2", "opción 3 (si aplica)"]
-    }
-  ]
-}`;
-
-      const resultado = await llamarClaude(prompt, 1400);
-      return res.status(200).json({ areas: resultado.areas || [] });
-    }
-
-    // ---------- sintetizar_insight (Workea Insight, paso 2) ----------
-    // Con las respuestas ya confirmadas por el usuario, arma los hallazgos
-    // finales + una simulación de cómo un reclutador leería el perfil hoy.
-    if (accion === 'sintetizar_insight') {
-      if (orden.plan === 'diagnostico') {
-        return res.status(403).json({ error: 'El plan Diagnóstico no incluye Workea Insight' });
-      }
-      const { respuestas = [] } = req.body;
-
-      const respuestasTexto = respuestas.length
-        ? respuestas.map(r => `- ${r.titulo}: pregunta "${r.pregunta}" → respuesta confirmada: ${r.respuesta}`).join('\n')
-        : '(el usuario no confirmó ninguna)';
-
-      const prompt = `Con base en este CV y en las fortalezas que el usuario acaba de confirmar (nunca inventes nada fuera de esto), genera:
-
-1. Un resumen de los hallazgos confirmados — solo los que el usuario efectivamente confirmó, no los que quedaron sin responder.
-2. Una simulación honesta de cómo un reclutador leería este perfil HOY, antes de optimizarlo — sé real, no artificialmente positivo.
-
-CV:
-"""
-${orden.cv_original}
-"""
-
-Fortalezas exploradas y respuesta del usuario:
-${respuestasTexto}
-
-IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior.
-
-Responde en JSON puro:
-{
-  "hallazgos": [
-    {"titulo": "nombre de la fortaleza confirmada", "descripcion": "explicación breve de qué revela y por qué es valiosa"}
-  ],
-  "lectura_reclutador": {
-    "primera_impresion": "una frase de cómo se percibe el perfil a primera vista",
-    "nivel_percibido": "ej: Semi Senior con potencial a Senior",
-    "atractivo": "lo más atractivo del perfil tal como está hoy",
-    "dudas": "qué podría generar dudas o preguntas en un reclutador",
-    "reforzar": "qué es lo más importante a reforzar"
-  }
-}`;
-
-      const resultado = await llamarClaude(prompt, 1200);
-      return res.status(200).json({
-        hallazgos: resultado.hallazgos || [],
-        lectura_reclutador: resultado.lectura_reclutador || null
+      const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 700,
+          messages: [{ role: 'user', content: prompt }]
+        })
       });
-    }
 
-    // ---------- diagnosticar ----------
-    if (accion === 'diagnosticar') {
-      const prompt = `Eres un experto en reclutamiento y sistemas ATS. Analiza este CV real y da un diagnóstico honesto, basado ÚNICAMENTE en el contenido que aparece abajo (nunca inventes datos que no estén ahí).
-
-CV:
-"""
-${orden.cv_original}
-"""
-${orden.oferta_referencia ? `\nOferta de referencia:\n"""\n${orden.oferta_referencia}\n"""` : ''}
-
-IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior — si necesitas nombrar una alternativa o sinónimo, sepáralo con "o" o "/" sin comillas (ejemplo correcto: RRHH o Recursos Humanos — NO: "RRHH" o "Recursos Humanos").
-
-Responde en JSON puro, sin texto adicional, con este formato exacto:
-{
-  "score": <número 0-100, compatibilidad ATS estimada>,
-  "fortalezas": ["punto fuerte real 1", "punto fuerte real 2"],
-  "alertas": ["problema real detectado 1", "problema real detectado 2", "problema real detectado 3"],
-  "keywords_faltantes": ["palabra clave relevante 1", "palabra clave relevante 2"]
-}
-
-El score y las alertas deben poder justificarse con el contenido real del CV. No inventes logros ni cifras que no estén en el texto.`;
-
-      const diagnostico = await llamarClaude(prompt, 1300);
-
-      const { data, error } = await supabase.from('cv_ordenes')
-        .update({ diagnostico, estado: 'diagnosticado' })
-        .eq('id', orden_id).select().single();
-
-      if (error) return res.status(500).json({ error: error.message });
-      return res.status(200).json({ orden: data });
-    }
-
-    // ---------- optimizar ----------
-    // Recibe los hallazgos confirmados en Workea Insight (o respuestas del
-    // formato anterior, por compatibilidad) y reescribe el CV con eso.
-    if (accion === 'optimizar') {
-      if (orden.plan === 'diagnostico') {
-        return res.status(403).json({ error: 'El plan Diagnóstico no incluye optimización' });
-      }
-      const { respuestas = [], hallazgos = [] } = req.body;
-
-      const respuestasTexto = respuestas.length
-        ? respuestas.map(r => `- ${r.pregunta} → ${r.respuesta || '(sin responder, no usar cifra)'}`).join('\n')
-        : '';
-      const hallazgosTexto = hallazgos.length
-        ? hallazgos.map(h => `- ${h.titulo}: ${h.descripcion}`).join('\n')
-        : '';
-      const infoConfirmada = [respuestasTexto, hallazgosTexto].filter(Boolean).join('\n') || '(el usuario no confirmó información adicional)';
-
-      const prompt = `Reescribe este CV de forma profesional y optimizada para ATS. Reglas estrictas:
-- NUNCA inventes logros, cifras o experiencia que no estén en el CV original o en la información confirmada por el usuario abajo.
-- Si hay un hallazgo confirmado (una fortaleza que el CV no comunicaba con claridad), incorpóralo de forma natural en el resumen profesional y/o en el bullet de experiencia correspondiente — esa información SÍ está autorizada a usarse, porque el propio usuario la confirmó.
-- Mejora verbos de acción, claridad y estructura, pero el contenido factual debe venir siempre del usuario.
-- Revisa el CV completo y no omitas ninguna sección que tenga: cursos/certificaciones, herramientas o software específico, e idiomas — cada una va en su propio campo del JSON, no las mezcles ni las dejes fuera.
-
-CV original:
-"""
-${orden.cv_original}
-"""
-
-Información adicional confirmada por el usuario:
-${infoConfirmada}
-
-IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior.
-
-Responde en JSON puro con este formato:
-{
-  "resumen_profesional": "texto reescrito del resumen",
-  "experiencia": [
-    {"cargo": "...", "empresa": "...", "periodo": "...", "bullets": ["bullet reescrito 1", "bullet reescrito 2"]}
-  ],
-  "habilidades": ["habilidad 1", "habilidad 2"],
-  "herramientas": ["herramienta o software mencionado, ej: LinkedIn Recruiter, Excel avanzado — solo si el CV original las menciona"],
-  "idiomas": ["idioma y nivel, ej: Inglés avanzado — solo si el CV original los menciona"],
-  "cursos_certificaciones": ["nombre del curso o certificación (institución, año) — solo si el CV original los menciona"]
-}`;
-
-      const cv_optimizado = await llamarClaude(prompt, 3200);
-
-      const { data, error } = await supabase.from('cv_ordenes')
-        .update({
-          cv_optimizado,
-          preguntas_respuestas: respuestas,
-          estado: 'optimizado'
-        })
-        .eq('id', orden_id).select().single();
-
-      if (error) return res.status(500).json({ error: error.message });
-      return res.status(200).json({ orden: data });
-    }
-
-    // ---------- generar_mensaje ----------
-    // Mensaje corto de presentación + tips de postulación (vive dentro
-    // de Workea CV, no es un producto aparte — ver decisión de diseño).
-    if (accion === 'generar_mensaje') {
-      if (orden.plan === 'diagnostico') {
-        return res.status(403).json({ error: 'El plan Diagnóstico no incluye mensaje de presentación' });
-      }
-      if (!orden.cv_optimizado) {
-        return res.status(400).json({ error: 'Primero optimiza el CV antes de generar el mensaje' });
+      if (!aiRes.ok) {
+        const errText = await aiRes.text();
+        console.error('Anthropic API error:', errText);
+        return res.status(200).json({
+          texto: 'No pudimos generar tu insight en este momento — inténtalo de nuevo en un rato.',
+          evidencia: [],
+          esGenerico: true
+        });
       }
 
-      const prompt = `Con base en este CV ya optimizado${orden.oferta_referencia ? ' y esta oferta laboral' : ''}, escribe:
-1. Un mensaje corto de presentación (2-4 líneas, tono profesional pero cercano, para LinkedIn o un formulario de postulación — NO es una carta formal larga).
-2. 2-3 tips concretos de estrategia de postulación para este caso específico.
+      const aiData = await aiRes.json();
+      let textoRespuesta = aiData?.content?.[0]?.text || '{}';
+      textoRespuesta = textoRespuesta.replace(/```json/gi, '').replace(/```/g, '').trim();
 
-CV optimizado:
-"""
-${JSON.stringify(orden.cv_optimizado)}
-"""
-${orden.oferta_referencia ? `\nOferta:\n"""\n${orden.oferta_referencia}\n"""\nEmpresa: ${orden.empresa_referencia || 'no especificada'}` : ''}
-
-IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior.
-
-Responde en JSON puro:
-{
-  "mensaje": "el mensaje corto de presentación",
-  "tips": ["tip concreto 1", "tip concreto 2"]
-}
-
-No inventes datos del candidato que no estén en el CV.`;
-
-      const resultado = await llamarClaude(prompt, 1000);
-
-      const { data, error } = await supabase.from('cv_ordenes')
-        .update({
-          mensaje_presentacion: resultado.mensaje || '',
-          tips_postulacion: resultado.tips || [],
-          estado: 'completo'
-        })
-        .eq('id', orden_id).select().single();
-
-      if (error) return res.status(500).json({ error: error.message });
-      return res.status(200).json({ orden: data });
-    }
-
-    // ---------- generar_banco_historias ----------
-    // Extrae 3-4 experiencias reales del CV en formato STAR, para que
-    // Entrevistas deje de usar preguntas genéricas y use la experiencia
-    // real de la persona como base de práctica.
-    if (accion === 'generar_banco_historias') {
-      if (orden.plan === 'diagnostico') {
-        return res.status(403).json({ error: 'El plan Diagnóstico no incluye Banco de Historias' });
-      }
-      if (!orden.cv_optimizado) {
-        return res.status(400).json({ error: 'Primero optimiza tu CV antes de generar el banco de historias' });
+      let parsed;
+      try {
+        // Por si el modelo agrega texto extra alrededor del JSON
+        const match = textoRespuesta.match(/\{[\s\S]*\}/);
+        parsed = JSON.parse(match ? match[0] : textoRespuesta);
+      } catch (e) {
+        console.error('No se pudo parsear la respuesta del modelo:', textoRespuesta);
+        parsed = { texto: textoRespuesta.slice(0, 220), evidencia: [] };
       }
 
-      const prompt = `Eres una psicóloga laboral. Lee este CV y extrae entre 3 y 4 experiencias reales que se puedan contar como historias completas en formato STAR (Situación, Desafío, Acción, Resultado) — útiles para practicar entrevistas.
-
-CV:
-"""
-${orden.cv_original}
-"""
-
-Usa ÚNICAMENTE información real del CV — si un elemento STAR no está claro en el texto, complétalo de forma genérica pero honesta (ej. "Resultado no especificado en el CV — te recomendamos cuantificarlo antes de tu entrevista"), nunca inventes cifras o detalles que no estén ahí.
-
-IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior.
-
-Responde en JSON puro:
-{
-  "historias": [
-    {
-      "titulo": "nombre corto de la historia, ej: Liderazgo de equipo en Fintech X",
-      "situacion": "qué estaba pasando",
-      "desafio": "qué problema o reto había",
-      "accion": "qué hizo la persona específicamente",
-      "resultado": "qué ocurrió (o nota honesta si el CV no lo especifica)",
-      "competencias": ["competencia 1", "competencia 2"]
-    }
-  ]
-}`;
-
-      const resultado = await llamarClaude(prompt, 3000);
-      const historias = resultado.historias || [];
-
-      const { data, error } = await supabase.from('cv_ordenes')
-        .update({ banco_historias: historias })
-        .eq('id', orden_id).select().single();
-
-      if (error) return res.status(500).json({ error: error.message });
-      return res.status(200).json({ orden: data });
-    }
-
-    // ---------- elegir_plantilla ----------
-    if (accion === 'elegir_plantilla') {
-      if (orden.plan !== 'pro') {
-        return res.status(403).json({ error: 'Elegir plantilla es exclusivo del plan Pro' });
-      }
-      const { plantilla } = req.body;
-      const validas = ['minimal', 'professional', 'harvard', 'executive', 'tech', 'creative'];
-      if (!validas.includes(plantilla)) return res.status(400).json({ error: 'Plantilla inválida' });
-
-      const { data, error } = await supabase.from('cv_ordenes')
-        .update({ plantilla_elegida: plantilla })
-        .eq('id', orden_id).select().single();
-
-      if (error) return res.status(500).json({ error: error.message });
-      return res.status(200).json({ orden: data });
+      return res.status(200).json({
+        texto: parsed.texto || 'No pudimos generar un insight claro esta vez.',
+        evidencia: Array.isArray(parsed.evidencia) ? parsed.evidencia : []
+      });
     }
 
     return res.status(400).json({ error: 'Acción desconocida: ' + accion });
 
   } catch (err) {
-    console.error('cv/index error:', err);
+    console.error('bitacora/index error:', err);
     return res.status(500).json({ error: 'Error interno: ' + (err.message || 'desconocido') });
   }
 };
