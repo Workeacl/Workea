@@ -209,6 +209,19 @@
 
   .goals-bar{ background:var(--card); border-bottom:1px solid var(--line); padding:10px 24px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .goal-chip{ font-size:12px; font-weight:700; color:var(--ink-soft); background:var(--bg); border:1px solid var(--line); padding:6px 13px; border-radius:100px; cursor:pointer; }
+  .goal-chip-wrap{ display:inline-flex; align-items:center; position:relative; }
+  .goal-chip-wrap .goal-chip{ padding-right:24px; }
+  .goal-chip-x{ position:absolute; right:4px; font-size:11px; color:var(--ink-faint); background:none; border:none; cursor:pointer; padding:2px 4px; line-height:1; }
+  .goal-chip-x:hover{ color:var(--bad); }
+  .interes-row{ display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+  .interes-btn{ font-size:11.5px; font-weight:600; color:var(--ink-soft); background:var(--bg); border:1px solid var(--line); padding:6px 11px; border-radius:100px; cursor:pointer; }
+  .interes-btn.active{ background:var(--card); border-color:var(--azul); color:var(--ink); box-shadow:0 0 0 1.5px var(--azul); }
+  .motivos-chips{ display:flex; gap:6px; flex-wrap:wrap; }
+  .motivo-chip{ font-size:11px; font-weight:600; color:var(--ink-faint); background:var(--bg); border:1px solid var(--line); padding:4px 10px; border-radius:100px; cursor:pointer; }
+  .motivo-chip.active{ background:var(--brand-tint, #eef1ff); color:var(--azul); border-color:var(--azul); }
+  .compare-table{ width:100%; border-collapse:collapse; background:var(--card); border-radius:14px; overflow:hidden; box-shadow:var(--shadow); }
+  .compare-table th{ text-align:left; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); background:var(--bg); padding:10px 14px; white-space:nowrap; }
+  .compare-table td{ padding:12px 14px; font-size:13px; border-top:1px solid var(--line); white-space:nowrap; }
   .goal-chip.active{ background:var(--grad); color:#fff; border-color:transparent; }
   .goal-chip.add{ background:none; border:1px dashed var(--line); color:var(--ink-faint); }
   .goal-add-form{ display:flex; gap:6px; align-items:center; }
@@ -231,6 +244,7 @@
     <div class="top-nav" id="top-nav">
       <button class="nav-link active" onclick="goToView('list')">Inicio</button>
       <button class="nav-link" onclick="goToView('calendar')">Calendario</button>
+      <button class="nav-link" onclick="goToView('comparar')">🧩 Comparar</button>
     </div>
     <button class="btn-ghost" id="btn-export" style="display:none;" onclick="exportarExcel()">📊 Exportar</button>
     <button class="btn-ghost" id="btn-add" style="display:none;" onclick="openModal()">＋ Agregar postulación</button>
@@ -265,6 +279,8 @@
     <div id="view-ficha" style="display:none;"></div>
 
     <div id="view-calendar" style="display:none;"></div>
+
+    <div id="view-comparar" style="display:none;"></div>
   </div>
 
 </div>
@@ -384,6 +400,8 @@
     'crear-postulacion': 'crear_postulacion',
     'actualizar-estado': 'actualizar_estado',
     'agregar-objetivo': 'agregar_objetivo',
+    'editar-objetivo': 'editar_objetivo',
+    'eliminar-objetivo': 'eliminar_objetivo',
     'editar-postulacion': 'editar_postulacion',
     'eliminar-postulacion': 'eliminar_postulacion',
     'eliminar-evento': 'eliminar_evento',
@@ -414,7 +432,10 @@
     const bar = document.getElementById('goals-bar');
     bar.style.display = 'flex';
     const chips = objetivos.map(o => `
-      <button class="goal-chip ${objetivoSeleccionado === o.id ? 'active' : ''}" onclick="seleccionarObjetivo('${o.id}')">${escapeHtml(o.cargo_objetivo)}</button>
+      <span class="goal-chip-wrap">
+        <button class="goal-chip ${objetivoSeleccionado === o.id ? 'active' : ''}" onclick="seleccionarObjetivo('${o.id}')" ondblclick="renombrarObjetivo('${o.id}', event)" title="Doble clic para renombrar">${escapeHtml(o.cargo_objetivo)}</button>
+        <button class="goal-chip-x" onclick="eliminarObjetivo('${o.id}', event)" title="Eliminar este objetivo">✕</button>
+      </span>
     `).join('');
     const todosChip = objetivos.length > 0
       ? `<button class="goal-chip ${!objetivoSeleccionado ? 'active' : ''}" onclick="seleccionarObjetivo(null)">Todos</button>`
@@ -453,6 +474,38 @@
       await cargarPostulaciones();
     } catch(err){
       showToast('No se pudo agregar: ' + err.message);
+    }
+  }
+
+  async function renombrarObjetivo(id, event){
+    event.stopPropagation();
+    const actual = objetivos.find(o => o.id === id);
+    if(!actual) return;
+    const nuevo = prompt('Renombrar objetivo:', actual.cargo_objetivo);
+    if(nuevo === null) return; // canceló
+    const val = nuevo.trim();
+    if(!val || val === actual.cargo_objetivo) return;
+    try{
+      await apiCall('editar-objetivo', { method:'POST', body: JSON.stringify({ objetivo_id: id, cargo_objetivo: val }) });
+      showToast('Renombrado a "' + val + '"');
+      await cargarPostulaciones();
+    } catch(err){
+      showToast('No se pudo renombrar: ' + err.message);
+    }
+  }
+
+  async function eliminarObjetivo(id, event){
+    event.stopPropagation();
+    const actual = objetivos.find(o => o.id === id);
+    if(!actual) return;
+    if(!confirm(`¿Eliminar el objetivo "${actual.cargo_objetivo}"? Las postulaciones que tenía quedarán sin objetivo asignado, pero no se borran.`)) return;
+    try{
+      await apiCall('eliminar-objetivo', { method:'POST', body: JSON.stringify({ objetivo_id: id }) });
+      showToast('Objetivo eliminado');
+      if(objetivoSeleccionado === id) objetivoSeleccionado = null;
+      await cargarPostulaciones();
+    } catch(err){
+      showToast('No se pudo eliminar: ' + err.message);
     }
   }
 
@@ -617,8 +670,26 @@
         <div id="ficha-titulos">
           <div class="ficha-title">${escapeHtml(p.cargo)}</div>
           <div class="ficha-company">${escapeHtml(p.empresa)}</div>
+          <div style="display:flex; gap:12px; margin-top:4px;">
+            ${p.sitio_web ? `<a href="${escapeHtml(p.sitio_web)}" target="_blank" rel="noopener" class="link-btn" style="font-size:12px;">🌐 Sitio de la empresa</a>` : ''}
+            ${p.link_oferta ? `<a href="${escapeHtml(p.link_oferta)}" target="_blank" rel="noopener" class="link-btn" style="font-size:12px;">🔗 Ver oferta original</a>` : ''}
+          </div>
         </div>
         <button class="icon-btn" title="Editar empresa/cargo" onclick="toggleEditarFicha()">✏️</button>
+      </div>
+      <div class="interes-row" id="interes-row">
+        <button class="interes-btn ${p.interes?.nivel === 'mucho' ? 'active' : ''}" onclick="marcarInteres('mucho', event)">❤️ Me interesa mucho</button>
+        <button class="interes-btn ${p.interes?.nivel === 'interesa' ? 'active' : ''}" onclick="marcarInteres('interesa', event)">🙂 Me interesa</button>
+        <button class="interes-btn ${p.interes?.nivel === 'no_seguro' ? 'active' : ''}" onclick="marcarInteres('no_seguro', event)">😐 No estoy seguro</button>
+        <button class="interes-btn ${p.interes?.nivel === 'no_interesa' ? 'active' : ''}" onclick="marcarInteres('no_interesa', event)">🙅 Ya no me interesa</button>
+      </div>
+      <div id="interes-motivos-form" style="display:none; margin:8px 0 0;">
+        <p style="font-size:11.5px; color:var(--ink-faint); margin-bottom:6px;">¿Por qué? (opcional, elige las que apliquen)</p>
+        <div class="motivos-chips">
+          ${['Renta','Cargo','Empresa','Cultura','Modalidad','Proyección','Ubicación','Beneficios'].map(m => `
+            <button class="motivo-chip ${(p.interes?.motivos || []).includes(m) ? 'active' : ''}" onclick="toggleMotivo('${m}', this)">${m}</button>
+          `).join('')}
+        </div>
       </div>
       <div style="margin:6px 0 0;">
         <button class="link-btn" onclick="toggleReclutadorSueldo()">${p.reclutador || p.sueldo ? '📇 Ver reclutador y sueldo' : '+ Agregar reclutador y sueldo (opcional)'}</button>
@@ -644,6 +715,8 @@
       <div id="edit-ficha-form" style="display:none; margin:10px 0;">
         <div class="field"><label>Empresa</label><input type="text" id="edit-empresa" value="${escapeHtml(p.empresa)}"></div>
         <div class="field"><label>Cargo</label><input type="text" id="edit-cargo" value="${escapeHtml(p.cargo)}"></div>
+        <div class="field"><label>Sitio web de la empresa</label><input type="text" id="edit-sitio-web" placeholder="https://..." value="${escapeHtml(p.sitio_web || '')}"></div>
+        <div class="field"><label>Link de la oferta</label><input type="text" id="edit-link-oferta" placeholder="https://..." value="${escapeHtml(p.link_oferta || '')}"></div>
         <div class="error-text" id="edit-error" style="display:none;"></div>
         <div class="edit-row">
           <button class="btn-primary" onclick="guardarEdicionFicha()">Guardar</button>
@@ -664,6 +737,8 @@
   async function guardarEdicionFicha(){
     const empresa = document.getElementById('edit-empresa').value.trim();
     const cargo = document.getElementById('edit-cargo').value.trim();
+    const sitio_web = document.getElementById('edit-sitio-web').value.trim();
+    const link_oferta = document.getElementById('edit-link-oferta').value.trim();
     const errEl = document.getElementById('edit-error');
     if(!empresa || !cargo){
       errEl.textContent = 'Empresa y cargo son obligatorios';
@@ -673,7 +748,7 @@
     try{
       await apiCall('editar-postulacion', {
         method: 'POST',
-        body: JSON.stringify({ postulacion_id: fichaActivaId, empresa, cargo })
+        body: JSON.stringify({ postulacion_id: fichaActivaId, empresa, cargo, sitio_web, link_oferta })
       });
       showToast('Actualizado');
       await cargarPostulaciones();
@@ -681,6 +756,41 @@
     } catch(err){
       errEl.textContent = err.message;
       errEl.style.display = 'block';
+    }
+  }
+
+  let motivosSeleccionados = [];
+
+  async function marcarInteres(nivel, event){
+    const p = postulaciones.find(x => x.id === fichaActivaId);
+    motivosSeleccionados = (p?.interes?.motivos) || [];
+    document.getElementById('interes-motivos-form').style.display = 'block';
+    document.querySelectorAll('.interes-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    try{
+      await apiCall('editar-postulacion', {
+        method: 'POST',
+        body: JSON.stringify({ postulacion_id: fichaActivaId, interes: { nivel, motivos: motivosSeleccionados } })
+      });
+      await cargarPostulaciones();
+    } catch(err){
+      showToast('No se pudo guardar: ' + err.message);
+    }
+  }
+
+  async function toggleMotivo(motivo, btn){
+    btn.classList.toggle('active');
+    const activos = [...document.querySelectorAll('.motivo-chip.active')].map(b => b.textContent.trim());
+    const p = postulaciones.find(x => x.id === fichaActivaId);
+    const nivelActual = p?.interes?.nivel || 'interesa';
+    try{
+      await apiCall('editar-postulacion', {
+        method: 'POST',
+        body: JSON.stringify({ postulacion_id: fichaActivaId, interes: { nivel: nivelActual, motivos: activos } })
+      });
+      await cargarPostulaciones();
+    } catch(err){
+      showToast('No se pudo guardar: ' + err.message);
     }
   }
 
@@ -803,10 +913,54 @@
   let calAnio = new Date().getFullYear();
   let calDiaSeleccionado = null;
 
+  const INTERES_LABEL = { mucho: '❤️', interesa: '🙂', no_seguro: '😐', no_interesa: '🙅' };
+
+  function renderComparar(){
+    const activas = postulaciones.filter(p => !TERMINALES.includes(p.estado_actual));
+    const el = document.getElementById('view-comparar');
+
+    if(!activas.length){
+      el.innerHTML = `<div class="empty-msg">Agrega o marca postulaciones activas para poder compararlas.</div>`;
+      return;
+    }
+
+    const filas = activas.map(p => `
+      <tr>
+        <td><b>${escapeHtml(p.cargo)}</b><br><span style="color:var(--ink-faint); font-size:12px;">${escapeHtml(p.empresa)}</span></td>
+        <td>${p.compatibilidad ? p.compatibilidad + '%' : '—'}</td>
+        <td>${escapeHtml(p.sueldo?.oferta_final || p.sueldo?.conversado || p.sueldo?.expectativa || '—')}</td>
+        <td>${escapeHtml(p.modalidad || '—')}</td>
+        <td>${ESTADO_LABEL[p.estado_actual] || p.estado_actual || '—'}</td>
+        <td style="font-size:16px; text-align:center;">${p.interes?.nivel ? INTERES_LABEL[p.interes.nivel] : '—'}</td>
+      </tr>
+    `).join('');
+
+    // Lectura simple: la de mayor match no siempre es la de mayor interés declarado
+    const mayorMatch = [...activas].sort((a,b) => (b.compatibilidad||0) - (a.compatibilidad||0))[0];
+    const mayorInteres = activas.find(p => p.interes?.nivel === 'mucho');
+    let lectura = '';
+    if(mayorMatch && mayorInteres && mayorMatch.id !== mayorInteres.id){
+      lectura = `<div class="insight-card" style="margin-top:14px;">💡 <b>${escapeHtml(mayorMatch.empresa)}</b> es tu mayor compatibilidad técnica (${mayorMatch.compatibilidad}%), pero marcaste que <b>${escapeHtml(mayorInteres.empresa)}</b> te interesa más. El Match mide qué tan bien calza tu experiencia — cuánto te conviene también depende de lo que tú valoras: renta, cultura, proyección. Ambas cosas importan.</div>`;
+    }
+
+    el.innerHTML = `
+      <p style="font-size:13px; color:var(--ink-faint); margin-bottom:12px;">Comparando tus ${activas.length} postulaciones activas.</p>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead><tr><th>Empresa / Cargo</th><th>Match</th><th>Renta</th><th>Modalidad</th><th>Etapa</th><th>Interés</th></tr></thead>
+          <tbody>${filas}</tbody>
+        </table>
+      </div>
+      ${lectura}
+    `;
+  }
+
   function goToView(view){
     document.getElementById('view-list').style.display = view === 'list' ? 'block' : 'none';
     document.getElementById('view-ficha').style.display = 'none';
     document.getElementById('view-calendar').style.display = view === 'calendar' ? 'block' : 'none';
+    document.getElementById('view-comparar').style.display = view === 'comparar' ? 'block' : 'none';
+    if(view === 'comparar') renderComparar();
     document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
     document.querySelector('.nav-link[onclick="goToView(\'' + view + '\')"]')?.classList.add('active');
     if(view === 'calendar'){ calDiaSeleccionado = null; renderCalendario(); }
