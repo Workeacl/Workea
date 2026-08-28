@@ -28,7 +28,9 @@ async function validarCodigoCareer(codigoLimpio) {
   const fila = Array.isArray(rows) ? rows[0] : null;
   if (!fila) return { ok: false, status: 401, error: 'Código de acceso inválido' };
 
-  if (String(fila.plan || '').trim() !== 'Workea Career') {
+  // El plan en Supabase se guarda corto ('career'), igual convención
+  // que usa Match ('match'/'experto') — no un texto largo.
+  if (String(fila.plan || '').trim() !== 'career') {
     return { ok: false, status: 401, error: 'Este código no corresponde a Workea Career' };
   }
 
