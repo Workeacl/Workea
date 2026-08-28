@@ -31,6 +31,10 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 .tb-logo{display:flex;align-items:center;gap:.5rem;font-family:var(--display);font-weight:700;font-size:1rem}
 .tb-logo svg{width:26px;height:19px}
 .tb-plan-badge{font-size:.72rem;font-weight:700;background:var(--brand-tint);color:var(--brand-strong);padding:.35rem .8rem;border-radius:999px}
+.workea-switcher{background:#fff;border-bottom:1px solid var(--line);padding:.5rem 1.25rem;display:flex;gap:.4rem;overflow-x:auto}
+.ws-link{font-size:.78rem;font-weight:700;color:var(--muted);padding:.4rem .8rem;border-radius:999px;white-space:nowrap;text-decoration:none;flex-shrink:0}
+.ws-link:hover{background:var(--bg)}
+.ws-link.active{background:var(--navy);color:#fff}
 
 .stage{max-width:760px;margin:0 auto;padding:2rem 1.4rem 5rem}
 
@@ -135,6 +139,13 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
   <div class="tb-plan-badge" id="tb-plan-badge" style="display:none;"></div>
 </div>
 
+<div class="workea-switcher">
+  <a href="/" class="ws-link">🎯 Match</a>
+  <a href="/workea-cv-planes.html" class="ws-link active">📄 CV</a>
+  <a href="/career.html" class="ws-link">🧭 Career</a>
+  <a href="/bitacora.html" class="ws-link">📖 Bitácora</a>
+</div>
+
 <div class="gate" id="gate">
   <h2>Inicia sesión para usar Workea CV</h2>
   <p>Usa la misma cuenta de Workea que ya usas en Mi Cuenta. <a href="/cuenta.html">Inicia sesión ahí →</a> y vuelve a esta página.</p>
@@ -155,12 +166,13 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       <div class="file-chip" id="file-chip" style="display:none;"></div>
     </div>
 
-    <div class="plan-select">
+    <div class="plan-select" id="plan-select">
       <div class="plan-pill" onclick="elegirPlan('diagnostico', this)"><div class="pp-name">Diagnóstico</div><div class="pp-price">$3.490</div></div>
       <div class="plan-pill active" onclick="elegirPlan('optimizado', this)"><div class="pp-name">Optimizado</div><div class="pp-price">$8.990</div></div>
       <div class="plan-pill" onclick="elegirPlan('pro', this)"><div class="pp-name">Pro</div><div class="pp-price">$11.990</div></div>
     </div>
-    <p class="plan-notice">⚠️ Prototipo: el pago aún no está conectado — cualquier plan que elijas acá corre gratis por ahora.</p>
+    <p class="plan-notice" id="plan-notice-libre">Elige el plan que ya compraste. Si aún no tienes uno, <a href="/workea-cv-planes.html" style="color:var(--brand-strong);font-weight:600;">ve a los planes de Workea CV →</a></p>
+    <p class="plan-notice" id="plan-notice-bloqueado" style="display:none;background:var(--brand-tint);border-color:var(--brand-tint-2);color:var(--brand-deep);">🔒 Plan activado con tu código de acceso.</p>
 
     <div class="contact-fields" style="margin-top:1.2rem;">
       <label style="font-size:.78rem;font-weight:600;color:var(--muted);display:block;margin-bottom:.4rem;">Para el encabezado de tu CV final (opcional, recomendado)</label>
@@ -222,6 +234,17 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 
   let session = null;
   let planActual = 'optimizado';
+  let codigoActual = '';
+
+  // Si la persona llega desde el link de activación (tras pagar), el
+  // plan y el código vienen en la URL — se bloquea el plan comprado.
+  (function leerParametrosDeActivacion(){
+    const params = new URLSearchParams(window.location.search);
+    const codigo = params.get('codigo');
+    const plan = params.get('plan');
+    if(codigo) codigoActual = codigo;
+    if(plan && ['diagnostico', 'optimizado', 'pro'].includes(plan)) planActual = plan;
+  })();
   let archivoBase64 = null;
   let archivoTipo = null;
   let ordenActual = null;
@@ -235,6 +258,22 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     if(!session){ return; }
     document.getElementById('gate').style.display = 'none';
     document.getElementById('app-stage').style.display = 'block';
+
+    // Si llegó con un código de activación, bloquea el plan comprado
+    // en vez de dejar que elija cualquiera (ese plan es el que pagó).
+    if(codigoActual){
+      document.querySelectorAll('.plan-pill').forEach(p => {
+        p.classList.remove('active');
+        p.onclick = null;
+        p.style.opacity = '.45';
+        p.style.cursor = 'default';
+      });
+      const pillIdx = { diagnostico: 0, optimizado: 1, pro: 2 }[planActual];
+      const pills = document.querySelectorAll('.plan-pill');
+      if(pills[pillIdx]){ pills[pillIdx].classList.add('active'); pills[pillIdx].style.opacity = '1'; }
+      document.getElementById('plan-notice-libre').style.display = 'none';
+      document.getElementById('plan-notice-bloqueado').style.display = 'block';
+    }
   }
 
   async function apiCall(path, accion, extra = {}){
@@ -309,7 +348,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     try{
       const r1 = await apiCall('/api/cv', 'extraer_texto', { archivo_base64: archivoBase64, tipo: archivoTipo });
       texto = r1.texto;
-      const r2 = await apiCall('/api/cv', 'crear_orden', { cv_original: texto, plan: planActual });
+      const r2 = await apiCall('/api/cv', 'crear_orden', { cv_original: texto, plan: planActual, codigo: codigoActual });
       orden = r2.orden;
     } catch(err){
       document.getElementById('btn-analizar').disabled = false;
