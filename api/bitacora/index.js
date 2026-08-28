@@ -23,7 +23,7 @@ const ESTADOS_ACTIVOS = ['postule', 'me_contactaron', 'entrevista_rrhh', 'entrev
 const ESTADOS_ENTREVISTA = ['entrevista_rrhh', 'entrevista_tecnica', 'entrevista_final'];
 const ESTADOS_CERRADOS = ['rechazado', 'cancele_proceso'];
 const TIPOS_ESTADO = ['postule', 'me_contactaron', 'entrevista_rrhh', 'entrevista_tecnica', 'entrevista_final', 'evaluacion', 'oferta_recibida', 'rechazado', 'cancele_proceso'];
-const CAMPOS_EDITABLES = ['empresa', 'cargo', 'modalidad', 'seniority', 'link_oferta', 'reclutador', 'sueldo'];
+const CAMPOS_EDITABLES = ['empresa', 'cargo', 'modalidad', 'seniority', 'link_oferta', 'sitio_web', 'reclutador', 'sueldo', 'interes'];
 
 module.exports = async (req, res) => {
   try {
@@ -124,6 +124,32 @@ module.exports = async (req, res) => {
         .insert({ usuario_id: userData.user.id, cargo_objetivo: cargo_objetivo.trim() }).select().single();
       if (error) return res.status(500).json({ error: error.message });
       return res.status(201).json({ objetivo: data });
+    }
+
+    // ---------- editar_objetivo ----------
+    if (accion === 'editar_objetivo') {
+      const { objetivo_id, cargo_objetivo } = req.body;
+      if (!objetivo_id) return res.status(400).json({ error: 'objetivo_id es obligatorio' });
+      if (!cargo_objetivo || !cargo_objetivo.trim()) return res.status(400).json({ error: 'cargo_objetivo es obligatorio' });
+
+      const { data, error } = await supabase.from('bitacora_objetivos')
+        .update({ cargo_objetivo: cargo_objetivo.trim() }).eq('id', objetivo_id).select().single();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ objetivo: data });
+    }
+
+    // ---------- eliminar_objetivo ----------
+    // Las postulaciones que tenían este objetivo quedan con objetivo_id = null
+    // (no se borran, solo pierden la etiqueta).
+    if (accion === 'eliminar_objetivo') {
+      const { objetivo_id } = req.body;
+      if (!objetivo_id) return res.status(400).json({ error: 'objetivo_id es obligatorio' });
+
+      await supabase.from('postulaciones').update({ objetivo_id: null }).eq('objetivo_id', objetivo_id);
+
+      const { error } = await supabase.from('bitacora_objetivos').delete().eq('id', objetivo_id);
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ ok: true });
     }
 
     // ---------- editar_postulacion ----------
