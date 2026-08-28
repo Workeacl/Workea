@@ -48,6 +48,8 @@ a{color:inherit;text-decoration:none}
 .trust-ic{flex-shrink:0;font-size:.95rem;line-height:1.4}
 
 .plans-wrap{max-width:1100px;margin:0 auto;padding:0 1.5rem 4.5rem}
+.codigo-activacion{max-width:640px;margin:2.5rem auto 0;text-align:center;background:var(--brand-tint);border:1px solid var(--brand-tint-2);border-radius:16px;padding:1.4rem 1.6rem}
+.codigo-activacion p{font-size:.92rem;color:var(--navy)}
 .plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;align-items:stretch;max-width:900px;margin:0 auto}
 .plan-card{
   background:var(--surface);border:1.5px solid var(--line);border-radius:18px;
@@ -156,7 +158,7 @@ a{color:inherit;text-decoration:none}
       <div class="plan-name">🔍 Diagnóstico + Feedback</div>
       <div class="plan-desc">¿Qué le pasa a tu CV y qué deberías cambiar? Análisis completo con recomendaciones específicas por sección.</div>
       <div class="plan-price">$3.490</div>
-      <a class="plan-cta" href="#">Elegir Diagnóstico</a>
+      <button class="plan-cta" onclick="comprarPlanCv('diagnostico', this)">Elegir Diagnóstico</button>
       <div class="feat-list">
         <div class="feat-row"><span class="ic">✅</span> Puntaje de compatibilidad ATS</div>
         <div class="feat-row"><span class="ic">✅</span> Errores y alertas detectadas</div>
@@ -172,7 +174,7 @@ a{color:inherit;text-decoration:none}
       <div class="plan-name">🚀 CV Optimizado</div>
       <div class="plan-desc">Reescríbanmelo, no tengo tiempo ni sé cómo. Tu CV reescrito completo y optimizado para ATS, listo para postular.</div>
       <div class="plan-price">$8.990</div>
-      <a class="plan-cta" href="#">Elegir Optimizado</a>
+      <button class="plan-cta" onclick="comprarPlanCv('optimizado', this)">Elegir Optimizado</button>
       <div class="feat-list">
         <div class="feat-row"><span class="ic">✅</span> Todo lo de Diagnóstico + Feedback</div>
         <div class="feat-row"><span class="ic">✅</span> Reescritura completa del contenido</div>
@@ -188,7 +190,7 @@ a{color:inherit;text-decoration:none}
       <div class="plan-name">👑 CV Pro</div>
       <div class="plan-desc">Además, que se vea profesional. Todo lo anterior, con diseño: elige plantilla y recibe versión ATS-safe + visual.</div>
       <div class="plan-price">$11.990</div>
-      <a class="plan-cta" href="#">Elegir Pro</a>
+      <button class="plan-cta" onclick="comprarPlanCv('pro', this)">Elegir Pro</button>
       <div class="feat-list">
         <div class="feat-row"><span class="ic">✅</span> Todo lo de CV Optimizado</div>
         <div class="feat-row"><span class="ic">✅</span> 6 plantillas: Minimal, Professional, Harvard, Executive, Tech, Creative</div>
@@ -197,6 +199,19 @@ a{color:inherit;text-decoration:none}
       </div>
     </div>
 
+  </div>
+
+  <div class="codigo-activacion">
+    <p><b>🔑 ¿Ya tienes un código de acceso?</b> Actívalo y ve directo a trabajar tu CV.</p>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:.8rem;">
+      <select id="codigo-plan-select" style="font-family:inherit;font-size:.88rem;padding:.6rem .9rem;border:1.5px solid var(--line);border-radius:999px;">
+        <option value="diagnostico">Diagnóstico</option>
+        <option value="optimizado" selected>Optimizado</option>
+        <option value="pro">Pro</option>
+      </select>
+      <input type="text" id="codigo-input" placeholder="Tu código (WC-...)" style="font-family:inherit;font-size:.88rem;padding:.6rem .9rem;border:1.5px solid var(--line);border-radius:999px;width:180px;">
+      <button class="btn-ghost" onclick="activarCodigoCv()">Activar y continuar →</button>
+    </div>
   </div>
 
   <p class="compare-note">¿No sabes cuál elegir? Si tu CV nunca te ha dado entrevistas, parte por <a href="#">Diagnóstico + Feedback</a>. Si ya sabes qué falta y solo quieres que quede listo, ve directo a Optimizado o Pro.</p>
@@ -210,6 +225,43 @@ a{color:inherit;text-decoration:none}
     <a class="pb-cta" href="#">Conocer asesorías →</a>
   </div>
 </div>
+
+<script>
+async function comprarPlanCv(plan, btn){
+  const textoOriginal = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Generando tu pago...';
+  try {
+    const r = await fetch('/api/crear-pago', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ producto: 'cv', plan })
+    });
+    const data = await r.json();
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      alert(data.error || 'No se pudo iniciar el pago. Intenta de nuevo.');
+      btn.disabled = false;
+      btn.textContent = textoOriginal;
+    }
+  } catch (err) {
+    alert('No se pudo iniciar el pago. Intenta de nuevo.');
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+  }
+}
+
+function activarCodigoCv(){
+  const codigo = document.getElementById('codigo-input').value.trim();
+  const plan = document.getElementById('codigo-plan-select').value;
+  if(!codigo){
+    alert('Ingresa tu código de acceso.');
+    return;
+  }
+  window.location.href = `/workea-cv-experiencia.html?codigo=${encodeURIComponent(codigo)}&plan=${encodeURIComponent(plan)}`;
+}
+</script>
 
 </body>
 </html>
