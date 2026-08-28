@@ -5,23 +5,67 @@
 // incluir 3-5 ofertas laborales REALES y actuales en el informe, bajo
 // el campo "oportunidades_reales". No se guarda nada, no se mantiene
 // una base de datos propia de ofertas — se busca fresco en cada informe.
+//
+// CAMBIO: la validación de código ahora usa la misma tabla "codigos"
+// de Supabase que Match y CV (antes usaba una variable de entorno
+// simple sin control de vencimiento ni de reutilización — cualquiera
+// con un código CAR- podía compartirlo sin límite).
+
+const SUPABASE_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
+
+async function validarCodigoCareer(codigoLimpio) {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey) {
+    return { ok: false, status: 500, error: 'Falta configurar SUPABASE_SERVICE_ROLE_KEY en Vercel' };
+  }
+
+  const headers = { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` };
+  const url = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&select=codigo,plan,estado,vence`;
+  const r = await fetch(url, { headers });
+  if (!r.ok) return { ok: false, status: 502, error: 'No se pudo verificar el código. Intenta de nuevo.' };
+
+  const rows = await r.json();
+  const fila = Array.isArray(rows) ? rows[0] : null;
+  if (!fila) return { ok: false, status: 401, error: 'Código de acceso inválido' };
+
+  if (String(fila.plan || '').trim() !== 'Workea Career') {
+    return { ok: false, status: 401, error: 'Este código no corresponde a Workea Career' };
+  }
+
+  if (fila.vence) {
+    if (new Date(fila.vence).getTime() < Date.now()) {
+      return { ok: false, status: 401, error: 'Tu acceso venció. Adquiere un nuevo informe para continuar.' };
+    }
+    return { ok: true };
+  }
+
+  // Primer uso real: fijamos "vence" ahora mismo (30 días de acceso).
+  const vence = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  const patchUrl = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&vence=is.null`;
+  await fetch(patchUrl, {
+    method: 'PATCH',
+    headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ vence: vence.toISOString() })
+  }).catch(() => console.error('No se pudo fijar "vence" para', codigoLimpio));
+
+  return { ok: true };
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Metodo no permitido' });
 
   const { cv, contexto, codigo } = req.body || {};
 
-  const listaCodigos = (process.env.WORKEA_CODIGO || '')
-    .split(',').map(c => c.trim()).filter(Boolean);
   const codigoLimpio = (codigo || '').trim();
-  if (listaCodigos.length && !listaCodigos.includes(codigoLimpio)) {
-    return res.status(401).json({ error: 'Codigo de acceso invalido' });
-  }
-  // Restriccion de prefijo: Career solo acepta el codigo maestro o CAR-
   const esMaestro = codigoLimpio.toUpperCase() === 'WORKEA2026';
-  const esCAR = codigoLimpio.toUpperCase().startsWith('CAR-');
-  if (!esMaestro && !esCAR) {
-    return res.status(401).json({ error: 'Este codigo no corresponde a Workea Career' });
+
+  if (!esMaestro) {
+    if (!codigoLimpio) return res.status(401).json({ error: 'Código de acceso inválido' });
+    if (!codigoLimpio.toUpperCase().startsWith('CAR-')) {
+      return res.status(401).json({ error: 'Este código no corresponde a Workea Career' });
+    }
+    const resultado = await validarCodigoCareer(codigoLimpio.toUpperCase());
+    if (!resultado.ok) return res.status(resultado.status).json({ error: resultado.error });
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
