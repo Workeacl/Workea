@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workea CV · Plantillas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --grad:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0);
+  --brand-strong:#5138d6;--navy:#0a1430;
+  --ink:#101b38;--muted:#5a6785;--faint:#8f9ab3;
+  --bg:#f6f8fc;--surface:#ffffff;--line:#e3e6f0;
+  --shadow:0 1px 2px rgba(16,27,56,.05),0 8px 24px rgba(16,27,56,.07);
+  --display:'Bricolage Grotesque',sans-serif;--body:'Instrument Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);background:var(--bg);color:var(--ink)}
+.tp-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;background:var(--surface);border-bottom:1px solid var(--line)}
+.tp-header .logo{display:flex;align-items:center;gap:.5rem;font-family:var(--display);font-weight:700;font-size:1.05rem;color:var(--navy);text-decoration:none}
+.tp-header .back{font-size:.85rem;font-weight:600;color:var(--brand-strong);text-decoration:none}
+
+/* ---- selector ---- */
+.picker-bar{
+  position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:14px 20px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
+}
+.picker-btn{
+  font-family:var(--body);font-size:.82rem;font-weight:700;padding:.5rem 1rem;border-radius:999px;
+  border:1.5px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;
+}
+.picker-btn.active{background:var(--grad);color:#fff;border-color:transparent}
+
+.color-bar{
+  background:#fdfdfe;border-bottom:1px solid var(--line);padding:12px 20px;
+  display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:center;
+}
+.color-label{font-size:.78rem;font-weight:600;color:var(--muted)}
+.color-swatch{
+  width:26px;height:26px;border-radius:50%;border:2px solid #fff;
+  box-shadow:0 0 0 1.5px var(--line);cursor:pointer;padding:0;
+}
+.color-swatch.active{box-shadow:0 0 0 2.5px var(--brand-strong)}
+.color-note{font-size:.72rem;color:var(--faint);margin-left:.5rem}
+.color-bar.disabled .color-swatch{opacity:.3;pointer-events:none}
+
+.stage{padding:2.5rem 1rem 4rem;display:flex;justify-content:center}
+.sheet{
+  width:100%;max-width:780px;background:#fff;box-shadow:var(--shadow);
+  min-height:1000px;
+}
+.tpl{display:none}
+.tpl.active{display:block}
+
+/* =========================================================
+   1. MINIMAL — sans-serif, mucho blanco, una columna, ATS-safe
+   ========================================================= */
+#tpl-minimal{padding:3.2rem 3.4rem;font-family:var(--body)}
+#tpl-minimal .m-name{font-family:var(--display);font-size:2rem;font-weight:700;letter-spacing:-.01em}
+#tpl-minimal .m-role{font-size:1rem;color:var(--muted);margin-top:.2rem}
+#tpl-minimal .m-contact{font-size:.82rem;color:var(--faint);margin-top:.6rem;display:flex;gap:1rem;flex-wrap:wrap}
+#tpl-minimal .m-sec{margin-top:2rem}
+#tpl-minimal .m-sec h3{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:.9rem}
+#tpl-minimal .m-item{margin-bottom:1.2rem}
+#tpl-minimal .m-item-head{display:flex;justify-content:space-between;font-weight:600;font-size:.95rem}
+#tpl-minimal .m-item-sub{font-size:.85rem;color:var(--muted);margin-bottom:.35rem}
+#tpl-minimal .m-item p{font-size:.85rem;color:var(--ink);line-height:1.55}
+#tpl-minimal .m-skills{display:flex;flex-wrap:wrap;gap:.5rem}
+#tpl-minimal .m-skill{font-size:.78rem;background:var(--bg);padding:.3rem .7rem;border-radius:6px;color:var(--muted)}
+
+/* =========================================================
+   2. PROFESSIONAL — clásico corporativo, barra lateral fina
+   ========================================================= */
+#tpl-professional{display:grid;grid-template-columns:220px 1fr;font-family:var(--body);min-height:1000px}
+#tpl-professional .p-side{background:var(--tpl-accent, var(--navy));color:#fff;padding:2.6rem 1.8rem}
+#tpl-professional .p-name{font-family:var(--display);font-size:1.4rem;font-weight:700;line-height:1.2}
+#tpl-professional .p-role{font-size:.85rem;color:#a5bde6;margin-top:.3rem;margin-bottom:2rem}
+#tpl-professional .p-side h4{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:#7d94c9;margin:1.4rem 0 .6rem}
+#tpl-professional .p-side .p-contact-row{font-size:.78rem;color:#dbe4f5;margin-bottom:.4rem}
+#tpl-professional .p-skill-tag{display:inline-block;font-size:.72rem;background:rgba(255,255,255,.1);padding:.25rem .6rem;border-radius:5px;margin:0 .3rem .3rem 0}
+#tpl-professional .p-main{padding:2.6rem 2.2rem}
+#tpl-professional .p-main h3{font-family:var(--display);font-size:.95rem;font-weight:700;color:var(--tpl-accent, var(--brand-strong));border-bottom:2px solid var(--line);padding-bottom:.4rem;margin-bottom:1rem;margin-top:1.8rem}
+#tpl-professional .p-main h3:first-child{margin-top:0}
+#tpl-professional .p-item-head{display:flex;justify-content:space-between;font-weight:700;font-size:.9rem}
+#tpl-professional .p-item-sub{font-size:.82rem;color:var(--muted);margin-bottom:.3rem}
+#tpl-professional .p-item p{font-size:.83rem;color:var(--ink);line-height:1.5;margin-bottom:1rem}
+
+/* =========================================================
+   3. HARVARD — el estándar académico/consultoría, serif, sobrio
+   ========================================================= */
+#tpl-harvard{padding:3rem 3.6rem;font-family:'Source Serif 4',serif;color:#111}
+#tpl-harvard .h-name{font-size:1.5rem;font-weight:700;text-align:center;letter-spacing:.02em}
+#tpl-harvard .h-contact{text-align:center;font-size:.8rem;margin-top:.3rem;color:#333}
+#tpl-harvard hr{border:none;border-top:1.5px solid #111;margin:1.4rem 0 1.6rem}
+#tpl-harvard .h-sec{margin-bottom:1.4rem}
+#tpl-harvard .h-sec h3{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #111;padding-bottom:.2rem;margin-bottom:.7rem}
+#tpl-harvard .h-item-head{display:flex;justify-content:space-between;font-weight:700;font-size:.88rem}
+#tpl-harvard .h-item-sub{display:flex;justify-content:space-between;font-style:italic;font-size:.83rem;margin-bottom:.35rem}
+#tpl-harvard ul{margin:0 0 .9rem 1.1rem}
+#tpl-harvard li{font-size:.83rem;line-height:1.5;margin-bottom:.15rem}
+
+/* =========================================================
+   4. EXECUTIVE — senior, tipografía grande, acentos sobrios
+   ========================================================= */
+#tpl-executive{padding:0;font-family:var(--body)}
+#tpl-executive .e-header{background:var(--tpl-accent, var(--navy));color:#fff;padding:2.6rem 3rem}
+#tpl-executive .e-name{font-family:'Playfair Display',serif;font-size:2.1rem;font-weight:700}
+#tpl-executive .e-role{font-size:.95rem;color:#9fb3dd;margin-top:.4rem;letter-spacing:.03em;text-transform:uppercase}
+#tpl-executive .e-contact{margin-top:1rem;font-size:.78rem;color:#c5d2ec;display:flex;gap:1.3rem;flex-wrap:wrap}
+#tpl-executive .e-body{padding:2.4rem 3rem}
+#tpl-executive .e-summary{font-size:.92rem;color:var(--muted);line-height:1.6;margin-bottom:1.8rem;font-style:italic;border-left:3px solid var(--tpl-accent, var(--brand-strong));padding-left:1rem}
+#tpl-executive h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--tpl-accent, var(--navy));margin:1.6rem 0 1rem}
+#tpl-executive h3:first-of-type{margin-top:0}
+#tpl-executive .e-item-head{display:flex;justify-content:space-between;font-weight:700;font-size:.92rem}
+#tpl-executive .e-item-sub{font-size:.82rem;color:var(--muted);margin-bottom:.3rem}
+#tpl-executive .e-item p{font-size:.84rem;line-height:1.55;margin-bottom:1rem}
+
+/* =========================================================
+   5. TECH — moderno, monospace touches, tags de skills, dark accent
+   ========================================================= */
+#tpl-tech{padding:2.8rem 3rem;font-family:var(--body);background:#fff}
+#tpl-tech .t-name{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700}
+#tpl-tech .t-name .t-prompt{color:var(--tpl-accent, var(--brand-strong))}
+#tpl-tech .t-role{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--muted);margin-top:.3rem}
+#tpl-tech .t-contact{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--faint);margin-top:.7rem;display:flex;gap:1rem;flex-wrap:wrap}
+#tpl-tech .t-sec{margin-top:2rem}
+#tpl-tech .t-sec h3{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#fff;background:var(--tpl-accent, var(--navy));display:inline-block;padding:.3rem .7rem;border-radius:5px;margin-bottom:1rem}
+#tpl-tech .t-item-head{display:flex;justify-content:space-between;font-weight:700;font-size:.9rem}
+#tpl-tech .t-item-sub{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);margin-bottom:.4rem}
+#tpl-tech .t-item p{font-size:.84rem;line-height:1.5;margin-bottom:.9rem}
+#tpl-tech .t-skills{display:flex;flex-wrap:wrap;gap:.5rem}
+#tpl-tech .t-skill{font-family:'JetBrains Mono',monospace;font-size:.75rem;background:var(--bg);border:1px solid var(--line);padding:.3rem .65rem;border-radius:5px}
+
+/* =========================================================
+   6. CREATIVE — visual, sidebar de color, más gráfico
+   ========================================================= */
+#tpl-creative{display:grid;grid-template-columns:250px 1fr;min-height:1000px;font-family:var(--body)}
+#tpl-creative .c-side{background:var(--tpl-accent, var(--grad));color:#fff;padding:2.6rem 1.8rem;position:relative}
+#tpl-creative .c-avatar{width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:1.6rem;font-weight:800;margin-bottom:1.2rem}
+#tpl-creative .c-name{font-family:var(--display);font-size:1.3rem;font-weight:800;line-height:1.15}
+#tpl-creative .c-role{font-size:.82rem;margin-top:.3rem;opacity:.9}
+#tpl-creative .c-side h4{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;margin:1.6rem 0 .6rem;opacity:.85}
+#tpl-creative .c-contact-row{font-size:.78rem;margin-bottom:.4rem}
+#tpl-creative .c-skill-bar{margin-bottom:.7rem}
+#tpl-creative .c-skill-bar .lbl{font-size:.75rem;margin-bottom:.25rem}
+#tpl-creative .c-skill-track{height:5px;background:rgba(255,255,255,.25);border-radius:3px;overflow:hidden}
+#tpl-creative .c-skill-fill{height:100%;background:#fff;border-radius:3px}
+#tpl-creative .c-main{padding:2.6rem 2.2rem}
+#tpl-creative h3{font-family:var(--display);font-size:.95rem;font-weight:800;color:var(--ink);margin:1.8rem 0 1rem;display:flex;align-items:center;gap:.5rem}
+#tpl-creative h3:first-child{margin-top:0}
+#tpl-creative h3::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--tpl-accent, var(--grad));display:inline-block}
+#tpl-creative .c-item-head{display:flex;justify-content:space-between;font-weight:700;font-size:.9rem}
+#tpl-creative .c-item-sub{font-size:.82rem;color:var(--muted);margin-bottom:.3rem}
+#tpl-creative .c-item p{font-size:.83rem;color:var(--ink);line-height:1.5;margin-bottom:1rem}
+
+@media(max-width:640px){
+  #tpl-professional,#tpl-creative{grid-template-columns:1fr}
+  .sheet{max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<div class="tp-header">
+  <a class="logo" href="/">work<em style="font-style:normal;color:var(--brand-strong)">ea</em></a>
+  <a class="back" href="/workea-cv-planes.html">← Volver a planes de CV</a>
+</div>
+
+<div class="picker-bar">
+  <button class="picker-btn active" onclick="mostrar('minimal', this)">Minimal</button>
+  <button class="picker-btn" onclick="mostrar('professional', this)">Professional</button>
+  <button class="picker-btn" onclick="mostrar('harvard', this)">Harvard</button>
+  <button class="picker-btn" onclick="mostrar('executive', this)">Executive</button>
+  <button class="picker-btn" onclick="mostrar('tech', this)">Tech</button>
+  <button class="picker-btn" onclick="mostrar('creative', this)">Creative</button>
+</div>
+
+<div class="color-bar" id="color-bar">
+  <span class="color-label">Color de acento:</span>
+  <button class="color-swatch active" style="background:#0a1430" onclick="tenirActivo('#0a1430', this)" title="Navy (por defecto)"></button>
+  <button class="color-swatch" style="background:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0)" onclick="tenirActivo('linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0)', this)" title="Degradado Workea"></button>
+  <button class="color-swatch" style="background:#1f6feb" onclick="tenirActivo('#1f6feb', this)" title="Azul"></button>
+  <button class="color-swatch" style="background:#0f9d58" onclick="tenirActivo('#0f9d58', this)" title="Verde"></button>
+  <button class="color-swatch" style="background:#8b2fc9" onclick="tenirActivo('#8b2fc9', this)" title="Morado"></button>
+  <button class="color-swatch" style="background:#c9302f" onclick="tenirActivo('#c9302f', this)" title="Rojo"></button>
+  <button class="color-swatch" style="background:#3a3a3a" onclick="tenirActivo('#3a3a3a', this)" title="Gris oscuro"></button>
+  <span class="color-note" id="color-note">No disponible para Minimal / Harvard — mantienen diseño neutro por diseño (máxima compatibilidad ATS)</span>
+</div>
+
+<div class="stage">
+  <div class="sheet">
+
+    <!-- 1. MINIMAL -->
+    <div class="tpl active" id="tpl-minimal">
+      <div class="m-name">Javiera Muñoz</div>
+      <div class="m-role">Product Manager</div>
+      <div class="m-contact"><span>javiera.munoz@mail.com</span><span>+56 9 1234 5678</span><span>Santiago, Chile</span><span>linkedin.com/in/javieramunoz</span></div>
+
+      <div class="m-sec">
+        <h3>Resumen</h3>
+        <p style="font-size:.85rem;line-height:1.6;color:var(--ink)">Product Manager con 6 años liderando equipos multidisciplinarios en fintech y retail. Especialista en descubrimiento de producto y priorización basada en datos.</p>
+      </div>
+
+      <div class="m-sec">
+        <h3>Experiencia</h3>
+        <div class="m-item">
+          <div class="m-item-head"><span>Product Manager Senior</span><span>2022 — Presente</span></div>
+          <div class="m-item-sub">Fintech X · Santiago, Chile</div>
+          <p>Lideré el rediseño del flujo de onboarding, aumentando la conversión en 28%. Gestioné un equipo de 4 personas y coordiné con ingeniería, diseño y negocio.</p>
+        </div>
+        <div class="m-item">
+          <div class="m-item-head"><span>Product Manager</span><span>2019 — 2022</span></div>
+          <div class="m-item-sub">Retail Co · Santiago, Chile</div>
+          <p>Definí la hoja de ruta del producto de fidelización, con foco en retención de usuarios. Implementé métricas de producto con impacto directo en decisiones de negocio.</p>
+        </div>
+      </div>
+
+      <div class="m-sec">
+        <h3>Educación</h3>
+        <div class="m-item">
+          <div class="m-item-head"><span>Ingeniería Civil Industrial</span><span>2014 — 2018</span></div>
+          <div class="m-item-sub">Universidad de Chile</div>
+        </div>
+      </div>
+
+      <div class="m-sec">
+        <h3>Habilidades</h3>
+        <div class="m-skills">
+          <span class="m-skill">Product Discovery</span><span class="m-skill">SQL</span><span class="m-skill">Figma</span><span class="m-skill">A/B Testing</span><span class="m-skill">Scrum</span><span class="m-skill">Inglés avanzado</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. PROFESSIONAL -->
+    <div class="tpl" id="tpl-professional">
+      <div class="p-side">
+        <div class="p-name">Javiera Muñoz</div>
+        <div class="p-role">Product Manager</div>
+        <h4>Contacto</h4>
+        <div class="p-contact-row">javiera.munoz@mail.com</div>
+        <div class="p-contact-row">+56 9 1234 5678</div>
+        <div class="p-contact-row">Santiago, Chile</div>
+        <div class="p-contact-row">linkedin.com/in/javieramunoz</div>
+        <h4>Habilidades</h4>
+        <span class="p-skill-tag">Product Discovery</span><span class="p-skill-tag">SQL</span><span class="p-skill-tag">Figma</span><span class="p-skill-tag">A/B Testing</span><span class="p-skill-tag">Scrum</span>
+        <h4>Idiomas</h4>
+        <div class="p-contact-row">Español (nativo)</div>
+        <div class="p-contact-row">Inglés (avanzado)</div>
+      </div>
+      <div class="p-main">
+        <h3>Resumen</h3>
+        <p style="font-size:.85rem;line-height:1.6;color:var(--ink);margin-bottom:1.5rem">Product Manager con 6 años liderando equipos multidisciplinarios en fintech y retail. Especialista en descubrimiento de producto y priorización basada en datos.</p>
+
+        <h3>Experiencia</h3>
+        <div class="p-item-head"><span>Product Manager Senior</span><span>2022 — Presente</span></div>
+        <div class="p-item-sub">Fintech X · Santiago, Chile</div>
+        <p>Lideré el rediseño del flujo de onboarding, aumentando la conversión en 28%. Gestioné un equipo de 4 personas.</p>
+        <div class="p-item-head"><span>Product Manager</span><span>2019 — 2022</span></div>
+        <div class="p-item-sub">Retail Co · Santiago, Chile</div>
+        <p>Definí la hoja de ruta del producto de fidelización, con foco en retención de usuarios.</p>
+
+        <h3>Educación</h3>
+        <div class="p-item-head"><span>Ingeniería Civil Industrial</span><span>2014 — 2018</span></div>
+        <div class="p-item-sub">Universidad de Chile</div>
+      </div>
+    </div>
+
+    <!-- 3. HARVARD -->
+    <div class="tpl" id="tpl-harvard">
+      <div class="h-name">JAVIERA MUÑOZ</div>
+      <div class="h-contact">Santiago, Chile · +56 9 1234 5678 · javiera.munoz@mail.com · linkedin.com/in/javieramunoz</div>
+      <hr>
+
+      <div class="h-sec">
+        <h3>Educación</h3>
+        <div class="h-item-head"><span>Universidad de Chile</span><span>Santiago, Chile</span></div>
+        <div class="h-item-sub"><span>Ingeniería Civil Industrial</span><span>2014 — 2018</span></div>
+      </div>
+
+      <div class="h-sec">
+        <h3>Experiencia Profesional</h3>
+        <div class="h-item-head"><span>Fintech X</span><span>Santiago, Chile</span></div>
+        <div class="h-item-sub"><span>Product Manager Senior</span><span>2022 — Presente</span></div>
+        <ul>
+          <li>Lideré el rediseño del flujo de onboarding, aumentando la conversión en 28%</li>
+          <li>Gestioné un equipo de 4 personas, coordinando con ingeniería, diseño y negocio</li>
+        </ul>
+        <div class="h-item-head"><span>Retail Co</span><span>Santiago, Chile</span></div>
+        <div class="h-item-sub"><span>Product Manager</span><span>2019 — 2022</span></div>
+        <ul>
+          <li>Definí la hoja de ruta del producto de fidelización, con foco en retención</li>
+          <li>Implementé métricas de producto con impacto directo en decisiones de negocio</li>
+        </ul>
+      </div>
+
+      <div class="h-sec">
+        <h3>Habilidades y Otros</h3>
+        <p style="font-size:.83rem;line-height:1.6">Product Discovery, SQL, Figma, A/B Testing, Scrum. Idiomas: español (nativo), inglés (avanzado).</p>
+      </div>
+    </div>
+
+    <!-- 4. EXECUTIVE -->
+    <div class="tpl" id="tpl-executive">
+      <div class="e-header">
+        <div class="e-name">Javiera Muñoz</div>
+        <div class="e-role">Product Manager</div>
+        <div class="e-contact"><span>javiera.munoz@mail.com</span><span>+56 9 1234 5678</span><span>Santiago, Chile</span></div>
+      </div>
+      <div class="e-body">
+        <div class="e-summary">"Product Manager con 6 años liderando equipos multidisciplinarios en fintech y retail, con foco en descubrimiento de producto y decisiones basadas en datos."</div>
+
+        <h3>Experiencia</h3>
+        <div class="e-item-head"><span>Product Manager Senior</span><span>2022 — Presente</span></div>
+        <div class="e-item-sub">Fintech X · Santiago, Chile</div>
+        <p>Lideré el rediseño del flujo de onboarding, aumentando la conversión en 28%. Gestioné un equipo de 4 personas.</p>
+        <div class="e-item-head"><span>Product Manager</span><span>2019 — 2022</span></div>
+        <div class="e-item-sub">Retail Co · Santiago, Chile</div>
+        <p>Definí la hoja de ruta del producto de fidelización, con foco en retención de usuarios.</p>
+
+        <h3>Educación</h3>
+        <div class="e-item-head"><span>Ingeniería Civil Industrial</span><span>2014 — 2018</span></div>
+        <div class="e-item-sub">Universidad de Chile</div>
+      </div>
+    </div>
+
+    <!-- 5. TECH -->
+    <div class="tpl" id="tpl-tech">
+      <div class="t-name"><span class="t-prompt">&gt;</span> javiera_munoz</div>
+      <div class="t-role">// Product Manager</div>
+      <div class="t-contact"><span>javiera.munoz@mail.com</span><span>+56 9 1234 5678</span><span>Santiago, CL</span><span>github.com/jmunoz</span></div>
+
+      <div class="t-sec">
+        <h3>experiencia</h3>
+        <div class="t-item-head"><span>Product Manager Senior</span><span>2022 — Presente</span></div>
+        <div class="t-item-sub">Fintech X · Santiago, Chile</div>
+        <p>Lideré el rediseño del flujo de onboarding, aumentando la conversión en 28%. Gestioné un equipo de 4 personas.</p>
+        <div class="t-item-head"><span>Product Manager</span><span>2019 — 2022</span></div>
+        <div class="t-item-sub">Retail Co · Santiago, Chile</div>
+        <p>Definí la hoja de ruta del producto de fidelización, con foco en retención de usuarios.</p>
+      </div>
+
+      <div class="t-sec">
+        <h3>skills</h3>
+        <div class="t-skills">
+          <span class="t-skill">product-discovery</span><span class="t-skill">sql</span><span class="t-skill">figma</span><span class="t-skill">ab-testing</span><span class="t-skill">scrum</span>
+        </div>
+      </div>
+
+      <div class="t-sec">
+        <h3>educación</h3>
+        <div class="t-item-head"><span>Ingeniería Civil Industrial</span><span>2014 — 2018</span></div>
+        <div class="t-item-sub">Universidad de Chile</div>
+      </div>
+    </div>
+
+    <!-- 6. CREATIVE -->
+    <div class="tpl" id="tpl-creative">
+      <div class="c-side">
+        <div class="c-avatar">JM</div>
+        <div class="c-name">Javiera Muñoz</div>
+        <div class="c-role">Product Manager</div>
+
+        <h4>Contacto</h4>
+        <div class="c-contact-row">javiera.munoz@mail.com</div>
+        <div class="c-contact-row">+56 9 1234 5678</div>
+        <div class="c-contact-row">Santiago, Chile</div>
+
+        <h4>Habilidades</h4>
+        <div class="c-skill-bar"><div class="lbl">Product Discovery</div><div class="c-skill-track"><div class="c-skill-fill" style="width:92%"></div></div></div>
+        <div class="c-skill-bar"><div class="lbl">SQL</div><div class="c-skill-track"><div class="c-skill-fill" style="width:80%"></div></div></div>
+        <div class="c-skill-bar"><div class="lbl">Figma</div><div class="c-skill-track"><div class="c-skill-fill" style="width:75%"></div></div></div>
+
+        <h4>Idiomas</h4>
+        <div class="c-contact-row">Español (nativo)</div>
+        <div class="c-contact-row">Inglés (avanzado)</div>
+      </div>
+      <div class="c-main">
+        <h3>Resumen</h3>
+        <p style="font-size:.85rem;line-height:1.6;color:var(--ink);margin-bottom:1.5rem">Product Manager con 6 años liderando equipos multidisciplinarios en fintech y retail.</p>
+
+        <h3>Experiencia</h3>
+        <div class="c-item-head"><span>Product Manager Senior</span><span>2022 — Presente</span></div>
+        <div class="c-item-sub">Fintech X · Santiago, Chile</div>
+        <p>Lideré el rediseño del flujo de onboarding, aumentando la conversión en 28%.</p>
+        <div class="c-item-head"><span>Product Manager</span><span>2019 — 2022</span></div>
+        <div class="c-item-sub">Retail Co · Santiago, Chile</div>
+        <p>Definí la hoja de ruta del producto de fidelización.</p>
+
+        <h3>Educación</h3>
+        <div class="c-item-head"><span>Ingeniería Civil Industrial</span><span>2014 — 2018</span></div>
+        <div class="c-item-sub">Universidad de Chile</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SIN_COLOR = ['minimal', 'harvard'];
+
+function mostrar(id, btn){
+  document.querySelectorAll('.tpl').forEach(t => t.classList.remove('active'));
+  document.getElementById('tpl-' + id).classList.add('active');
+  document.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const colorBar = document.getElementById('color-bar');
+  const note = document.getElementById('color-note');
+  if(SIN_COLOR.includes(id)){
+    colorBar.classList.add('disabled');
+    note.style.display = 'inline';
+  } else {
+    colorBar.classList.remove('disabled');
+    note.style.display = 'none';
+  }
+}
+
+function tenirActivo(color, btn){
+  const activo = document.querySelector('.tpl.active');
+  if(!activo) return;
+  activo.style.setProperty('--tpl-accent', color);
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// estado inicial: Minimal está activa por defecto, sin color
+document.getElementById('color-bar').classList.add('disabled');
+document.getElementById('color-note').style.display = 'inline';
+</script>
+
+</body>
+</html>
