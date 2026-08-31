@@ -1572,18 +1572,18 @@ function activarCodigo(){
 
 function startEsencial(){
   const ultimoUso = localStorage.getItem('workea_esencial_ultimo_uso');
-  const TREINTA_DIAS = 30 * 24 * 60 * 60 * 1000;
-  if(ultimoUso && (Date.now() - parseInt(ultimoUso, 10)) < TREINTA_DIAS){
-    const diasRestantes = Math.ceil((TREINTA_DIAS - (Date.now() - parseInt(ultimoUso, 10))) / (24*60*60*1000));
+  const SIETE_DIAS = 7 * 24 * 60 * 60 * 1000;
+  if(ultimoUso && (Date.now() - parseInt(ultimoUso, 10)) < SIETE_DIAS){
+    const diasRestantes = Math.ceil((SIETE_DIAS - (Date.now() - parseInt(ultimoUso, 10))) / (24*60*60*1000));
     startApp(); showScreen('scr-input',0);
     document.getElementById('inputError').innerHTML =
-      '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tu Informe Esencial gratis este mes — vuelve a estar disponible en ' + diasRestantes + ' día' + (diasRestantes===1?'':'s') + '. Para analizar ahora, el <b>Workea Match</b> te entrega el plan de acción completo al instante.</span></div>';
+      '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tu Informe Esencial gratis esta semana — vuelve a estar disponible en ' + diasRestantes + ' día' + (diasRestantes===1?'':'s') + '. Para analizar ahora, el <b>Workea Match</b> te entrega el plan de acción completo al instante.</span></div>';
     return;
   }
   realMode = true; modoPlan = 'esencial'; accessCode = '';
   startApp(); showScreen('scr-input',0);
   document.getElementById('realStrip').innerHTML =
-    '<p><b>🩵 Informe Esencial gratis activado.</b> Pega el texto de tu oferta, sube su PDF o una captura — y luego tu CV. Recibirás tu orientación al instante (1 informe gratis al mes).</p>';
+    '<p><b>🩵 Informe Esencial gratis activado.</b> Pega el texto de tu oferta, sube su PDF o una captura — y luego tu CV. Recibirás tu orientación al instante (1 informe gratis por semana).</p>';
   document.querySelector('[data-tab="link"]').classList.add('hidden');
   setTab('text');
 }
