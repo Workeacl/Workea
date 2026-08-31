@@ -591,6 +591,26 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     </div>
   </section>
 
+  <section class="section" id="seguridad" style="padding-top:0">
+    <div style="background:var(--navy);border-radius:22px;padding:2.4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem">
+      <div>
+        <div style="font-size:1.5rem;margin-bottom:.7rem">🔒</div>
+        <h4 style="color:#fff;font-size:1rem;margin-bottom:.4rem">Tus datos, solo para tu análisis</h4>
+        <p style="color:#c9d6ef;font-size:.88rem">Tu CV y tus datos se usan únicamente para generar tu informe. Nunca se comparten con empresas ni reclutadores.</p>
+      </div>
+      <div>
+        <div style="font-size:1.5rem;margin-bottom:.7rem">🗑️</div>
+        <h4 style="color:#fff;font-size:1rem;margin-bottom:.4rem">Elimínalos cuando quieras</h4>
+        <p style="color:#c9d6ef;font-size:.88rem">Puedes pedir la eliminación de tu información en cualquier momento, escribiendo a workea@tupartnerlaboral.cl.</p>
+      </div>
+      <div>
+        <div style="font-size:1.5rem;margin-bottom:.7rem">🇨🇱</div>
+        <h4 style="color:#fff;font-size:1rem;margin-bottom:.4rem">Pensado para Chile</h4>
+        <p style="color:#c9d6ef;font-size:.88rem">Sueldos en pesos chilenos, contexto del mercado local — no una traducción genérica de una herramienta extranjera.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="section" id="planes" style="padding-top:0;text-align:center">
     <div class="section-head" style="margin:0 auto">
       <h2>¿Quieres ver los niveles de análisis de Workea Match?</h2>
@@ -1551,16 +1571,19 @@ function activarCodigo(){
 }
 
 function startEsencial(){
-  if(localStorage.getItem('workea_esencial_usado')){
+  const ultimoUso = localStorage.getItem('workea_esencial_ultimo_uso');
+  const TREINTA_DIAS = 30 * 24 * 60 * 60 * 1000;
+  if(ultimoUso && (Date.now() - parseInt(ultimoUso, 10)) < TREINTA_DIAS){
+    const diasRestantes = Math.ceil((TREINTA_DIAS - (Date.now() - parseInt(ultimoUso, 10))) / (24*60*60*1000));
     startApp(); showScreen('scr-input',0);
     document.getElementById('inputError').innerHTML =
-      '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tu Informe Esencial gratis en este dispositivo. Para tu siguiente análisis, el <b>Workea Match</b> te entrega el plan de acción completo al instante.</span></div>';
+      '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tu Informe Esencial gratis este mes — vuelve a estar disponible en ' + diasRestantes + ' día' + (diasRestantes===1?'':'s') + '. Para analizar ahora, el <b>Workea Match</b> te entrega el plan de acción completo al instante.</span></div>';
     return;
   }
   realMode = true; modoPlan = 'esencial'; accessCode = '';
   startApp(); showScreen('scr-input',0);
   document.getElementById('realStrip').innerHTML =
-    '<p><b>🩵 Informe Esencial gratis activado.</b> Pega el texto de tu oferta, sube su PDF o una captura — y luego tu CV. Recibirás tu orientación al instante (1 informe gratis por persona).</p>';
+    '<p><b>🩵 Informe Esencial gratis activado.</b> Pega el texto de tu oferta, sube su PDF o una captura — y luego tu CV. Recibirás tu orientación al instante (1 informe gratis al mes).</p>';
   document.querySelector('[data-tab="link"]').classList.add('hidden');
   setTab('text');
 }
@@ -1608,7 +1631,7 @@ async function runRealAnalysis(oferta, cv){
     clearInterval(iv);
     if(!r.ok || data.error){ throw new Error(data.error||'Error del servidor'); }
     bar.style.width='100%';
-    if(modoPlan==='esencial'){ try{ localStorage.setItem('workea_esencial_usado','1'); }catch(e){} }
+    if(modoPlan==='esencial'){ try{ localStorage.setItem('workea_esencial_ultimo_uso', Date.now().toString()); }catch(e){} }
     setTimeout(()=>{ renderResults(data); },400);
   }catch(e){
     clearInterval(iv);
