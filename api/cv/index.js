@@ -22,14 +22,14 @@ const SUPABASE_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
 // Valida un código de acceso de Workea CV contra la tabla "codigos"
 // de Supabase (mismo patrón que api/analizar.js para Match).
 // El código debe existir, tener plan === el plan pedido, y no estar vencido.
-async function validarCodigoCv(codigoLimpio, planPedido) {
+async function validarCodigoCv(codigoLimpio, planPedido, usuarioId) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!serviceKey) {
     return { ok: false, status: 500, error: 'Falta configurar SUPABASE_SERVICE_ROLE_KEY en Vercel' };
   }
 
   const headers = { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` };
-  const url = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&select=codigo,plan,estado,vence`;
+  const url = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&select=codigo,plan,estado,vence,usado_por`;
   const r = await fetch(url, { headers });
   if (!r.ok) return { ok: false, status: 502, error: 'No se pudo verificar el código. Intenta de nuevo.' };
 
@@ -45,21 +45,39 @@ async function validarCodigoCv(codigoLimpio, planPedido) {
     return { ok: false, status: 401, error: 'Este código no corresponde al plan "' + planPedido + '"' };
   }
 
-  if (fila.vence) {
-    if (new Date(fila.vence).getTime() < Date.now()) {
+  // Si el código ya fue activado antes, solo la MISMA cuenta que lo
+  // activó puede seguir usándolo (necesario porque el plan Optimizado/Pro
+  // se trabaja en varias sesiones). Cualquier otra cuenta queda bloqueada
+  // — esto es lo que evita que un código se comparta con más gente.
+  if (fila.estado === 'usado') {
+    if (fila.usado_por !== usuarioId) {
+      return { ok: false, status: 401, error: 'Este código ya fue activado por otra cuenta.' };
+    }
+    if (fila.vence && new Date(fila.vence).getTime() < Date.now()) {
       return { ok: false, status: 401, error: 'Tu acceso venció. Adquiere un nuevo plan para continuar.' };
     }
     return { ok: true };
   }
 
-  // Primer uso real: fijamos "vence" ahora mismo (30 días de acceso).
+  // Primer uso real: lo marcamos 'usado' y lo atamos a esta cuenta,
+  // de forma atómica (el filtro estado=eq.libre evita que 2 personas
+  // ganen la carrera si intentan usarlo en el mismo instante).
   const vence = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-  const patchUrl = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&vence=is.null`;
-  await fetch(patchUrl, {
+  const patchUrl = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&estado=eq.libre`;
+  const patchRes = await fetch(patchUrl, {
     method: 'PATCH',
-    headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-    body: JSON.stringify({ vence: vence.toISOString() })
-  }).catch(() => console.error('No se pudo fijar "vence" para', codigoLimpio));
+    headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+    body: JSON.stringify({ estado: 'usado', usado_por: usuarioId, vence: vence.toISOString() })
+  });
+
+  if (!patchRes.ok) {
+    return { ok: false, status: 502, error: 'No se pudo activar el código. Intenta de nuevo.' };
+  }
+  const actualizadas = await patchRes.json().catch(() => []);
+  if (!Array.isArray(actualizadas) || actualizadas.length === 0) {
+    // Alguien más ganó la carrera justo en este instante.
+    return { ok: false, status: 401, error: 'Este código ya fue activado por otra cuenta.' };
+  }
 
   return { ok: true };
 }
@@ -196,7 +214,7 @@ module.exports = async (req, res) => {
         if (!codigoLimpio.toUpperCase().startsWith('WC-')) {
           return res.status(401).json({ error: 'Este código no corresponde a Workea CV' });
         }
-        const resultado = await validarCodigoCv(codigoLimpio.toUpperCase(), plan);
+        const resultado = await validarCodigoCv(codigoLimpio.toUpperCase(), plan, usuarioId);
         if (!resultado.ok) return res.status(resultado.status).json({ error: resultado.error });
       }
 
