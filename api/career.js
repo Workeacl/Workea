@@ -20,7 +20,7 @@ async function validarCodigoCareer(codigoLimpio) {
   }
 
   const headers = { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` };
-  const url = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&select=codigo,plan,estado,vence`;
+  const url = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&select=codigo,plan,estado`;
   const r = await fetch(url, { headers });
   if (!r.ok) return { ok: false, status: 502, error: 'No se pudo verificar el código. Intenta de nuevo.' };
 
@@ -34,21 +34,30 @@ async function validarCodigoCareer(codigoLimpio) {
     return { ok: false, status: 401, error: 'Este código no corresponde a Workea Career' };
   }
 
-  if (fila.vence) {
-    if (new Date(fila.vence).getTime() < Date.now()) {
-      return { ok: false, status: 401, error: 'Tu acceso venció. Adquiere un nuevo informe para continuar.' };
-    }
-    return { ok: true };
+  // Career no tiene sistema de cuentas (no hay a quién atar el código),
+  // así que su única protección real es un solo uso TOTAL: la primera
+  // vez que se usa con éxito, queda marcado 'usado' para siempre.
+  // El filtro estado=eq.libre hace esto atómico: si dos personas
+  // intentan usarlo en el mismo instante, solo una gana la carrera.
+  if (fila.estado === 'usado') {
+    return { ok: false, status: 401, error: 'Este código ya fue utilizado. Cada código de Workea Career sirve para un solo informe.' };
   }
 
-  // Primer uso real: fijamos "vence" ahora mismo (30 días de acceso).
-  const vence = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-  const patchUrl = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&vence=is.null`;
-  await fetch(patchUrl, {
+  const patchUrl = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&estado=eq.libre`;
+  const patchRes = await fetch(patchUrl, {
     method: 'PATCH',
-    headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-    body: JSON.stringify({ vence: vence.toISOString() })
-  }).catch(() => console.error('No se pudo fijar "vence" para', codigoLimpio));
+    headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+    body: JSON.stringify({ estado: 'usado' })
+  });
+
+  if (!patchRes.ok) {
+    return { ok: false, status: 502, error: 'No se pudo activar el código. Intenta de nuevo.' };
+  }
+  const actualizadas = await patchRes.json().catch(() => []);
+  if (!Array.isArray(actualizadas) || actualizadas.length === 0) {
+    // Alguien más ganó la carrera justo en este instante.
+    return { ok: false, status: 401, error: 'Este código ya fue utilizado. Cada código de Workea Career sirve para un solo informe.' };
+  }
 
   return { ok: true };
 }
