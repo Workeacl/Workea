@@ -6,7 +6,24 @@
 
 const SUPABASE_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
 
-async function validarCodigoEnSupabase(codigoLimpio) {
+// Deja un rastro de qué IPs han usado este código, sin bloquear nada.
+// Si algún día ves 5 IPs distintas en un código de 1 solo cliente,
+// eso es una señal de que probablemente se compartió — pero la
+// decisión de qué hacer siempre la tomas tú, revisando el panel.
+async function registrarUsoDelCodigo(codigoLimpio, ip, ipsVistasActual, usosActual, headers) {
+  if (!ip) return;
+  const ips = Array.isArray(ipsVistasActual) ? ipsVistasActual : [];
+  if (!ips.includes(ip)) ips.push(ip);
+
+  const patchUrl = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}`;
+  await fetch(patchUrl, {
+    method: 'PATCH',
+    headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ ips_vistas: ips, usos_totales: (usosActual || 0) + 1 })
+  });
+}
+
+async function validarCodigoEnSupabase(codigoLimpio, ip) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!serviceKey) {
     return { ok: false, status: 500, error: 'Falta configurar SUPABASE_SERVICE_ROLE_KEY en Vercel' };
@@ -17,7 +34,7 @@ async function validarCodigoEnSupabase(codigoLimpio) {
     'Authorization': `Bearer ${serviceKey}`
   };
 
-  const url = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&select=codigo,plan,estado,vence`;
+  const url = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&select=codigo,plan,estado,vence,ips_vistas,usos_totales`;
   const r = await fetch(url, { headers });
 
   if (!r.ok) {
@@ -30,6 +47,12 @@ async function validarCodigoEnSupabase(codigoLimpio) {
   if (!fila) {
     return { ok: false, status: 401, error: 'Código de acceso inválido' };
   }
+
+  // Registro de uso — NUNCA bloquea el acceso, solo deja un rastro para
+  // que puedas notar patrones raros (ej: el mismo código usado desde
+  // muchas IPs distintas) y decidir tú misma si vale la pena investigar.
+  // No espera respuesta (no retrasa ni puede fallar la validación real).
+  registrarUsoDelCodigo(codigoLimpio, ip, fila.ips_vistas, fila.usos_totales, headers).catch(() => {});
 
   // Si "vence" ya está fijado, revisamos si el código sigue vigente.
   if (fila.vence) {
@@ -85,7 +108,8 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: 'Este código no corresponde a Workea Match' });
       }
 
-      const resultado = await validarCodigoEnSupabase(codigoLimpio.toUpperCase());
+      const ipReq = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || null;
+      const resultado = await validarCodigoEnSupabase(codigoLimpio.toUpperCase(), ipReq);
       if (!resultado.ok) {
         return res.status(resultado.status).json({ error: resultado.error });
       }
