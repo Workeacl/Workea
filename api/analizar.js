@@ -23,6 +23,48 @@ async function registrarUsoDelCodigo(codigoLimpio, ip, ipsVistasActual, usosActu
   });
 }
 
+// Controla que el modo Esencial (gratis) no se pueda automatizar sin límite.
+// Una fila por IP en la tabla "esencial_usos": si ya usó el gratis hace
+// menos de 7 días, se bloquea. Si nunca la vimos o ya pasó la semana,
+// se deja pasar y se actualiza la fecha.
+async function verificarLimiteEsencial(ip) {
+  if (!ip) return { ok: true }; // si no hay IP disponible, no bloqueamos (caso raro)
+
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey) return { ok: true }; // si falta la config, no bloqueamos el flujo gratis por un error nuestro
+
+  const headers = { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` };
+  const SIETE_DIAS_MS = 7 * 24 * 60 * 60 * 1000;
+
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/esencial_usos?ip=eq.${encodeURIComponent(ip)}&select=ip,ultimo_uso`;
+    const r = await fetch(url, { headers });
+    if (r.ok) {
+      const rows = await r.json();
+      const fila = Array.isArray(rows) ? rows[0] : null;
+      if (fila?.ultimo_uso) {
+        const desdeUltimoUso = Date.now() - new Date(fila.ultimo_uso).getTime();
+        if (desdeUltimoUso < SIETE_DIAS_MS) {
+          const diasRestantes = Math.ceil((SIETE_DIAS_MS - desdeUltimoUso) / (24 * 60 * 60 * 1000));
+          return { ok: false, error: `Ya se usó el Informe Esencial gratis desde esta conexión hace poco. Vuelve a estar disponible en ${diasRestantes} día(s), o adquiere el Informe Match para analizar ahora.` };
+        }
+      }
+    }
+
+    // Registramos/actualizamos esta IP con la fecha de ahora.
+    await fetch(`${SUPABASE_URL}/rest/v1/esencial_usos`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ ip, ultimo_uso: new Date().toISOString() })
+    });
+
+    return { ok: true };
+  } catch (e) {
+    console.error('Error verificando límite Esencial:', e);
+    return { ok: true }; // si falla la verificación por un error nuestro, no bloqueamos a alguien real
+  }
+}
+
 async function validarCodigoEnSupabase(codigoLimpio, ip) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!serviceKey) {
@@ -113,6 +155,17 @@ export default async function handler(req, res) {
       if (!resultado.ok) {
         return res.status(resultado.status).json({ error: resultado.error });
       }
+    }
+  } else {
+    // Modo Esencial: es gratis, pero el límite de "1 vez por semana" que se
+    // muestra en pantalla es solo una gentileza del navegador (localStorage) —
+    // sin control de servidor, cualquiera podría llamar a este endpoint
+    // directamente y saltárselo. Este control real es por IP: bloquea el
+    // abuso automatizado sin afectar a una persona real usando el sitio.
+    const ipReq = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || null;
+    const limite = await verificarLimiteEsencial(ipReq);
+    if (!limite.ok) {
+      return res.status(429).json({ error: limite.error });
     }
   }
 
