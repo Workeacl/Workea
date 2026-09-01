@@ -207,8 +207,8 @@ PRINCIPIOS OBLIGATORIOS:
 - Para benchmark_salarial: si la oferta menciona sueldo, evalúa si está alineado, bajo o sobre el mercado para ese cargo y seniority. Si no lo menciona, entrega un rango referencial. Usa formulaciones honestas ("la mayoría de las ofertas similares ofrecen...") y nunca inventes porcentajes o estadísticas precisas que no puedas fundamentar.
 - Para nivel_calibre: compara el seniority/experiencia real del CV con el nivel que pide la oferta. Sé honesta: si la persona tiene más experiencia de la que pide el cargo, es "sobrecalificado"; si tiene menos, "subcalificado"; si calza, "alineado".
 
-${esencial ? 'MODO ESENCIAL: genera solo la orientación inicial. Incluye info, compatibilidad, fortalezas (máx 3), oportunidades (máx 2), brechas (máx 2) y recomendacion. Deja claves, cv, entrevista, insuficiente y comparacion como listas vacías. Deja nivel_calibre y benchmark_salarial con sus campos de texto vacíos y números en 0 (son funciones exclusivas del plan pagado). Sé breve y directo.' : 'Incluye 3-6 fortalezas, 2-4 oportunidades, 0-3 brechas, 0-3 insuficiente, 8-12 claves, 3-4 recomendaciones de CV y 5-6 preguntas de entrevista. Completa nivel_calibre y benchmark_salarial con contenido real y específico, nunca vacío.'}
-Si recibes UNA sola oferta, deja "comparacion" como lista vacía. Si recibes VARIAS ofertas: incluye "comparacion" ordenada de mayor a menor prioridad de postulación, y desarrolla TODO el análisis detallado sobre la oferta prioritaria, indicando en compatibilidad.titulo a qué oferta corresponde.
+${esencial ? 'MODO ESENCIAL: genera solo la orientación inicial. Incluye info, compatibilidad, primera_impresion, fortalezas (máx 3), oportunidades (máx 2), brechas (máx 2) y recomendacion. Deja claves, cv, entrevista, insuficiente y comparacion como listas vacías. Deja nivel_calibre y benchmark_salarial con sus campos de texto vacíos y números en 0 (son funciones exclusivas del plan pagado). Para prioridad: usa nivel "media" y en razon escribe exactamente "Disponible en el Informe Workea Match, con análisis completo de nivel y sueldo" (también es exclusivo del plan pagado, porque depende de nivel_calibre y benchmark_salarial). Sé breve y directo.' : 'Incluye 3-6 fortalezas, 2-4 oportunidades, 0-3 brechas, 0-3 insuficiente, 8-12 claves, 3-4 recomendaciones de CV y 5-6 preguntas de entrevista. Completa nivel_calibre y benchmark_salarial con contenido real y específico, nunca vacío. Completa prioridad con un juicio real, combinando compatibilidad + nivel_calibre + benchmark_salarial — una oferta con % alto pero con brecha crítica, modalidad no deseada o sueldo muy bajo mercado debe bajar a prioridad "media" o "baja", explicando por qué en razon.'}
+Si recibes UNA sola oferta, deja "comparacion" como lista vacía. Si recibes VARIAS ofertas: incluye "comparacion" ordenada por prioridad.nivel primero (alta, luego media, luego baja) y por porcentaje como criterio secundario dentro de cada prioridad — no ordenes solo por porcentaje. Desarrolla TODO el análisis detallado sobre la oferta de mayor prioridad real (no necesariamente el mayor %), indicando en compatibilidad.titulo a qué oferta corresponde.
 Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`;
 
   const tool = {
@@ -235,6 +235,16 @@ Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`
           },
           required: ['porcentaje', 'titulo', 'lectura']
         },
+        prioridad: {
+          type: 'object',
+          description: 'OBLIGATORIO. Síntesis de si vale la pena postular de verdad — no es lo mismo que el porcentaje de compatibilidad. Una oferta puede tener alto % técnico pero baja prioridad real si hay una brecha crítica, modalidad no deseada, o sueldo muy bajo mercado. Considera: compatibilidad, nivel_calibre y benchmark_salarial en conjunto.',
+          properties: {
+            nivel: { type: 'string', enum: ['alta', 'media', 'baja'] },
+            razon: { type: 'string', description: 'OBLIGATORIO: 1-2 líneas explicando por qué esta prioridad, mencionando el factor decisivo (ej: brecha crítica, modalidad, sueldo, o que todo está alineado). Nunca dejar vacío.' }
+          },
+          required: ['nivel', 'razon']
+        },
+        primera_impresion: { type: 'string', description: 'OBLIGATORIO, disponible en todos los planes. Una sola frase (máx 20 palabras) capturando la reacción instintiva, de los primeros segundos, que tendría quien revisa candidatos al ver este CV junto a esta oferta específica — antes de leer el análisis detallado. No repitas el contenido de fortalezas/brechas, es un ángulo distinto: la impresión inicial, visceral, no el análisis razonado. Ejemplo de tono: "Perfil que llama la atención por su experiencia en X, pero genera una duda inmediata sobre Y."' },
         observacion: { type: 'string', description: 'señal relevante sobre la oportunidad misma, string vacío si no aplica' },
         nivel_calibre: {
           type: 'object',
@@ -270,9 +280,9 @@ Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`
           },
           required: ['nivel', 'titulo', 'detalle']
         },
-        comparacion: { type: 'array', items: { type: 'object', properties: { oferta: { type: 'string' }, porcentaje: { type: 'integer' }, veredicto: { type: 'string' } }, required: ['oferta', 'porcentaje', 'veredicto'] } }
+        comparacion: { type: 'array', items: { type: 'object', properties: { oferta: { type: 'string' }, porcentaje: { type: 'integer' }, prioridad: { type: 'string', enum: ['alta', 'media', 'baja'] }, veredicto: { type: 'string' } }, required: ['oferta', 'porcentaje', 'prioridad', 'veredicto'] } }
       },
-      required: ['info', 'compatibilidad', 'observacion', 'nivel_calibre', 'benchmark_salarial', 'fortalezas', 'oportunidades', 'brechas', 'insuficiente', 'claves', 'cv', 'entrevista', 'recomendacion', 'comparacion']
+      required: ['info', 'compatibilidad', 'prioridad', 'primera_impresion', 'observacion', 'nivel_calibre', 'benchmark_salarial', 'fortalezas', 'oportunidades', 'brechas', 'insuficiente', 'claves', 'cv', 'entrevista', 'recomendacion', 'comparacion']
     }
   };
 
