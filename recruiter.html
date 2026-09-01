@@ -605,6 +605,14 @@ function renderResults(d){
         <div class="qb"><span>Qué evalúa</span><p>${esc(q.que_evalua||'')}</p></div>
         <div class="qb"><span>Respuesta ideal del candidato</span><p>${esc(q.respuesta_ideal||'')}</p></div>
       </div></div>`).join('');
+  const mensajesContacto=(arr)=>(arr||[]).map((m,i)=>`
+    <div class="res-card" style="margin-bottom:.9rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem">
+        <p style="font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--brand-strong)">${esc(m.enfoque||'Mensaje '+(i+1))}</p>
+        <button class="q-toggle" style="width:auto;padding:.4rem .8rem;font-size:.8rem;border-radius:999px;border:1px solid var(--gray-ln);background:var(--gray-bg)" onclick="copiarMensaje(this,${i})">📋 Copiar</button>
+      </div>
+      <p id="msgContacto${i}" style="white-space:pre-wrap;font-size:.92rem;color:var(--ink);line-height:1.6">${esc(m.mensaje||'')}</p>
+    </div>`).join('');
 
   const salColor = sal.lectura?.toLowerCase().includes('bajo') ? 'salary-warn' : 'salary-ok';
   const salIcon = sal.lectura?.toLowerCase().includes('bajo') ? '⚠️' : '✅';
@@ -678,6 +686,12 @@ function renderResults(d){
       ${preguntas(d.preguntas_entrevista)}
     </div>
 
+    <div class="res-card full" style="margin-bottom:1.2rem">
+      <h3><span class="ico">💬</span> Mensajes de contacto para LinkedIn</h3>
+      <p style="color:var(--muted);font-size:.88rem;margin-bottom:1rem">Listos para copiar y enviar a un candidato pasivo que encuentres con la búsqueda.</p>
+      ${mensajesContacto(d.mensajes_contacto)}
+    </div>
+
     <div class="res-card full">
       <h3><span class="ico">🎯</span> Estrategia recomendada</h3>
       <p style="color:var(--muted);font-size:.95rem">${esc(d.estrategia_resumen||'')}</p>
@@ -687,6 +701,17 @@ function renderResults(d){
 }
 
 function toggleQ(btn){btn.parentElement.classList.toggle('open');}
+
+function copiarMensaje(btn, i){
+  const texto = document.getElementById('msgContacto'+i)?.textContent || '';
+  navigator.clipboard.writeText(texto).then(()=>{
+    const original = btn.textContent;
+    btn.textContent = '✅ Copiado';
+    setTimeout(()=>{ btn.textContent = original; }, 1800);
+  }).catch(()=>{
+    alert('No se pudo copiar automáticamente. Selecciona el texto manualmente.');
+  });
+}
 
 /* ===== TABS PRINCIPALES ===== */
 let descriptorGuardado = '';
