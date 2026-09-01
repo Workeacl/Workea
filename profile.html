@@ -40,6 +40,10 @@ a{color:inherit;text-decoration:none}
 .logo .lt b em{font-style:normal;color:inherit}
 .logo .lt span{font-size:.58rem;color:var(--partner-blue);font-weight:700;letter-spacing:.05em;display:block;margin-top:.1rem}
 .profile-badge{background:var(--grad);color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.06em;padding:.3rem .8rem;border-radius:999px}
+.workea-switcher{max-width:860px;margin:0 auto;padding:.5rem 1.5rem;display:flex;gap:.4rem;overflow-x:auto;border-top:1px solid var(--line)}
+.ws-link{font-size:.78rem;font-weight:700;color:var(--muted);padding:.4rem .8rem;border-radius:999px;white-space:nowrap;text-decoration:none;flex-shrink:0}
+.ws-link:hover{background:var(--brand-tint)}
+.ws-link.active{background:var(--navy);color:#fff}
 
 /* layout */
 .main{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
@@ -74,6 +78,7 @@ a{color:inherit;text-decoration:none}
 .score-ring .sr-label b{font-family:var(--display);font-size:1.8rem;font-weight:800;color:#fff;line-height:1}
 .score-ring .sr-label span{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.08em;text-transform:uppercase}
 .score-preview p{font-size:.88rem;color:#a5bde6;text-align:center}
+.score-preview .sp-example{font-size:.68rem;color:#6f85b8;text-align:center;margin-top:.7rem;font-style:italic}
 .includes{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:2.5rem}
 .inc-item{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;display:flex;gap:.7rem;align-items:flex-start;box-shadow:var(--shadow)}
 .inc-item .ii-ico{font-size:1.2rem;flex-shrink:0}
@@ -192,6 +197,13 @@ a{color:inherit;text-decoration:none}
     </a>
     <span class="profile-badge">Profile Check</span>
   </div>
+  <div class="workea-switcher">
+    <a href="/" class="ws-link">🎯 Match</a>
+    <a href="/workea-cv-planes.html" class="ws-link">📄 CV</a>
+    <a href="/career.html" class="ws-link">🧭 Career</a>
+    <a href="/bitacora.html" class="ws-link">📖 Bitácora</a>
+    <a href="/profile.html" class="ws-link active">🔵 Profile Check</a>
+  </div>
 </header>
 
 <main class="main">
@@ -216,6 +228,7 @@ a{color:inherit;text-decoration:none}
           <div class="sr-label"><b>68%</b><span>score</span></div>
         </div>
         <p>Tienes una buena base, pero hay 3 oportunidades para comunicar mejor tu perfil profesional.</p>
+        <p class="sp-example">Ejemplo ilustrativo — no son datos de un usuario real</p>
       </div>
     </div>
 
@@ -232,7 +245,7 @@ a{color:inherit;text-decoration:none}
       <p class="pb-name">Workea Profile Check</p>
       <p class="pb-price">$2.990</p>
       <p class="pb-sub">Diagnóstico completo de tu perfil LinkedIn · resultado al instante</p>
-      <a class="btn btn-brand" href="https://mpago.la/XXXXXXX" target="_blank" rel="noopener" id="btnComprar" style="justify-content:center;width:100%">Obtener mi Profile Check →</a>
+      <button class="btn btn-brand" onclick="comprarProfile(this)" id="btnComprar" style="justify-content:center;width:100%">Obtener mi Profile Check →</button>
       <p class="pb-note">Pago seguro con Mercado Pago · Tras pagar, recibirás tu código de acceso por correo</p>
       <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line)">
         <button class="btn btn-ghost" onclick="showScreen('scr-access')" style="width:100%;justify-content:center;font-size:.88rem">¿Ya tienes un código? Actívalo aquí</button>
@@ -246,7 +259,7 @@ a{color:inherit;text-decoration:none}
       <h2>Activa tu acceso</h2>
       <p>Ingresa el código que recibiste por correo tras tu compra.</p>
       <div class="access-field">
-        <input type="password" id="accessInput" placeholder="Código de acceso" onkeydown="if(event.key==='Enter')checkAccess()">
+        <input type="text" id="accessInput" placeholder="Código de acceso" onkeydown="if(event.key==='Enter')checkAccess()">
         <button class="btn btn-primary" onclick="checkAccess()">Entrar →</button>
       </div>
       <div id="accessError"></div>
@@ -329,8 +342,22 @@ a{color:inherit;text-decoration:none}
 <script>
 if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-const PC_CODIGO = 'WORKEA2026';
 let tab = 'text', fileData = null;
+let codigoIngresado = '';
+
+// Si llega desde el link de activación (tras pagar), el código viene
+// prellenado en la URL.
+(function leerCodigoDeActivacion(){
+  const params = new URLSearchParams(window.location.search);
+  const codigo = params.get('codigo');
+  if(codigo){
+    codigoIngresado = codigo;
+    document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('accessInput');
+      if(input){ input.value = codigo; }
+    });
+  }
+})();
 
 /* pantallas */
 function showScreen(id){
@@ -341,16 +368,46 @@ function showScreen(id){
   window.scrollTo({top:0});
 }
 
-/* acceso */
+/* compra */
+async function comprarProfile(btn){
+  const textoOriginal = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Generando tu pago...';
+  try {
+    const r = await fetch('/api/crear-pago', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ producto: 'profile' })
+    });
+    const data = await r.json();
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      alert(data.error || 'No se pudo iniciar el pago. Intenta de nuevo.');
+      btn.disabled = false;
+      btn.textContent = textoOriginal;
+    }
+  } catch (err) {
+    alert('No se pudo iniciar el pago. Intenta de nuevo.');
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+  }
+}
+
+/* acceso — solo valida el FORMATO acá; la validación real (existe,
+   plan correcto, no usado) ocurre en el servidor al analizar. */
 function checkAccess(){
   const v=document.getElementById('accessInput').value.trim();
-  if(v===PC_CODIGO){
+  const esMaestro = v.toUpperCase()==='WORKEA2026';
+  const esPC = v.toUpperCase().startsWith('PC-');
+  if(esMaestro || esPC){
+    codigoIngresado = v;
     showScreen('scr-input');
     document.getElementById('accessConfirm').innerHTML=
       '<div style="display:flex;align-items:center;gap:.6rem;background:var(--green-bg);border:1px solid var(--green-ln);border-radius:12px;padding:.75rem 1.1rem;margin-bottom:1.2rem;font-size:.9rem;color:#1c6b47"><span>✅</span><span><b>Sesión iniciada.</b> Ingresa tu perfil de LinkedIn para comenzar el análisis.</span></div>';
   } else {
     document.getElementById('accessError').innerHTML=
-      '<div class="error-box">⚠️ <span>Código incorrecto. Si no lo recuerdas, escríbenos a workea@tupartnerlaboral.cl.</span></div>';
+      '<div class="error-box">⚠️ <span>Ese código no tiene el formato de Profile Check. Si no lo recuerdas, escríbenos a workea@tupartnerlaboral.cl.</span></div>';
   }
 }
 
@@ -428,7 +485,7 @@ async function runProfileCheck(){
 
   try{
     const r=await fetch('/api/profile',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({texto,codigo:PC_CODIGO})});
+      body:JSON.stringify({texto,codigo:codigoIngresado})});
     const data=await r.json();
     clearInterval(iv);
     if(!r.ok||data.error) throw new Error(data.error||'Error del servidor');
