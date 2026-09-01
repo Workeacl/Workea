@@ -1,5 +1,16 @@
 // api/recruiter.js — Workea Recruiter (herramienta interna)
 // Usa Anthropic tool use para garantizar JSON valido sin parseo manual
+//
+// CAMBIO DE SEGURIDAD: antes, si la variable de entorno WORKEA_CODIGO no
+// estaba configurada, el endpoint quedaba abierto sin pedir ningún código
+// (cualquiera podía usarlo gratis). Ahora, si no hay código configurado,
+// se rechaza el acceso por defecto — nunca queda abierto por accidente.
+//
+// CAMBIO DE FUNCIONALIDAD: se agregó "mensajes_contacto" — 2-3 plantillas
+// de mensaje de LinkedIn listas para copiar y enviar a candidatos
+// encontrados con la búsqueda, cada una con un gancho distinto, usando
+// los mismos datos que ya se extraen del cargo (no agrega una llamada
+// nueva a la IA, ni cambia el resto de la estrategia).
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Metodo no permitido' });
@@ -8,7 +19,11 @@ export default async function handler(req, res) {
 
   const listaCodigos = (process.env.WORKEA_CODIGO || '')
     .split(',').map(c => c.trim()).filter(Boolean);
-  if (listaCodigos.length && !listaCodigos.includes((codigo || '').trim())) {
+
+  if (!listaCodigos.length) {
+    return res.status(500).json({ error: 'Acceso no configurado. Configura WORKEA_CODIGO en Vercel.' });
+  }
+  if (!listaCodigos.includes((codigo || '').trim())) {
     return res.status(401).json({ error: 'Codigo de acceso invalido' });
   }
 
@@ -24,7 +39,8 @@ export default async function handler(req, res) {
 
   const system = 'Eres un experto en reclutamiento de perfiles tecnologicos y digitales en Latinoamerica. ' +
     'Analiza el descriptor de cargo (puede ser formal, un correo o apuntes desordenados) y genera una estrategia de busqueda completa para el pais indicado, usando la herramienta generar_estrategia. ' +
-    'Si el descriptor es informal o incompleto, infiere lo que puedas con criterio experto de reclutadora y marca las inferencias en alertas.';
+    'Si el descriptor es informal o incompleto, infiere lo que puedas con criterio experto de reclutadora y marca las inferencias en alertas. ' +
+    'Para mensajes_contacto: escribe mensajes cortos (maximo 4-5 lineas), en tono profesional pero cercano, listos para copiar y pegar en LinkedIn. Nunca inventes datos de la empresa que no esten en el descriptor — si falta el nombre de la empresa, usa "tu equipo" o formulaciones genericas en vez de inventar un nombre.';
 
   const tool = {
     name: 'generar_estrategia',
@@ -95,10 +111,22 @@ export default async function handler(req, res) {
             required: ['pregunta', 'tipo', 'que_evalua', 'respuesta_ideal']
           }
         },
+        mensajes_contacto: {
+          type: 'array',
+          description: 'OBLIGATORIO: exactamente 3 plantillas de mensaje de LinkedIn (InMail) listas para copiar y enviar a un candidato pasivo encontrado con la búsqueda. Cada una con un gancho distinto. Nunca dejar vacío.',
+          items: {
+            type: 'object',
+            properties: {
+              enfoque: { type: 'string', description: 'Nombre corto del gancho, ej: "Desafío del rol", "Proyección y crecimiento", "Directo y breve"' },
+              mensaje: { type: 'string', description: 'El mensaje completo, listo para copiar, máximo 4-5 líneas, en español, sin inventar datos que no estén en el descriptor' }
+            },
+            required: ['enfoque', 'mensaje']
+          }
+        },
         alertas: { type: 'array', items: { type: 'string' }, description: 'senales de alerta del descriptor: requisitos contradictorios, expectativas irreales, inferencias hechas' },
         estrategia_resumen: { type: 'string', description: '3-4 lineas con el foco recomendado, que va a ser dificil y como abordarlo' }
       },
-      required: ['cargo', 'empresa', 'pais', 'seniority', 'entendimiento', 'criticos', 'deseables', 'competencias_tecnicas', 'competencias_conductuales', 'palabras_clave', 'donde_buscar', 'benchmark_salarial', 'preguntas_entrevista', 'alertas', 'estrategia_resumen']
+      required: ['cargo', 'empresa', 'pais', 'seniority', 'entendimiento', 'criticos', 'deseables', 'competencias_tecnicas', 'competencias_conductuales', 'palabras_clave', 'donde_buscar', 'benchmark_salarial', 'preguntas_entrevista', 'mensajes_contacto', 'alertas', 'estrategia_resumen']
     }
   };
 
@@ -114,7 +142,7 @@ export default async function handler(req, res) {
       headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 4000,
+        max_tokens: 4500,
         system,
         tools: [tool],
         tool_choice: { type: 'tool', name: 'generar_estrategia' },
