@@ -92,7 +92,7 @@ export default async function handler(req, res) {
             rango_min: { type: 'integer' },
             rango_max: { type: 'integer' },
             moneda: { type: 'string', description: 'CLP, COP, ARS, MXN, PEN o USD segun el pais' },
-            fuente_referencial: { type: 'string' },
+            fuente_referencial: { type: 'string', description: 'Aclara explícitamente que es una estimación referencial del mercado, no una cifra exacta o confirmada' },
             lectura: { type: 'string', description: 'si hay salario propuesto: bajo, alineado o sobre mercado. Si no hay: rango sugerido' },
             argumento_cliente: { type: 'string' }
           },
