@@ -1,22 +1,75 @@
 // api/profile.js — Workea Profile Check
 // Usa Anthropic tool use para garantizar JSON valido sin parseo manual
+//
+// CAMBIO: la validación de código ahora usa la misma tabla "codigos" de
+// Supabase que Match/CV/Career (antes usaba una variable de entorno
+// simple, y el frontend ni siquiera enviaba el código real que la
+// persona escribía — siempre mandaba el código maestro).
+
+const SUPABASE_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
+
+async function validarCodigoProfile(codigoLimpio) {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey) {
+    return { ok: false, status: 500, error: 'Falta configurar SUPABASE_SERVICE_ROLE_KEY en Vercel' };
+  }
+
+  const headers = { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` };
+  const url = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&select=codigo,plan,estado`;
+  const r = await fetch(url, { headers });
+  if (!r.ok) return { ok: false, status: 502, error: 'No se pudo verificar el código. Intenta de nuevo.' };
+
+  const rows = await r.json();
+  const fila = Array.isArray(rows) ? rows[0] : null;
+  if (!fila) return { ok: false, status: 401, error: 'Código de acceso inválido' };
+
+  // El plan en Supabase se guarda corto ('profile_check'), igual
+  // convención que usa el resto del sitio ('match'/'experto'/'diagnostico'...).
+  if (String(fila.plan || '').trim() !== 'profile_check') {
+    return { ok: false, status: 401, error: 'Este código no corresponde a Workea Profile Check' };
+  }
+
+  // Profile Check es un informe puntual (un análisis, no una herramienta
+  // de varias sesiones), así que su única protección real es un solo
+  // uso TOTAL — mismo criterio que usamos para Career.
+  if (fila.estado === 'usado') {
+    return { ok: false, status: 401, error: 'Este código ya fue utilizado. Cada código de Profile Check sirve para un solo análisis.' };
+  }
+
+  const patchUrl = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&estado=eq.libre`;
+  const patchRes = await fetch(patchUrl, {
+    method: 'PATCH',
+    headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+    body: JSON.stringify({ estado: 'usado' })
+  });
+
+  if (!patchRes.ok) {
+    return { ok: false, status: 502, error: 'No se pudo activar el código. Intenta de nuevo.' };
+  }
+  const actualizadas = await patchRes.json().catch(() => []);
+  if (!Array.isArray(actualizadas) || actualizadas.length === 0) {
+    // Alguien más ganó la carrera justo en este instante.
+    return { ok: false, status: 401, error: 'Este código ya fue utilizado. Cada código de Profile Check sirve para un solo análisis.' };
+  }
+
+  return { ok: true };
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Metodo no permitido' });
 
   const { texto, codigo } = req.body || {};
 
-  const listaCodigos = (process.env.WORKEA_CODIGO || '')
-    .split(',').map(c => c.trim()).filter(Boolean);
   const codigoLimpio = (codigo || '').trim();
-  if (listaCodigos.length && !listaCodigos.includes(codigoLimpio)) {
-    return res.status(401).json({ error: 'Codigo de acceso invalido' });
-  }
-  // Restriccion de prefijo: Profile Check solo acepta el codigo maestro o PC-
   const esMaestro = codigoLimpio.toUpperCase() === 'WORKEA2026';
-  const esPC = codigoLimpio.toUpperCase().startsWith('PC-');
-  if (!esMaestro && !esPC) {
-    return res.status(401).json({ error: 'Este codigo no corresponde a Workea Profile Check' });
+
+  if (!esMaestro) {
+    if (!codigoLimpio) return res.status(401).json({ error: 'Código de acceso inválido' });
+    if (!codigoLimpio.toUpperCase().startsWith('PC-')) {
+      return res.status(401).json({ error: 'Este código no corresponde a Workea Profile Check' });
+    }
+    const resultado = await validarCodigoProfile(codigoLimpio.toUpperCase());
+    if (!resultado.ok) return res.status(resultado.status).json({ error: resultado.error });
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
