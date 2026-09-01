@@ -1,15 +1,28 @@
 // api/crear-pago.js — Genera una preferencia de pago en Mercado Pago
-// con redirección automática al formulario de activación correspondiente.
+// con redirección automática al formulario de activación (uno solo,
+// compartido por Match, CV y Career), con el texto exacto del plan
+// prellenado para que la persona no tenga que elegirlo a mano.
 //
-// Maneja 2 productos en un solo endpoint (para no sumar funciones nuevas
-// al plan Hobby de Vercel):
-//   POST /api/crear-pago  { }                          → Workea Match (comportamiento original, sin cambios)
-//   POST /api/crear-pago  { producto: 'cv', plan: 'diagnostico'|'optimizado'|'pro' }  → Workea CV
+// POST /api/crear-pago  { }                                    → Workea Match (comportamiento original)
+// POST /api/crear-pago  { producto: 'cv', plan: 'diagnostico'|'optimizado'|'pro' }  → Workea CV
+// POST /api/crear-pago  { producto: 'career' }                 → Workea Career
 
-const PLANES_CV = {
-  diagnostico: { titulo: 'Workea CV · Diagnóstico + Feedback', precio: 3490 },
-  optimizado:  { titulo: 'Workea CV · Optimizado',             precio: 8990 },
-  pro:         { titulo: 'Workea CV · Pro',                    precio: 11990 }
+// El texto debe calzar EXACTO con las opciones del desplegable
+// "Plan comprado" del formulario único.
+const PLANES = {
+  cv: {
+    diagnostico: { titulo: 'Workea CV Diagnóstico', precio: 3490 },
+    optimizado:  { titulo: 'Workea CV Optimizado',  precio: 8990 },
+    pro:         { titulo: 'Workea CV Pro',          precio: 11990 }
+  },
+  career: {
+    titulo: 'Workea Career',
+    precio: 4990
+  },
+  profile: {
+    titulo: 'Workea Profile Check',
+    precio: 2990
+  }
 };
 
 export default async function handler(req, res) {
@@ -22,59 +35,45 @@ export default async function handler(req, res) {
   }
 
   const { producto, plan } = req.body || {};
-  const esCv = producto === 'cv';
-  const esCareer = producto === 'career';
 
-  let preferencia;
+  let planTexto, precio;
 
-  if (esCv) {
-    const planInfo = PLANES_CV[plan];
-    if (!planInfo) {
-      return res.status(400).json({ error: 'Plan de CV inválido. Usa diagnostico, optimizado o pro.' });
-    }
-    // El plan viaja en la URL de retorno para que el puente
-    // (redirigir-formulario) sepa a qué formulario mandar a la persona.
-    const REDIRECT_URL = `https://workea.cl/api/redirigir-formulario?producto=cv&plan=${encodeURIComponent(plan)}`;
-    preferencia = {
-      items: [{ title: planInfo.titulo, quantity: 1, unit_price: planInfo.precio, currency_id: 'CLP' }],
-      back_urls: { success: REDIRECT_URL, pending: REDIRECT_URL, failure: 'https://workea.cl/workea-cv-planes.html' },
-      auto_return: 'approved'
-    };
-  } else if (esCareer) {
-    const REDIRECT_URL = 'https://workea.cl/api/redirigir-formulario?producto=career';
-    preferencia = {
-      items: [{ title: 'Workea Career · Ruta profesional', quantity: 1, unit_price: 4990, currency_id: 'CLP' }],
-      back_urls: { success: REDIRECT_URL, pending: REDIRECT_URL, failure: 'https://workea.cl/career.html' },
-      auto_return: 'approved'
-    };
+  if (producto === 'cv') {
+    const planInfo = PLANES.cv[plan];
+    if (!planInfo) return res.status(400).json({ error: 'Plan de CV inválido. Usa diagnostico, optimizado o pro.' });
+    planTexto = planInfo.titulo;
+    precio = planInfo.precio;
+  } else if (producto === 'career') {
+    planTexto = PLANES.career.titulo;
+    precio = PLANES.career.precio;
+  } else if (producto === 'profile') {
+    planTexto = PLANES.profile.titulo;
+    precio = PLANES.profile.precio;
   } else {
     // ---------- Comportamiento original de Match, sin ningún cambio ----------
-    const REDIRECT_URL = 'https://workea.cl/api/redirigir-formulario';
-    preferencia = {
-      items: [
-        {
-          title: 'Workea · Informe Match — Acceso 7 días',
-          quantity: 1,
-          unit_price: 2990,
-          currency_id: 'CLP'
-        }
-      ],
-      back_urls: {
-        success: REDIRECT_URL,
-        pending: REDIRECT_URL,
-        failure: 'https://workea.cl'
-      },
-      auto_return: 'approved'
-    };
+    planTexto = 'Informe Workea Match';
+    precio = 2990;
   }
+
+  const REDIRECT_URL = `https://workea.cl/api/redirigir-formulario?plan=${encodeURIComponent(planTexto)}`;
+
+  const preferencia = {
+    items: [{ title: 'Workea · ' + planTexto, quantity: 1, unit_price: precio, currency_id: 'CLP' }],
+    back_urls: {
+      success: REDIRECT_URL,
+      pending: REDIRECT_URL,
+      failure: producto === 'cv' ? 'https://workea.cl/workea-cv-planes.html'
+             : producto === 'career' ? 'https://workea.cl/career.html'
+             : producto === 'profile' ? 'https://workea.cl/profile.html'
+             : 'https://workea.cl'
+    },
+    auto_return: 'approved'
+  };
 
   try {
     const r = await fetch('https://api.mercadopago.com/checkout/preferences', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify(preferencia)
     });
     const data = await r.json();
