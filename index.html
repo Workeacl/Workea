@@ -383,7 +383,13 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 .family-card h3{font-size:1.1rem;margin-bottom:.5rem}
 .family-card p{font-size:.9rem;color:var(--muted);margin-bottom:1rem}
 .family-price{font-size:.85rem;font-weight:700;color:var(--brand-strong)}
+.security-box{background:var(--navy);border-radius:22px;padding:2.4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem}
+.asesorias-cta{grid-template-columns:1.2fr auto;align-items:center}
 @media(max-width:900px){.family-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.security-box{grid-template-columns:1fr 1fr;padding:2rem}}
+@media(max-width:640px){.security-box{grid-template-columns:1fr}}
+@media(max-width:900px){.asesorias-cta{grid-template-columns:1fr}}
+@media(max-width:900px){.asesorias-cta .btn{width:100%;justify-content:center;margin-top:.5rem}}
 @media(max-width:680px){
   .landing-nav .nav-links a{display:none}
   .landing-nav .nav-links{gap:0}
@@ -596,7 +602,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   </section>
 
   <section class="section" id="seguridad" style="padding-top:0">
-    <div style="background:var(--navy);border-radius:22px;padding:2.4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem">
+    <div class="security-box">
       <div>
         <div style="font-size:1.5rem;margin-bottom:.7rem">🔒</div>
         <h4 style="color:#fff;font-size:1rem;margin-bottom:.4rem">Tus datos, solo para tu análisis</h4>
@@ -624,12 +630,12 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   </section>
 
   <section class="section" style="padding-top:0">
-    <div class="problem" style="grid-template-columns:1.2fr auto;align-items:center">
+    <div class="problem asesorias-cta">
       <div>
         <h2 style="font-size:clamp(1.3rem,2.6vw,1.7rem)">¿Necesitas más que un análisis?</h2>
         <p style="margin-bottom:0">Detrás de Workea está <b>Tu Partner Laboral</b>: asesorías personalizadas de empleabilidad, armado y optimización de CV, preparación de entrevistas y acompañamiento en tu búsqueda, con una especialista en selección.</p>
       </div>
-      <a class="btn btn-primary" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener">Conocer las asesorías →</a>
+      <a class="btn btn-primary" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener" style="white-space:nowrap">Conocer las asesorías →</a>
     </div>
   </section>
 
