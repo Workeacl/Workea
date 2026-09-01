@@ -231,6 +231,10 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 .ring-bg{stroke:var(--neutral-bg)}
 .ring-val{stroke:var(--brand);stroke-linecap:round;transition:stroke-dashoffset 1.2s ease}
 .ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.priority-badge{margin-top:.8rem;text-align:center;font-size:.78rem;font-weight:700;padding:.4rem .9rem;border-radius:999px;white-space:nowrap}
+.priority-alta{background:var(--green-bg);color:var(--green)}
+.priority-media{background:var(--amber-bg);color:var(--amber)}
+.priority-baja{background:var(--red-bg);color:var(--red)}
 .ring-label b{font-family:var(--display);font-size:1.9rem;font-weight:800;line-height:1}
 .ring-label span{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-top:.2rem}
 .compat-reading .kicker{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin-bottom:.4rem}
@@ -1676,17 +1680,26 @@ function renderResults(d){
   document.getElementById('resultsMount').innerHTML = `
     <div class="screen-head"><h2>Tu análisis Workea</h2>
       <p>Generado automáticamente con la metodología Workea a partir de tu oferta y tu CV. Léelo completo: el número importa menos que la lectura.</p></div>
+    ${d.primera_impresion?`<div style="background:var(--navy);border-radius:16px;padding:1.3rem 1.6rem;margin-bottom:1.2rem;display:flex;gap:.8rem;align-items:flex-start">
+      <span style="font-size:1.3rem;flex-shrink:0">👀</span>
+      <div><p style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);margin-bottom:.3rem">Mirada de selección · primera impresión</p>
+      <p style="color:#fff;font-size:.95rem;font-style:italic">"${esc(d.primera_impresion)}"</p></div>
+    </div>`:''}
     <div class="card"><div class="offer-header"><div><h3>${esc(info.cargo||'Oportunidad analizada')}</h3>
       <p class="company">${esc(info.empresa||'')}</p></div></div>
       <div class="meta-grid">${metas}</div></div>
     <div class="compat-hero" style="margin-top:1.2rem">
-      <div class="ring-wrap"><svg width="130" height="130" viewBox="0 0 130 130">
-        <circle class="ring-bg" cx="65" cy="65" r="56" fill="none" stroke-width="11"/>
-        <circle class="ring-val" cx="65" cy="65" r="56" fill="none" stroke-width="11"
-          stroke-dasharray="${circ}" stroke-dashoffset="${circ*(1-pct/100)}"/></svg>
-        <div class="ring-label"><b>${pct}%</b><span>estimada</span></div></div>
+      <div>
+        <div class="ring-wrap"><svg width="130" height="130" viewBox="0 0 130 130">
+          <circle class="ring-bg" cx="65" cy="65" r="56" fill="none" stroke-width="11"/>
+          <circle class="ring-val" cx="65" cy="65" r="56" fill="none" stroke-width="11"
+            stroke-dasharray="${circ}" stroke-dashoffset="${circ*(1-pct/100)}"/></svg>
+          <div class="ring-label"><b>${pct}%</b><span>estimada</span></div></div>
+        ${d.prioridad?.nivel?`<div class="priority-badge priority-${d.prioridad.nivel}">${{alta:'🟢',media:'🟡',baja:'🔴'}[d.prioridad.nivel]} Prioridad ${d.prioridad.nivel}</div>`:''}
+      </div>
       <div class="compat-reading"><p class="kicker">Compatibilidad estimada · lo que significa</p>
-        <h3>${esc(d.compatibilidad?.titulo||'')}</h3><p>${esc(d.compatibilidad?.lectura||'')}</p></div></div>
+        <h3>${esc(d.compatibilidad?.titulo||'')}</h3><p>${esc(d.compatibilidad?.lectura||'')}</p>
+        ${d.prioridad?.razon?`<p style="margin-top:.6rem;font-size:.88rem;color:var(--muted)"><b>¿Por qué esta prioridad?</b> ${esc(d.prioridad.razon)}</p>`:''}</div></div>
     ${d.observacion?`<div class="note-card" style="margin-top:1rem"><b>Observación sobre la oportunidad:</b> ${esc(d.observacion)}</div>`:''}
     ${(d.nivel_calibre?.nivel || d.benchmark_salarial?.rango_min)?`<div class="finding-group" style="margin-top:1.2rem"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Ajuste de nivel y sueldo referencial</h3></div>
       <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
@@ -1701,7 +1714,11 @@ function renderResults(d){
           <p style="font-size:.87rem;color:var(--muted)">${esc(d.benchmark_salarial.lectura||'')}</p>
         </div>`:''}
       </div></div>`:''}
-    ${''}${(d.comparacion&&d.comparacion.length>1)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Comparación de tus ofertas: ¿a cuál postular primero?</h3></div>${d.comparacion.map((c,i)=>`<div class="finding ${i===0?'f-green':'f-neutral'}"><b>${i===0?'🥇 ':i===1?'🥈 ':'🥉 '}${esc(c.oferta)} — ${c.porcentaje??''}%</b><p>${esc(c.veredicto)}</p></div>`).join('')}</div>`:''}
+    ${(d.comparacion&&d.comparacion.length>1)?`<div class="finding-group"><div class="finding-head"><span class="fh-dot" style="background:var(--brand)"></span><h3>Comparación de tus ofertas: ¿a cuál postular primero?</h3></div>${d.comparacion.map((c,i)=>{
+      const cls = c.prioridad==='alta'?'f-green':(c.prioridad==='media'?'f-amber':'f-red');
+      const badge = {alta:'🟢 Alta prioridad',media:'🟡 Prioridad media',baja:'🔴 Baja prioridad'}[c.prioridad]||'';
+      return `<div class="finding ${cls}"><b>${i===0?'🥇 ':i===1?'🥈 ':'🥉 '}${esc(c.oferta)} — ${c.porcentaje??''}% · ${badge}</b><p>${esc(c.veredicto)}</p></div>`;
+    }).join('')}</div>`:''}
     ${group('var(--green)','Fortalezas',d.fortalezas,'f-green')}
     ${group('var(--amber)','Oportunidades de mejora',d.oportunidades,'f-amber')}
     ${group('var(--red)','Brechas',d.brechas,'f-red')}
