@@ -1,5 +1,10 @@
 // api/cv-check.js — Revision de CV de candidato vs descriptor
 // Usa Anthropic tool use para garantizar JSON valido sin parseo manual
+//
+// CAMBIO DE SEGURIDAD: antes, si la variable de entorno WORKEA_CODIGO no
+// estaba configurada, el endpoint quedaba abierto sin pedir ningún código
+// (cualquiera podía usarlo gratis). Ahora, si no hay código configurado,
+// se rechaza el acceso por defecto — nunca queda abierto por accidente.
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Metodo no permitido' });
@@ -8,7 +13,11 @@ export default async function handler(req, res) {
 
   const listaCodigos = (process.env.WORKEA_CODIGO || '')
     .split(',').map(c => c.trim()).filter(Boolean);
-  if (listaCodigos.length && !listaCodigos.includes((codigo || '').trim())) {
+
+  if (!listaCodigos.length) {
+    return res.status(500).json({ error: 'Acceso no configurado. Configura WORKEA_CODIGO en Vercel.' });
+  }
+  if (!listaCodigos.includes((codigo || '').trim())) {
     return res.status(401).json({ error: 'Codigo de acceso invalido' });
   }
 
