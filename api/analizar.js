@@ -205,7 +205,6 @@ PRINCIPIOS OBLIGATORIOS:
 - Tono: cercano, claro, profesional, humano. Trata a la persona de "tú". Español de Chile neutro.
 - IMPORTANTE: todos los campos marcados como obligatorios en el schema deben tener contenido real y específico. Nunca dejes "compatibilidad", "info" ni "recomendacion" vacíos o en 0 — son el corazón del informe.
 - Para benchmark_salarial: si la oferta menciona sueldo, evalúa si está alineado, bajo o sobre el mercado para ese cargo y seniority. Si no lo menciona, entrega un rango referencial. Presenta el rango explícitamente como una ESTIMACIÓN aproximada del mercado, nunca como una cifra exacta o confirmada — usa formulaciones como "estimación referencial" o "rango aproximado del mercado". Nunca inventes porcentajes o estadísticas precisas que no puedas fundamentar.
-${esencial ? '' : '- Tienes disponible la herramienta de búsqueda web: úsala para buscar sueldos actuales y reales para el cargo analizado en el mercado chileno (o el país correspondiente), y fundamentar mejor benchmark_salarial con datos recientes en vez de estimarlo solo de memoria. Después de buscar (o si decides que no es necesario buscar), SIEMPRE debes terminar llamando a la herramienta generar_analisis con el análisis completo — la búsqueda es un paso intermedio, nunca la respuesta final.'}
 - Para nivel_calibre: compara el seniority/experiencia real del CV con el nivel que pide la oferta. Sé honesta: si la persona tiene más experiencia de la que pide el cargo, es "sobrecalificado"; si tiene menos, "subcalificado"; si calza, "alineado".
 
 ${esencial ? 'MODO ESENCIAL: genera solo la orientación inicial. Incluye info, compatibilidad, primera_impresion, fortalezas (máx 3), oportunidades (máx 2), brechas (máx 2) y recomendacion. Deja claves, cv, entrevista, insuficiente y comparacion como listas vacías. Deja nivel_calibre y benchmark_salarial con sus campos de texto vacíos y números en 0 (son funciones exclusivas del plan pagado). Para prioridad: usa nivel "media" y en razon escribe exactamente "Disponible en el Informe Workea Match, con análisis completo de nivel y sueldo" (también es exclusivo del plan pagado, porque depende de nivel_calibre y benchmark_salarial). Sé breve y directo.' : 'Incluye 3-6 fortalezas, 2-4 oportunidades, 0-3 brechas, 0-3 insuficiente, 8-12 claves, 3-4 recomendaciones de CV y 5-6 preguntas de entrevista. Completa nivel_calibre y benchmark_salarial con contenido real y específico, nunca vacío. Completa prioridad con un juicio real, combinando compatibilidad + nivel_calibre + benchmark_salarial — una oferta con % alto pero con brecha crítica, modalidad no deseada o sueldo muy bajo mercado debe bajar a prioridad "media" o "baja", explicando por qué en razon.'}
@@ -297,17 +296,10 @@ Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        // Se sube el límite del plan pagado (antes 5500) porque ahora puede
-        // incluir texto de búsqueda web antes del resultado final.
-        max_tokens: esencial ? 1600 : 7500,
+        max_tokens: esencial ? 1600 : 5500,
         system,
-        // Búsqueda web real solo en el plan pagado (Match/Experto) — el
-        // Esencial gratis sigue con estimación de memoria, sin costo extra
-        // de búsqueda. Cuando hay web_search, no se puede forzar el
-        // tool_choice (el modelo necesita poder buscar primero) — se deja
-        // en "auto" y el modelo igual termina llamando a generar_analisis.
-        tools: esencial ? [tool] : [{ type: 'web_search_20250305', name: 'web_search' }, tool],
-        tool_choice: esencial ? { type: 'tool', name: 'generar_analisis' } : { type: 'auto' },
+        tools: [tool],
+        tool_choice: { type: 'tool', name: 'generar_analisis' },
         messages: [{
           role: 'user',
           content: [
