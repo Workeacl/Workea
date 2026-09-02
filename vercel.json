@@ -4,14 +4,6 @@
     "api/recruiter.js": { "maxDuration": 90 },
     "api/cv-check.js": { "maxDuration": 60 },
     "api/profile.js": { "maxDuration": 60 },
-    "api/career.js": { "maxDuration": 120 }
-  },
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.workea.cl" }],
-      "destination": "https://workea.cl/:path*",
-      "permanent": true
-    }
-  ]
+    "api/career.js": { "maxDuration": 300 }
+  }
 }
