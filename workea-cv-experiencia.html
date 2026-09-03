@@ -754,10 +754,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
         </div>`;
       return;
     }
-    const historiasParam = (ordenActual.banco_historias && ordenActual.banco_historias.length)
-      ? '&historias=' + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(ordenActual.banco_historias)))))
-      : '';
-    el.innerHTML = `<div class="entrevistas-frame"><iframe src="/entrevistas.html?orden_id=${ordenActual.id}&plan=${planActual}${historiasParam}"></iframe></div>`;
+    el.innerHTML = `<div class="entrevistas-frame"><iframe src="/entrevistas.html?orden_id=${ordenActual.id}"></iframe></div>`;
   }
 
   // ===== Descarga final del CV =====
