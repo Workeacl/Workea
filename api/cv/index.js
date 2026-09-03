@@ -424,9 +424,21 @@ Responde en JSON puro con este formato:
         return res.status(400).json({ error: 'Primero optimiza el CV antes de generar el mensaje' });
       }
 
-      const prompt = `Con base en este CV ya optimizado${orden.oferta_referencia ? ' y esta oferta laboral' : ''}, escribe:
-1. Un mensaje corto de presentación (2-4 líneas, tono profesional pero cercano, para LinkedIn o un formulario de postulación — NO es una carta formal larga).
-2. 2-3 tips concretos de estrategia de postulación para este caso específico.
+      const prompt = `Con base en este CV ya optimizado${orden.oferta_referencia ? ' y esta oferta laboral' : ''}, escribe DOS versiones de mensaje de postulación, adaptadas a cada contexto (no es el mismo texto acortado — cada una debe sentirse natural en su plataforma):
+
+1. mensaje_email: un correo de postulación COMPLETO, listo para copiar y enviar tal cual — con esta estructura exacta:
+   - Saludo: "Estimado/a [nombre de quien recluta o "equipo de selección"]," (usa un saludo genérico si no hay nombre de contacto)
+   - Primera frase de presentación: "Mi nombre es [nombre completo real del candidato, tomado del CV], soy [cargo/profesión real del CV], y..." — continúa presentando su valor de forma natural, no como una lista de logros.
+   - Cuerpo (2-3 frases): por qué le interesa el rol/empresa (si hay oferta) y qué aportaría, conectado con lo más fuerte de su CV.
+   - Cierre: mención de que adjunta su CV para revisión, y disposición a conversar.
+   - Despedida profesional con el nombre real del candidato (ej: "Saludos cordiales," seguido del nombre).
+   Tono profesional pero cercano, natural. Debe poder copiarse y pegarse directo en un correo sin que la persona tenga que editarlo.
+
+2. mensaje_linkedin: un mensaje corto para LinkedIn (InMail, "Easy Apply" o mensaje directo a quien recluta) — MUY distinto al de email:
+   - SIN saludo formal tipo "Estimado/a" (en LinkedIn se ve forzado) — puede empezar directo con la presentación o un saludo breve tipo "¡Hola! ".
+   - NUNCA menciones "adjunto mi CV" — en LinkedIn no se adjuntan archivos en un mensaje así, el CV ya está en el perfil o se sube aparte.
+   - Máximo 3-4 líneas, directo y conversacional, terminando con una invitación abierta a conversar (no una despedida formal con firma).
+   - Debe sentirse como algo que una persona real escribiría en LinkedIn, no un correo acortado.
 
 CV optimizado:
 """
@@ -434,21 +446,25 @@ ${JSON.stringify(orden.cv_optimizado)}
 """
 ${orden.oferta_referencia ? `\nOferta:\n"""\n${orden.oferta_referencia}\n"""\nEmpresa: ${orden.empresa_referencia || 'no especificada'}` : ''}
 
-IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior.
+Además, entrega 2-3 tips concretos de estrategia de postulación para este caso específico.
+
+IMPORTANTE sobre el formato: ningún texto dentro del JSON puede contener comillas dobles (") en su interior. Usa \\n para los saltos de línea dentro de cada mensaje.
 
 Responde en JSON puro:
 {
-  "mensaje": "el mensaje corto de presentación",
+  "mensaje_email": "el correo completo, con saltos de línea (\\n) entre saludo, cuerpo y despedida",
+  "mensaje_linkedin": "el mensaje corto para LinkedIn",
   "tips": ["tip concreto 1", "tip concreto 2"]
 }
 
 No inventes datos del candidato que no estén en el CV.`;
 
-      const resultado = await llamarClaude(prompt, 1000);
+      const resultado = await llamarClaude(prompt, 1700);
 
       const { data, error } = await supabase.from('cv_ordenes')
         .update({
-          mensaje_presentacion: resultado.mensaje || '',
+          mensaje_presentacion: resultado.mensaje_email || '',
+          mensaje_linkedin: resultado.mensaje_linkedin || '',
           tips_postulacion: resultado.tips || [],
           estado: 'completo'
         })
