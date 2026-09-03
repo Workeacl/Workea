@@ -4,6 +4,7 @@
     "api/recruiter.js": { "maxDuration": 180 },
     "api/cv-check.js": { "maxDuration": 60 },
     "api/profile.js": { "maxDuration": 60 },
-    "api/career.js": { "maxDuration": 300 }
+    "api/career.js": { "maxDuration": 300 },
+    "api/entrevistas/index.js": { "maxDuration": 30 }
   }
 }
