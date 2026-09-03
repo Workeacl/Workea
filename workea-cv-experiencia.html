@@ -112,7 +112,10 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 .tpl-pick .tp-swatch{height:48px;border-radius:8px;margin-bottom:.4rem}
 .tpl-pick .tp-name{font-size:.75rem;font-weight:700}
 
-.msg-box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.3rem 1.4rem;line-height:1.55;font-size:.88rem;margin-bottom:1rem}
+.msg-box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.3rem 1.4rem;line-height:1.55;font-size:.88rem;margin-bottom:1rem;white-space:pre-wrap}
+.formato-toggle{display:inline-flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px}
+.formato-btn{font-size:.82rem;font-weight:600;padding:.45rem .9rem;border-radius:999px;color:var(--muted)}
+.formato-btn.active{background:var(--navy);color:#fff}
 .tips-box{background:var(--brand-tint);border-radius:var(--r);padding:1.1rem 1.3rem;font-size:.85rem;color:var(--ink)}
 .tips-box div{margin-bottom:.4rem}
 
@@ -429,6 +432,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     if(d.keywords_faltantes && d.keywords_faltantes.length){
       html += '<div class="diag-list"><h4>🔑 Palabras clave que faltan</h4>' + d.keywords_faltantes.map(k => '<div class="diag-row"><span class="ic">•</span> '+escapeHtml(k)+'</div>').join('') + '</div>';
     }
+    html += siguientePasoHtml('optimizador', '🚀', 'Ya tienes tu diagnóstico — ahora optimicemos tu CV con esos hallazgos.');
     el.innerHTML = html;
   }
 
@@ -668,14 +672,42 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     }
   }
 
+  let formatoMensajeActivo = 'email';
+
   function renderMensajeResultado(){
     const el = document.getElementById('mensaje-content');
-    let html = '<div class="msg-box">'+escapeHtml(ordenActual.mensaje_presentacion || '')+'</div>';
+    let html = `
+      <div class="formato-toggle" style="margin-bottom:.9rem">
+        <button class="formato-btn ${formatoMensajeActivo==='email'?'active':''}" onclick="cambiarFormatoMensaje('email')">📧 Para correo</button>
+        <button class="formato-btn ${formatoMensajeActivo==='linkedin'?'active':''}" onclick="cambiarFormatoMensaje('linkedin')">💼 Para LinkedIn</button>
+      </div>
+      <div class="msg-box" id="msg-box-texto">${escapeHtml((formatoMensajeActivo==='email' ? ordenActual.mensaje_presentacion : ordenActual.mensaje_linkedin) || '')}</div>
+      <button class="btn btn-ghost" style="margin-bottom:1rem" onclick="copiarMensajeActivo()">📋 Copiar ${formatoMensajeActivo==='email' ? 'correo' : 'mensaje'}</button>`;
     if(ordenActual.tips_postulacion && ordenActual.tips_postulacion.length){
       html += '<div class="tips-box">'+ordenActual.tips_postulacion.map(t => '<div>💡 '+escapeHtml(t)+'</div>').join('')+'</div>';
     }
     html += siguientePasoHtml('historias', '🧠', 'Ahora arma tu banco de historias reales — te va a servir para preparar tu entrevista.');
     el.innerHTML = html;
+  }
+
+  function cambiarFormatoMensaje(formato){
+    formatoMensajeActivo = formato;
+    renderMensajeResultado();
+  }
+
+  function copiarMensajeActivo(){
+    const texto = (formatoMensajeActivo==='email' ? ordenActual.mensaje_presentacion : ordenActual.mensaje_linkedin) || '';
+    navigator.clipboard.writeText(texto).then(()=>{
+      showToast('Copiado ✅');
+    }).catch(()=>{
+      const ta = document.createElement('textarea');
+      ta.value = texto;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Copiado ✅');
+    });
   }
 
   // ===== TAB Historias =====
