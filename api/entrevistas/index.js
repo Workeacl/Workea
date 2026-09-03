@@ -1,67 +1,50 @@
 // api/entrevistas/index.js
 //
-// Simulador de Entrevistas STAR — a diferencia de Bitácora y CV, este
-// endpoint NO requiere sesión ni guarda nada en Supabase. Es la
-// herramienta de "gancho gratuito" pensada para convertir hacia las
-// asesorías de Tu Partner Laboral, así que la fricción de entrada debe
-// ser cero: cualquiera puede practicar sin crear cuenta.
+// Simulador de Entrevistas STAR — beneficio incluido con Workea CV
+// planes Optimizado o Pro, NO una herramienta gratuita abierta a
+// cualquiera (a diferencia de lo que decía el comentario original
+// de este archivo — el frontend real siempre exigió una orden paga).
 //
-// CAMBIO DE SEGURIDAD: se agregó un control de abuso por IP (igual
-// criterio que el plan Esencial de Match) — generoso, porque practicar
-// varias veces en una sesión es legítimo, pero con un techo para que
-// nadie pueda automatizarlo sin límite. Nunca bloquea si algo falla del
-// lado del servidor (prioriza que la herramienta gratuita siga abierta).
+// CAMBIO DE SEGURIDAD: antes, el "candado" de acceso vivía solo en el
+// frontend, revisando si la URL tenía CUALQUIER texto en ?orden_id= y
+// ?plan= — sin verificar que esa orden existiera ni estuviera pagada.
+// Cualquiera podía escribir la URL a mano y entrar gratis. Ahora se
+// valida la orden real contra Supabase antes de dar acceso o evaluar.
 //
-// CAMBIO DE FORMATO: se agregó la regla anti-comillas que ya usan CV,
-// Career y Profile Check — evita que el JSON se rompa cuando el modelo
-// usa comillas dobles dentro de un valor de texto.
+// CAMBIO DE DISEÑO: las "historias reales" del usuario (banco_historias)
+// ya no viajan como un parámetro largo en la URL (fácil de alterar) —
+// se leen directo desde la orden real en Supabase.
 
 const SUPABASE_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
+const PLANES_CON_ACCESO = ['optimizado', 'pro'];
 
-// Máximo 20 evaluaciones por IP cada 24 horas — generoso para practicar
-// varias respuestas en una sesión, pero acotado contra scripts.
-async function verificarLimiteEntrevistas(ip) {
-  if (!ip) return { ok: true };
-
+async function obtenerOrdenValida(ordenId) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceKey) return { ok: true }; // si falta la config, no bloqueamos la herramienta gratuita
+  if (!serviceKey) {
+    return { ok: false, status: 500, error: 'Falta configurar SUPABASE_SERVICE_ROLE_KEY en Vercel' };
+  }
+  if (!ordenId) {
+    return { ok: false, status: 401, error: 'Acceso inválido: falta la orden.' };
+  }
 
   const headers = { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` };
-  const VEINTICUATRO_HORAS_MS = 24 * 60 * 60 * 1000;
-  const LIMITE = 20;
+  const url = `${SUPABASE_URL}/rest/v1/cv_ordenes?id=eq.${encodeURIComponent(ordenId)}&select=id,plan,estado,banco_historias`;
+  const r = await fetch(url, { headers });
+  if (!r.ok) return { ok: false, status: 502, error: 'No se pudo verificar tu acceso. Intenta de nuevo.' };
 
-  try {
-    const url = `${SUPABASE_URL}/rest/v1/entrevistas_usos?ip=eq.${encodeURIComponent(ip)}&select=ip,usos_hoy,ultimo_uso`;
-    const r = await fetch(url, { headers });
-    if (r.ok) {
-      const rows = await r.json();
-      const fila = Array.isArray(rows) ? rows[0] : null;
-      if (fila?.ultimo_uso) {
-        const desdeUltimoUso = Date.now() - new Date(fila.ultimo_uso).getTime();
-        if (desdeUltimoUso < VEINTICUATRO_HORAS_MS) {
-          if ((fila.usos_hoy || 0) >= LIMITE) {
-            return { ok: false, error: 'Alcanzaste el límite de práctica gratuita por hoy. Vuelve mañana, o escríbenos a workea@tupartnerlaboral.cl para conversar sobre una asesoría de entrevistas.' };
-          }
-          await fetch(`${SUPABASE_URL}/rest/v1/entrevistas_usos`, {
-            method: 'POST',
-            headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-            body: JSON.stringify({ ip, usos_hoy: (fila.usos_hoy || 0) + 1, ultimo_uso: fila.ultimo_uso })
-          });
-          return { ok: true };
-        }
-      }
-    }
-
-    await fetch(`${SUPABASE_URL}/rest/v1/entrevistas_usos`, {
-      method: 'POST',
-      headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-      body: JSON.stringify({ ip, usos_hoy: 1, ultimo_uso: new Date().toISOString() })
-    });
-    return { ok: true };
-  } catch (e) {
-    console.error('Error verificando límite de entrevistas:', e);
-    return { ok: true };
+  const rows = await r.json();
+  const orden = Array.isArray(rows) ? rows[0] : null;
+  if (!orden) {
+    return { ok: false, status: 401, error: 'No encontramos esa orden. Este beneficio es exclusivo de Workea CV.' };
   }
+  if (orden.estado !== 'completo') {
+    return { ok: false, status: 401, error: 'Termina tu CV en Workea CV (incluido tu mensaje de presentación) para desbloquear esta práctica.' };
+  }
+  if (!PLANES_CON_ACCESO.includes(orden.plan)) {
+    return { ok: false, status: 401, error: 'Este beneficio está incluido solo en los planes Optimizado y Pro de Workea CV.' };
+  }
+
+  return { ok: true, orden };
 }
 
 module.exports = async (req, res) => {
@@ -69,20 +52,26 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Método no permitido' });
   }
   try {
-    const { accion, pregunta, respuesta } = req.body || {};
-    if (accion !== 'evaluar') return res.status(400).json({ error: 'Acción desconocida' });
-    if (!pregunta || !respuesta) return res.status(400).json({ error: 'pregunta y respuesta son obligatorias' });
-    if (respuesta.trim().length < 20) {
-      return res.status(400).json({ error: 'Tu respuesta es muy corta para evaluarla — cuenta un poco más' });
+    const { accion, orden_id, pregunta, respuesta } = req.body || {};
+
+    // ===== Verificar acceso y entregar las historias reales =====
+    if (accion === 'verificar_acceso') {
+      const resultado = await obtenerOrdenValida(orden_id);
+      if (!resultado.ok) return res.status(resultado.status).json({ error: resultado.error });
+      return res.status(200).json({ ok: true, historias: resultado.orden.banco_historias || [] });
     }
 
-    const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || null;
-    const limite = await verificarLimiteEntrevistas(ip);
-    if (!limite.ok) {
-      return res.status(429).json({ error: limite.error });
-    }
+    // ===== Evaluar una respuesta (exige la misma orden válida) =====
+    if (accion === 'evaluar') {
+      const resultado = await obtenerOrdenValida(orden_id);
+      if (!resultado.ok) return res.status(resultado.status).json({ error: resultado.error });
 
-    const prompt = `Eres una psicóloga laboral especializada en entrevistas de trabajo. Evalúa esta respuesta de un candidato a una pregunta de entrevista conductual, usando el método STAR (Situación, Tarea, Acción, Resultado).
+      if (!pregunta || !respuesta) return res.status(400).json({ error: 'pregunta y respuesta son obligatorias' });
+      if (respuesta.trim().length < 20) {
+        return res.status(400).json({ error: 'Tu respuesta es muy corta para evaluarla — cuenta un poco más' });
+      }
+
+      const prompt = `Eres una psicóloga laboral especializada en entrevistas de trabajo. Evalúa esta respuesta de un candidato a una pregunta de entrevista conductual, usando el método STAR (Situación, Tarea, Acción, Resultado).
 Pregunta: "${pregunta}"
 Respuesta del candidato:
 """
@@ -99,45 +88,48 @@ Responde en JSON puro, sin texto adicional:
   "resultado": {"presente": true/false, "nota": "comentario breve"},
   "sugerencia_principal": "el consejo más importante para mejorar esta respuesta específica"
 }`;
-    const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 900,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    if (!aiRes.ok) {
-      const errText = await aiRes.text();
-      console.error('Anthropic API error:', errText);
-      return res.status(502).json({ error: 'No pudimos evaluar tu respuesta en este momento. Intenta de nuevo en un rato.' });
-    }
-    const data = await aiRes.json();
-    let texto = data?.content?.[0]?.text || '{}';
-    texto = texto.replace(/```json/gi, '').replace(/```/g, '').trim();
-    if (data?.stop_reason === 'max_tokens') {
-      console.error('Respuesta cortada por max_tokens:', texto);
-      return res.status(502).json({ error: 'La evaluación quedó incompleta — intenta de nuevo' });
-    }
-    let evaluacion;
-    try {
-      evaluacion = JSON.parse(texto);
-    } catch (e) {
-      const match = texto.match(/\{[\s\S]*\}/);
-      if (match) {
-        try { evaluacion = JSON.parse(match[0]); } catch (e2) { /* cae abajo */ }
+      const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 900,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      if (!aiRes.ok) {
+        const errText = await aiRes.text();
+        console.error('Anthropic API error:', errText);
+        return res.status(502).json({ error: 'No pudimos evaluar tu respuesta en este momento. Intenta de nuevo en un rato.' });
       }
-      if (!evaluacion) {
-        console.error('No se pudo parsear la evaluación:', texto);
-        return res.status(502).json({ error: 'No se pudo interpretar la evaluación' });
+      const data = await aiRes.json();
+      let texto = data?.content?.[0]?.text || '{}';
+      texto = texto.replace(/```json/gi, '').replace(/```/g, '').trim();
+      if (data?.stop_reason === 'max_tokens') {
+        console.error('Respuesta cortada por max_tokens:', texto);
+        return res.status(502).json({ error: 'La evaluación quedó incompleta — intenta de nuevo' });
       }
+      let evaluacion;
+      try {
+        evaluacion = JSON.parse(texto);
+      } catch (e) {
+        const match = texto.match(/\{[\s\S]*\}/);
+        if (match) {
+          try { evaluacion = JSON.parse(match[0]); } catch (e2) { /* cae abajo */ }
+        }
+        if (!evaluacion) {
+          console.error('No se pudo parsear la evaluación:', texto);
+          return res.status(502).json({ error: 'No se pudo interpretar la evaluación' });
+        }
+      }
+      return res.status(200).json({ evaluacion });
     }
-    return res.status(200).json({ evaluacion });
+
+    return res.status(400).json({ error: 'Acción desconocida' });
   } catch (err) {
     console.error('entrevistas/index error:', err);
     return res.status(500).json({ error: 'Error interno: ' + (err.message || 'desconocido') });
