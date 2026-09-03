@@ -170,13 +170,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
   ];
 
   let historiasReales = [];
-  try{
-    const params = new URLSearchParams(window.location.search);
-    const historiasParam = params.get('historias');
-    if(historiasParam){
-      historiasReales = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(historiasParam)))));
-    }
-  } catch(e){ historiasReales = []; }
+  let ordenIdActual = '';
 
   let preguntaActual = '';
   let resultadosSesion = []; // [{indice, score}]
@@ -263,7 +257,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       const res = await fetch('/api/entrevistas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accion: 'evaluar', pregunta: preguntaActual, respuesta })
+        body: JSON.stringify({ accion: 'evaluar', orden_id: ordenIdActual, pregunta: preguntaActual, respuesta })
       });
       const data = await res.json();
       if(!res.ok) throw new Error(data.error || 'Error de servidor');
@@ -316,23 +310,36 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     return div.innerHTML;
   }
 
-  function verificarAcceso(){
+  async function verificarAcceso(){
     const params = new URLSearchParams(window.location.search);
     const ordenId = params.get('orden_id');
-    const plan = params.get('plan');
-    const planesValidos = ['optimizado', 'pro'];
 
-    if(!ordenId || !planesValidos.includes(plan)){
-      return false;
+    if(!ordenId){
+      return; // se queda en scr-locked, que ya está activa por defecto
     }
-    document.getElementById('scr-locked').classList.remove('active');
-    document.getElementById('scr-preguntas').classList.add('active');
-    return true;
+
+    try{
+      const res = await fetch('/api/entrevistas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accion: 'verificar_acceso', orden_id: ordenId })
+      });
+      const data = await res.json();
+      if(!res.ok || !data.ok){
+        return; // se queda en scr-locked; data.error tiene el motivo si se necesita mostrar
+      }
+
+      ordenIdActual = ordenId;
+      historiasReales = Array.isArray(data.historias) ? data.historias : [];
+      document.getElementById('scr-locked').classList.remove('active');
+      document.getElementById('scr-preguntas').classList.add('active');
+      renderPreguntas();
+    } catch(e){
+      // Ante cualquier error de red, se queda en scr-locked por seguridad.
+    }
   }
 
-  if(verificarAcceso()){
-    renderPreguntas();
-  }
+  verificarAcceso();
 </script>
 
 </body>
