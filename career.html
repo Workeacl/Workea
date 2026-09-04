@@ -188,6 +188,15 @@ a{color:inherit;text-decoration:none}
 .consejo-card p{font-size:.95rem;color:#c9d6ef;line-height:1.7;font-style:italic}
 .consejo-card .firma{margin-top:1rem;font-size:.82rem;color:#a5bde6;font-style:normal}
 .cta-final{background:var(--grad);border-radius:18px;padding:1.8rem 2rem;text-align:center;box-shadow:var(--shadow-lg);margin-top:1.3rem}
+.cta-servicios{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-bottom:1.2rem}
+.cta-serv{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:.9rem .8rem;text-align:left}
+.cta-serv b{display:block;color:#fff;font-size:.82rem;margin-bottom:.15rem}
+.cta-serv span{display:block;font-family:var(--display);font-weight:800;font-size:1.05rem;color:#fff;margin-bottom:.35rem}
+.cta-serv p{font-size:.75rem;color:rgba(255,255,255,.85);line-height:1.4;margin:0}
+.cta-gratis{background:rgba(255,255,255,.95);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.3rem;text-align:left}
+.cta-gratis b{display:block;color:var(--navy);font-size:.9rem;margin-bottom:.25rem}
+.cta-gratis p{font-size:.83rem;color:var(--muted);line-height:1.5;margin:0}
+@media(max-width:620px){.cta-servicios{grid-template-columns:1fr}}
 .cta-final h3{font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:.4rem}
 .cta-final p{font-size:.9rem;color:rgba(255,255,255,.9);margin-bottom:1.2rem}
 .btn-white{background:#fff;color:var(--navy);font-weight:700;padding:.85rem 1.8rem;border-radius:999px;border:none;cursor:pointer;font-size:.93rem}
@@ -717,9 +726,35 @@ function renderResults(d){
     </div>
 
     <div class="cta-final">
-      <h3>¿Quieres trabajar tu ruta con acompañamiento real?</h3>
-      <p>Tu ruta te muestra el camino. Las asesorías de Tu Partner Laboral te acompañan a recorrerlo: CV, LinkedIn, entrevistas y estrategia personalizada.</p>
-      <a class="btn-white" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener">Conocer las asesorías →</a>
+      <h3>Tu ruta te muestra el camino. Yo te acompaño a recorrerlo.</h3>
+      <p style="margin-bottom:1.4rem">Soy Arantxa Martínez, psicóloga laboral con +7 años en selección — he estado del otro lado de la mesa evaluando candidatos. Esto es lo que trabajamos juntas, que ninguna herramienta automática puede hacer por ti:</p>
+
+      <div class="cta-servicios">
+        <div class="cta-serv">
+          <b>⚡ Express · 30 min</b>
+          <span>$18.000</span>
+          <p>Una duda concreta, resuelta con criterio profesional.</p>
+        </div>
+        <div class="cta-serv">
+          <b>🎯 Focalizada · 45 min</b>
+          <span>$25.000</span>
+          <p>Trabajamos a fondo un frente: CV, LinkedIn o entrevistas.</p>
+        </div>
+        <div class="cta-serv">
+          <b>🧭 General · 60 min</b>
+          <span>$40.000</span>
+          <p>Tu estrategia completa de búsqueda, ordenada y con plan.</p>
+        </div>
+      </div>
+
+      <div class="cta-gratis">
+        <b>💬 ¿No sabes cuál te sirve más?</b>
+        <p>Escríbeme y conversamos tu caso — te oriento sobre qué necesitas según lo que muestra tu ruta, sin compromiso.</p>
+      </div>
+
+      <a class="btn-white" href="https://wa.me/56933124415" target="_blank" rel="noopener">Conversemos por WhatsApp →</a>
+      <p style="font-size:.82rem;margin-top:.9rem;margin-bottom:0"><a href="https://tupartnerlaboral.cl/#agenda" target="_blank" rel="noopener" style="color:rgba(255,255,255,.9);text-decoration:underline">O agenda directamente tu asesoría →</a></p>
+      <p style="font-size:.78rem;color:rgba(255,255,255,.7);margin-top:.7rem;margin-bottom:0">100% online · Chile y Latinoamérica · ★ 5.0 de valoración</p>
     </div>`;
 
   showScreen('scr-results');
