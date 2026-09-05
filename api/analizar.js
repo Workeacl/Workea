@@ -90,6 +90,14 @@ async function validarCodigoEnSupabase(codigoLimpio, ip) {
     return { ok: false, status: 401, error: 'Código de acceso inválido' };
   }
 
+  // Tope silencioso contra abuso automatizado. Un usuario real analizando
+  // sus postulaciones no se acerca a este número, así que no se anuncia
+  // como límite en la página de planes.
+  const TOPE_ANALISIS = 30;
+  if ((fila.usos_totales || 0) >= TOPE_ANALISIS) {
+    return { ok: false, status: 429, error: 'Has alcanzado el máximo de análisis para este código. Si necesitas seguir analizando ofertas, escríbenos a workea@tupartnerlaboral.cl y lo vemos.' };
+  }
+
   // Registro de uso — NUNCA bloquea el acceso, solo deja un rastro para
   // que puedas notar patrones raros (ej: el mismo código usado desde
   // muchas IPs distintas) y decidir tú misma si vale la pena investigar.
