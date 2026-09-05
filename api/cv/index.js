@@ -361,6 +361,15 @@ El score y las alertas deben poder justificarse con el contenido real del CV. No
       if (orden.plan === 'diagnostico') {
         return res.status(403).json({ error: 'El plan Diagnóstico no incluye optimización' });
       }
+
+      // Tope silencioso contra abuso automatizado. Un usuario real nunca
+      // se acerca a este número (con 3-4 iteraciones suele quedar conforme),
+      // así que no se anuncia como límite en la página de planes.
+      const TOPE_REGENERACIONES = 20;
+      if ((orden.regeneraciones || 0) >= TOPE_REGENERACIONES) {
+        return res.status(429).json({ error: 'Has alcanzado el máximo de versiones para esta orden. Si necesitas seguir ajustando, escríbenos a workea@tupartnerlaboral.cl y lo vemos.' });
+      }
+
       const { respuestas = [], hallazgos = [] } = req.body;
 
       const respuestasTexto = respuestas.length
@@ -405,7 +414,8 @@ Responde en JSON puro con este formato:
         .update({
           cv_optimizado,
           preguntas_respuestas: respuestas,
-          estado: 'optimizado'
+          estado: 'optimizado',
+          regeneraciones: (orden.regeneraciones || 0) + 1
         })
         .eq('id', orden_id).select().single();
 
