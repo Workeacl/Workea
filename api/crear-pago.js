@@ -11,9 +11,9 @@
 // "Plan comprado" del formulario único.
 const PLANES = {
   cv: {
-    diagnostico: { titulo: 'Workea CV Diagnóstico', precio: 3490 },
-    optimizado:  { titulo: 'Workea CV Optimizado',  precio: 8990 },
-    pro:         { titulo: 'Workea CV Pro',          precio: 11990 }
+    diagnostico: { titulo: 'Workea CV Diagnóstico', precio: 2990 },
+    optimizado:  { titulo: 'Workea CV Optimizado',  precio: 6990 },
+    pro:         { titulo: 'Workea CV Pro',          precio: 9990 }
   },
   career: {
     titulo: 'Workea Career',
