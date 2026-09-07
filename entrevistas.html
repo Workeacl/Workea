@@ -171,6 +171,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 
   let historiasReales = [];
   let ordenIdActual = '';
+  let practicaPrevia = [];
 
   let preguntaActual = '';
   let resultadosSesion = []; // [{indice, score}]
@@ -225,7 +226,8 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     } else {
       ctxEl.style.display = 'none';
     }
-    document.getElementById('respuesta-input').value = '';
+    const previa = practicaPrevia.find(p => p.pregunta === preguntaActual);
+    document.getElementById('respuesta-input').value = previa ? previa.respuesta : '';
     document.getElementById('respuesta-error').style.display = 'none';
     irScreen('scr-responder');
   }
@@ -265,6 +267,8 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       renderResultado(data.evaluacion);
       resultadosSesion = resultadosSesion.filter(r => r.indice !== preguntaIdx);
       resultadosSesion.push({ indice: preguntaIdx, score: data.evaluacion.score });
+      practicaPrevia = practicaPrevia.filter(p => p.pregunta !== preguntaActual);
+      practicaPrevia.push({ pregunta: preguntaActual, respuesta, score: data.evaluacion.score, fecha: new Date().toISOString() });
       irScreen('scr-resultado');
     } catch(err){
       irScreen('scr-responder');
@@ -331,6 +335,16 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 
       ordenIdActual = ordenId;
       historiasReales = Array.isArray(data.historias) ? data.historias : [];
+
+      // Recuperamos lo practicado en sesiones anteriores, para que la
+      // persona vea su progreso al volver otro día.
+      practicaPrevia = Array.isArray(data.practica) ? data.practica : [];
+      const lista = listaCombinada();
+      resultadosSesion = practicaPrevia.map(p => {
+        const indice = lista.findIndex(item => item.pregunta === p.pregunta);
+        return indice >= 0 ? { indice, score: p.score } : null;
+      }).filter(Boolean);
+
       document.getElementById('scr-locked').classList.remove('active');
       document.getElementById('scr-preguntas').classList.add('active');
       renderPreguntas();
