@@ -19,16 +19,23 @@ const SUPABASE_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
 const PLANES_CON_ACCESO = ['optimizado', 'pro'];
 
 async function obtenerOrdenValida(ordenId) {
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceKey) {
-    return { ok: false, status: 500, error: 'Falta configurar SUPABASE_SERVICE_ROLE_KEY en Vercel' };
-  }
   if (!ordenId) {
     return { ok: false, status: 401, error: 'Acceso inválido: falta la orden.' };
   }
 
+  // Código maestro para pruebas, igual criterio que el resto del sitio —
+  // no consulta Supabase, entrega las 5 preguntas genéricas sin historias reales.
+  if (ordenId.toUpperCase() === 'WORKEA2026') {
+    return { ok: true, orden: { banco_historias: [] } };
+  }
+
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey) {
+    return { ok: false, status: 500, error: 'Falta configurar SUPABASE_SERVICE_ROLE_KEY en Vercel' };
+  }
+
   const headers = { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` };
-  const url = `${SUPABASE_URL}/rest/v1/cv_ordenes?id=eq.${encodeURIComponent(ordenId)}&select=id,plan,estado,banco_historias`;
+  const url = `${SUPABASE_URL}/rest/v1/cv_ordenes?id=eq.${encodeURIComponent(ordenId)}&select=id,plan,estado,banco_historias,practica_entrevistas`;
   const r = await fetch(url, { headers });
   if (!r.ok) return { ok: false, status: 502, error: 'No se pudo verificar tu acceso. Intenta de nuevo.' };
 
@@ -58,7 +65,11 @@ module.exports = async (req, res) => {
     if (accion === 'verificar_acceso') {
       const resultado = await obtenerOrdenValida(orden_id);
       if (!resultado.ok) return res.status(resultado.status).json({ error: resultado.error });
-      return res.status(200).json({ ok: true, historias: resultado.orden.banco_historias || [] });
+      return res.status(200).json({
+        ok: true,
+        historias: resultado.orden.banco_historias || [],
+        practica: resultado.orden.practica_entrevistas || []
+      });
     }
 
     // ===== Evaluar una respuesta (exige la misma orden válida) =====
@@ -126,6 +137,28 @@ Responde en JSON puro, sin texto adicional:
           return res.status(502).json({ error: 'No se pudo interpretar la evaluación' });
         }
       }
+      // Guardamos esta práctica en el historial de la orden, para que la
+      // persona pueda retomar otro día sin perder su progreso. Si ya había
+      // practicado esta misma pregunta, se reemplaza por el intento nuevo.
+      if (String(orden_id).toUpperCase() !== 'WORKEA2026') {
+        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        if (serviceKey) {
+          const headers = { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` };
+          const previas = (resultado.orden.practica_entrevistas || []).filter(p => p.pregunta !== pregunta);
+          const historial = [...previas, {
+            pregunta,
+            respuesta,
+            score: evaluacion.score,
+            fecha: new Date().toISOString()
+          }];
+          await fetch(`${SUPABASE_URL}/rest/v1/cv_ordenes?id=eq.${encodeURIComponent(orden_id)}`, {
+            method: 'PATCH',
+            headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+            body: JSON.stringify({ practica_entrevistas: historial })
+          }).catch(e => console.error('No se pudo guardar la práctica:', e));
+        }
+      }
+
       return res.status(200).json({ evaluacion });
     }
 
