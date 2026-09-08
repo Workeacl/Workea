@@ -111,6 +111,9 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
 .tpl-pick.active{border-color:var(--brand-strong);box-shadow:0 0 0 2px var(--brand-tint)}
 .tpl-pick .tp-swatch{height:48px;border-radius:8px;margin-bottom:.4rem}
 .tpl-pick .tp-name{font-size:.75rem;font-weight:700}
+.tpl-pick .tp-tag{font-size:.6rem;font-weight:700;padding:.1rem .4rem;border-radius:999px;margin-top:.25rem;display:inline-block;letter-spacing:.03em}
+.tp-tag.tp-ats{background:var(--green-bg);color:var(--green)}
+.tp-tag.tp-vis{background:var(--brand-tint);color:var(--brand-strong)}
 
 .msg-box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.3rem 1.4rem;line-height:1.55;font-size:.88rem;margin-bottom:1rem;white-space:pre-wrap}
 .formato-toggle{display:inline-flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px}
@@ -613,13 +616,14 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     if(planActual === 'pro'){
       html += `<div class="opt-block">
         <h4>Elige tu plantilla</h4>
+        <p style="font-size:.82rem;color:var(--muted);margin:-.3rem 0 .8rem;line-height:1.5">Puedes cambiarla y volver a descargar las veces que quieras. Las marcadas <b>ATS</b> son las más seguras para postular por portales; las <b>visuales</b> lucen mejor al enviarlas directo a una persona.</p>
         <div class="tpl-grid" id="tpl-grid">
-          <div class="tpl-pick active" onclick="elegirTplUI('minimal', this)"><div class="tp-swatch" style="background:#f6f8fc;border:1px solid #e3e6f0"></div><div class="tp-name">Minimal</div></div>
-          <div class="tpl-pick" onclick="elegirTplUI('professional', this)"><div class="tp-swatch" style="background:#0a1430"></div><div class="tp-name">Professional</div></div>
-          <div class="tpl-pick" onclick="elegirTplUI('harvard', this)"><div class="tp-swatch" style="background:#fff;border:1.5px solid #111"></div><div class="tp-name">Harvard</div></div>
-          <div class="tpl-pick" onclick="elegirTplUI('executive', this)"><div class="tp-swatch" style="background:linear-gradient(120deg,#0a1430,#1f2a4a)"></div><div class="tp-name">Executive</div></div>
-          <div class="tpl-pick" onclick="elegirTplUI('tech', this)"><div class="tp-swatch" style="background:#101418"></div><div class="tp-name">Tech</div></div>
-          <div class="tpl-pick" onclick="elegirTplUI('creative', this)"><div class="tp-swatch" style="background:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0)"></div><div class="tp-name">Creative</div></div>
+          <div class="tpl-pick active" onclick="elegirTplUI('minimal', this)"><div class="tp-swatch" style="background:#f6f8fc;border:1px solid #e3e6f0"></div><div class="tp-name">Minimal</div><div class="tp-tag tp-ats">ATS</div></div>
+          <div class="tpl-pick" onclick="elegirTplUI('professional', this)"><div class="tp-swatch" style="background:#0a1430"></div><div class="tp-name">Professional</div><div class="tp-tag tp-ats">ATS</div></div>
+          <div class="tpl-pick" onclick="elegirTplUI('harvard', this)"><div class="tp-swatch" style="background:#fff;border:1.5px solid #111"></div><div class="tp-name">Harvard</div><div class="tp-tag tp-ats">ATS</div></div>
+          <div class="tpl-pick" onclick="elegirTplUI('executive', this)"><div class="tp-swatch" style="background:linear-gradient(120deg,#0a1430,#1f2a4a)"></div><div class="tp-name">Executive</div><div class="tp-tag tp-ats">ATS</div></div>
+          <div class="tpl-pick" onclick="elegirTplUI('tech', this)"><div class="tp-swatch" style="background:#101418"></div><div class="tp-name">Tech</div><div class="tp-tag tp-vis">Visual</div></div>
+          <div class="tpl-pick" onclick="elegirTplUI('creative', this)"><div class="tp-swatch" style="background:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0)"></div><div class="tp-name">Creative</div><div class="tp-tag tp-vis">Visual</div></div>
         </div>
       </div>`;
     }
