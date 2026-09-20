@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workea Ruta · Todo tu proceso de búsqueda, en un solo paquete</title>
+<meta name="description" content="Match + CV Diagnóstico + Profile Check + Relato + 30 días de Bitácora, en un solo pago. La forma más completa y conveniente de usar Workea durante tu búsqueda laboral.">
+<link rel="canonical" href="https://workea.cl/ruta.html">
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#6c53ee;--cyan:#12cdf0;--grad:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0);
+  --brand-strong:#5138d6;--navy:#0a1430;--partner-blue:#51608a;
+  --brand-tint:#f0edfe;--brand-tint-2:#ded7fc;
+  --ink:#101b38;--muted:#5a6785;--faint:#8f9ab3;
+  --bg:#f6f8fc;--surface:#ffffff;--line:#e3e6f0;
+  --green:#2f9e6d;--green-bg:#e9f7f0;--green-ln:#bfe5d2;
+  --shadow:0 1px 2px rgba(16,27,56,.05),0 8px 24px rgba(16,27,56,.07);
+  --shadow-lg:0 2px 4px rgba(16,27,56,.06),0 18px 48px rgba(16,27,56,.12);
+  --r:14px;--display:'Bricolage Grotesque',sans-serif;--body:'Instrument Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);line-height:1.15;letter-spacing:-.01em}
+button,a{font-family:var(--body);cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+.app-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.app-header-in{max-width:900px;margin:0 auto;padding:.9rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;align-items:center;gap:.65rem}
+.logo-w{width:38px;height:28px;flex-shrink:0}
+.logo .lt{display:flex;flex-direction:column;line-height:1.05}
+.logo .lt b{font-weight:700;font-size:1.2rem;letter-spacing:-.015em;color:var(--navy)}
+.logo .lt b em{font-style:normal}
+.logo .lt span{font-size:.58rem;color:var(--partner-blue);font-weight:700;letter-spacing:.05em}
+.ruta-badge{background:var(--grad);color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.06em;padding:.3rem .8rem;border-radius:999px}
+
+.main{max-width:900px;margin:0 auto;padding:0 1.5rem 5rem}
+
+.hero{text-align:center;padding:3.4rem 1rem 2.2rem}
+.hero .eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-strong);background:var(--brand-tint);border:1px solid var(--brand-tint-2);padding:.35rem .9rem;border-radius:999px;margin-bottom:1.2rem}
+.hero h1{font-size:clamp(1.9rem,4vw,2.7rem);font-weight:800;margin-bottom:.8rem}
+.hero p{font-size:1.05rem;color:var(--muted);max-width:36rem;margin:0 auto}
+
+.bundle-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:2.6rem 0}
+.bundle-item{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:1.3rem 1.4rem;box-shadow:var(--shadow);display:flex;gap:.9rem;align-items:flex-start}
+.bundle-item .bi-ico{font-size:1.5rem;flex-shrink:0}
+.bundle-item b{display:block;font-size:1rem;margin-bottom:.25rem}
+.bundle-item p{font-size:.86rem;color:var(--muted)}
+.bundle-item .bi-price{display:inline-block;margin-top:.5rem;font-size:.76rem;font-weight:700;color:var(--faint);text-decoration:line-through}
+
+.plus-row{display:flex;align-items:center;justify-content:center;gap:.6rem;margin:.2rem 0;color:var(--faint);font-weight:700;font-size:1.1rem}
+
+.price-box{text-align:center;background:var(--navy);border-radius:22px;padding:2.4rem 1.8rem;box-shadow:var(--shadow-lg);max-width:440px;margin:0 auto 2.6rem;color:#fff}
+.price-box .pb-name{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:.6rem}
+.price-box .pb-compare{font-size:.85rem;color:#a5bde6;text-decoration:line-through;margin-bottom:.2rem}
+.price-box .pb-price{font-family:var(--display);font-size:2.8rem;font-weight:800;margin-bottom:.3rem}
+.price-box .pb-sub{font-size:.9rem;color:#a5bde6;margin-bottom:1.4rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-weight:700;font-size:.95rem;padding:.85rem 1.6rem;border-radius:999px;transition:transform .15s,box-shadow .15s;cursor:pointer;border:none;width:100%}
+.btn-brand{background:var(--grad);color:#fff}
+.btn-brand:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none!important}
+.price-box .pb-note{font-size:.78rem;color:#7f93bd;margin-top:1rem}
+
+.how-it-works{max-width:640px;margin:0 auto 2.8rem}
+.how-it-works h2{text-align:center;font-size:1.3rem;margin-bottom:1.4rem}
+.how-step{display:flex;gap:.9rem;margin-bottom:1.1rem}
+.how-num{width:26px;height:26px;border-radius:50%;background:var(--grad);color:#fff;font-size:.78rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.how-step p{font-size:.92rem;color:var(--muted)}
+.how-step b{color:var(--ink)}
+
+.compare-note{max-width:600px;margin:0 auto;text-align:center;font-size:.85rem;color:var(--faint)}
+.compare-note a{color:var(--brand-strong);font-weight:600;text-decoration:underline}
+
+@media(max-width:640px){
+  .bundle-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-in">
+    <a class="logo" href="/">
+      <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true">
+        <defs><linearGradient id="wgLogo" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/>
+        </linearGradient></defs>
+        <path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgLogo)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+    </a>
+    <span class="ruta-badge">Ruta</span>
+  </div>
+</header>
+
+<main class="main">
+
+  <div class="hero">
+    <span class="eyebrow">✦ Todo incluido · 30 días</span>
+    <h1>Tu búsqueda laboral, completa, en un solo paquete</h1>
+    <p>En vez de ir comprando cada informe por separado, Workea Ruta te da acceso a todo lo que necesitas para buscar trabajo con estrategia, durante 30 días.</p>
+  </div>
+
+  <div class="bundle-grid">
+    <div class="bundle-item">
+      <span class="bi-ico">🎯</span>
+      <div><b>Workea Match</b><p>Analiza tu compatibilidad con cada oferta a la que postules: fortalezas, brechas, palabras clave y plan de acción.</p><span class="bi-price">$2.990</span></div>
+    </div>
+    <div class="bundle-item">
+      <span class="bi-ico">🔍</span>
+      <div><b>Workea CV Diagnóstico</b><p>Puntaje de compatibilidad ATS, errores detectados y recomendaciones específicas por sección.</p><span class="bi-price">$2.990</span></div>
+    </div>
+    <div class="bundle-item">
+      <span class="bi-ico">🔵</span>
+      <div><b>Workea Profile Check</b><p>Diagnóstico completo de tu perfil de LinkedIn: titular, "Acerca de", experiencia y palabras clave.</p><span class="bi-price">$2.990</span></div>
+    </div>
+    <div class="bundle-item">
+      <span class="bi-ico">💬</span>
+      <div><b>Workea Relato</b><p>Prepara cómo explicar un vacío laboral, un despido o un cambio de rubro, sin inventar nada.</p><span class="bi-price">$2.990</span></div>
+    </div>
+    <div class="bundle-item" style="grid-column:1/-1">
+      <span class="bi-ico">📖</span>
+      <div><b>Workea Bitácora — 30 días</b><p>Seguimiento de todas tus postulaciones y entrevistas durante el mes, en un solo lugar.</p></div>
+    </div>
+  </div>
+
+  <div class="price-box">
+    <p class="pb-name">Workea Ruta</p>
+    <p class="pb-compare">Comprado por separado: $11.960</p>
+    <p class="pb-price">$7.990</p>
+    <p class="pb-sub">Pago único · acceso por 30 días a los 4 informes + Bitácora</p>
+    <button class="btn btn-brand" onclick="comprarRuta(this)" id="btnComprar">Obtener Workea Ruta →</button>
+    <p class="pb-note">Pago seguro con Mercado Pago · Tras pagar, recibirás tus 4 códigos de acceso por correo</p>
+  </div>
+
+  <div class="how-it-works">
+    <h2>¿Cómo funciona?</h2>
+    <div class="how-step"><span class="how-num">1</span><p><b>Pagas una vez</b> — sin mensualidades ni renovación automática.</p></div>
+    <div class="how-step"><span class="how-num">2</span><p><b>Recibes un correo con 4 códigos</b>, uno por cada informe incluido, junto con el link directo para usar cada uno.</p></div>
+    <div class="how-step"><span class="how-num">3</span><p><b>Los activas cuando quieras</b>, en el orden que prefieras, durante tus 30 días de acceso.</p></div>
+  </div>
+
+  <p class="compare-note">¿Solo necesitas uno de estos informes? Puedes comprarlos por separado en <a href="/">Workea Match</a>, <a href="/workea-cv-planes.html">Workea CV</a> o <a href="/profile.html">Profile Check</a>.</p>
+
+</main>
+
+<script>
+async function comprarRuta(btn){
+  const textoOriginal = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Generando tu pago...';
+  try {
+    const r = await fetch('/api/crear-pago', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ producto: 'ruta' })
+    });
+    const data = await r.json();
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      alert(data.error || 'No se pudo iniciar el pago. Intenta de nuevo.');
+      btn.disabled = false;
+      btn.textContent = textoOriginal;
+    }
+  } catch (err) {
+    alert('No se pudo iniciar el pago. Intenta de nuevo.');
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+  }
+}
+</script>
+
+</body>
+</html>
