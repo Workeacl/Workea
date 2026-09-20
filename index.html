@@ -566,6 +566,22 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
   </section>
 
+  <!-- RUTA -->
+  <section class="section" id="ruta" style="padding-top:0">
+    <div style="max-width:900px;margin:0 auto;background:var(--navy);border-radius:28px;padding:2.6rem 2rem;display:flex;flex-wrap:wrap;gap:2rem;align-items:center;justify-content:space-between">
+      <div style="flex:1;min-width:260px;color:#fff">
+        <span style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.12);color:var(--cyan);font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:.35rem .9rem;border-radius:999px;margin-bottom:1rem">✦ Todo incluido · 30 días</span>
+        <h2 style="color:#fff;font-size:clamp(1.5rem,2.8vw,2rem);margin-bottom:.7rem">¿Prefieres que te acompañemos en todo el proceso?</h2>
+        <p style="color:#c9d6ef;max-width:34rem">Workea Ruta junta Match + CV Diagnóstico + Profile Check + Relato + 30 días de Bitácora en un solo pago — todo lo que necesitas para buscar trabajo con estrategia, sin ir comprando cada informe por separado.</p>
+      </div>
+      <div style="text-align:center;flex-shrink:0">
+        <p style="color:#7f93bd;font-size:.85rem;text-decoration:line-through;margin-bottom:.1rem">Comprado por separado: $11.960</p>
+        <p style="font-family:var(--display);color:#fff;font-size:2.2rem;font-weight:800;margin-bottom:.9rem">$7.990</p>
+        <a href="/ruta.html" class="btn btn-brand" style="display:inline-flex">Conocer Workea Ruta →</a>
+      </div>
+    </div>
+  </section>
+
   <!-- MIRADA PROFESIONAL -->
   <section class="section" id="metodologia" style="padding-top:0">
     <div style="background:var(--navy);border-radius:22px;padding:2.6rem 2.4rem;box-shadow:var(--shadow-lg);display:grid;grid-template-columns:auto 1fr;gap:2.2rem;align-items:center">
@@ -1151,7 +1167,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <div class="real-cta">
         <div>
           <h3>¿Quieres tu análisis real? 💬</h3>
-          <p>Este fue un ejemplo. Solicita gratis tu Informe Esencial con tu propia oferta y tu CV, o revisa los planes Estratégico y Experto para un análisis en profundidad.</p>
+          <p>Este fue un ejemplo. Solicita gratis tu Informe Esencial con tu propia oferta y tu CV, o revisa los planes Match y Ruta para un análisis en profundidad.</p>
         </div>
         <button class="btn btn-wa" onclick="startEsencial()">Obtener mi Informe Esencial gratis →</button>
       </div>
@@ -1260,7 +1276,7 @@ function shotInfo(){
   if(realMode){ pickShot(); return; }
   setTab('text');
   document.getElementById('inputError').innerHTML =
-    '<div class="error-box" style="background:var(--brand-tint);border-color:var(--brand-tint-2);color:var(--brand-deep)">🖼️ <span>En la demo las capturas no se procesan. En los informes reales (Esencial, Estratégico y Experto) sí puedes subir capturas de la oferta.</span></div>';
+    '<div class="error-box" style="background:var(--brand-tint);border-color:var(--brand-tint-2);color:var(--brand-deep)">🖼️ <span>En la demo las capturas no se procesan. En los informes reales (Esencial, Match y Ruta) sí puedes subir capturas de la oferta.</span></div>';
 }
 let realShots = [];
 function fileToResizedBase64(file){
@@ -1300,7 +1316,6 @@ const CONTACTO_URL = 'mailto:' + CONTACTO_EMAIL
 document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('.wa-link').forEach(a=>{a.href=CONTACTO_URL;a.removeAttribute('target');});
   const mk=(asunto,cuerpo)=>'mailto:'+CONTACTO_EMAIL+'?subject='+encodeURIComponent(asunto)+'&body='+encodeURIComponent(cuerpo);
-  document.querySelectorAll('.experto-wait').forEach(a=>{a.href=mk('Lista de espera — Informe Experto','¡Hola! Quiero que me avisen cuando el Informe Workea Experto esté disponible.\n\n¡Gracias!');});
   document.querySelectorAll('.esencial-link').forEach(a=>{a.href=mk('Quiero mi Informe Esencial gratis','¡Hola! Quiero mi Informe Workea Esencial gratuito.\n\nAdjunto:\n1. La oferta laboral que me interesa (texto, link o captura).\n2. Mi CV en PDF.\n\n¡Gracias!');});
 });
 
@@ -1749,14 +1764,7 @@ function renderResults(d){
       <div class="verdict" style="margin-top:.6rem"><span class="v-emoji">${emo}</span>
         <div><h3>${esc(d.recomendacion?.titulo||'')}</h3><p>${esc(d.recomendacion?.detalle||'')}</p></div></div></div>
     ${modoPlan!=='esencial'?`<div class="real-cta" style="margin-top:1.4rem"><div><h3>¿Tu LinkedIn refleja todo esto? 🔵</h3><p>Acabas de analizar tu postulación. Ahora descubre si tu perfil de LinkedIn comunica lo mismo que tu CV — antes de que lo vea el reclutador.</p></div><a class="btn btn-brand" href="https://mpago.la/2pt7YtA" target="_blank" rel="noopener">Obtener Workea Profile Check →</a></div><p style="text-align:center;font-size:.85rem;color:var(--muted);margin-top:1rem">¿Quieres acompañamiento personalizado? Conoce las <a class="btn-link" href="https://tupartnerlaboral.cl" target="_blank" rel="noopener">asesorías de Tu Partner Laboral →</a></p>`:''}
-    ${(modoPlan!=='esencial' && accessCode.toUpperCase().startsWith('EXP-'))?`<div class="note-card" style="margin-top:1.4rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
-      <div>
-        <b>📩 Enviar mi informe a Workea</b>
-        <p style="font-size:.85rem;margin-top:.2rem;color:var(--muted)">Como parte de tu Informe Workea Experto, envíanos tu informe con un clic — es importante para que podamos preparar tu Estrategia Workea personalizada al cierre de tu período.</p>
-      </div>
-      <button class="btn btn-ghost" onclick="enviarInforme()" style="white-space:nowrap;flex-shrink:0">Enviar mi informe →</button>
-    </div>`:''}
-    ${modoPlan==='esencial'?`<div class="real-cta"><div><h3>Este fue tu Informe Esencial 🩵</h3><p>Ya sabes si vale la pena postular. El <b>Workea Match</b> ($2.990, precio de acceso anticipado) te da 7 días de acceso ilimitado y agrega el análisis detallado, las palabras clave, las recomendaciones para tu CV, tu preparación de entrevista y el plan de acción priorizado — al instante.</p></div><button class="btn btn-wa" onclick="comprarMatch(this)">Obtener Informe Workea Match →</button></div>`:''}`;
+    ${modoPlan==='esencial'?`<div class="real-cta"><div><h3>Este fue tu Informe Esencial 🩵</h3><p>Ya sabes si vale la pena postular. El <b>Workea Match</b> ($2.990) te da 7 días de acceso ilimitado y agrega el análisis detallado, las palabras clave, las recomendaciones para tu CV, tu preparación de entrevista y el plan de acción priorizado — al instante.</p></div><button class="btn btn-wa" onclick="comprarMatch(this)">Obtener Informe Workea Match →</button></div>`:''}`;
   document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
   document.getElementById('scr-results').classList.remove('hidden');
   renderStepper(6); window.scrollTo({top:0});
