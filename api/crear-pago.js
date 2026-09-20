@@ -6,6 +6,9 @@
 // POST /api/crear-pago  { }                                    → Workea Match (comportamiento original)
 // POST /api/crear-pago  { producto: 'cv', plan: 'diagnostico'|'optimizado'|'pro' }  → Workea CV
 // POST /api/crear-pago  { producto: 'career' }                 → Workea Career
+// POST /api/crear-pago  { producto: 'profile' }                → Workea Profile Check
+// POST /api/crear-pago  { producto: 'relato' }                 → Workea Relato
+// POST /api/crear-pago  { producto: 'ruta' }                   → Workea Ruta (bundle: Match + CV Diagnóstico + Profile Check + Relato + 30 días Bitácora)
 
 // El texto debe calzar EXACTO con las opciones del desplegable
 // "Plan comprado" del formulario único.
@@ -22,6 +25,14 @@ const PLANES = {
   profile: {
     titulo: 'Workea Profile Check',
     precio: 2990
+  },
+  relato: {
+    titulo: 'Workea Relato',
+    precio: 2990
+  },
+  ruta: {
+    titulo: 'Workea Ruta',
+    precio: 7990
   }
 };
 
@@ -49,6 +60,12 @@ export default async function handler(req, res) {
   } else if (producto === 'profile') {
     planTexto = PLANES.profile.titulo;
     precio = PLANES.profile.precio;
+  } else if (producto === 'relato') {
+    planTexto = PLANES.relato.titulo;
+    precio = PLANES.relato.precio;
+  } else if (producto === 'ruta') {
+    planTexto = PLANES.ruta.titulo;
+    precio = PLANES.ruta.precio;
   } else {
     // ---------- Comportamiento original de Match, sin ningún cambio ----------
     planTexto = 'Informe Workea Match';
@@ -65,6 +82,8 @@ export default async function handler(req, res) {
       failure: producto === 'cv' ? 'https://workea.cl/workea-cv-planes.html'
              : producto === 'career' ? 'https://workea.cl/career.html'
              : producto === 'profile' ? 'https://workea.cl/profile.html'
+             : producto === 'relato' ? 'https://workea.cl/relato.html'
+             : producto === 'ruta' ? 'https://workea.cl/ruta.html'
              : 'https://workea.cl'
     },
     auto_return: 'approved'
