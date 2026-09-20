@@ -141,6 +141,21 @@ a{color:inherit;text-decoration:none}
 .final-cta h2{font-size:clamp(1.8rem,3.4vw,2.5rem);margin-bottom:.8rem}
 .final-cta p{color:var(--muted);margin-bottom:1.6rem}
 
+.ruta-banner{max-width:900px;margin:0 auto;background:linear-gradient(135deg,var(--navy) 20%,var(--brand-strong) 130%);border-radius:28px;padding:2.6rem 2.2rem;display:flex;flex-wrap:wrap;gap:2rem;align-items:center;justify-content:space-between;box-shadow:0 18px 48px rgba(81,56,214,.22)}
+.ruta-banner-text{flex:1;min-width:260px;color:#fff}
+.ruta-eyebrow{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.14);color:#fff;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:.35rem .9rem;border-radius:999px;margin-bottom:1rem}
+.ruta-banner-text h2{color:#fff;font-size:clamp(1.5rem,2.8vw,2rem);margin-bottom:.7rem}
+.ruta-banner-text p{color:#e3ddfc;max-width:34rem}
+.ruta-banner-price{text-align:center;flex-shrink:0}
+.ruta-banner-price .rbp-compare{color:#c6b8f7;font-size:.85rem;text-decoration:line-through;margin-bottom:.1rem}
+.ruta-banner-price .rbp-price{font-family:var(--display);color:#fff;font-size:2.2rem;font-weight:800;margin-bottom:.9rem}
+@media(max-width:640px){
+  .ruta-banner{flex-direction:column;text-align:center;padding:2.2rem 1.5rem}
+  .ruta-banner-text p{max-width:none}
+  .ruta-banner-price{width:100%}
+  .ruta-banner-price .btn{width:100%;justify-content:center}
+}
+
 footer{border-top:1px solid var(--line);background:var(--surface)}
 .footer-in{max-width:1120px;margin:0 auto;padding:2.2rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;flex-wrap:wrap}
 .footer-in p{font-size:.85rem;color:var(--faint)}
@@ -567,16 +582,16 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   </section>
 
   <!-- RUTA -->
-  <section class="section" id="ruta" style="padding-top:0">
-    <div style="max-width:900px;margin:0 auto;background:var(--navy);border-radius:28px;padding:2.6rem 2rem;display:flex;flex-wrap:wrap;gap:2rem;align-items:center;justify-content:space-between">
-      <div style="flex:1;min-width:260px;color:#fff">
-        <span style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.12);color:var(--cyan);font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:.35rem .9rem;border-radius:999px;margin-bottom:1rem">✦ Todo incluido · 30 días</span>
-        <h2 style="color:#fff;font-size:clamp(1.5rem,2.8vw,2rem);margin-bottom:.7rem">¿Prefieres que te acompañemos en todo el proceso?</h2>
-        <p style="color:#c9d6ef;max-width:34rem">Workea Ruta junta Match + CV Diagnóstico + Profile Check + Relato + 30 días de Bitácora en un solo pago — todo lo que necesitas para buscar trabajo con estrategia, sin ir comprando cada informe por separado.</p>
+  <section class="section" id="ruta">
+    <div class="ruta-banner">
+      <div class="ruta-banner-text">
+        <span class="ruta-eyebrow">✦ Todo incluido · 30 días</span>
+        <h2>¿Prefieres que te acompañemos en todo el proceso?</h2>
+        <p>Workea Ruta junta Match + CV Diagnóstico + Profile Check + Relato + 30 días de Bitácora en un solo pago — todo lo que necesitas para buscar trabajo con estrategia, sin ir comprando cada informe por separado.</p>
       </div>
-      <div style="text-align:center;flex-shrink:0">
-        <p style="color:#7f93bd;font-size:.85rem;text-decoration:line-through;margin-bottom:.1rem">Comprado por separado: $11.960</p>
-        <p style="font-family:var(--display);color:#fff;font-size:2.2rem;font-weight:800;margin-bottom:.9rem">$7.990</p>
+      <div class="ruta-banner-price">
+        <p class="rbp-compare">Comprado por separado: $11.960</p>
+        <p class="rbp-price">$7.990</p>
         <a href="/ruta.html" class="btn btn-brand" style="display:inline-flex">Conocer Workea Ruta →</a>
       </div>
     </div>
