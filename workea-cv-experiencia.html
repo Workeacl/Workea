@@ -250,14 +250,14 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     const codigo = params.get('codigo');
     const plan = params.get('plan');
     if(codigo) codigoActual = codigo;
-    if(plan && ['diagnostico', 'optimizado', 'pro'].includes(plan)) planActual = plan;
+    if(plan && ['diagnostico', 'optimizado', 'pro', 'gratis'].includes(plan)) planActual = plan;
   })();
   let archivoBase64 = null;
   let archivoTipo = null;
   let ordenActual = null;
   let plantillaSeleccionada = 'minimal';
 
-  const PLAN_LABEL = { diagnostico: 'Plan Diagnóstico', optimizado: 'Plan Optimizado', pro: 'Plan Pro' };
+  const PLAN_LABEL = { diagnostico: 'Plan Diagnóstico', optimizado: 'Plan Optimizado', pro: 'Plan Pro', gratis: 'Diagnóstico gratis' };
 
   async function init(){
     const { data } = await sb.auth.getSession();
@@ -280,6 +280,16 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       if(pills[pillIdx]){ pills[pillIdx].classList.add('active'); pills[pillIdx].style.opacity = '1'; }
       document.getElementById('plan-notice-libre').style.display = 'none';
       document.getElementById('plan-notice-bloqueado').style.display = 'block';
+    }
+
+    // Diagnóstico gratis: no hay plan que elegir, se oculta el selector
+    // y se explica qué va a pasar (3 hallazgos gratis, el resto bloqueado).
+    if(planActual === 'gratis'){
+      document.getElementById('plan-select').style.display = 'none';
+      document.getElementById('plan-notice-libre').style.display = 'none';
+      const notice = document.getElementById('plan-notice-bloqueado');
+      notice.textContent = '🎁 Diagnóstico gratis: verás 3 hallazgos de tu CV, sin costo.';
+      notice.style.display = 'block';
     }
   }
 
@@ -377,7 +387,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       ordenActual = ordenDiag;
       renderDiagnostico();
 
-      if(planActual === 'diagnostico'){
+      if(planActual === 'diagnostico' || planActual === 'gratis'){
         renderOptimizadorBloqueado();
         renderMensajeBloqueado();
         renderHistoriasBloqueado();
@@ -401,7 +411,7 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
       const { orden: ordenDiag } = await apiCall('/api/cv', 'diagnosticar', { orden_id: ordenActual.id });
       ordenActual = ordenDiag;
       renderDiagnostico();
-      if(planActual === 'diagnostico'){
+      if(planActual === 'diagnostico' || planActual === 'gratis'){
         renderOptimizadorBloqueado();
         renderMensajeBloqueado();
         renderHistoriasBloqueado();
@@ -423,6 +433,35 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
   function renderDiagnostico(){
     const d = ordenActual.diagnostico;
     const el = document.getElementById('diagnostico-content');
+
+    // Diagnóstico gratis: solo se muestran los hallazgos (alertas). El
+    // score, las fortalezas y las keywords ya están calculados (misma
+    // llamada a la IA), pero quedan bloqueados hasta activar un código —
+    // nunca se vuelve a llamar al modelo al desbloquear.
+    if(planActual === 'gratis'){
+      let htmlGratis = '<div class="diag-list"><h4>🔍 3 hallazgos de tu CV</h4>' +
+        (d.alertas || []).slice(0,3).map(a => '<div class="diag-row"><span class="ic">🔸</span> '+escapeHtml(a)+'</div>').join('') + '</div>';
+      htmlGratis += `
+        <div class="locked-panel">
+          <div class="lp-ic">🔒</div>
+          <h3>Ese es solo el principio</h3>
+          <p>Con el plan Diagnóstico ($2.990) ves tu puntaje de compatibilidad ATS, lo que ya está bien en tu CV, y las palabras clave que te faltan.</p>
+          <div style="display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:1rem;">
+            <select id="activar-plan-select" style="font-family:inherit;font-size:.85rem;padding:.6rem .9rem;border:1.5px solid var(--line);border-radius:999px;">
+              <option value="diagnostico">Código de Diagnóstico</option>
+              <option value="optimizado">Código de Optimizado</option>
+              <option value="pro">Código de Pro</option>
+            </select>
+            <input type="text" id="activar-codigo-input" placeholder="Tu código (WC-...)" style="font-family:inherit;font-size:.85rem;padding:.6rem .9rem;border:1.5px solid var(--line);border-radius:999px;width:170px;">
+            <button class="btn btn-ghost" onclick="activarCodigoGratis()">Activar código →</button>
+          </div>
+          <div class="error-text" id="activar-error" style="display:none;margin-top:.6rem;"></div>
+          <a href="/workea-cv-planes.html" class="btn btn-brand" style="margin-top:1rem;display:inline-flex;">Ver planes desde $2.990 →</a>
+        </div>`;
+      el.innerHTML = htmlGratis;
+      return;
+    }
+
     const color = d.score >= 70 ? 'var(--green)' : (d.score >= 50 ? 'var(--amber)' : 'var(--red)');
     let html = '<div class="score-card"><div class="score-num" style="color:'+color+'">'+d.score+'%</div><div class="score-label">Compatibilidad ATS estimada</div></div>';
 
@@ -437,6 +476,42 @@ button{font-family:var(--body);cursor:pointer;border:none;background:none}
     }
     html += siguientePasoHtml('optimizador', '🚀', 'Ya tienes tu diagnóstico — ahora optimicemos tu CV con esos hallazgos.');
     el.innerHTML = html;
+  }
+
+  // Sube la orden gratis a un plan pagado activando un código real — no
+  // vuelve a llamar a la IA, solo libera lo que ya estaba calculado.
+  async function activarCodigoGratis(){
+    const plan = document.getElementById('activar-plan-select').value;
+    const codigo = document.getElementById('activar-codigo-input').value.trim();
+    const errEl = document.getElementById('activar-error');
+    errEl.style.display = 'none';
+    if(!codigo){
+      errEl.textContent = 'Ingresa tu código de acceso';
+      errEl.style.display = 'block';
+      return;
+    }
+    try{
+      const { orden } = await apiCall('/api/cv', 'activar_codigo', { orden_id: ordenActual.id, codigo, plan });
+      ordenActual = orden;
+      planActual = orden.plan;
+      const badge = document.getElementById('tb-plan-badge');
+      badge.textContent = PLAN_LABEL[planActual];
+      renderDiagnostico();
+      if(planActual === 'diagnostico'){
+        renderOptimizadorBloqueado();
+        renderMensajeBloqueado();
+        renderHistoriasBloqueado();
+      } else {
+        renderOptimizadorInicial();
+        renderMensajeBloqueado(true);
+        renderHistoriasBloqueado(true);
+      }
+      renderEntrevistasPanel();
+      showToast('¡Listo! Tu plan quedó activado.');
+    } catch(err){
+      errEl.textContent = err.message;
+      errEl.style.display = 'block';
+    }
   }
 
   // ===== TAB Optimizador =====
