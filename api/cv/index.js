@@ -206,6 +206,27 @@ module.exports = async (req, res) => {
       const { cv_original, plan, codigo, oferta_referencia = null, empresa_referencia = null } = req.body;
       if (!cv_original || !plan) return res.status(400).json({ error: 'cv_original y plan son obligatorios' });
 
+      // Plan "gratis": diagnóstico de vista previa (3 hallazgos), sin
+      // código. No cuesta un llamado a la IA aparte del que ya pagaría
+      // el plan Diagnóstico — es la MISMA acción 'diagnosticar', solo que
+      // el frontend muestra menos campos hasta que se active un código.
+      // Tope: una orden gratis por usuario — si ya tiene una, se la
+      // devolvemos tal cual (nunca se vuelve a llamar a la IA de gratis).
+      if (plan === 'gratis') {
+        const { data: previa, error: previaError } = await supabase
+          .from('cv_ordenes').select('*')
+          .eq('usuario_id', usuarioId).eq('plan', 'gratis')
+          .order('created_at', { ascending: false }).limit(1).maybeSingle();
+        if (previaError) return res.status(500).json({ error: previaError.message });
+        if (previa) return res.status(200).json({ orden: previa, ya_existe: true });
+
+        const { data, error } = await supabase.from('cv_ordenes').insert({
+          usuario_id: usuarioId, cv_original, plan: 'gratis', oferta_referencia, empresa_referencia
+        }).select().single();
+        if (error) return res.status(500).json({ error: error.message });
+        return res.status(201).json({ orden: data });
+      }
+
       // Código maestro (para pruebas internas), igual que en Match.
       const esMaestro = String(codigo || '').trim().toUpperCase() === 'WORKEA2026';
       if (!esMaestro) {
@@ -226,6 +247,38 @@ module.exports = async (req, res) => {
       return res.status(201).json({ orden: data });
     }
 
+    // ---------- activar_codigo ----------
+    // Sube una orden "gratis" ya diagnosticada a un plan pagado, activando
+    // un código real — reutiliza el diagnóstico ya calculado, así que esto
+    // NUNCA vuelve a llamar a la IA. Solo funciona sobre una orden que hoy
+    // está en plan 'gratis' (no permite "reetiquetar" una orden ya pagada).
+    if (accion === 'activar_codigo') {
+      const { orden_id, codigo, plan } = req.body;
+      if (!orden_id || !codigo || !plan) return res.status(400).json({ error: 'orden_id, codigo y plan son obligatorios' });
+      if (!['diagnostico', 'optimizado', 'pro'].includes(plan)) return res.status(400).json({ error: 'Plan inválido' });
+
+      const { data: orden, error: ordenError } = await supabase.from('cv_ordenes').select('*').eq('id', orden_id).single();
+      if (ordenError || !orden) return res.status(404).json({ error: 'Orden no encontrada' });
+      if (orden.usuario_id !== usuarioId) return res.status(403).json({ error: 'Esta orden no te pertenece' });
+      if (orden.plan !== 'gratis') return res.status(409).json({ error: 'Esta orden ya tiene un plan asignado' });
+
+      const esMaestro = String(codigo || '').trim().toUpperCase() === 'WORKEA2026';
+      if (!esMaestro) {
+        const codigoLimpio = String(codigo || '').trim();
+        if (!codigoLimpio.toUpperCase().startsWith('WC-')) {
+          return res.status(401).json({ error: 'Este código no corresponde a Workea CV' });
+        }
+        const resultado = await validarCodigoCv(codigoLimpio.toUpperCase(), plan, usuarioId);
+        if (!resultado.ok) return res.status(resultado.status).json({ error: resultado.error });
+      }
+
+      const { data, error } = await supabase.from('cv_ordenes')
+        .update({ plan })
+        .eq('id', orden_id).select().single();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ orden: data });
+    }
+
     // A partir de acá, todas las acciones operan sobre una orden existente
     const { orden_id } = req.body;
     if (!orden_id) return res.status(400).json({ error: 'orden_id es obligatorio' });
@@ -239,7 +292,7 @@ module.exports = async (req, res) => {
     // (opción múltiple o sí/no) por cada una — rápido de responder, nunca
     // un formulario largo.
     if (accion === 'generar_insight_cv') {
-      if (orden.plan === 'diagnostico') {
+      if (orden.plan === 'diagnostico' || orden.plan === 'gratis') {
         return res.status(403).json({ error: 'El plan Diagnóstico no incluye Workea Insight' });
       }
 
@@ -277,7 +330,7 @@ Responde en JSON puro:
     // Con las respuestas ya confirmadas por el usuario, arma los hallazgos
     // finales + una simulación de cómo un reclutador leería el perfil hoy.
     if (accion === 'sintetizar_insight') {
-      if (orden.plan === 'diagnostico') {
+      if (orden.plan === 'diagnostico' || orden.plan === 'gratis') {
         return res.status(403).json({ error: 'El plan Diagnóstico no incluye Workea Insight' });
       }
       const { respuestas = [] } = req.body;
@@ -358,7 +411,7 @@ El score y las alertas deben poder justificarse con el contenido real del CV. No
     // Recibe los hallazgos confirmados en Workea Insight (o respuestas del
     // formato anterior, por compatibilidad) y reescribe el CV con eso.
     if (accion === 'optimizar') {
-      if (orden.plan === 'diagnostico') {
+      if (orden.plan === 'diagnostico' || orden.plan === 'gratis') {
         return res.status(403).json({ error: 'El plan Diagnóstico no incluye optimización' });
       }
 
@@ -427,7 +480,7 @@ Responde en JSON puro con este formato:
     // Mensaje corto de presentación + tips de postulación (vive dentro
     // de Workea CV, no es un producto aparte — ver decisión de diseño).
     if (accion === 'generar_mensaje') {
-      if (orden.plan === 'diagnostico') {
+      if (orden.plan === 'diagnostico' || orden.plan === 'gratis') {
         return res.status(403).json({ error: 'El plan Diagnóstico no incluye mensaje de presentación' });
       }
       if (!orden.cv_optimizado) {
@@ -489,7 +542,7 @@ No inventes datos del candidato que no estén en el CV.`;
     // Entrevistas deje de usar preguntas genéricas y use la experiencia
     // real de la persona como base de práctica.
     if (accion === 'generar_banco_historias') {
-      if (orden.plan === 'diagnostico') {
+      if (orden.plan === 'diagnostico' || orden.plan === 'gratis') {
         return res.status(403).json({ error: 'El plan Diagnóstico no incluye Banco de Historias' });
       }
       if (!orden.cv_optimizado) {
