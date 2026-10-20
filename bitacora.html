@@ -67,6 +67,10 @@
   .process-company{ font-size:12px; color:var(--ink-soft); }
   .state-badge{ margin-left:auto; font-size:11px; font-weight:700; padding:5px 10px; border-radius:100px;
     background:rgba(25,153,241,0.14); color:#0d6db8; white-space:nowrap; }
+  .state-badge.b-entrevista{ background:rgba(123,92,240,0.14); color:#6b46c7; }
+  .state-badge.b-oferta{ background:rgba(40,201,138,0.16); color:#1a8f62; }
+  .state-badge.b-rechazado{ background:rgba(239,90,114,0.14); color:#c23a52; }
+  .state-badge.b-cancelado{ background:rgba(91,100,120,0.14); color:#5b6478; }
 
   .empty-msg{ text-align:center; padding:50px 20px; color:var(--ink-soft); font-size:13.5px; }
 
@@ -257,7 +261,6 @@
   <a href="/workea-cv-planes.html" class="ws-link">📄 CV</a>
   <a href="/career.html" class="ws-link">🧭 Career</a>
   <a href="/bitacora.html" class="ws-link active">📖 Bitácora</a>
-  <a href="/profile.html" class="ws-link">🔵 Profile Check</a>
 </div>
 
 <div class="goals-bar" id="goals-bar" style="display:none;"></div>
@@ -354,6 +357,10 @@
     entrevista_final: '👥 Entrevista final', evaluacion: '📝 Evaluación',
     oferta_recibida: '🎉 Oferta recibida', rechazado: '❌ Rechazado',
     cancele_proceso: '🚫 Cancelé proceso'
+  };
+  const ESTADO_BADGE_CLASE = {
+    entrevista_rrhh: 'b-entrevista', entrevista_tecnica: 'b-entrevista', entrevista_final: 'b-entrevista',
+    oferta_recibida: 'b-oferta', rechazado: 'b-rechazado', cancele_proceso: 'b-cancelado'
   };
   const SIGUIENTES_ESTADOS = {
     postule: ['me_contactaron', 'entrevista_rrhh'],
@@ -605,7 +612,7 @@
           <div class="process-role">${escapeHtml(p.cargo)}</div>
           <div class="process-company">${escapeHtml(p.empresa)}</div>
         </div>
-        <div class="state-badge">${ESTADO_LABEL[p.estado_actual] || p.estado_actual}</div>
+        <div class="state-badge ${ESTADO_BADGE_CLASE[p.estado_actual] || ''}">${ESTADO_LABEL[p.estado_actual] || p.estado_actual}</div>
         <button class="icon-btn" title="Eliminar" onclick="eliminarPostulacion('${p.id}', event)">🗑️</button>
       </div>
     `).join('');
