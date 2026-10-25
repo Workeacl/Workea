@@ -261,6 +261,7 @@
   <a href="/workea-cv-planes.html" class="ws-link">📄 CV</a>
   <a href="/career.html" class="ws-link">🧭 Career</a>
   <a href="/bitacora.html" class="ws-link active">📖 Bitácora</a>
+  <a href="/sueldo.html" class="ws-link">💰 Sueldo</a>
 </div>
 
 <div class="goals-bar" id="goals-bar" style="display:none;"></div>
@@ -703,6 +704,11 @@
       <div style="margin:6px 0 0;">
         <button class="link-btn" onclick="toggleReclutadorSueldo()">${p.reclutador || p.sueldo ? '📇 Ver reclutador y sueldo' : '+ Agregar reclutador y sueldo (opcional)'}</button>
       </div>
+      ${(() => { const e = enlacesSueldo(p); return `
+      <div style="margin:4px 0 0; display:flex; flex-wrap:wrap; gap:4px 14px;">
+        <a class="link-btn" href="${e.calc}" target="_blank" rel="noopener">💰 ${e.hayOferta ? 'Ver si esta oferta me conviene' : 'Calcular cuánto pedir'}</a>
+        <a class="link-btn" href="${e.cmp}" target="_blank" rel="noopener">⚖️ Comparar con otra oferta</a>
+      </div>`; })()}
       <div id="reclutador-sueldo-form" style="display:none; margin:10px 0; padding:12px; background:var(--bg); border-radius:10px;">
         <p style="font-size:12px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px;">Datos del reclutador (opcional)</p>
         <div class="field"><label>Nombre</label><input type="text" id="rs-nombre" value="${escapeHtml(p.reclutador?.nombre || '')}"></div>
@@ -801,6 +807,40 @@
     } catch(err){
       showToast('No se pudo guardar: ' + err.message);
     }
+  }
+
+  // Convierte un texto libre de sueldo ("$1.000.000", "900 mil", "1,2 millones") en pesos; null si no está claro.
+  function parseSueldoCLP(texto){
+    const t = String(texto || '').toLowerCase();
+    if(!t || /bruto/.test(t)) return null; // Sueldo trabaja con líquido: no mezclamos conceptos
+    const m = t.match(/(\d{1,3}(?:[.\s]\d{3})+|\d+(?:[.,]\d+)?)\s*(millones|millón|millon|mm|m\b|mil\b|k\b)?/);
+    if(!m) return null;
+    const suf = m[2] || '';
+    let n;
+    if(/^\d{1,3}(?:[.\s]\d{3})+$/.test(m[1])) n = parseInt(m[1].replace(/[.\s]/g, ''), 10);
+    else n = parseFloat(m[1].replace(',', '.'));
+    if(/^(millones|millón|millon|mm|m)$/.test(suf)) n *= 1e6;
+    else if(/^(mil|k)$/.test(suf)) n *= 1e3;
+    n = Math.round(n);
+    return (n >= 100000 && n <= 100000000) ? n : null;
+  }
+  function modalidadParaSueldo(txt){
+    const t = String(txt || '').toLowerCase();
+    if(/remot|teletrabajo/.test(t)) return 'remota';
+    if(/h[ií]brid/.test(t)) return 'hibrida';
+    if(/presencial/.test(t)) return 'presencial';
+    return '';
+  }
+  // Enlaces a Workea Sueldo. Los datos van después de «#»: el navegador no los envía al servidor.
+  function enlacesSueldo(p){
+    const oferta = parseSueldoCLP(p.sueldo?.oferta_final) || parseSueldoCLP(p.sueldo?.conversado);
+    const calc = oferta ? '/sueldo.html#cambio&oferta=' + oferta : '/sueldo.html#busco';
+    let cmp = '/sueldo.html#comparar&a_nombre=' + encodeURIComponent(String(p.cargo || '').slice(0, 40)) +
+              '&a_empresa=' + encodeURIComponent(String(p.empresa || '').slice(0, 60));
+    const mod = modalidadParaSueldo(p.modalidad);
+    if(mod) cmp += '&a_modalidad=' + mod;
+    if(oferta) cmp += '&a_sueldo=' + oferta;
+    return { calc: calc, cmp: cmp, hayOferta: !!oferta };
   }
 
   function toggleReclutadorSueldo(){
