@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workea Sueldo · Calcula tu pretensión de renta y compara ofertas</title>
+<meta name="description" content="Calcula cuánto pedir de sueldo si te cambias de trabajo, buscas empleo o recién egresas, y compara dos ofertas considerando gastos, traslado y jornada. Se calcula en tu navegador: no guardamos tus datos.">
+<meta property="og:title" content="Workea Sueldo · Cuando te pregunten cuánto quieres ganar, ten una respuesta clara">
+<meta property="og:description" content="Calcula tu expectativa salarial y compara ofertas considerando gastos, traslado y jornada. Gratis, sin crear cuenta.">
+<meta property="og:type" content="website">
+<style>
+  :root{
+    --cian:#2be0f8; --azul:#1999f1; --violeta:#7b5cf0; --navy:#0a1430;
+    --grad: linear-gradient(120deg, var(--cian), var(--azul) 55%, var(--violeta));
+    --bg:#f5f6fb; --card:#ffffff; --ink:#0a1430; --ink-soft:#5b6478;
+    --line:#e7e9f2; --bad:#c23a52;
+    --tint:rgba(25,153,241,0.10);
+    --radius:16px; --shadow:0 4px 16px rgba(10,20,48,0.05);
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{ margin:0; background:var(--bg); color:var(--ink); line-height:1.5; }
+  :focus-visible{ outline:2.5px solid var(--azul); outline-offset:2px; border-radius:6px; }
+
+  /* ---------- Barra superior (misma de Workea) ---------- */
+  .topbar{ background:var(--navy); color:#fff; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .brand{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:15px; }
+  .workea-switcher{ background:#fff; border-bottom:1px solid var(--line); padding:8px 20px; display:flex; gap:6px; overflow-x:auto; }
+  .ws-link{ font-size:12.5px; font-weight:700; color:var(--ink-soft); padding:8px 12px; border-radius:999px; white-space:nowrap; text-decoration:none; flex-shrink:0; }
+  .ws-link:hover{ background:var(--bg); }
+  .ws-link.active{ background:var(--navy); color:#fff; }
+
+  .content{ max-width:980px; margin:0 auto; padding:28px 20px 64px; }
+
+  /* ---------- Hero ---------- */
+  .eyebrow{ display:inline-block; font-size:12px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:#0d6db8; background:var(--tint); padding:6px 12px; border-radius:999px; }
+  h1{ font-size:clamp(26px, 6.2vw, 40px); line-height:1.12; letter-spacing:-0.02em; font-weight:800; margin:14px 0 12px; max-width:20ch; }
+  .sub{ font-size:15.5px; color:var(--ink-soft); max-width:60ch; margin:0 0 6px; }
+  .privacy{ font-size:13px; color:var(--ink-soft); margin:0 0 24px; }
+  .privacy b{ color:var(--ink); }
+
+  /* ---------- Pestañas ---------- */
+  .tabs{ display:flex; gap:6px; background:#e9ecf6; padding:5px; border-radius:14px; margin-bottom:22px; }
+  .tab{ flex:1; min-height:46px; border:none; background:transparent; font:inherit; font-size:14px; font-weight:700; color:var(--ink-soft); border-radius:10px; cursor:pointer; padding:8px 10px; }
+  .tab[aria-selected="true"]{ background:var(--navy); color:#fff; }
+  .panel[hidden]{ display:none; }
+
+
+  /* ---------- Selector de situación ---------- */
+  .ctx-title{ font-size:13px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 8px; }
+  .ctx{ display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:18px; }
+  .ctx-btn{ display:flex; align-items:center; gap:12px; text-align:left; min-height:60px; padding:10px 14px; background:#fff; border:1.5px solid var(--line); border-radius:14px; font:inherit; color:var(--ink); cursor:pointer; box-shadow:var(--shadow); }
+  .ctx-btn b{ display:block; font-size:14.5px; }
+  .ctx-btn small{ display:block; font-size:12.5px; color:var(--ink-soft); }
+  .ctx-ic{ font-size:22px; flex-shrink:0; }
+  .ctx-btn[aria-pressed="true"]{ border-color:var(--azul); background:var(--tint); box-shadow:0 0 0 3px rgba(25,153,241,0.15); }
+  [hidden]{ display:none !important; }
+  #ctx-cambio, #ctx-needs{ margin-bottom:16px; }
+
+  /* ---------- Tarjetas y formularios ---------- */
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); min-width:0; }
+  .card + .card{ margin-top:16px; }
+  .card h2{ font-size:17px; margin:0 0 4px; letter-spacing:-0.01em; }
+  .card .lead{ font-size:13.5px; color:var(--ink-soft); margin:0 0 16px; }
+  .grid-2{ display:grid; grid-template-columns:1fr; gap:14px; }
+  .field{ min-width:0; }
+  .field label{ display:block; font-size:13px; font-weight:700; margin-bottom:6px; }
+  .field .opt{ font-weight:500; color:var(--ink-soft); }
+  .hint{ font-size:12px; color:var(--ink-soft); margin-top:5px; }
+  input[type=text], input[type=number], select, textarea{
+    width:100%; min-height:46px; border:1px solid #d6dae8; border-radius:12px; padding:10px 12px;
+    font:inherit; font-size:15px; color:var(--ink); background:#fff;
+  }
+  textarea{ min-height:68px; resize:vertical; }
+  input:focus, select:focus, textarea:focus{ border-color:var(--azul); outline:none; box-shadow:0 0 0 3px rgba(25,153,241,0.18); }
+  .money{ position:relative; }
+  .money > span{ position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--ink-soft); font-weight:700; pointer-events:none; }
+  .money input{ padding-left:28px; }
+  .sec-title{ font-size:12px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); margin:20px 0 10px; }
+  .sec-title:first-of-type{ margin-top:6px; }
+  details.more{ margin-top:18px; border-top:1px dashed var(--line); padding-top:12px; }
+  details.more summary{ cursor:pointer; font-size:13.5px; font-weight:700; color:#0d6db8; min-height:36px; display:flex; align-items:center; }
+  details.more .grid-2{ margin-top:10px; }
+
+  .offer-card{ border-top:4px solid var(--azul); }
+  .offer-card.b{ border-top-color:var(--violeta); }
+
+  /* ---------- Resultados ---------- */
+  .empty{ text-align:center; color:var(--ink-soft); font-size:14px; padding:26px 14px; background:var(--card); border:1px dashed #cfd5e6; border-radius:var(--radius); }
+  .tiles{ display:grid; grid-template-columns:1fr; gap:10px; margin:6px 0 4px; }
+  .tile{ border:1px solid var(--line); border-radius:14px; padding:14px 16px; background:#fff; min-width:0; }
+  .tile .t-label{ font-size:12px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); }
+  .tile .t-val{ font-size:26px; font-weight:800; letter-spacing:-0.02em; margin:2px 0; }
+  .tile .t-note{ font-size:12.5px; color:var(--ink-soft); }
+  .tile.main{ background:var(--navy); border-color:var(--navy); color:#fff; }
+  .tile.main .t-label, .tile.main .t-note{ color:#c6cde2; }
+  .breakdown{ list-style:none; margin:10px 0 0; padding:0; font-size:14px; }
+  .breakdown li{ display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px solid var(--line); }
+  .breakdown li:last-child{ border-bottom:none; }
+  .breakdown .sum{ font-weight:800; }
+  .say{ background:var(--tint); border-radius:14px; padding:14px 16px; margin-top:14px; font-size:14.5px; }
+  .say .say-label{ font-size:12px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:#0d6db8; margin-bottom:4px; }
+  .btn{ min-height:44px; border:none; border-radius:12px; font:inherit; font-size:14px; font-weight:700; padding:10px 16px; cursor:pointer; }
+  .btn-primary{ background:var(--grad); color:#fff; }
+  .btn-ghost{ background:#fff; border:1px solid #d6dae8; color:var(--ink); }
+  .tips{ margin:12px 0 0; padding-left:18px; font-size:14px; color:var(--ink); }
+  .tips li{ margin-bottom:8px; }
+  .callout{ font-size:13px; color:var(--ink-soft); background:#f1f3fa; border-radius:12px; padding:12px 14px; margin-top:14px; }
+
+  .metric{ border-top:1px solid var(--line); padding:16px 0; }
+  .metric:first-child{ border-top:none; padding-top:4px; }
+  .metric h3{ font-size:14.5px; margin:0 0 2px; }
+  .metric .m-note{ font-size:12.5px; color:var(--ink-soft); margin-bottom:10px; }
+  .cols{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .col{ min-width:0; }
+  .who{ font-size:12.5px; font-weight:700; display:flex; align-items:center; gap:6px; overflow-wrap:anywhere; }
+  .dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; background:var(--azul); }
+  .col.b .dot{ background:var(--violeta); }
+  .val{ font-size:20px; font-weight:800; letter-spacing:-0.02em; margin:2px 0 6px; overflow-wrap:anywhere; }
+  .val.sm{ font-size:15px; letter-spacing:0; }
+  .bar{ height:8px; background:#eceff8; border-radius:99px; overflow:hidden; }
+  .bar > span{ display:block; height:100%; background:var(--azul); border-radius:99px; }
+  .col.b .bar > span{ background:var(--violeta); }
+  .diff{ margin-top:10px; font-size:13.5px; font-weight:700; background:var(--tint); border-radius:10px; padding:8px 12px; }
+  .notes{ font-size:13px; white-space:pre-wrap; overflow-wrap:anywhere; color:var(--ink); }
+  .notes .n-label{ font-weight:800; color:var(--ink-soft); font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; display:block; margin-top:8px; }
+  .toggle{ display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; min-height:44px; cursor:pointer; }
+  .toggle input{ width:20px; height:20px; accent-color:var(--azul); }
+  .summary{ border:1px solid var(--line); border-left:5px solid var(--azul); border-radius:14px; background:#fff; padding:16px 18px; font-size:15px; margin-top:16px; }
+  .summary small{ display:block; color:var(--ink-soft); margin-top:6px; font-size:13px; }
+  details.assume{ margin-top:14px; font-size:13.5px; }
+  details.assume summary{ cursor:pointer; font-weight:700; color:#0d6db8; min-height:36px; display:flex; align-items:center; }
+  details.assume ul{ margin:6px 0 0; padding-left:18px; color:var(--ink-soft); }
+  .cross{ margin-top:18px; font-size:14px; }
+  .cross a, .link-btn{ color:#0d6db8; font-weight:700; text-decoration:none; background:none; border:none; font:inherit; font-weight:700; cursor:pointer; padding:0; }
+  .cross a:hover, .link-btn:hover{ text-decoration:underline; }
+  .foot{ margin-top:30px; font-size:12px; color:var(--ink-soft); }
+  .toast{ position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--navy); color:#fff; font-size:13.5px; font-weight:600; padding:10px 16px; border-radius:12px; opacity:0; pointer-events:none; transition:opacity .2s; max-width:90vw; text-align:center; }
+  .toast.show{ opacity:1; }
+
+  @media (min-width:720px){
+    .grid-2{ grid-template-columns:1fr 1fr; }
+    .ctx{ grid-template-columns:repeat(3, 1fr); }
+    .tiles{ grid-template-columns:1fr 1fr 1fr; }
+    .compare-forms{ display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; }
+    .compare-forms .card + .card{ margin-top:0; }
+    .content{ padding-top:40px; }
+  }
+  @media (max-width:420px){
+    .topbar{ padding:12px 14px; } .workea-switcher{ padding:8px 14px; } .content{ padding-left:14px; padding-right:14px; }
+    .card{ padding:16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <svg width="30" height="22" viewBox="0 0 100 74" aria-hidden="true">
+      <defs><linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/>
+      </linearGradient></defs>
+      <path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wg)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Workea Sueldo
+  </div>
+</div>
+
+<nav class="workea-switcher" aria-label="Herramientas de Workea">
+  <a href="/" class="ws-link">🎯 Match</a>
+  <a href="/workea-cv-planes.html" class="ws-link">📄 CV</a>
+  <a href="/career.html" class="ws-link">🧭 Career</a>
+  <a href="/bitacora.html" class="ws-link">📖 Bitácora</a>
+  <a href="/sueldo.html" class="ws-link active" aria-current="page">💰 Sueldo</a>
+</nav>
+
+<main class="content">
+  <span class="eyebrow">Sueldo · Tu pretensión de renta</span>
+  <h1>Cuando te pregunten cuánto quieres ganar, ten una respuesta clara.</h1>
+  <p class="sub">Calcula cuánto pedir de sueldo, ya sea que te cambies de trabajo, busques empleo o recién egreses. O compara dos ofertas considerando transporte, tiempo y jornada.</p>
+  <p class="privacy"><b>Tus datos no se guardan ni se envían.</b> Todo se calcula en tu navegador, sin crear cuenta.</p>
+
+  <noscript><div class="empty">Esta herramienta necesita JavaScript para calcular. Actívalo en tu navegador e intenta de nuevo.</div></noscript>
+
+  <div class="tabs" role="tablist" aria-label="Elige qué quieres hacer">
+    <button class="tab" role="tab" id="tab-exp" aria-selected="true" aria-controls="panel-exp" tabindex="0">💬 ¿Cuánto pedir?</button>
+    <button class="tab" role="tab" id="tab-cmp" aria-selected="false" aria-controls="panel-cmp" tabindex="-1">⚖️ Comparar ofertas</button>
+  </div>
+
+  <!-- ===================== PANEL 1: ¿CUÁNTO PEDIR? (por situación) ===================== -->
+  <section class="panel" id="panel-exp" role="tabpanel" aria-labelledby="tab-exp">
+    <div class="ctx-title" id="ctx-label">¿En qué situación estás?</div>
+    <div class="ctx" role="group" aria-labelledby="ctx-label">
+      <button type="button" class="ctx-btn" data-ctx="cambio" aria-pressed="true"><span class="ctx-ic" aria-hidden="true">🔄</span><span><b>Trabajo y quiero cambiarme</b><small>O me hicieron una oferta</small></span></button>
+      <button type="button" class="ctx-btn" data-ctx="busco" aria-pressed="false"><span class="ctx-ic" aria-hidden="true">🔎</span><span><b>Hoy no trabajo</b><small>Busco empleo</small></span></button>
+      <button type="button" class="ctx-btn" data-ctx="egreso" aria-pressed="false"><span class="ctx-ic" aria-hidden="true">🎓</span><span><b>Recién egreso</b><small>Busco mi primer trabajo</small></span></button>
+    </div>
+
+    <!-- ===== Situación 1: ya trabajo ===== -->
+    <div id="ctx-cambio">
+      <div class="card">
+        <h2>Tu situación hoy</h2>
+        <p class="lead">Solo necesitamos lo básico.</p>
+        <div class="grid-2">
+          <div class="field">
+            <label for="q-actual">Lo que ganas hoy, líquido</label>
+            <div class="money"><span>$</span><input type="text" id="q-actual" data-money inputmode="numeric" autocomplete="off" placeholder="Ej: 1.000.000"></div>
+          </div>
+          <div class="field">
+            <label for="q-modact">Tu modalidad hoy</label>
+            <select id="q-modact"><option value="presencial">Presencial</option><option value="hibrida">Híbrida</option><option value="remota">Remota</option></select>
+          </div>
+          <div class="field">
+            <label for="q-trabact">Lo que gastas al mes en ir a trabajar <span class="opt">(opcional)</span></label>
+            <div class="money"><span>$</span><input type="text" id="q-trabact" data-money inputmode="numeric" autocomplete="off" placeholder="Ej: 60.000"></div>
+            <div class="hint">Transporte, estacionamiento, colación.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>El cambio</h2>
+        <p class="lead">Si ya te ofrecieron algo, ingrésalo. Si no, déjalo vacío y te decimos cuánto pedir.</p>
+        <div class="grid-2">
+          <div class="field">
+            <label for="q-oferta">Lo que te ofrecen, líquido <span class="opt">(opcional)</span></label>
+            <div class="money"><span>$</span><input type="text" id="q-oferta" data-money inputmode="numeric" autocomplete="off" placeholder="Ej: 1.100.000"></div>
+            <div class="hint">Si te lo dieron en bruto, pide el líquido aproximado a la empresa.</div>
+          </div>
+          <div class="field">
+            <label for="q-modnueva">Modalidad del nuevo trabajo</label>
+            <select id="q-modnueva"><option value="presencial">Presencial</option><option value="hibrida">Híbrida</option><option value="remota">Remota</option></select>
+          </div>
+          <div class="field">
+            <label for="q-trabnuevo">Gasto mensual en ir al nuevo trabajo <span class="opt">(opcional)</span></label>
+            <div class="money"><span>$</span><input type="text" id="q-trabnuevo" data-money inputmode="numeric" autocomplete="off" placeholder="Igual al de hoy"></div>
+            <div class="hint">Si lo dejas vacío, asumimos el mismo gasto de hoy. En remoto se rellena con 0.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Situaciones 2 y 3: no trabajo hoy / recién egreso ===== -->
+    <div id="ctx-needs" hidden>
+      <div class="card">
+        <h2 id="n-title">Tu situación</h2>
+        <p class="lead" id="n-lead"></p>
+        <div class="grid-2">
+          <div class="field">
+            <label for="n-gastos">Gastos fijos mensuales <span class="opt">(opcional)</span></label>
+            <div class="money"><span>$</span><input type="text" id="n-gastos" data-money inputmode="numeric" autocomplete="off" placeholder="Ej: 600.000"></div>
+            <div class="hint" id="n-gastos-hint"></div>
+          </div>
+          <div class="field">
+            <label for="n-ahorro">Ahorro mensual que quieres lograr <span class="opt">(opcional)</span></label>
+            <div class="money"><span>$</span><input type="text" id="n-ahorro" data-money inputmode="numeric" autocomplete="off" placeholder="Ej: 50.000"></div>
+          </div>
+          <div class="field">
+            <label for="n-modalidad">Modalidad que buscas</label>
+            <select id="n-modalidad"><option value="presencial">Presencial</option><option value="hibrida">Híbrida</option><option value="remota">Remota</option><option value="cualquiera">Me da lo mismo</option></select>
+          </div>
+          <div class="field">
+            <label for="n-trabajo">Lo que gastarías al mes en ir a trabajar <span class="opt">(opcional)</span></label>
+            <div class="money"><span>$</span><input type="text" id="n-trabajo" data-money inputmode="numeric" autocomplete="off" placeholder="Ej: 50.000"></div>
+            <div class="hint">Transporte, colación. En remoto se rellena con 0.</div>
+          </div>
+          <div class="field" id="n-ultimo-field">
+            <label for="n-ultimo">Tu último sueldo líquido <span class="opt">(opcional)</span></label>
+            <div class="money"><span>$</span><input type="text" id="n-ultimo" data-money inputmode="numeric" autocomplete="off" placeholder="Ej: 900.000"></div>
+            <div class="hint">Si no pones tus gastos, partimos desde aquí.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="q-result" aria-live="polite"></div>
+    <div class="card" id="n-result" aria-live="polite" hidden></div>
+    <div class="card" id="ref-card" aria-live="polite" hidden></div>
+  </section>
+
+  
+<!-- ===================== PANEL 2: COMPARAR ===================== -->
+  <section class="panel" id="panel-cmp" role="tabpanel" aria-labelledby="tab-cmp" hidden>
+    <p class="lead" style="font-size:14px;color:var(--ink-soft);margin:0 0 14px;">Completa las dos ofertas. Puedes usar tu trabajo actual como una de ellas: solo cambia el nombre.</p>
+    <div class="compare-forms">
+      <div class="card offer-card a" id="offer-a"></div>
+      <div class="card offer-card b" id="offer-b"></div>
+    </div>
+    <div id="c-result" aria-live="polite" style="margin-top:20px;"></div>
+  </section>
+
+  <p class="foot">Los cálculos son referenciales y se basan solo en los datos que ingresas. No constituyen asesoría legal ni financiera. Workea no garantiza resultados en procesos de selección.</p>
+</main>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* CALC-START — funciones puras de cálculo (se prueban por separado) */
+const SEMANAS_POR_MES = 52 / 12;
+
+function redondearArriba(n, paso){
+  // la tolerancia evita que 1.100.000,0000000002 suba un escalón entero
+  return Math.ceil(n / paso - 1e-6) * paso;
+}
+
+function calcularExpectativa(d){
+  const necesidades = d.gastosFijos + d.gastosTrabajo + d.ahorro;
+  const base = Math.max(necesidades, d.sueldoActual);
+  const mObj = Math.max(0, d.margenObjetivo) / 100;
+  const mIdeal = Math.max(0, d.margenIdeal, d.margenObjetivo) / 100;
+  return {
+    necesidades: necesidades,
+    sueldoActual: d.sueldoActual,
+    base: base,
+    pisoPorNecesidades: necesidades >= d.sueldoActual,
+    piso: redondearArriba(base, 10000),
+    objetivo: redondearArriba(base * (1 + mObj), 10000),
+    ideal: redondearArriba(base * (1 + mIdeal), 10000)
+  };
+}
+
+function calcularOferta(o){
+  const neto = o.sueldo + o.bonos + o.beneficios - o.transporte - o.otros;
+  const vuelta = (o.vuelta === null || o.vuelta === undefined) ? o.ida : o.vuelta;
+  const trasladoSemanalMin = (o.ida + vuelta) * o.dias;
+  const trasladoSemanalHoras = trasladoSemanalMin / 60;
+  const trasladoMensualHoras = trasladoSemanalHoras * SEMANAS_POR_MES;
+  const horasDedicadasMes = o.jornada > 0 ? (o.jornada + trasladoSemanalHoras) * SEMANAS_POR_MES : null;
+  const ingresoHora = horasDedicadasMes ? neto / horasDedicadasMes : null;
+  return { neto: neto, trasladoSemanalHoras: trasladoSemanalHoras, trasladoMensualHoras: trasladoMensualHoras,
+           horasDedicadasMes: horasDedicadasMes, ingresoHora: ingresoHora };
+}
+
+function compararOfertas(ra, rb){
+  const diffMensual = rb.neto - ra.neto;
+  return { diffMensual: diffMensual, diffAnual: diffMensual * 12,
+           diffTrasladoSemanal: rb.trasladoSemanalHoras - ra.trasladoSemanalHoras };
+}
+
+function calcularCambio(d){
+  const ajusteTransporte = d.transporteNuevo - d.transporteActual;
+  const base = Math.max(0, d.sueldoActual + ajusteTransporte);   // líquido nuevo que te deja igual que hoy
+  const mObj = Math.max(0, d.margenObjetivo) / 100;
+  const mIdeal = Math.max(0, d.margenIdeal, d.margenObjetivo) / 100;
+  const r = {
+    ajusteTransporte: ajusteTransporte,
+    base: base,
+    bolsilloHoy: d.sueldoActual - d.transporteActual,
+    igual: redondearArriba(base, 10000),
+    objetivo: redondearArriba(base * (1 + mObj), 10000),
+    ideal: redondearArriba(base * (1 + mIdeal), 10000)
+  };
+  if(d.oferta > 0){
+    r.bolsilloNuevo = d.oferta - d.transporteNuevo;
+    r.diffMensual = r.bolsilloNuevo - r.bolsilloHoy;
+    r.diffAnual = r.diffMensual * 12;
+    r.pctSobreIgual = base > 0 ? (d.oferta / base - 1) * 100 : 0;
+    r.zona = d.oferta < base ? 'menos' : (d.oferta < r.objetivo ? 'bajo_objetivo' : (d.oferta < r.ideal ? 'en_rango' : 'sobre_ideal'));
+  }
+  return r;
+}
+
+/* ===== DATOS DE REFERENCIA OFICIALES — actualizar cada año =====
+   Ingreso mínimo: Dirección del Trabajo, Ley 21.830 (vigente desde 1-may-2026; próximo reajuste: enero 2027).
+   Ingresos: INE, Encuesta Suplementaria de Ingresos (ESI) 2025, levantamiento oct–dic 2025, publicada el 14-jul-2026.
+   Valores líquidos mensuales de personas ocupadas (el ingreso mínimo es bruto). */
+const REF = {
+  minimoBruto: 553553, minimoVigencia: '1 de mayo de 2026', minimoLey: 'Ley 21.830',
+  mediana: 680000, promedio: 962945,
+  educacion: { basica: 500211, media: 598442, postgrado: 2120927 },
+  ocupacion: { serviciosComercio: 529223, directoresGerentes: 1997562 },
+  fuente: 'INE, Encuesta Suplementaria de Ingresos (ESI) 2025, publicada el 14 de julio de 2026'
+};
+
+function textoReferencia(obj){
+  const dif = obj - REF.mediana;
+  let t = dif === 0
+    ? 'El monto desde el que pedirías (' + clp(obj) + ') es igual a la mediana de las personas ocupadas en Chile.'
+    : 'El monto desde el que pedirías (' + clp(obj) + ') está ' + clp(Math.abs(dif)) + (dif > 0 ? ' sobre' : ' bajo') + ' la mediana de las personas ocupadas en Chile (' + clp(REF.mediana) + ').';
+  if(obj >= REF.promedio){
+    t += ' También alcanza o supera el promedio nacional (' + clp(REF.promedio) + '): alrededor de 7 de cada 10 personas ocupadas gana menos o lo mismo.';
+  }else if(obj > REF.mediana){
+    t += ' Más de la mitad de las personas ocupadas gana menos que eso.';
+  }
+  return t;
+}
+
+function clp(n){
+  const r = Math.round(n);
+  const s = String(Math.abs(r)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return (r < 0 ? '-' : '') + '$' + s;
+}
+function fmtHoras(h){
+  const t = (Math.round(h * 10) / 10).toFixed(1).replace('.', ',');
+  return t.replace(/,0$/, '') + ' h';
+}
+/* CALC-END */
+
+/* ---------------- utilidades de interfaz ---------------- */
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = id => document.getElementById(id);
+
+function showToast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(showToast._t); showToast._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* Formato de miles mientras se escribe (1000000 → 1.000.000), cuidando el cursor */
+function formatMoneyInput(el){
+  const caret = el.selectionStart;
+  const digitsBefore = el.value.slice(0, caret).replace(/\D/g, '').length;
+  const digits = el.value.replace(/\D/g, '').slice(0, 10);
+  const formatted = digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  el.value = formatted;
+  let pos = 0, count = 0;
+  while(pos < formatted.length && count < digitsBefore){ if(/\d/.test(formatted[pos])) count++; pos++; }
+  try{ el.setSelectionRange(pos, pos); }catch(e){}
+}
+const money = id => { const d = $(id).value.replace(/\D/g, ''); return d ? Number(d) : 0; };
+const numero = (id, max) => { const x = parseFloat($(id).value); return (isFinite(x) && x >= 0) ? Math.min(x, max) : 0; };
+
+/* ---------------- PESTAÑAS ---------------- */
+const TABS = ['exp', 'cmp'];
+function selectTab(name, focus){
+  TABS.forEach(t => {
+    const on = t === name;
+    $('tab-' + t).setAttribute('aria-selected', on ? 'true' : 'false');
+    $('tab-' + t).tabIndex = on ? 0 : -1;
+    $('panel-' + t).hidden = !on;
+  });
+  if(focus) $('tab-' + name).focus();
+  try{ history.replaceState(null, '', name === 'cmp' ? '#comparar' : '#' + CTX); }catch(e){}
+}
+TABS.forEach((t, i) => {
+  $('tab-' + t).addEventListener('click', () => selectTab(t));
+  $('tab-' + t).addEventListener('keydown', e => {
+    if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
+      e.preventDefault();
+      selectTab(TABS[(i + (e.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length], true);
+    }
+  });
+});
+
+/* ---------------- PANEL 1: ¿CUÁNTO PEDIR? (según tu situación) ---------------- */
+const ORDEN_MOD = { presencial: 2, hibrida: 1, remota: 0 };
+const CONTEXTOS = ['cambio', 'busco', 'egreso'];
+let CTX = 'cambio';
+
+// Márgenes internos (no se muestran como porcentaje: la persona ve montos en pesos)
+const MARGEN_DESDE = 10, MARGEN_HASTA = 20;
+
+const TEXTOS_CTX = {
+  cambio: {},
+  busco: { title: 'Tu situación', lead: 'Con tus gastos mensuales calculamos tu piso: el mínimo bajo el cual una oferta no te alcanza. Si no los tienes a mano, puedes partir solo con tu último sueldo.',
+    gastosHint: 'Arriendo o dividendo, cuentas, alimentación, deudas, etc.' },
+  egreso: { title: 'Tu primer trabajo', lead: 'Con tus gastos mensuales calculamos tu piso: el mínimo bajo el cual una oferta no te alcanza. Después contrástalo con lo que se paga por tu carrera.',
+    gastosHint: 'Si vives con tu familia, pon tus gastos personales o lo que aportas en la casa.' }
+};
+
+function setContexto(c, desdeHash){
+  if(CONTEXTOS.indexOf(c) < 0) c = 'cambio';
+  CTX = c;
+  document.querySelectorAll('.ctx-btn').forEach(b => b.setAttribute('aria-pressed', b.dataset.ctx === c ? 'true' : 'false'));
+  const t = TEXTOS_CTX[c];
+  const necesidades = c !== 'cambio';
+  $('ctx-cambio').hidden = necesidades;
+  $('ctx-needs').hidden = !necesidades;
+  $('q-result').hidden = necesidades;
+  $('n-result').hidden = !necesidades;
+  if(necesidades){
+    $('n-title').textContent = t.title; $('n-lead').textContent = t.lead; $('n-gastos-hint').textContent = t.gastosHint;
+    $('n-ultimo-field').hidden = (c !== 'busco');
+  }
+  if(!desdeHash){ try{ history.replaceState(null, '', '#' + c); }catch(e){} }
+  renderCambio(); renderNecesidades();
+}
+document.querySelectorAll('.ctx-btn').forEach(b => b.addEventListener('click', () => setContexto(b.dataset.ctx)));
+
+function notaModalidad(act, nue, ajuste){
+  if(act === nue) return '';
+  const de = MODALIDAD[act].toLowerCase(), a = MODALIDAD[nue].toLowerCase();
+  if(ORDEN_MOD[nue] < ORDEN_MOD[act]){
+    return 'Pasarías de ' + de + ' a ' + a + ': ahorras traslado' + (ajuste < 0 ? ' (≈ ' + clp(-ajuste) + ' al mes, según lo que ingresaste)' : '') + ' y ganas tiempo. Para ver cuántas horas, usa «Comparar ofertas».';
+  }
+  return 'Pasarías de ' + de + ' a ' + a + ': suma gasto y tiempo de traslado' + (ajuste > 0 ? ' (≈ ' + clp(ajuste) + ' más al mes, según lo que ingresaste)' : '') + '. Para ver cuántas horas, usa «Comparar ofertas».';
+}
+
+function bindCopy(btnId, texto){
+  const b = $(btnId); if(!b) return;
+  b.addEventListener('click', () => {
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(texto).then(() => showToast('Frase copiada'), () => showToast('No se pudo copiar'));
+    }else{ showToast('Tu navegador no permite copiar automáticamente'); }
+  });
+}
+
+const REF_OBJ = { cambio: null, needs: null };
+function actualizarReferencias(){
+  const card = $('ref-card');
+  const obj = CTX === 'cambio' ? REF_OBJ.cambio : REF_OBJ.needs;
+  if(obj === null || obj === undefined){ card.hidden = true; card.innerHTML = ''; return; }
+  const sinMonto = (obj === 'sin');
+  const fila = (a, b) => '<li><span>' + a + '</span><span>' + clp(b) + '</span></li>';
+  card.innerHTML =
+    '<h2>Cómo se compara con el país</h2>' +
+    '<p class="lead">' + (sinMonto ? 'Referencias oficiales para tener de contexto. Son generales: no corresponden al cargo que buscas.' : 'Referencias oficiales para contrastar el monto que calculaste. Son generales: no corresponden al cargo que buscas.') + '</p>' +
+    (sinMonto ? '' : '<div class="summary" style="margin-top:0;">' + esc(textoReferencia(obj)) + '</div>') +
+    '<ul class="breakdown" aria-label="Referencias oficiales">' +
+      fila('Ingreso mínimo legal (bruto)', REF.minimoBruto) +
+      fila('Mediana de las personas ocupadas (líquido)', REF.mediana) +
+      fila('Promedio de las personas ocupadas (líquido)', REF.promedio) +
+      fila('Mediana con enseñanza básica', REF.educacion.basica) +
+      fila('Mediana con enseñanza media', REF.educacion.media) +
+      fila('Mediana con postgrado', REF.educacion.postgrado) +
+      fila('Mediana en servicios y comercio', REF.ocupacion.serviciosComercio) +
+      fila('Mediana en directores y gerentes', REF.ocupacion.directoresGerentes) +
+    '</ul>' +
+    '<div class="callout">El ingreso mínimo es un monto bruto: tras los descuentos previsionales, el líquido queda alrededor de $450.000 (aproximado; depende de la AFP y la salud). ' +
+      'Los ingresos del INE consideran a todas las personas ocupadas, también las de jornada parcial, por eso pueden ser más bajos que lo que paga un empleo formal de jornada completa. ' +
+      '<br><b>Fuentes:</b> Dirección del Trabajo, ' + esc(REF.minimoLey) + ' (vigente desde el ' + esc(REF.minimoVigencia) + '); ' + esc(REF.fuente) + '.</div>';
+  card.hidden = false;
+}
+
+function renderCambio(){
+  const el = $('q-result');
+  const trabNuevoVacio = $('q-trabnuevo').value.trim() === '';
+  const d = {
+    sueldoActual: money('q-actual'), transporteActual: money('q-trabact'),
+    oferta: money('q-oferta'),
+    transporteNuevo: trabNuevoVacio ? money('q-trabact') : money('q-trabnuevo'),
+    margenObjetivo: MARGEN_DESDE, margenIdeal: MARGEN_HASTA
+  };
+  if(d.sueldoActual === 0){
+    el.innerHTML = '<div class="empty" style="border:none;padding:10px;">Ingresa lo que ganas hoy (líquido) para ver tu resultado. ¿Hoy no trabajas o recién egresas? Elige tu situación arriba.</div>';
+    REF_OBJ.cambio = null; actualizarReferencias();
+    return;
+  }
+  const r = calcularCambio(d);
+  const hayOferta = d.oferta > 0;
+  let html = '<h2>' + (hayOferta ? 'Tu oferta frente a tu situación de hoy' : 'Cuánto pedir para que el cambio compense') + '</h2>';
+
+  if(hayOferta){
+    const dif = r.diffMensual;
+    const difTxt = dif === 0 ? 'lo mismo que hoy' : clp(Math.abs(dif)) + ' ' + (dif > 0 ? 'más' : 'menos') + ' que hoy';
+    const zonaTxt = {
+      menos: 'Con esta oferta te quedaría menos dinero al mes que hoy, después de gastos de traslado.',
+      bajo_objetivo: 'Mejora o iguala lo de hoy, pero queda bajo el monto desde el que te sugerimos pedir (' + clp(r.objetivo) + ').',
+      en_rango: 'Está dentro del rango que te sugerimos pedir: entre ' + clp(r.objetivo) + ' y ' + clp(r.ideal) + '.',
+      sobre_ideal: 'Está sobre el rango que te sugerimos pedir (hasta ' + clp(r.ideal) + ').'
+    }[r.zona];
+    html += '<div class="summary"><b>En tu bolsillo:</b> ' + clp(r.bolsilloNuevo) + ' al mes con la oferta, frente a ' + clp(r.bolsilloHoy) + ' hoy → ' + difTxt +
+      (dif !== 0 ? ' (≈ ' + clp(Math.abs(r.diffAnual)) + ' al año)' : '') + '.' +
+      '<small>' + esc(zonaTxt) + ' Frente a lo que necesitarías para quedar igual (' + clp(r.base) + '), la oferta está ' + clp(Math.abs(d.oferta - r.base)) + (d.oferta >= r.base ? ' sobre' : ' bajo') + '. Esto compara solo dinero: considera también tu tiempo, la estabilidad y lo que no se ve en la liquidación (antigüedad, vacaciones acumuladas, período de prueba).</small></div>';
+  }
+
+  html += '<p class="lead" style="margin-top:16px;">' + (hayOferta ? 'Si quieres negociar, estos son tus números.' : 'Estos son tus números.') + ' En pesos líquidos, redondeado hacia arriba a los $10.000.</p>' +
+    '<div class="tiles">' +
+      '<div class="tile"><div class="t-label">Para quedar igual</div><div class="t-val">' + clp(r.igual) + '</div><div class="t-note">Tu sueldo de hoy, ajustado por la diferencia de traslado.</div></div>' +
+      '<div class="tile main"><div class="t-label">Pide desde</div><div class="t-val">' + clp(r.objetivo) + '</div><div class="t-note">Un poco más que quedar igual, para dejar espacio a negociar.</div></div>' +
+      '<div class="tile"><div class="t-label">Pide hasta</div><div class="t-val">' + clp(r.ideal) + '</div><div class="t-note">Tu techo: hasta aquí llega tu rango.</div></div>' +
+    '</div>' +
+    '<ul class="breakdown" aria-label="Cómo se calculó">' +
+      '<li><span>Lo que ganas hoy (líquido)</span><span>' + clp(d.sueldoActual) + '</span></li>' +
+      '<li><span>Gasto de traslado hoy</span><span>' + clp(d.transporteActual) + '</span></li>' +
+      '<li><span>Gasto de traslado en el nuevo trabajo</span><span>' + clp(d.transporteNuevo) + '</span></li>' +
+      '<li class="sum"><span>Líquido para quedar igual que hoy</span><span>' + clp(r.base) + '</span></li>' +
+    '</ul>';
+
+  const nota = notaModalidad($('q-modact').value, $('q-modnueva').value, r.ajusteTransporte);
+  if(nota) html += '<div class="callout">' + esc(nota) + '</div>';
+
+  const mostrarFrase = !hayOferta || r.zona === 'menos' || r.zona === 'bajo_objetivo';
+  let frase = '';
+  if(mostrarFrase){
+    const rango = (r.objetivo === r.ideal) ? 'es de ' + clp(r.objetivo) + ' líquidos' : 'está entre ' + clp(r.objetivo) + ' y ' + clp(r.ideal) + ' líquidos';
+    frase = hayOferta
+      ? 'Agradezco la propuesta. Considerando mi situación actual y los gastos asociados al cambio, mi expectativa ' + rango + '.'
+      : 'Mi pretensión de renta ' + rango + ', dependiendo de las funciones, el tipo de contrato y los beneficios del cargo.';
+    html += '<div class="say"><div class="say-label">' + (hayOferta ? 'Una forma de plantearlo' : 'Una forma de decirlo en la entrevista') + '</div>' +
+      '<div>“' + esc(frase) + '”</div><div style="margin-top:10px;"><button class="btn btn-ghost" type="button" id="q-copy">Copiar frase</button></div></div>';
+  }
+
+  html += '<details class="assume"><summary>¿Cómo calculamos este rango?</summary><ul>' +
+      '<li>«Para quedar igual» es tu sueldo de hoy, ajustado por la diferencia de gasto en traslado.</li>' +
+      '<li>«Pide desde» suma un 10% a eso y «Pide hasta» suma un 20%, redondeado hacia arriba a los $10.000.</li>' +
+      '<li>Son márgenes de referencia para dejar espacio a negociar, no un dato de mercado. Estudios chilenos de 2018–2019 hablaban de cerca de 10% al cambiarse de trabajo; no es una cifra actual.</li>' +
+    '</ul></details>';
+  html += '<ul class="tips">' +
+      '<li><b>Da un rango, no una cifra única.</b> Deja espacio para conversar y ajustar.</li>' +
+      '<li><b>Confirma si te preguntan por renta líquida o bruta.</b> Esta calculadora trabaja con líquido.</li>' +
+      '<li><b>No necesitas responder en el momento.</b> “Gracias, déjame revisarlo y te respondo” es una respuesta válida.</li>' +
+    '</ul>' +
+    '<p class="cross">¿Tienes más de una oferta? <button class="link-btn" type="button" id="q-goto-cmp">Compáralas considerando gastos y traslado →</button></p>';
+
+  el.innerHTML = html;
+  REF_OBJ.cambio = r.objetivo; actualizarReferencias();
+  if(frase) bindCopy('q-copy', frase);
+  $('q-goto-cmp').addEventListener('click', () => { selectTab('cmp'); window.scrollTo({top:0, behavior:'smooth'}); });
+}
+
+/* Situaciones "hoy no trabajo" y "recién egreso": se parte de lo que necesitas */
+function renderNecesidades(){
+  const el = $('n-result');
+  if(CTX === 'cambio') return;
+  const gastos = money('n-gastos');
+  const ultimo = CTX === 'busco' ? money('n-ultimo') : 0;
+  const conGastos = gastos > 0;
+  const desdeUltimo = !conGastos && ultimo > 0;
+
+  if(!conGastos && !desdeUltimo){
+    const msg = CTX === 'busco'
+      ? 'Completa tus gastos fijos o tu último sueldo para ver un rango para pedir. Mientras tanto, abajo tienes cómo se compara el país.'
+      : 'Completa tus gastos fijos para calcular tu piso. Mientras tanto, abajo tienes cómo se compara el país. Para un primer trabajo, contrástalo con lo que se paga por tu carrera en <a href="https://www.mifuturo.cl" target="_blank" rel="noopener">mifuturo.cl</a>, del Ministerio de Educación.';
+    el.innerHTML = '<div class="empty" style="border:none;padding:10px;">' + msg + '</div>';
+    REF_OBJ.needs = 'sin'; actualizarReferencias();
+    return;
+  }
+
+  const d = conGastos
+    ? { gastosFijos: gastos, sueldoActual: 0, gastosTrabajo: money('n-trabajo'), ahorro: money('n-ahorro'), margenObjetivo: MARGEN_DESDE, margenIdeal: MARGEN_HASTA }
+    : { gastosFijos: 0, sueldoActual: ultimo, gastosTrabajo: 0, ahorro: 0, margenObjetivo: 0, margenIdeal: MARGEN_DESDE };
+  const r = calcularExpectativa(d);
+  const rango = (r.objetivo === r.ideal) ? 'es de ' + clp(r.objetivo) + ' líquidos' : 'está entre ' + clp(r.objetivo) + ' y ' + clp(r.ideal) + ' líquidos';
+  const frase = 'Mi pretensión de renta ' + rango + ', dependiendo de las funciones, el tipo de contrato y los beneficios del cargo.';
+
+  let html = '<h2>Tu rango para pedir</h2>';
+  if(conGastos){
+    html +=
+      '<p class="lead">Tu piso es lo que necesitas al mes. Todo en pesos líquidos, redondeado hacia arriba a los $10.000.</p>' +
+      '<div class="tiles">' +
+        '<div class="tile"><div class="t-label">Tu piso</div><div class="t-val">' + clp(r.piso) + '</div><div class="t-note">Tu mínimo. Es para ti: no hace falta decirlo.</div></div>' +
+        '<div class="tile main"><div class="t-label">Pide desde</div><div class="t-val">' + clp(r.objetivo) + '</div><div class="t-note">Un poco más que tu piso, para dejar espacio a negociar.</div></div>' +
+        '<div class="tile"><div class="t-label">Pide hasta</div><div class="t-val">' + clp(r.ideal) + '</div><div class="t-note">Tu techo: hasta aquí llega tu rango.</div></div>' +
+      '</div>' +
+      '<ul class="breakdown" aria-label="Cómo se calculó">' +
+        '<li><span>Gastos fijos</span><span>' + clp(d.gastosFijos) + '</span></li>' +
+        '<li><span>Gastos por ir a trabajar</span><span>' + clp(d.gastosTrabajo) + '</span></li>' +
+        '<li><span>Ahorro que quieres lograr</span><span>' + clp(d.ahorro) + '</span></li>' +
+        '<li class="sum"><span>Lo que necesitas al mes</span><span>' + clp(r.necesidades) + '</span></li>' +
+      '</ul>';
+    if(ultimo > 0){
+      const rel = r.piso > ultimo ? 'sobre' : 'bajo';
+      html += '<div class="callout">Tu último sueldo fue ' + clp(ultimo) + ': úsalo como referencia si buscas algo parecido. Tu piso según tus necesidades (' + clp(r.piso) + ') está ' + rel + ' ese sueldo. Si estás dispuesto/a a ir por debajo, define de antemano hasta dónde, para no decidirlo bajo presión.</div>';
+    }
+  }else{
+    html +=
+      '<p class="lead">Partimos de tu último sueldo, porque no pusiste tus gastos. Todo en pesos líquidos, redondeado hacia arriba a los $10.000.</p>' +
+      '<div class="tiles">' +
+        '<div class="tile main"><div class="t-label">Pide desde</div><div class="t-val">' + clp(r.objetivo) + '</div><div class="t-note">Lo mismo que ganabas.</div></div>' +
+        '<div class="tile"><div class="t-label">Pide hasta</div><div class="t-val">' + clp(r.ideal) + '</div><div class="t-note">Tu techo: hasta aquí llega tu rango.</div></div>' +
+      '</div>' +
+      '<div class="callout">Sin tus gastos no podemos calcular tu piso, el mínimo bajo el cual una oferta no te alcanza. Si lo quieres, completa los gastos fijos arriba. Si estás dispuesto/a a ir por debajo de tu último sueldo, define de antemano hasta dónde, para no decidirlo bajo presión.</div>';
+  }
+
+  html += '<div class="say"><div class="say-label">Una forma de decirlo en la entrevista</div><div>“' + esc(frase) + '”</div>' +
+    '<div style="margin-top:10px;"><button class="btn btn-ghost" type="button" id="n-copy">Copiar frase</button></div></div>' +
+    '<details class="assume"><summary>¿Cómo calculamos este rango?</summary><ul>' +
+      (conGastos
+        ? '<li>Tu piso es la suma de tus gastos fijos, lo que gastas en ir a trabajar y el ahorro que quieres lograr.</li>' +
+          '<li>«Pide desde» suma un 10% a tu piso y «Pide hasta» suma un 20%, redondeado hacia arriba a los $10.000.</li>'
+        : '<li>«Pide desde» es tu último sueldo y «Pide hasta» le suma un 10%, redondeado hacia arriba a los $10.000.</li>') +
+      '<li>Son márgenes de referencia para dejar espacio a negociar, no un dato de mercado.</li>' +
+    '</ul></details>' +
+    '<ul class="tips">' +
+      '<li><b>Da un rango, no una cifra única.</b> Deja espacio para conversar y ajustar.</li>' +
+      '<li><b>Si puedes, pregunta primero por el rango del cargo.</b> “¿Cuál es el rango que tienen contemplado?” te da un punto de partida antes de dar tu cifra.</li>' +
+      '<li><b>Confirma si te preguntan por renta líquida o bruta.</b> Esta calculadora trabaja con líquido.</li>' +
+    '</ul>' +
+    '<div class="callout"><b>Ojo:</b> este monto parte de ' + (conGastos ? 'tus necesidades' : 'tu último sueldo') + ', no de lo que paga el mercado por el cargo.' +
+      (CTX === 'egreso'
+        ? ' Para un primer trabajo, contrástalo con lo que se paga por tu carrera: <a href="https://www.mifuturo.cl" target="_blank" rel="noopener">mifuturo.cl</a>, del Ministerio de Educación, tiene información de empleabilidad e ingresos por carrera. Revisa a qué año de titulación corresponde el dato, porque no siempre es el de un primer empleo.'
+        : ' Contrástalo con ofertas parecidas y con tu experiencia antes de decidir qué pedir.') + '</div>' +
+    '<p class="cross">¿Ya tienes ofertas en mano? <button class="link-btn" type="button" id="n-goto-cmp">Compáralas considerando gastos y traslado →</button></p>';
+
+  el.innerHTML = html;
+  REF_OBJ.needs = r.objetivo; actualizarReferencias();
+  bindCopy('n-copy', frase);
+  $('n-goto-cmp').addEventListener('click', () => { selectTab('cmp'); window.scrollTo({top:0, behavior:'smooth'}); });
+}
+
+/* ---------------- PANEL 2: COMPARAR OFERTAS ---------------- */
+function offerForm(p, titulo){
+  const i = id => p + '-' + id;
+  const moneyField = (id, label, hint, ph, opt) =>
+    '<div class="field"><label for="' + i(id) + '">' + label + (opt ? ' <span class="opt">(opcional)</span>' : '') + '</label>' +
+    '<div class="money"><span>$</span><input type="text" id="' + i(id) + '" data-money inputmode="numeric" autocomplete="off" placeholder="' + ph + '"></div>' +
+    (hint ? '<div class="hint">' + hint + '</div>' : '') + '</div>';
+  const numField = (id, label, hint, ph, max, opt) =>
+    '<div class="field"><label for="' + i(id) + '">' + label + (opt ? ' <span class="opt">(opcional)</span>' : '') + '</label>' +
+    '<input type="number" id="' + i(id) + '" min="0" max="' + max + '" inputmode="numeric" placeholder="' + ph + '">' +
+    (hint ? '<div class="hint">' + hint + '</div>' : '') + '</div>';
+
+  return '<h2>' + titulo + '</h2>' +
+    '<div class="sec-title">Lo básico</div>' +
+    '<div class="grid-2">' +
+      '<div class="field"><label for="' + i('nombre') + '">Nombre</label><input type="text" id="' + i('nombre') + '" maxlength="40" placeholder="' + esc(titulo) + '"></div>' +
+      '<div class="field"><label for="' + i('empresa') + '">Empresa <span class="opt">(opcional)</span></label><input type="text" id="' + i('empresa') + '" maxlength="60"></div>' +
+      '<div class="field"><label for="' + i('modalidad') + '">Modalidad</label><select id="' + i('modalidad') + '"><option value="presencial">Presencial</option><option value="hibrida">Híbrida</option><option value="remota">Remota</option></select></div>' +
+      numField('jornada', 'Jornada semanal (horas)', '', 'Ej: 42', 80, false) +
+    '</div>' +
+    '<div class="sec-title">Lo que ganas</div>' +
+    '<div class="grid-2">' +
+      moneyField('sueldo', 'Sueldo líquido mensual', 'Lo que llega a tu cuenta tras descuentos. Si te lo dieron en bruto, pide el líquido aproximado a la empresa.', 'Ej: 1.000.000', false) +
+      moneyField('bonos', 'Bonos mensuales garantizados', '', 'Ej: 50.000', true) +
+      moneyField('beneficios', 'Beneficios en dinero recurrentes', 'Colación o movilización pagadas por la empresa, etc.', 'Ej: 30.000', true) +
+      moneyField('variable', 'Bono variable estimado', 'No garantizado: se muestra aparte, no se suma.', 'Ej: 100.000', true) +
+    '</div>' +
+    '<div class="sec-title">Lo que te cuesta</div>' +
+    '<div class="grid-2">' +
+      moneyField('transporte', 'Transporte mensual', '', 'Ej: 60.000', true) +
+      moneyField('otros', 'Otros gastos laborales mensuales', 'Estacionamiento, uniforme, internet, etc.', 'Ej: 20.000', true) +
+    '</div>' +
+    '<div class="sec-title">Tu tiempo</div>' +
+    '<div class="grid-2">' +
+      numField('dias', 'Días presenciales por semana', 'Se ajusta al cambiar la modalidad; corrígelo si es distinto.', 'Ej: 5', 7, false) +
+      numField('ida', 'Traslado de ida (minutos)', '', 'Ej: 40', 600, true) +
+      numField('vuelta', 'Traslado de vuelta (minutos)', 'Si lo dejas vacío, usamos el mismo tiempo de ida.', 'Igual a la ida', 600, true) +
+    '</div>' +
+    '<details class="more"><summary>Condiciones y notas (opcional)</summary>' +
+      '<div class="grid-2">' +
+        '<div class="field"><label for="' + i('flex') + '">Flexibilidad</label><select id="' + i('flex') + '"><option value="">Sin indicar</option><option>Horario fijo</option><option>Algo de flexibilidad</option><option>Alta flexibilidad</option></select></div>' +
+        '<div class="field"><label for="' + i('benef') + '">Otros beneficios relevantes</label><input type="text" id="' + i('benef') + '" maxlength="120" placeholder="Ej: seguro complementario, días extra"></div>' +
+        '<div class="field"><label for="' + i('pos') + '">Lo positivo</label><textarea id="' + i('pos') + '" maxlength="300"></textarea></div>' +
+        '<div class="field"><label for="' + i('neg') + '">Lo que te preocupa</label><textarea id="' + i('neg') + '" maxlength="300"></textarea></div>' +
+      '</div>' +
+    '</details>';
+}
+
+const MODALIDAD = { presencial: 'Presencial', hibrida: 'Híbrida', remota: 'Remota' };
+const DIAS_POR_MODALIDAD = { presencial: 5, hibrida: 2, remota: 0 };
+
+function readOffer(p){
+  const v = id => $(p + '-' + id);
+  const mon = id => { const d = v(id).value.replace(/\D/g, ''); return d ? Number(d) : 0; };
+  const num = (id, max) => { const x = parseFloat(v(id).value); return (isFinite(x) && x >= 0) ? Math.min(x, max) : 0; };
+  const vueltaRaw = v('vuelta').value.trim();
+  return {
+    nombre: v('nombre').value.trim() || ('Oferta ' + p.toUpperCase()),
+    empresa: v('empresa').value.trim(),
+    modalidad: v('modalidad').value,
+    jornada: num('jornada', 80),
+    sueldo: mon('sueldo'), bonos: mon('bonos'), beneficios: mon('beneficios'), variable: mon('variable'),
+    transporte: mon('transporte'), otros: mon('otros'),
+    dias: num('dias', 7), ida: num('ida', 600), vuelta: vueltaRaw === '' ? null : num('vuelta', 600),
+    flex: v('flex').value, benef: v('benef').value.trim(), pos: v('pos').value.trim(), neg: v('neg').value.trim()
+  };
+}
+
+function barPct(val, max){ return max > 0 ? Math.max(0, Math.min(100, (val / max) * 100)) : 0; }
+const nombreCompleto = o => o.nombre + (o.empresa ? ' · ' + o.empresa : '');
+
+function renderComparacion(){
+  const el = $('c-result');
+  const A = readOffer('a'), B = readOffer('b');
+  if(A.sueldo === 0 || B.sueldo === 0){
+    el.innerHTML = '<div class="empty">Ingresa el sueldo líquido de las dos ofertas para ver la comparación.</div>';
+    return;
+  }
+  const rA = calcularOferta(A), rB = calcularOferta(B), c = compararOfertas(rA, rB);
+  const verHora = $('c-hora') ? $('c-hora').checked : false;
+
+  const cols = (valA, valB, barA, barB, small) =>
+    '<div class="cols">' +
+      '<div class="col a"><div class="who"><span class="dot"></span>' + esc(A.nombre) + '</div><div class="val' + (small ? ' sm' : '') + '">' + valA + '</div>' + (barA !== null ? '<div class="bar" aria-hidden="true"><span style="width:' + barA + '%"></span></div>' : '') + '</div>' +
+      '<div class="col b"><div class="who"><span class="dot"></span>' + esc(B.nombre) + '</div><div class="val' + (small ? ' sm' : '') + '">' + valB + '</div>' + (barB !== null ? '<div class="bar" aria-hidden="true"><span style="width:' + barB + '%"></span></div>' : '') + '</div>' +
+    '</div>';
+
+  const maxNeto = Math.max(rA.neto, rB.neto);
+  const maxTras = Math.max(rA.trasladoSemanalHoras, rB.trasladoSemanalHoras);
+  const signo = n => n > 0 ? 'más' : 'menos';
+
+  // 1) ingreso neto
+  let m1 = '<div class="metric"><h3>Ingreso mensual después de gastos laborales</h3>' +
+    '<div class="m-note">Sueldo líquido + bonos garantizados + beneficios − transporte − otros gastos</div>' +
+    cols(clp(rA.neto), clp(rB.neto), barPct(rA.neto, maxNeto), barPct(rB.neto, maxNeto)) +
+    '<div class="diff">' + (c.diffMensual === 0
+      ? 'Ambas dejan el mismo ingreso mensual.'
+      : esc(B.nombre) + ' deja ' + clp(Math.abs(c.diffMensual)) + ' ' + signo(c.diffMensual) + ' al mes que ' + esc(A.nombre) + ' (≈ ' + clp(Math.abs(c.diffAnual)) + ' al año).') + '</div></div>';
+
+  // 2) traslado
+  let m2 = '<div class="metric"><h3>Tiempo de traslado</h3>' +
+    '<div class="m-note">(ida + vuelta) × días presenciales por semana. Al mes se multiplica por 4,33 semanas.</div>' +
+    cols(fmtHoras(rA.trasladoSemanalHoras) + ' <span style="font-size:12px;font-weight:600;color:var(--ink-soft)">por semana</span>',
+         fmtHoras(rB.trasladoSemanalHoras) + ' <span style="font-size:12px;font-weight:600;color:var(--ink-soft)">por semana</span>',
+         barPct(rA.trasladoSemanalHoras, maxTras), barPct(rB.trasladoSemanalHoras, maxTras)) +
+    '<div class="diff">Al mes: ≈ ' + fmtHoras(rA.trasladoMensualHoras) + ' en ' + esc(A.nombre) + ' y ≈ ' + fmtHoras(rB.trasladoMensualHoras) + ' en ' + esc(B.nombre) + '.</div></div>';
+
+  // 3) jornada y modalidad
+  let m3 = '<div class="metric"><h3>Jornada y modalidad</h3>' +
+    cols(esc(MODALIDAD[A.modalidad]) + (A.dias ? ' · ' + A.dias + ' d/sem' : '') + '<br>' + (A.jornada ? A.jornada + ' h semanales' : 'Jornada sin indicar'),
+         esc(MODALIDAD[B.modalidad]) + (B.dias ? ' · ' + B.dias + ' d/sem' : '') + '<br>' + (B.jornada ? B.jornada + ' h semanales' : 'Jornada sin indicar'), null, null, true) +
+    '</div>';
+
+  // 4) variable aparte
+  let m4 = '';
+  if(A.variable > 0 || B.variable > 0){
+    m4 = '<div class="metric"><h3>Bono variable estimado (aparte)</h3>' +
+      '<div class="m-note">No está garantizado, por eso no se suma al ingreso anterior.</div>' +
+      cols(A.variable ? clp(A.variable) : '—', B.variable ? clp(B.variable) : '—', null, null, true) + '</div>';
+  }
+
+  // 5) ingreso por hora (opcional)
+  let m5 = '<div class="metric"><label class="toggle"><input type="checkbox" id="c-hora"' + (verHora ? ' checked' : '') + '> Ver ingreso por hora dedicada (opcional)</label>';
+  if(verHora){
+    if(rA.ingresoHora === null || rB.ingresoHora === null){
+      m5 += '<div class="m-note">Para calcularlo, ingresa la jornada semanal de las dos ofertas.</div>';
+    }else{
+      m5 += '<div class="m-note">Ingreso mensual después de gastos ÷ horas al mes (jornada + traslado). Es una forma de mirar el tiempo; tú decides cuánto pesa.</div>' +
+        cols(clp(rA.ingresoHora) + ' <span style="font-size:12px;font-weight:600;color:var(--ink-soft)">por hora</span>',
+             clp(rB.ingresoHora) + ' <span style="font-size:12px;font-weight:600;color:var(--ink-soft)">por hora</span>', null, null, false);
+    }
+  }
+  m5 += '</div>';
+
+  // 6) condiciones y notas
+  const notasDe = o => {
+    const partes = [];
+    if(o.flex) partes.push('<span class="n-label">Flexibilidad</span>' + esc(o.flex));
+    if(o.benef) partes.push('<span class="n-label">Otros beneficios</span>' + esc(o.benef));
+    if(o.pos) partes.push('<span class="n-label">Lo positivo</span>' + esc(o.pos));
+    if(o.neg) partes.push('<span class="n-label">Lo que preocupa</span>' + esc(o.neg));
+    return partes.length ? partes.join('') : '<span style="color:var(--ink-soft)">Sin notas</span>';
+  };
+  let m6 = '';
+  if(A.flex || A.benef || A.pos || A.neg || B.flex || B.benef || B.pos || B.neg){
+    m6 = '<div class="metric"><h3>Condiciones y tus notas</h3>' +
+      '<div class="cols"><div class="col a"><div class="who"><span class="dot"></span>' + esc(A.nombre) + '</div><div class="notes">' + notasDe(A) + '</div></div>' +
+      '<div class="col b"><div class="who"><span class="dot"></span>' + esc(B.nombre) + '</div><div class="notes">' + notasDe(B) + '</div></div></div></div>';
+  }
+
+  // resumen neutro
+  const t = c.diffTrasladoSemanal;
+  const partesResumen = (c.diffMensual === 0)
+    ? esc(B.nombre) + ' y ' + esc(A.nombre) + ' dejan el mismo ingreso mensual'
+    : esc(B.nombre) + ' deja ' + clp(Math.abs(c.diffMensual)) + ' ' + signo(c.diffMensual) + ' al mes que ' + esc(A.nombre) + ' (≈ ' + clp(Math.abs(c.diffAnual)) + ' al año)';
+  const parteTraslado = Math.abs(t) < 0.05
+    ? ', con un traslado semanal similar.'
+    : ', con ' + fmtHoras(Math.abs(t)) + ' ' + signo(t) + ' de traslado a la semana.';
+
+  el.innerHTML =
+    '<div class="card"><h2>Comparación</h2><p class="lead">Lado a lado, con los datos que ingresaste.</p>' +
+    m1 + m2 + m3 + m4 + m5 + m6 +
+    '<div class="summary"><b>Resumen:</b> ' + partesResumen + parteTraslado +
+      '<small>Esto no dice cuál oferta es mejor: depende de cuánto valoras el ingreso, tu tiempo y las condiciones de cada una.</small></div>' +
+    '<details class="assume"><summary>Cómo se calcula y qué supuestos usamos</summary><ul>' +
+      '<li>Ingreso mensual después de gastos = sueldo líquido + bonos garantizados + beneficios en dinero − transporte − otros gastos laborales.</li>' +
+      '<li>Diferencia anual = diferencia mensual × 12. No considera gratificaciones, reajustes ni descuentos adicionales.</li>' +
+      '<li>Traslado semanal = (minutos de ida + minutos de vuelta) × días presenciales ÷ 60. Si no indicas la vuelta, se usa el mismo tiempo de ida.</li>' +
+      '<li>Traslado mensual = traslado semanal × 52 ÷ 12 (≈ 4,33 semanas por mes).</li>' +
+      '<li>El tiempo de traslado no se convierte en dinero. El ingreso por hora dedicada es opcional y solo divide el ingreso mensual por las horas de jornada y traslado.</li>' +
+      '<li>Los bonos variables se muestran aparte y nunca se suman.</li>' +
+    '</ul></details>' +
+    '</div>' +
+    '<p class="cross">¿Estás en un proceso? <a href="/bitacora.html">Registra cada postulación en Workea Bitácora →</a></p>';
+
+  const chk = $('c-hora');
+  if(chk) chk.addEventListener('change', renderComparacion);
+}
+
+/* ---------------- arranque y eventos ---------------- */
+$('offer-a').innerHTML = offerForm('a', 'Oferta A');
+$('offer-b').innerHTML = offerForm('b', 'Oferta B');
+['a', 'b'].forEach(p => { $(p + '-dias').value = DIAS_POR_MODALIDAD.presencial; });
+
+document.addEventListener('input', e => {
+  if(e.target.matches && e.target.matches('[data-money]')) formatMoneyInput(e.target);
+  const id = e.target.id || '';
+  if(id.indexOf('q-') === 0){ renderCambio(); renderNecesidades(); }
+  else if(id.indexOf('n-') === 0) renderNecesidades();
+  else if(/^[ab]-/.test(id)) renderComparacion();
+});
+document.addEventListener('change', e => {
+  const id = e.target.id || '';
+  const m = id.match(/^([ab])-modalidad$/);
+  if(m){ $(m[1] + '-dias').value = DIAS_POR_MODALIDAD[e.target.value]; renderComparacion(); return; }
+  if(id === 'q-modnueva'){
+    // en remoto no hay gasto de traslado; si el campo está vacío lo dejamos en 0
+    if(e.target.value === 'remota' && $('q-trabnuevo').value.trim() === '') $('q-trabnuevo').value = '0';
+    renderCambio();
+  }
+  if(id === 'q-modact') renderCambio();
+  if(id === 'n-modalidad'){
+    if(e.target.value === 'remota' && $('n-trabajo').value.trim() === '') $('n-trabajo').value = '0';
+    renderNecesidades();
+  }
+});
+
+setContexto('cambio', true);
+renderComparacion();
+if(location.hash === '#comparar') selectTab('cmp');
+else if(['#busco', '#egreso', '#cambio'].indexOf(location.hash) >= 0) setContexto(location.hash.slice(1), true);
+</script>
+</body>
+</html>
