@@ -887,8 +887,52 @@ document.addEventListener('change', e => {
 
 setContexto('cambio', true);
 renderComparacion();
-if(location.hash === '#comparar') selectTab('cmp');
-else if(['#busco', '#egreso', '#cambio'].indexOf(location.hash) >= 0) setContexto(location.hash.slice(1), true);
+/* Entrada desde otras páginas de Workea (p. ej. la Bitácora).
+   Los datos viajan en la parte del enlace después de «#», que el navegador nunca envía al servidor.
+   Formatos: #cambio&oferta=1000000  ·  #comparar&a_nombre=Cargo&a_empresa=Empresa&a_sueldo=950000&a_modalidad=remota */
+function leerHash(){
+  const partes = location.hash.slice(1).split('&');
+  const vista = partes.shift();
+  const datos = {};
+  partes.forEach(p => {
+    const i = p.indexOf('=');
+    if(i < 1) return;
+    try{ datos[p.slice(0, i)] = decodeURIComponent(p.slice(i + 1)); }catch(e){}
+  });
+  return { vista: vista, datos: datos };
+}
+function ponerTexto(id, v, max){
+  const el = $(id); if(!el || !v) return;
+  el.value = String(v).slice(0, max);
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+}
+function ponerMonto(id, v){
+  const n = parseInt(v, 10);
+  const el = $(id); if(!el || !(n > 0) || n > 1e9) return;
+  el.value = String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+}
+function ponerModalidad(id, v){
+  const el = $(id);
+  if(!el || ['presencial', 'hibrida', 'remota'].indexOf(v) < 0) return;
+  el.value = v;
+  el.dispatchEvent(new Event('change', { bubbles: true }));
+}
+(function entradaPorHash(){
+  const h = leerHash();
+  if(h.vista === 'comparar'){
+    selectTab('cmp');
+    ['a', 'b'].forEach(p => {
+      ponerTexto(p + '-nombre', h.datos[p + '_nombre'], 40);
+      ponerTexto(p + '-empresa', h.datos[p + '_empresa'], 60);
+      ponerModalidad(p + '-modalidad', h.datos[p + '_modalidad']);
+      ponerMonto(p + '-sueldo', h.datos[p + '_sueldo']);
+    });
+  }else if(['busco', 'egreso', 'cambio'].indexOf(h.vista) >= 0){
+    setContexto(h.vista, true);
+    if(h.vista === 'cambio') ponerMonto('q-oferta', h.datos.oferta);
+  }
+})();
 </script>
 </body>
 </html>
