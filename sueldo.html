@@ -372,6 +372,11 @@ const REF = {
   fuente: 'INE, Encuesta Suplementaria de Ingresos (ESI) 2025, publicada el 14 de julio de 2026'
 };
 
+function avisoMontoAlto(obj){
+  if(!(obj >= REF.promedio)) return '';
+  return '<div class="callout"><b>Antes de decir este monto:</b> está sobre lo que gana la mayoría de las personas ocupadas en Chile. Puede ser razonable si tu cargo es muy especializado o de alta responsabilidad, pero conviene comprobar que calce con el cargo, tu experiencia y el tamaño de la empresa. Si tienes dudas, pregunta primero por el rango que tienen contemplado.</div>';
+}
+
 function textoReferencia(obj){
   const dif = obj - REF.mediana;
   let t = dif === 0
@@ -572,6 +577,7 @@ function renderCambio(){
   const mostrarFrase = !hayOferta || r.zona === 'menos' || r.zona === 'bajo_objetivo';
   let frase = '';
   if(mostrarFrase){
+    html += avisoMontoAlto(r.objetivo);
     const rango = (r.objetivo === r.ideal) ? 'es de ' + clp(r.objetivo) + ' líquidos' : 'está entre ' + clp(r.objetivo) + ' y ' + clp(r.ideal) + ' líquidos';
     frase = hayOferta
       ? 'Agradezco la propuesta. Considerando mi situación actual y los gastos asociados al cambio, mi expectativa ' + rango + '.'
@@ -652,6 +658,7 @@ function renderNecesidades(){
       '<div class="callout">Sin tus gastos no podemos calcular tu piso, el mínimo bajo el cual una oferta no te alcanza. Si lo quieres, completa los gastos fijos arriba. Si estás dispuesto/a a ir por debajo de tu último sueldo, define de antemano hasta dónde, para no decidirlo bajo presión.</div>';
   }
 
+  html += avisoMontoAlto(r.objetivo);
   html += '<div class="say"><div class="say-label">Una forma de decirlo en la entrevista</div><div>“' + esc(frase) + '”</div>' +
     '<div style="margin-top:10px;"><button class="btn btn-ghost" type="button" id="n-copy">Copiar frase</button></div></div>' +
     '<details class="assume"><summary>¿Cómo calculamos este rango?</summary><ul>' +
