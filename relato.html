@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workea Relato · Cómo explicar esa parte de tu historia laboral</title>
+<meta name="description" content="¿Llevas meses sin trabajar, te despidieron o estás cambiando de rubro? Prepara cómo contarlo en una entrevista, sin inventar ni sobreexplicarte. Con la metodología de una psicóloga laboral.">
+<link rel="canonical" href="https://workea.cl/relato.html">
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#6c53ee;--cyan:#12cdf0;--grad:linear-gradient(120deg,#2be0f8,#1999f1 45%,#7b5cf0);
+  --brand-strong:#5138d6;--navy:#0a1430;--partner-blue:#51608a;
+  --brand-tint:#f0edfe;--brand-tint-2:#ded7fc;
+  --ink:#101b38;--muted:#5a6785;--faint:#8f9ab3;
+  --bg:#f6f8fc;--surface:#ffffff;--line:#e3e6f0;
+  --green:#2f9e6d;--green-bg:#e9f7f0;--green-ln:#bfe5d2;
+  --amber:#8a6508;--amber-bg:#fdf6e3;--amber-ln:#f0dfae;
+  --red:#9c3f3f;--red-bg:#fdeeee;--red-ln:#f0c9c9;
+  --gray-bg:#eef0f6;--gray-ln:#d9dfe9;
+  --shadow:0 1px 2px rgba(16,27,56,.05),0 8px 24px rgba(16,27,56,.07);
+  --shadow-lg:0 2px 4px rgba(16,27,56,.06),0 18px 48px rgba(16,27,56,.12);
+  --r:14px;--display:'Bricolage Grotesque',sans-serif;--body:'Instrument Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;letter-spacing:-.01em}
+button{font-family:var(--body);cursor:pointer;border:none;background:none}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+
+.app-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.app-header-in{max-width:760px;margin:0 auto;padding:.9rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;align-items:center;gap:.6rem}
+.logo-w{width:38px;height:28px;flex-shrink:0}
+.logo .lt{display:flex;flex-direction:column;line-height:1.05}
+.logo .lt b{font-weight:700;font-size:1.2rem;letter-spacing:-.015em;color:var(--navy)}
+.logo .lt b em{font-style:normal;color:inherit}
+.logo .lt span{font-size:.58rem;color:var(--partner-blue);font-weight:700;letter-spacing:.05em;margin-top:.1rem}
+.rel-badge{background:var(--grad);color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.06em;padding:.3rem .8rem;border-radius:999px;white-space:nowrap}
+.workea-switcher{max-width:760px;margin:0 auto;padding:.5rem 1.5rem;display:flex;gap:.4rem;overflow-x:auto;border-top:1px solid var(--line)}
+.ws-link{font-size:.78rem;font-weight:700;color:var(--muted);padding:.4rem .8rem;border-radius:999px;white-space:nowrap;flex-shrink:0}
+.ws-link:hover{background:var(--brand-tint)}
+.ws-link.active{background:var(--navy);color:#fff}
+
+.main{max-width:760px;margin:0 auto;padding:2.4rem 1.5rem 5rem}
+.screen{animation:fadeUp .3s ease both}
+.screen.hidden{display:none!important}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-weight:600;font-size:.93rem;padding:.8rem 1.5rem;border-radius:999px;transition:transform .15s,filter .15s;border:none}
+.btn-brand{background:var(--grad);color:#fff}
+.btn-brand:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn-primary{background:var(--navy);color:#fff;box-shadow:0 4px 14px rgba(10,20,48,.25)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-ghost{color:var(--navy);background:#fff;border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--brand);background:var(--brand-tint)}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none!important}
+.error-box{display:flex;gap:.7rem;align-items:flex-start;background:var(--red-bg);border:1px solid var(--red-ln);border-radius:12px;padding:.9rem 1.1rem;margin-top:1rem;font-size:.9rem;color:#8f3d3d}
+
+/* landing */
+.hero{text-align:center;padding:2.6rem 0 2rem}
+.hero .eyebrow{display:inline-block;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-strong);background:var(--brand-tint);border:1px solid var(--brand-tint-2);padding:.35rem .9rem;border-radius:999px;margin-bottom:1.2rem}
+.hero h1{font-size:clamp(1.8rem,4.2vw,2.6rem);font-weight:800;margin-bottom:.9rem}
+.hero .sub{font-size:1.05rem;color:var(--muted);max-width:34rem;margin:0 auto}
+.frase-card{background:var(--navy);border-radius:18px;padding:1.6rem 1.8rem;margin:2rem 0;text-align:left}
+.frase-card p{color:#fff;font-size:1rem;font-style:italic;line-height:1.6}
+.frase-card span{display:block;color:#8fa6d4;font-size:.82rem;margin-top:.7rem;font-style:normal}
+.incluye{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:2rem}
+.inc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;box-shadow:var(--shadow)}
+.inc b{display:block;font-size:.9rem;margin-bottom:.2rem}
+.inc p{font-size:.84rem;color:var(--muted);line-height:1.45}
+
+/* pasos */
+.step-head{margin-bottom:1.5rem}
+.step-head .paso{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-strong);margin-bottom:.4rem}
+.step-head h2{font-size:clamp(1.3rem,2.6vw,1.7rem);margin-bottom:.4rem}
+.step-head p{color:var(--muted);font-size:.92rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.5rem}
+.sit-list{display:flex;flex-direction:column;gap:.55rem}
+.sit{background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:.9rem 1.1rem;text-align:left;font-size:.92rem;font-weight:600;width:100%;transition:border-color .15s,background .15s}
+.sit:hover{border-color:var(--brand);background:var(--brand-tint)}
+.sit.active{border-color:var(--brand-strong);background:var(--brand-tint);color:var(--brand-strong)}
+.field{margin-bottom:1.1rem}
+.field label{display:block;font-size:.88rem;font-weight:600;margin-bottom:.4rem}
+.field .hint{font-size:.79rem;color:var(--faint);margin-top:.35rem;line-height:1.45}
+.field input,.field textarea{width:100%;font-family:var(--body);font-size:.93rem;padding:.8rem 1rem;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);resize:vertical}
+.field textarea{min-height:90px;line-height:1.5}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--brand);background:#fff}
+.priv-note{background:var(--green-bg);border:1px solid var(--green-ln);border-radius:12px;padding:.9rem 1.1rem;font-size:.85rem;color:#1c6b47;line-height:1.5;margin-bottom:1.1rem}
+.actions{display:flex;justify-content:space-between;gap:.8rem;margin-top:1.4rem;flex-wrap:wrap}
+
+/* loading */
+.loading-wrap{text-align:center;padding:4.5rem 1rem}
+.spinner{width:44px;height:44px;border:4px solid var(--line);border-top-color:var(--brand-strong);border-radius:50%;margin:0 auto 1.3rem;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* resultados */
+.res-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:1.4rem;margin-bottom:1.1rem}
+.res-card h3{font-size:1rem;font-weight:700;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem}
+.dudas{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.dudas li{display:flex;gap:.55rem;align-items:flex-start;font-size:.9rem;color:var(--muted)}
+.dudas li::before{content:"?";flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--amber-bg);color:var(--amber);font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:.12rem}
+.nota-calma{background:var(--brand-tint);border-radius:10px;padding:.8rem 1rem;font-size:.86rem;color:var(--brand-strong);margin-top:.9rem;line-height:1.5}
+.relato-box{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:1.1rem 1.2rem;font-size:.93rem;line-height:1.65;white-space:pre-wrap;margin-bottom:.7rem}
+.relato-tabs{display:inline-flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px;margin-bottom:.9rem;flex-wrap:wrap}
+.rt-btn{font-size:.8rem;font-weight:600;padding:.42rem .85rem;border-radius:999px;color:var(--muted)}
+.rt-btn.active{background:var(--navy);color:#fff}
+.dur{font-size:.75rem;color:var(--faint);margin-bottom:.7rem}
+.q-item{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:.6rem;overflow:hidden}
+.q-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;gap:1rem;text-align:left;padding:.95rem 1.15rem;font-size:.92rem;font-weight:600;color:var(--ink)}
+.q-chev{color:var(--faint);transition:transform .2s;flex-shrink:0}
+.q-item.open .q-chev{transform:rotate(180deg)}
+.q-body{display:none;padding:0 1.15rem 1rem;border-top:1px dashed var(--line)}
+.q-item.open .q-body{display:block}
+.qb{margin-top:.85rem}
+.qb span{display:block;font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:.2rem}
+.qb p{font-size:.87rem;color:var(--muted);line-height:1.5}
+.qb.ej p{background:var(--green-bg);border-radius:8px;padding:.65rem .85rem;color:#1c6b47}
+.punto{display:flex;gap:.6rem;align-items:flex-start;font-size:.88rem;color:var(--muted);margin-bottom:.55rem;line-height:1.5}
+.punto::before{content:"🔒";flex-shrink:0}
+.central{background:var(--grad);border-radius:16px;padding:1.5rem 1.6rem;color:#fff;margin-bottom:1.1rem}
+.central .lbl{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.8);margin-bottom:.4rem}
+.central p{font-size:1.02rem;font-weight:600;line-height:1.5}
+
+/* bloqueo / upsell */
+.lock-card{background:var(--navy);border-radius:18px;padding:2rem 1.8rem;text-align:center;box-shadow:var(--shadow-lg);margin-top:1.4rem}
+.lock-card .ic{font-size:1.8rem;margin-bottom:.7rem}
+.lock-card h3{color:#fff;font-size:1.15rem;margin-bottom:.6rem}
+.lock-card>p{color:#b9c6e8;font-size:.9rem;line-height:1.55;margin-bottom:1.2rem}
+.lock-list{background:rgba(255,255,255,.1);border-radius:12px;padding:1rem 1.2rem;text-align:left;margin-bottom:1.3rem}
+.lock-list div{color:#dce5f7;font-size:.87rem;margin-bottom:.45rem;display:flex;gap:.5rem;align-items:flex-start}
+.lock-list div:last-child{margin-bottom:0}
+.lock-precio{font-family:var(--display);font-size:1.9rem;font-weight:800;color:#fff;margin-bottom:.2rem}
+.lock-sub{font-size:.8rem;color:#8fa6d4;margin-bottom:1.1rem}
+.acceso-inline{margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.15)}
+.acceso-inline input{width:100%;font-family:var(--body);font-size:.9rem;padding:.7rem .9rem;border:1.5px solid rgba(255,255,255,.25);border-radius:999px;background:rgba(255,255,255,.1);color:#fff;text-align:center;margin-bottom:.6rem}
+.acceso-inline input::placeholder{color:#8fa6d4}
+.acceso-inline input:focus{outline:none;border-color:#fff}
+
+.cta-final{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:1.5rem 1.6rem;box-shadow:var(--shadow);margin-top:1.4rem;text-align:center}
+.cta-final h3{font-size:1.02rem;margin-bottom:.5rem}
+.cta-final p{font-size:.88rem;color:var(--muted);line-height:1.55;margin-bottom:1.1rem}
+
+@media print{
+  .app-header,.workea-switcher,.actions,.lock-card,.cta-final,.relato-tabs{display:none!important}
+  body{background:#fff}
+  .res-card{box-shadow:none!important;break-inside:avoid}
+  .q-body{display:block!important}
+}
+@media(max-width:600px){
+  .incluye{grid-template-columns:1fr}
+  .actions{flex-direction:column-reverse}
+  .actions .btn{width:100%}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-in">
+    <a class="logo" href="/">
+      <svg class="logo-w" viewBox="0 0 100 74" aria-hidden="true">
+        <defs><linearGradient id="wgRel" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#2be0f8"/><stop offset="45%" stop-color="#1999f1"/><stop offset="100%" stop-color="#7b5cf0"/>
+        </linearGradient></defs>
+        <path d="M9 20 L25 56 L39 34 L52 60 L90 9" fill="none" stroke="url(#wgRel)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="lt"><b>work<em>ea</em></b><span>by Tu Partner Laboral</span></span>
+    </a>
+    <span class="rel-badge">Relato</span>
+  </div>
+  <div class="workea-switcher">
+    <a href="/" class="ws-link">🎯 Match</a>
+    <a href="/workea-cv-planes.html" class="ws-link">📄 CV</a>
+    <a href="/career.html" class="ws-link">🧭 Career</a>
+    <a href="/profile.html" class="ws-link">🔵 Profile</a>
+    <a href="/relato.html" class="ws-link active">💬 Relato</a>
+    <a href="/sueldo.html" class="ws-link">💰 Sueldo</a>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- LANDING -->
+  <div class="screen" id="scr-landing">
+    <div class="hero">
+      <span class="eyebrow">✦ Nuevo</span>
+      <h1>Hay partes de nuestra historia laboral que no sabemos cómo contar.</h1>
+      <p class="sub">Un vacío de varios meses, un despido, una renuncia sin nada seguro, un cambio de rubro. Prepara cómo explicarlo en una entrevista — sin inventar nada y sin sentir que tienes que justificar tu vida.</p>
+    </div>
+
+    <div class="frase-card">
+      <p>"No se trata de inventar una historia mejor. Se trata de aprender a contar profesionalmente la historia que realmente tienes."</p>
+      <span>— La metodología de Workea, por Arantxa Martínez, psicóloga laboral</span>
+    </div>
+
+    <div class="incluye">
+      <div class="inc"><b>👀 Cómo podría leerse</b><p>Qué dudas podrían surgirle a quien revise tu trayectoria, dichas sin dramatizar.</p></div>
+      <div class="inc"><b>💬 Tu relato en 3 versiones</b><p>Breve, para entrevista y ampliada. Habladas, no textos de IA.</p></div>
+      <div class="inc"><b>🎤 Preguntas difíciles</b><p>Las que podrían hacerte según tu caso, y cómo encararlas sin ponerte a la defensiva.</p></div>
+      <div class="inc"><b>🔒 Qué no explicar</b><p>Dónde está el límite entre dar contexto y contar de más.</p></div>
+    </div>
+
+    <button class="btn btn-brand btn-block" style="font-size:1rem;padding:.95rem" onclick="irScreen('scr-situacion')">Empezar — la vista previa es gratis →</button>
+    <p style="text-align:center;font-size:.8rem;color:var(--faint);margin-top:.8rem">Sin registro. Toma unos 3 minutos.</p>
+
+    <div style="text-align:center;margin-top:1.2rem">
+      <button class="btn btn-ghost" style="font-size:.85rem" onclick="irScreen('scr-acceso')">¿Ya tienes un código? Actívalo aquí</button>
+    </div>
+  </div>
+
+  <!-- ACCESO CON CÓDIGO -->
+  <div class="screen hidden" id="scr-acceso">
+    <div class="step-head">
+      <h2>Activa tu acceso</h2>
+      <p>Ingresa el código que recibiste por correo tras tu compra.</p>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label for="codigoInput">Código de acceso</label>
+        <input type="text" id="codigoInput" placeholder="RL-XXXX-XXXX" onkeydown="if(event.key==='Enter')activarCodigo()">
+      </div>
+      <button class="btn btn-primary btn-block" onclick="activarCodigo()">Entrar →</button>
+      <div id="codigoError"></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="irScreen('scr-landing')">← Volver</button>
+    </div>
+  </div>
+
+  <!-- PASO 1 · SITUACIÓN -->
+  <div class="screen hidden" id="scr-situacion">
+    <div class="step-head">
+      <div class="paso">Paso 1 de 2</div>
+      <h2>¿Qué situación quieres preparar?</h2>
+      <p>Elige la que más se acerque a tu caso.</p>
+    </div>
+    <div class="sit-list" id="sit-list"></div>
+    <div class="field hidden" id="otraWrap" style="margin-top:1rem">
+      <label for="otraInput">Cuéntanos en una línea cuál es tu situación</label>
+      <input type="text" id="otraInput" placeholder="Ej: volví al país después de tres años fuera" oninput="validarSituacion()">
+    </div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="irScreen('scr-landing')">← Volver</button>
+      <button class="btn btn-brand" id="btnPaso2" disabled onclick="irScreen('scr-contexto')">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- PASO 2 · CONTEXTO -->
+  <div class="screen hidden" id="scr-contexto">
+    <div class="step-head">
+      <div class="paso">Paso 2 de 2</div>
+      <h2>Cuéntanos lo justo y necesario</h2>
+      <p>Con esto basta para armar tu relato. Nada de formularios interminables.</p>
+    </div>
+
+    <div class="priv-note">
+      🔒 <b>Tú decides qué contar.</b> No necesitas explicar motivos personales si no quieres. Más abajo puedes indicarnos qué prefieres mantener en privado y lo respetamos al armar tu relato.
+    </div>
+
+    <div class="card">
+      <div class="field">
+        <label for="cargoInput">¿Cuál fue tu último cargo?</label>
+        <input type="text" id="cargoInput" placeholder="Ej: Analista de Marketing Digital" oninput="validarContexto()">
+      </div>
+      <div class="field">
+        <label for="tiempoInput">¿Cuánto tiempo ha pasado?</label>
+        <input type="text" id="tiempoInput" placeholder="Ej: 8 meses, un año y medio, dos años" oninput="validarContexto()">
+      </div>
+      <div class="field">
+        <label for="hizoInput">¿Qué hiciste durante ese período?</label>
+        <textarea id="hizoInput" placeholder="Lo que sea real: buscar trabajo, un curso, freelance, cuidar a alguien, tomarte un tiempo. Si fue principalmente buscar trabajo, dilo tal cual — sirve igual." oninput="validarContexto()"></textarea>
+        <p class="hint">No hace falta que suene impresionante. Con lo que pasó de verdad alcanza.</p>
+      </div>
+      <div class="field">
+        <label for="buscaInput">¿Qué estás buscando ahora?</label>
+        <input type="text" id="buscaInput" placeholder="Ej: volver a un rol de analista, idealmente en retail" oninput="validarContexto()">
+      </div>
+      <div class="field">
+        <label for="reservadoInput">¿Hay algo que prefieres no detallar? <span style="font-weight:400;color:var(--faint)">(opcional)</span></label>
+        <input type="text" id="reservadoInput" placeholder="Ej: el motivo de salud, el conflicto con mi jefatura anterior">
+        <p class="hint">Lo tomamos en cuenta para que tu relato dé contexto sin entrar en eso.</p>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label for="ofertaInput">¿Ya tienes la oferta a la que vas a postular? <span style="font-weight:400;color:var(--faint)">(opcional)</span></label>
+        <textarea id="ofertaInput" placeholder="Pega aquí la oferta si la tienes a mano — así conectamos tu relato con ese cargo en particular."></textarea>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="irScreen('scr-situacion')">← Volver</button>
+      <button class="btn btn-brand" id="btnGenerar" disabled onclick="generar()">Ver mi relato →</button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="screen hidden" id="scr-loading">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <h3 style="font-size:1.05rem;margin-bottom:.3rem">Ordenando tu historia…</h3>
+      <p class="loading-msg" id="loadMsg" style="font-size:.88rem;color:var(--muted)">Leyendo tu situación</p>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="screen hidden" id="scr-resultado">
+    <div class="step-head">
+      <h2>Tu historia laboral</h2>
+      <p id="resSub">Así puedes contar esta parte de tu trayectoria.</p>
+    </div>
+    <div id="resultado-content"></div>
+    <div class="actions" style="justify-content:center">
+      <button class="btn btn-ghost" onclick="reiniciar()">Preparar otra situación</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const SITUACIONES = [
+  'Llevo varios meses sin trabajar',
+  'Llevo más de un año buscando trabajo',
+  'Me despidieron',
+  'Renuncié sin tener otro trabajo',
+  'Estoy cambiando de carrera o de rubro',
+  'Tuve una pausa por motivos personales',
+  'Fui mamá o papá y estoy volviendo al mercado laboral',
+  'Trabajé de forma independiente o freelance',
+  'Estuve emprendiendo',
+  'Tengo muchos cambios de trabajo en poco tiempo',
+  'Estoy sobrecalificada o sobrecalificado para el cargo',
+  'Tengo poca experiencia',
+  'Otra situación'
+];
+
+let situacionElegida = '';
+let codigoActivo = '';
+let versionActiva = 'breve';
+let datosRelato = null;
+
+/* Si viene desde el link de activación tras pagar */
+(function(){
+  const p = new URLSearchParams(window.location.search);
+  const c = p.get('codigo');
+  if(c){
+    codigoActivo = c;
+    document.addEventListener('DOMContentLoaded', () => {
+      const i = document.getElementById('codigoInput');
+      if(i) i.value = c;
+    });
+  }
+})();
+
+function irScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  const el = document.getElementById(id);
+  el.classList.remove('hidden');
+  el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
+  window.scrollTo({top:0});
+}
+
+function esc(s){ const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+/* ---- acceso con código ---- */
+function activarCodigo(){
+  const v = document.getElementById('codigoInput').value.trim();
+  const err = document.getElementById('codigoError');
+  const ok = v.toUpperCase() === 'WORKEA2026' || v.toUpperCase().startsWith('RL-');
+  if(!ok){
+    err.innerHTML = '<div class="error-box">⚠️ <span>Ese código no tiene el formato de Workea Relato. Si no lo recuerdas, escríbenos a workea@tupartnerlaboral.cl.</span></div>';
+    return;
+  }
+  codigoActivo = v;
+  err.innerHTML = '';
+  irScreen('scr-situacion');
+}
+
+/* ---- paso 1 ---- */
+function renderSituaciones(){
+  document.getElementById('sit-list').innerHTML = SITUACIONES.map((s,i) =>
+    `<button class="sit" onclick="elegirSituacion(${i}, this)">${esc(s)}</button>`
+  ).join('');
+}
+
+function elegirSituacion(i, el){
+  document.querySelectorAll('.sit').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  situacionElegida = SITUACIONES[i];
+  const esOtra = situacionElegida === 'Otra situación';
+  document.getElementById('otraWrap').classList.toggle('hidden', !esOtra);
+  validarSituacion();
+}
+
+function validarSituacion(){
+  let ok = !!situacionElegida;
+  if(situacionElegida === 'Otra situación'){
+    ok = document.getElementById('otraInput').value.trim().length > 4;
+  }
+  document.getElementById('btnPaso2').disabled = !ok;
+}
+
+/* ---- paso 2 ---- */
+function validarContexto(){
+  const cargo = document.getElementById('cargoInput').value.trim();
+  const tiempo = document.getElementById('tiempoInput').value.trim();
+  const hizo = document.getElementById('hizoInput').value.trim();
+  const busca = document.getElementById('buscaInput').value.trim();
+  document.getElementById('btnGenerar').disabled = !(cargo.length > 2 && tiempo.length > 1 && hizo.length > 8 && busca.length > 3);
+}
+
+function recogerDatos(){
+  const sit = situacionElegida === 'Otra situación'
+    ? document.getElementById('otraInput').value.trim()
+    : situacionElegida;
+  return {
+    situacion: sit,
+    ultimo_cargo: document.getElementById('cargoInput').value.trim(),
+    tiempo: document.getElementById('tiempoInput').value.trim(),
+    que_hizo: document.getElementById('hizoInput').value.trim(),
+    busca: document.getElementById('buscaInput').value.trim(),
+    reservado: document.getElementById('reservadoInput').value.trim(),
+    oferta: document.getElementById('ofertaInput').value.trim()
+  };
+}
+
+async function generar(){
+  irScreen('scr-loading');
+  const msgs = codigoActivo
+    ? ['Leyendo tu situación','Pensando cómo se lee tu trayectoria','Ordenando tu relato','Preparando las preguntas difíciles','Revisando qué no necesitas explicar']
+    : ['Leyendo tu situación','Pensando cómo se lee tu trayectoria','Ordenando tu relato'];
+  let i = 0;
+  const msgEl = document.getElementById('loadMsg');
+  msgEl.textContent = msgs[0];
+  const iv = setInterval(() => { i++; if(i < msgs.length) msgEl.textContent = msgs[i]; }, 2200);
+
+  try{
+    const body = { accion: codigoActivo ? 'completo' : 'vista_previa', datos: recogerDatos() };
+    if(codigoActivo) body.codigo = codigoActivo;
+    const r = await fetch('/api/relato', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await r.json();
+    clearInterval(iv);
+    if(!r.ok || data.error) throw new Error(data.error || 'Error del servidor');
+    datosRelato = data;
+    renderResultado(data, !!codigoActivo);
+    irScreen('scr-resultado');
+  } catch(e){
+    clearInterval(iv);
+    irScreen('scr-contexto');
+    alert(e.message || 'No pudimos generar tu relato. Intenta de nuevo.');
+  }
+}
+
+/* ---- resultado ---- */
+function renderResultado(d, completo){
+  const lr = d.lectura_reclutador || {};
+  let html = '';
+
+  document.getElementById('resSub').textContent = completo
+    ? 'Tu relato completo, listo para tu entrevista.'
+    : 'Esta es tu vista previa gratuita.';
+
+  html += `<div class="res-card">
+    <h3>👀 Cómo podría leerse tu trayectoria</h3>
+    ${lr.resumen ? `<p style="font-size:.92rem;color:var(--muted);margin-bottom:.9rem">${esc(lr.resumen)}</p>` : ''}
+    <ul class="dudas">${(lr.dudas||[]).map(q => `<li>${esc(q)}</li>`).join('')}</ul>
+    ${lr.nota ? `<div class="nota-calma">${esc(lr.nota)}</div>` : ''}
+  </div>`;
+
+  if(completo){
+    html += `<div class="res-card">
+      <h3>💬 Tu relato</h3>
+      <div class="relato-tabs">
+        <button class="rt-btn active" onclick="cambiarVersion('breve', this)">Breve</button>
+        <button class="rt-btn" onclick="cambiarVersion('entrevista', this)">Para entrevista</button>
+        <button class="rt-btn" onclick="cambiarVersion('ampliado', this)">Ampliada</button>
+      </div>
+      <p class="dur" id="relatoDur">20-30 segundos · para responder al pasar</p>
+      <div class="relato-box" id="relatoTexto">${esc(d.relato_breve||'')}</div>
+      <button class="btn btn-ghost" style="font-size:.83rem" onclick="copiarRelato()">📋 Copiar</button>
+    </div>`;
+
+    const qs = d.preguntas_dificiles || [];
+    if(qs.length){
+      html += `<div class="res-card"><h3>🎤 Preguntas que podrían hacerte</h3>`;
+      qs.forEach((q,i) => {
+        html += `<div class="q-item"><button class="q-toggle" onclick="toggleQ(this)">
+          <span>${i+1}. ${esc(q.pregunta)}</span><span class="q-chev">▾</span></button>
+          <div class="q-body">
+            ${q.transmitir ? `<div class="qb"><span>Qué conviene transmitir</span><p>${esc(q.transmitir)}</p></div>` : ''}
+            ${q.evitar ? `<div class="qb"><span>Qué conviene evitar</span><p>${esc(q.evitar)}</p></div>` : ''}
+            ${q.respuesta_ejemplo ? `<div class="qb ej"><span>Una forma de responder</span><p>${esc(q.respuesta_ejemplo)}</p></div>` : ''}
+            ${q.por_que_funciona ? `<div class="qb"><span>Por qué funciona</span><p>${esc(q.por_que_funciona)}</p></div>` : ''}
+          </div></div>`;
+      });
+      html += `</div>`;
+    }
+
+    const ns = d.no_sobreexplicar;
+    if(ns){
+      html += `<div class="res-card">
+        <h3>🔒 Lo que no necesitas explicar</h3>
+        ${ns.principio ? `<p style="font-size:.9rem;color:var(--muted);margin-bottom:.9rem">${esc(ns.principio)}</p>` : ''}
+        ${(ns.puntos||[]).map(p => `<div class="punto">${esc(p)}</div>`).join('')}
+      </div>`;
+    }
+
+    if(d.mensaje_central){
+      html += `<div class="central"><p class="lbl">Tu mensaje central</p><p>${esc(d.mensaje_central)}</p></div>`;
+    }
+    if(d.recomendacion_final){
+      html += `<div class="res-card"><h3>✦ Antes de tu entrevista</h3>
+        <p style="font-size:.92rem;color:var(--muted);line-height:1.6">${esc(d.recomendacion_final)}</p></div>`;
+    }
+
+    html += `<div class="cta-final">
+      <h3>La IA ordena tu relato. Practicarlo en voz alta es otra cosa.</h3>
+      <p>Si quieres ensayarlo con alguien que ha estado del otro lado de la mesa, trabajémoslo en una sesión: te escucho, te corrijo en vivo y ajustamos lo que suene forzado.</p>
+      <a class="btn btn-primary" href="https://wa.me/56933124415" target="_blank" rel="noopener">Conversemos por WhatsApp →</a>
+    </div>`;
+  } else {
+    html += `<div class="res-card">
+      <h3>💬 Tu relato — versión breve</h3>
+      <p class="dur">20-30 segundos · para responder al pasar</p>
+      <div class="relato-box">${esc(d.relato_breve||'')}</div>
+    </div>`;
+
+    html += `<div class="lock-card">
+      <div class="ic">🔓</div>
+      <h3>Esto es solo el comienzo de tu relato</h3>
+      <p>Tienes la versión corta. Para una entrevista real vas a necesitar más que eso.</p>
+      <div class="lock-list">
+        <div>💬 <span>Las tres versiones: breve, para entrevista y ampliada</span></div>
+        <div>🎤 <span>Las preguntas difíciles de tu caso, con qué transmitir y qué evitar en cada una</span></div>
+        <div>🔒 <span>Qué no necesitas explicar, y cómo poner el límite con naturalidad</span></div>
+        <div>✦ <span>Tu mensaje central y qué practicar antes de la entrevista</span></div>
+      </div>
+      <div class="lock-precio">$2.990</div>
+      <p class="lock-sub">Pago único · resultado al instante</p>
+      <button class="btn btn-brand btn-block" onclick="comprarRelato(this)">Quiero mi relato completo →</button>
+      <div class="acceso-inline">
+        <input type="text" id="codigoInline" placeholder="¿Ya tienes un código? Pégalo aquí">
+        <button class="btn btn-ghost btn-block" style="font-size:.85rem" onclick="activarInline()">Activar y ver mi relato completo</button>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('resultado-content').innerHTML = html;
+}
+
+function cambiarVersion(v, btn){
+  versionActiva = v;
+  document.querySelectorAll('.rt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const mapa = {
+    breve: [datosRelato.relato_breve, '20-30 segundos · para responder al pasar'],
+    entrevista: [datosRelato.relato_entrevista, '45-60 segundos · la respuesta completa'],
+    ampliado: [datosRelato.relato_ampliado, 'Para cuando te pidan más detalle']
+  };
+  document.getElementById('relatoTexto').textContent = mapa[v][0] || '';
+  document.getElementById('relatoDur').textContent = mapa[v][1];
+}
+
+function copiarRelato(){
+  const t = document.getElementById('relatoTexto').textContent;
+  navigator.clipboard.writeText(t).then(() => {
+    const b = document.querySelector('[onclick="copiarRelato()"]');
+    if(b){ const o = b.textContent; b.textContent = '✅ Copiado'; setTimeout(() => b.textContent = o, 1800); }
+  }).catch(() => {});
+}
+
+function toggleQ(btn){ btn.parentElement.classList.toggle('open'); }
+
+async function comprarRelato(btn){
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Generando tu pago...';
+  try{
+    const r = await fetch('/api/crear-pago', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ producto: 'relato' })
+    });
+    const data = await r.json();
+    if(data.init_point){ window.location.href = data.init_point; }
+    else { alert(data.error || 'No se pudo iniciar el pago.'); btn.disabled = false; btn.textContent = orig; }
+  } catch(e){
+    alert('No se pudo iniciar el pago. Intenta de nuevo.');
+    btn.disabled = false; btn.textContent = orig;
+  }
+}
+
+function activarInline(){
+  const v = document.getElementById('codigoInline').value.trim();
+  if(!(v.toUpperCase() === 'WORKEA2026' || v.toUpperCase().startsWith('RL-'))){
+    alert('Ese código no tiene el formato de Workea Relato.');
+    return;
+  }
+  codigoActivo = v;
+  generar();
+}
+
+function reiniciar(){
+  situacionElegida = '';
+  ['cargoInput','tiempoInput','hizoInput','buscaInput','reservadoInput','ofertaInput','otraInput'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  document.querySelectorAll('.sit').forEach(b => b.classList.remove('active'));
+  document.getElementById('otraWrap').classList.add('hidden');
+  document.getElementById('btnPaso2').disabled = true;
+  document.getElementById('btnGenerar').disabled = true;
+  irScreen('scr-situacion');
+}
+
+renderSituaciones();
+</script>
+</body>
+</html>
