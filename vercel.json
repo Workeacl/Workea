@@ -1,10 +1,49 @@
 {
   "functions": {
-    "api/analizar.js": { "maxDuration": 120 },
-    "api/recruiter.js": { "maxDuration": 180 },
-    "api/cv-check.js": { "maxDuration": 60 },
-    "api/profile.js": { "maxDuration": 60 },
-    "api/career.js": { "maxDuration": 300 },
-    "api/entrevistas/index.js": { "maxDuration": 30 }
-  }
+    "api/analizar.js": {
+      "maxDuration": 120
+    },
+    "api/recruiter.js": {
+      "maxDuration": 180
+    },
+    "api/cv-check.js": {
+      "maxDuration": 60
+    },
+    "api/profile.js": {
+      "maxDuration": 60
+    },
+    "api/career.js": {
+      "maxDuration": 300
+    },
+    "api/entrevistas/index.js": {
+      "maxDuration": 30
+    },
+    "api/relato.js": {
+      "maxDuration": 90
+    }
+  },
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    }
+  ]
 }

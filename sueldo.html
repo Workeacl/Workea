@@ -8,6 +8,12 @@
 <meta property="og:title" content="Workea Sueldo · Cuando te pregunten cuánto quieres ganar, ten una respuesta clara">
 <meta property="og:description" content="Calcula tu expectativa salarial y compara ofertas considerando gastos, traslado y jornada. Gratis, sin crear cuenta.">
 <meta property="og:type" content="website">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0a1430">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Workea">
 <style>
   :root{
     --cian:#2be0f8; --azul:#1999f1; --violeta:#7b5cf0; --navy:#0a1430;
@@ -151,6 +157,8 @@
     .topbar{ padding:12px 14px; } .workea-switcher{ padding:8px 14px; } .content{ padding-left:14px; padding-right:14px; }
     .card{ padding:16px; }
   }
+
+@media (pointer:coarse){ input:not([type=checkbox]):not([type=radio]), select, textarea{ font-size:16px !important; } }
 </style>
 </head>
 <body>
@@ -940,6 +948,9 @@ function ponerModalidad(id, v){
     if(h.vista === 'cambio') ponerMonto('q-oferta', h.datos.oferta);
   }
 })();
+</script>
+<script>
+if('serviceWorker' in navigator){ window.addEventListener('load', function(){ navigator.serviceWorker.register('/sw.js').catch(function(){}); }); }
 </script>
 </body>
 </html>
