@@ -2,9 +2,15 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Workea Bitácora</title>
 <meta name="robots" content="noindex">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0a1430">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Workea">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
@@ -24,6 +30,13 @@
     display:flex; align-items:center; justify-content:space-between;
   }
   .brand{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:15px; }
+
+  .install-banner{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 24px; background:#eaf6ff; border-bottom:1px solid var(--line); font-size:13px; color:var(--ink); }
+  .install-banner[hidden]{ display:none; }
+  .install-banner span{ flex:1 1 220px; }
+  .install-banner button{ font:inherit; font-weight:700; border-radius:10px; cursor:pointer; padding:7px 14px; }
+  #install-btn{ background:var(--azul); color:#fff; border:none; }
+  #install-close{ background:none; border:1px solid var(--line); color:var(--ink-soft); }
   .workea-switcher{
     background:#fff; border-bottom:1px solid var(--line); padding:8px 24px;
     display:flex; gap:6px; overflow-x:auto;
@@ -231,6 +244,164 @@
   .goal-chip.add{ background:none; border:1px dashed var(--line); color:var(--ink-faint); }
   .goal-add-form{ display:flex; gap:6px; align-items:center; }
   .goal-add-form input{ padding:6px 10px; border:1.5px solid var(--line); border-radius:100px; font-size:12px; font-family:inherit; width:170px; }
+
+  /* ---------- Comodidad en celular y app instalada ---------- */
+  .goal-chip-edit{ display:none; }
+  /* Márgenes de seguridad (muesca y barra de inicio) cuando la app abre a pantalla completa */
+  .topbar{ padding-top:calc(16px + env(safe-area-inset-top)); padding-left:max(24px, env(safe-area-inset-left)); padding-right:max(24px, env(safe-area-inset-right)); }
+  .workea-switcher, .goals-bar, .install-banner{ padding-left:max(24px, env(safe-area-inset-left)); padding-right:max(24px, env(safe-area-inset-right)); }
+  .content{ padding-bottom:calc(60px + env(safe-area-inset-bottom)); }
+  .topbar-actions{ display:flex; align-items:center; gap:16px; }
+  .topbar .btn-ghost{ color:#fff; border-color:rgba(255,255,255,0.35); }
+  .topbar .btn-ghost:hover{ background:rgba(255,255,255,0.1); }
+  /* En el celular la barra superior baja a dos filas en vez de salirse de la pantalla */
+  @media (max-width:640px){
+    .topbar{ flex-wrap:wrap; gap:10px 12px; padding-left:max(14px, env(safe-area-inset-left)); padding-right:max(14px, env(safe-area-inset-right)); }
+    .topbar-actions{ flex-wrap:wrap; width:100%; gap:8px; }
+    .top-nav{ flex:1 1 100%; }
+    .top-nav .nav-link{ flex:1; justify-content:center; text-align:center; padding-left:6px; padding-right:6px; }
+    #btn-export, #btn-add{ flex:1 1 auto; justify-content:center; }
+    .workea-switcher, .goals-bar, .install-banner{ padding-left:max(14px, env(safe-area-inset-left)); padding-right:max(14px, env(safe-area-inset-right)); }
+  }
+  /* Pantallas táctiles: zonas de toque de ~44px y letra de 16px en los campos (así el iPhone no hace zoom al escribir) */
+  @media (pointer:coarse){
+    input, select, textarea{ font-size:16px !important; }
+    .link-btn{ font-size:13px; padding:12px 4px; min-height:44px; display:inline-flex; align-items:center; }
+    .interes-btn, .motivo-chip, .state-btn, .btn-ghost, .btn-primary, .nav-link, .goal-chip{ min-height:44px; display:inline-flex; align-items:center; justify-content:center; }
+    .ws-link{ min-height:44px; display:inline-flex; align-items:center; }
+    .icon-btn{ min-width:44px; min-height:44px; }
+    .goal-chip-wrap .goal-chip{ padding-right:56px; }
+    .goal-chip-edit{ display:block; position:absolute; right:30px; top:50%; transform:translateY(-50%); font-size:13px; color:var(--ink-faint); background:none; border:none; padding:0; line-height:1; cursor:pointer; }
+    .goal-chip-edit::after, .goal-chip-x::after{ content:''; position:absolute; top:-12px; bottom:-12px; left:-8px; right:-8px; }
+    .goal-chip-x{ font-size:13px; right:8px; top:50%; transform:translateY(-50%); padding:0; }
+    .cal-nav-btns button{ min-width:44px; min-height:44px; }
+    .install-banner button{ min-height:44px; }
+    .hm-range .hm-chip{ min-height:44px; padding:6px 14px; }
+    .ficha-back{ min-height:44px; display:flex; align-items:center; }
+    .practice-cta{ min-height:44px; display:inline-flex; align-items:center; }
+  }
+  @media (max-width:640px){
+    .content{ padding-left:max(14px, env(safe-area-inset-left)); padding-right:max(14px, env(safe-area-inset-right)); }
+    .modal{ max-height:90vh; overflow-y:auto; }
+  }
+
+  /* ---------- App móvil: barra inferior, Inicio, Progreso, hojas ---------- */
+  .tabbar, .fab, .bell{ display:none; }
+  .sheet-overlay{ position:fixed; inset:0; background:rgba(10,20,48,0.45); display:none; align-items:flex-end; justify-content:center; z-index:55; }
+  .sheet-overlay.show{ display:flex; }
+  .sheet{ background:#fff; width:100%; max-width:520px; border-radius:22px 22px 0 0; padding:18px 18px calc(18px + env(safe-area-inset-bottom)); max-height:85vh; overflow-y:auto; }
+  .sheet-title{ font-size:17px; font-weight:800; margin:0 0 6px; }
+  .sheet-sub{ font-size:12.5px; color:var(--ink-soft); margin:0 0 8px; line-height:1.45; }
+  .sheet-row{ display:flex; align-items:center; gap:12px; width:100%; min-height:54px; padding:12px 4px; background:none; border:none; border-bottom:1px solid var(--line);
+    font:inherit; font-size:15px; font-weight:700; color:var(--ink); text-align:left; text-decoration:none; cursor:pointer; }
+  .sheet-row:last-child{ border-bottom:none; }
+  .sheet-row .sr-ic{ font-size:20px; width:28px; text-align:center; flex-shrink:0; }
+  .sheet-row .sr-sub{ display:block; font-size:12.5px; font-weight:500; color:var(--ink-soft); margin-top:2px; }
+  .sheet-close{ margin-top:10px; width:100%; min-height:48px; border-radius:12px; border:1px solid var(--line); background:none; font:inherit; font-weight:700; color:var(--ink-soft); cursor:pointer; }
+
+  .hm-hello{ font-size:15px; color:var(--ink-soft); margin:2px 0 2px; }
+  .hm-title{ font-size:24px; line-height:1.2; font-weight:800; margin:0 0 16px; letter-spacing:-.01em; }
+  .hm-card{ background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px; box-shadow:var(--shadow); margin-bottom:14px; }
+  .hm-next{ background:linear-gradient(135deg,#eaf6ff,#f1edff); border-color:#d9e6fb; }
+  .hm-eyebrow{ font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#0d6db8; margin-bottom:6px; }
+  .hm-role{ font-size:19px; font-weight:800; line-height:1.25; }
+  .hm-company{ font-size:14px; color:var(--ink-soft); margin-top:2px; }
+  .hm-when{ display:flex; flex-wrap:wrap; gap:6px 14px; margin:10px 0 14px; font-size:14px; font-weight:600; }
+  .hm-cta{ width:100%; min-height:48px; border:none; border-radius:14px; background:var(--navy); color:#fff; font:inherit; font-size:15px; font-weight:700; cursor:pointer; }
+  .hm-h2{ display:flex; align-items:baseline; justify-content:space-between; margin:20px 0 10px; }
+  .hm-h2 h2{ font-size:18px; font-weight:800; margin:0; }
+  .hm-link{ background:none; border:none; color:var(--azul); font:inherit; font-size:14px; font-weight:700; cursor:pointer; padding:10px 0 10px 10px; min-height:44px; }
+  .hm-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .hm-mini{ display:flex; flex-direction:column; gap:6px; text-align:left; text-decoration:none; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px; min-height:112px; box-shadow:var(--shadow); cursor:pointer; font:inherit; }
+  .hm-mini .mi-ic{ font-size:22px; }
+  .hm-mini .mi-t{ font-size:14.5px; font-weight:800; line-height:1.25; }
+  .hm-mini .mi-s{ font-size:12.5px; color:var(--ink-soft); line-height:1.35; }
+  .hm-mini.warn{ background:#fffaf0; border-color:#f6e3b8; }
+  .hm-mini.good{ background:#f1fbf6; border-color:#cdeedd; }
+  .hm-mini.sueldo{ background:#f4f1ff; border-color:#ddd5fb; }
+  .hm-range{ display:flex; gap:6px; }
+  .hm-chip{ min-height:36px; padding:6px 12px; border-radius:100px; border:1px solid var(--line); background:var(--bg); font:inherit; font-size:12.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; }
+  .hm-chip.active{ background:var(--navy); color:#fff; border-color:var(--navy); }
+  .hm-stats{ display:grid; grid-template-columns:repeat(4,1fr); background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); }
+  .hm-stat{ text-align:center; padding:14px 4px; border-right:1px solid var(--line); }
+  .hm-stat:last-child{ border-right:none; }
+  .hm-stat b{ display:block; font-size:24px; font-weight:800; }
+  .hm-stat span{ font-size:11.5px; color:var(--ink-soft); }
+  .hm-row{ display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:var(--card); border:none; border-bottom:1px solid var(--line); padding:12px 4px; min-height:64px; font:inherit; color:var(--ink); cursor:pointer; }
+  .hm-list{ background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); padding:0 12px; overflow:hidden; }
+  .hm-list .hm-row:last-child{ border-bottom:none; }
+  .hm-row .logo-chip{ flex-shrink:0; }
+  .hm-row-main{ flex:1; min-width:0; }
+  .hm-row-main .r{ font-size:15px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hm-row-main .c{ font-size:13px; color:var(--ink-soft); }
+  .hm-row-main .d{ font-size:12px; color:var(--ink-faint); margin-top:1px; }
+  .hm-row .state-badge{ margin-left:0; flex-shrink:0; }
+
+  .pg-title{ font-size:22px; font-weight:800; margin:2px 0 14px; }
+  .pg-card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:var(--shadow); margin-bottom:12px; }
+  .pg-big{ font-size:28px; font-weight:800; line-height:1.1; }
+  .pg-label{ font-size:13px; color:var(--ink-soft); margin-top:4px; line-height:1.4; }
+  .pg-bars{ display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+  .pg-bar-row{ display:grid; grid-template-columns:128px 1fr 28px; align-items:center; gap:8px; font-size:12.5px; }
+  .pg-bar{ height:10px; border-radius:99px; background:var(--bg); overflow:hidden; }
+  .pg-bar i{ display:block; height:100%; background:var(--grad); border-radius:99px; }
+
+  .bell{ position:relative; width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,0.1); border:none; color:#fff; align-items:center; justify-content:center; cursor:pointer; }
+  .bell-dot{ position:absolute; top:8px; right:9px; width:10px; height:10px; border-radius:50%; background:var(--bad); border:2px solid var(--navy); }
+  .bell-dot[hidden]{ display:none; }
+
+  @media (max-width:640px){
+    body.logged{ padding-bottom:calc(72px + env(safe-area-inset-bottom)); }
+    .m-app .top-nav, .m-app #btn-export, .m-app #btn-add, .m-app .topbar-actions, .m-app .workea-switcher{ display:none !important; }
+    .m-app.logged .bell{ display:flex; }
+    .m-app .topbar{ flex-wrap:nowrap; padding-top:calc(10px + env(safe-area-inset-top)); padding-bottom:10px; }
+    .m-app.logged .tabbar{ display:flex; position:fixed; left:0; right:0; bottom:0; z-index:40; background:#fff; border-top:1px solid var(--line);
+      padding:6px max(6px, env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom)); box-shadow:0 -4px 16px rgba(10,20,48,0.06); }
+    .tab{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; min-height:56px; border:none; background:none; border-radius:14px;
+      font:inherit; font-size:11.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; }
+    .tab svg{ width:24px; height:24px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+    .tab[aria-current="page"]{ color:#0d6db8; background:#eaf6ff; }
+    .m-app.logged .fab:not([hidden]){ display:flex; position:fixed; right:16px; bottom:calc(84px + env(safe-area-inset-bottom)); z-index:40; width:58px; height:58px; border-radius:50%;
+      flex-direction:column; align-items:center; justify-content:center; gap:0; border:none; background:var(--grad); color:#fff; font:inherit; font-size:11px; font-weight:800;
+      box-shadow:0 8px 20px rgba(25,153,241,0.4); cursor:pointer; }
+    .fab .plus{ font-size:26px; line-height:1; font-weight:600; }
+    .m-app #process-list{ padding-bottom:84px; }
+    .m-app .toast{ bottom:calc(90px + env(safe-area-inset-bottom)); }
+    .m-app:not(.vista-list) #goals-bar{ display:none !important; }
+    .pg-bar-row{ grid-template-columns:112px 1fr 24px; }
+  }
+
+  /* ---------- Seguimiento y Prepárate ---------- */
+  @media (min-width:641px){
+    .sheet-overlay.centrado{ align-items:center; }
+    .sheet-overlay.centrado .sheet{ border-radius:22px; max-width:560px; }
+  }
+  .seg-label{ display:block; font-size:11.5px; font-weight:700; color:var(--ink-soft); margin:12px 0 6px; text-transform:uppercase; letter-spacing:.04em; }
+  .seg-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .seg-chips .hm-chip{ min-height:40px; padding:8px 14px; font-size:13px; }
+  .seg-tip{ margin:10px 0 0; padding:10px 12px; background:#f4f1ff; border:1px solid #ddd5fb; border-radius:12px; font-size:12.5px; color:var(--ink-soft); line-height:1.45; }
+  .seg-text, .seg-asunto{ width:100%; border:1.5px solid var(--line); border-radius:12px; font:inherit; font-size:16px; color:var(--ink); padding:10px 12px; background:#fff; }
+  .seg-text{ min-height:220px; resize:vertical; line-height:1.5; }
+  .seg-actions{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .seg-actions .hm-cta, .seg-actions .seg-sec{ width:100%; min-height:48px; border-radius:14px; font:inherit; font-size:15px; font-weight:700; cursor:pointer; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center; }
+  .seg-actions .seg-sec{ background:#fff; border:1.5px solid var(--line); color:var(--ink); }
+  .seg-nota{ font-size:11.5px; color:var(--ink-faint); margin:10px 0 0; line-height:1.4; }
+  .prep-fecha{ margin:0 0 4px; padding:10px 12px; background:linear-gradient(135deg,#eaf6ff,#f1edff); border:1px solid #d9e6fb; border-radius:12px; font-size:13.5px; font-weight:700; }
+  .prep-item{ display:flex; align-items:flex-start; gap:12px; width:100%; min-height:52px; padding:12px 4px; background:none; border:none; border-bottom:1px solid var(--line); font:inherit; text-align:left; cursor:pointer; color:var(--ink); }
+  .prep-item .prep-box{ flex:0 0 24px; width:24px; height:24px; border-radius:7px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:15px; color:#fff; margin-top:1px; }
+  .prep-item.hecho .prep-box{ background:var(--navy); border-color:var(--navy); }
+  .prep-item.hecho .prep-t{ color:var(--ink-faint); text-decoration:line-through; }
+  .prep-t{ font-size:14.5px; font-weight:700; line-height:1.3; }
+  .prep-s{ display:block; font-size:12.5px; font-weight:500; color:var(--ink-soft); margin-top:3px; line-height:1.4; text-decoration:none; }
+  .prep-s a{ color:var(--azul); font-weight:700; }
+  .prep-prog{ font-size:12.5px; font-weight:700; color:var(--ink-soft); margin:10px 0 0; }
+  .prep-links{ display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+  .seg-ficha{ display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 4px; }
+  .seg-ficha button{ min-height:44px; padding:10px 16px; border-radius:12px; font:inherit; font-size:14px; font-weight:700; cursor:pointer; border:1.5px solid var(--line); background:#fff; color:var(--ink); }
+  .seg-ficha button.principal{ background:var(--navy); border-color:var(--navy); color:#fff; }
+  .seg-ficha-aviso{ flex-basis:100%; font-size:12.5px; color:#8a5a00; background:#fffaf0; border:1px solid #f6e3b8; border-radius:10px; padding:8px 10px; }
+  .seg-actions [hidden]{ display:none !important; }
+  .hm-cta.alt{ background:#fff; color:var(--navy); border:1.5px solid var(--navy); margin-top:8px; }
 </style>
 </head>
 <body>
@@ -245,7 +416,7 @@
     </svg>
     Workea Bitácora
   </div>
-  <div style="display:flex; align-items:center; gap:16px;">
+  <div class="topbar-actions">
     <div class="top-nav" id="top-nav">
       <button class="nav-link active" onclick="goToView('list')">Inicio</button>
       <button class="nav-link" onclick="goToView('calendar')">Calendario</button>
@@ -254,6 +425,7 @@
     <button class="btn-ghost" id="btn-export" style="display:none;" onclick="exportarExcel()">📊 Exportar</button>
     <button class="btn-ghost" id="btn-add" style="display:none;" onclick="openModal()">＋ Agregar postulación</button>
   </div>
+  <button type="button" class="bell" id="btn-bell" onclick="abrirAvisos()" aria-label="Avisos"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="bell-dot" id="bell-dot" hidden></span></button>
 </div>
 
 <div class="workea-switcher">
@@ -262,6 +434,12 @@
   <a href="/career.html" class="ws-link">🧭 Career</a>
   <a href="/bitacora.html" class="ws-link active">📖 Bitácora</a>
   <a href="/sueldo.html" class="ws-link">💰 Sueldo</a>
+</div>
+
+<div class="install-banner" id="install-banner" role="region" aria-label="Instalar la app" hidden>
+  <span id="install-text"></span>
+  <button type="button" id="install-btn" hidden>📲 Instalar</button>
+  <button type="button" id="install-close" aria-label="Cerrar aviso">Ahora no</button>
 </div>
 
 <div class="goals-bar" id="goals-bar" style="display:none;"></div>
@@ -287,6 +465,15 @@
     <div id="view-calendar" style="display:none;"></div>
 
     <div id="view-comparar" style="display:none;"></div>
+
+    <div id="view-home" style="display:none;"></div>
+
+    <div id="view-progress" style="display:none;">
+      <h1 class="pg-title">Tu progreso</h1>
+      <div id="progress-top"></div>
+      <div id="progress-stats"></div>
+    </div>
+
   </div>
 
 </div>
@@ -339,6 +526,76 @@
   </div>
 </div>
 
+
+<!-- App móvil: barra inferior, botón agregar y hojas -->
+<nav class="tabbar" id="tabbar" aria-label="Navegación principal">
+  <button type="button" class="tab" data-tab="home" onclick="goToView('home')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/></svg>Inicio</button>
+  <button type="button" class="tab" data-tab="list" onclick="goToView('list')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M3 12.5h18"/></svg>Procesos</button>
+  <button type="button" class="tab" data-tab="calendar" onclick="goToView('calendar')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Agenda</button>
+  <button type="button" class="tab" data-tab="progress" onclick="goToView('progress')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-6"/></svg>Progreso</button>
+  <button type="button" class="tab" data-tab="more" onclick="abrirSheet('more-sheet')"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/></svg>Más</button>
+</nav>
+<button type="button" class="fab" id="fab-add" onclick="openModal()" aria-label="Agregar postulación" hidden><span class="plus">＋</span>Agregar</button>
+
+<div class="sheet-overlay" id="more-sheet" onclick="if(event.target===this) cerrarSheet('more-sheet')">
+  <div class="sheet" role="dialog" aria-label="Más opciones">
+    <h2 class="sheet-title">Más</h2>
+    <button type="button" class="sheet-row" onclick="cerrarSheet('more-sheet'); goToView('comparar')"><span class="sr-ic">🧩</span><span>Comparar mis postulaciones</span></button>
+    <a class="sheet-row" href="/sueldo.html"><span class="sr-ic">💰</span><span>Workea Sueldo<span class="sr-sub">Cuánto pedir y comparar ofertas</span></span></a>
+    <a class="sheet-row" href="/"><span class="sr-ic">🎯</span><span>Workea Match</span></a>
+    <a class="sheet-row" href="/workea-cv-planes.html"><span class="sr-ic">📄</span><span>Workea CV</span></a>
+    <a class="sheet-row" href="/career.html"><span class="sr-ic">🧭</span><span>Workea Career</span></a>
+    <a class="sheet-row" href="/relato.html"><span class="sr-ic">💬</span><span>Workea Relato</span></a>
+    <a class="sheet-row" href="/cuenta.html"><span class="sr-ic">👤</span><span>Mi cuenta</span></a>
+    <button type="button" class="sheet-row" onclick="cerrarSheet('more-sheet'); exportarExcel()"><span class="sr-ic">📊</span><span>Exportar a Excel</span></button>
+    <button type="button" class="sheet-row" onclick="cerrarSheet('more-sheet'); openHowit()"><span class="sr-ic">❓</span><span>Cómo funciona</span></button>
+    <button type="button" class="sheet-close" onclick="cerrarSheet('more-sheet')">Cerrar</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="avisos-sheet" onclick="if(event.target===this) cerrarSheet('avisos-sheet')">
+  <div class="sheet" role="dialog" aria-label="Avisos">
+    <h2 class="sheet-title">Avisos</h2>
+    <div id="avisos-list"></div>
+    <p class="sheet-sub">Estos avisos se calculan al abrir la app. Por ahora no se envían notificaciones al teléfono.</p>
+    <button type="button" class="sheet-close" onclick="cerrarSheet('avisos-sheet')">Cerrar</button>
+  </div>
+</div>
+
+<div class="sheet-overlay centrado" id="seg-sheet" onclick="if(event.target===this) cerrarSheet('seg-sheet')">
+  <div class="sheet" role="dialog" aria-label="Escribir seguimiento">
+    <h2 class="sheet-title">Escribir seguimiento</h2>
+    <p class="sheet-sub" id="seg-para"></p>
+    <span class="seg-label">¿Qué necesitas?</span>
+    <div class="seg-chips" id="seg-sits"></div>
+    <div class="seg-tip" id="seg-tip"></div>
+    <span class="seg-label">¿Por dónde lo enviarás?</span>
+    <div class="seg-chips" id="seg-canales"></div>
+    <div id="seg-asunto-wrap">
+      <span class="seg-label">Asunto</span>
+      <input type="text" class="seg-asunto" id="seg-asunto" aria-label="Asunto del correo">
+    </div>
+    <span class="seg-label">Mensaje (puedes editarlo)</span>
+    <textarea class="seg-text" id="seg-texto" aria-label="Mensaje de seguimiento"></textarea>
+    <div class="seg-actions">
+      <button type="button" class="hm-cta" id="seg-copiar" onclick="segCopiar('texto')">Copiar mensaje</button>
+      <button type="button" class="seg-sec" id="seg-copiar-asunto" onclick="segCopiar('asunto')">Copiar asunto</button>
+      <a class="seg-sec" id="seg-mailto" href="#" hidden>Abrir en mi correo</a>
+      <a class="seg-sec" id="seg-linkedin" href="#" target="_blank" rel="noopener" hidden>Abrir LinkedIn del reclutador</a>
+    </div>
+    <p class="seg-nota">Es una base para que la adaptes con tus palabras. Workea no envía nada por ti ni guarda este texto.</p>
+    <button type="button" class="sheet-close" onclick="cerrarSheet('seg-sheet')">Cerrar</button>
+  </div>
+</div>
+
+<div class="sheet-overlay centrado" id="prep-sheet" onclick="if(event.target===this) cerrarSheet('prep-sheet')">
+  <div class="sheet" role="dialog" aria-label="Prepárate para tu entrevista">
+    <h2 class="sheet-title">Prepárate para tu entrevista</h2>
+    <div id="prep-body"></div>
+    <button type="button" class="sheet-close" onclick="cerrarSheet('prep-sheet')">Cerrar</button>
+  </div>
+</div>
+
 <script>
   // Mismos valores que usa cuenta.html
   const SUPABASE_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
@@ -384,7 +641,9 @@
     document.getElementById('app-view').style.display = 'block';
     document.getElementById('btn-add').style.display = 'inline-block';
     document.getElementById('btn-export').style.display = 'inline-block';
+    document.body.classList.add('logged');
     await cargarPostulaciones();
+    goToView(vistaPorDefecto());
   }
 
   async function apiCall(accion, options = {}){
@@ -428,6 +687,9 @@
       renderInsightInicial();
       renderKpis();
       renderList();
+      renderHome();
+      renderProgreso();
+      actualizarAvisos();
     } catch(err){
       showToast('Error cargando tu bitácora: ' + err.message);
     }
@@ -444,7 +706,8 @@
     const chips = objetivos.map(o => `
       <span class="goal-chip-wrap">
         <button class="goal-chip ${objetivoSeleccionado === o.id ? 'active' : ''}" onclick="seleccionarObjetivo('${o.id}')" ondblclick="renombrarObjetivo('${o.id}', event)" title="Doble clic para renombrar">${escapeHtml(o.cargo_objetivo)}</button>
-        <button class="goal-chip-x" onclick="eliminarObjetivo('${o.id}', event)" title="Eliminar este objetivo">✕</button>
+        <button class="goal-chip-edit" onclick="renombrarObjetivo('${o.id}', event)" aria-label="Renombrar objetivo" title="Renombrar este objetivo">✎</button>
+        <button class="goal-chip-x" onclick="eliminarObjetivo('${o.id}', event)" aria-label="Eliminar objetivo" title="Eliminar este objetivo">✕</button>
       </span>
     `).join('');
     const todosChip = objetivos.length > 0
@@ -623,8 +886,12 @@
     fichaActivaId = id;
     const p = postulaciones.find(x => x.id === id);
     if(!p) return;
-    document.getElementById('view-list').style.display = 'none';
+    const yaAbierta = document.getElementById('view-ficha').style.display === 'block';
+    vistaAnterior = vistaActual;
+    VISTAS.forEach(v => { const el = document.getElementById('view-' + v); if(el) el.style.display = 'none'; });
     document.getElementById('view-ficha').style.display = 'block';
+    const fabF = document.getElementById('fab-add'); if(fabF) fabF.hidden = true;
+    if(!yaAbierta) window.scrollTo(0, 0);
 
     const eventos = (p.timeline_eventos || []);
     const timelineHtml = eventos.map((ev, i) => {
@@ -726,6 +993,15 @@
         </div>
       </div>
       <div class="progress-track">${progressHtml}</div>
+      ${(() => {
+        if(!esActiva(p) || p.estado_actual === 'oferta_recibida') return '';
+        const sn = sinNovedades().find(x => x.p.id === p.id);
+        return `<div class="seg-ficha">
+          ${sn ? `<div class="seg-ficha-aviso">⏳ Sin novedades hace ${sn.dias} días. Si quieres, escríbeles un mensaje breve y amable.</div>` : ''}
+          ${puedePrepararse(p) ? `<button type="button" class="principal" onclick="abrirPrepare('${p.id}')">🎯 Prepárate para la entrevista</button>` : ''}
+          <button type="button" class="${sn && !puedePrepararse(p) ? 'principal' : ''}" onclick="abrirSeguimiento('${p.id}')">✉️ Escribir seguimiento</button>
+        </div>`;
+      })()}
       ${banerPractica}
       <div id="edit-ficha-form" style="display:none; margin:10px 0;">
         <div class="field"><label>Empresa</label><input type="text" id="edit-empresa" value="${escapeHtml(p.empresa)}"></div>
@@ -1005,14 +1281,21 @@
   }
 
   function goToView(view){
-    document.getElementById('view-list').style.display = view === 'list' ? 'block' : 'none';
+    if(!VISTAS.includes(view)) view = vistaPorDefecto();
+    if(!esMovil() && (view === 'home' || view === 'progress')) view = 'list';
+    VISTAS.forEach(v => { const el = document.getElementById('view-' + v); if(el) el.style.display = v === view ? 'block' : 'none'; });
     document.getElementById('view-ficha').style.display = 'none';
-    document.getElementById('view-calendar').style.display = view === 'calendar' ? 'block' : 'none';
-    document.getElementById('view-comparar').style.display = view === 'comparar' ? 'block' : 'none';
+    vistaActual = view;
+    document.body.classList.toggle('vista-list', view === 'list');
+    if(view === 'home') renderHome();
+    if(view === 'progress') renderProgreso();
     if(view === 'comparar') renderComparar();
+    if(view === 'calendar'){ calDiaSeleccionado = null; renderCalendario(); }
     document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
     document.querySelector('.nav-link[onclick="goToView(\'' + view + '\')"]')?.classList.add('active');
-    if(view === 'calendar'){ calDiaSeleccionado = null; renderCalendario(); }
+    document.querySelectorAll('.tab').forEach(t => { if(t.dataset.tab === view) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); });
+    const fab = document.getElementById('fab-add'); if(fab) fab.hidden = !(view === 'home' || view === 'list');
+    window.scrollTo(0, 0);
   }
 
   const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -1120,8 +1403,8 @@
 
   function cerrarFicha(){
     document.getElementById('view-ficha').style.display = 'none';
-    document.getElementById('view-list').style.display = 'block';
     fichaActivaId = null;
+    goToView(vistaAnterior || vistaPorDefecto());
   }
 
   async function cambiarEstado(tipo_evento){
@@ -1231,8 +1514,461 @@
     document.body.removeChild(link);
   }
 
+  /* ===== App móvil: Inicio, Progreso, avisos y barra inferior ===== */
+  const mqMovil = window.matchMedia('(max-width:640px)');
+  const esMovil = () => mqMovil.matches;
+  const VISTAS = ['home', 'list', 'calendar', 'comparar', 'progress'];
+  const DIAS_SIN_NOVEDADES = 10;
+  let vistaActual = 'list', vistaAnterior = null, rangoProgreso = 30;
+  const $id = id => document.getElementById(id);
+
+  const hoyLocal = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+  const aFecha = s => (s ? new Date(String(s).slice(0, 10) + 'T00:00:00') : null);
+  const diasDesde = s => { const f = aFecha(s); return f ? Math.round((hoyLocal() - f) / 86400000) : null; };
+  function fechaAmigable(s, hora){
+    const n = diasDesde(s), h = hora ? ', ' + String(hora).slice(0, 5) + ' h' : '';
+    if(n === 0) return 'Hoy' + h;
+    if(n === -1) return 'Mañana' + h;
+    const f = aFecha(s);
+    return (f ? f.toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '') : '') + h;
+  }
+  const fechaPostulacion = p => p.fecha_creacion || ((p.timeline_eventos || []).find(e => e.tipo_evento === 'postule') || {}).fecha || p.fecha_ultima_actividad;
+  const esActiva = p => !ESTADOS_TERMINALES.includes(p.estado_actual);
+
+  function primerNombre(){
+    const m = (session && session.user && session.user.user_metadata) || {};
+    const n = String(m.full_name || m.name || m.nombre || '').trim().split(/\s+/)[0];
+    return n || '';
+  }
+
+  function proximaEntrevista(){
+    const hoy = hoyLocal();
+    let mejor = null;
+    postulacionesFiltradas().forEach(p => {
+      if(!esActiva(p)) return;
+      (p.timeline_eventos || []).forEach(ev => {
+        if(!(ESTADOS_ENTREVISTA.includes(ev.tipo_evento) || ev.tipo_evento === 'evaluacion')) return;
+        const f = aFecha(ev.fecha);
+        if(!f || f < hoy) return;
+        const clave = ev.fecha + ' ' + (ev.hora || '99:99');
+        if(!mejor || clave < mejor.clave) mejor = { p: p, ev: ev, clave: clave };
+      });
+    });
+    return mejor;
+  }
+
+  function sinNovedades(){
+    return postulacionesFiltradas()
+      .filter(p => esActiva(p) && p.estado_actual !== 'oferta_recibida')
+      .map(p => ({ p: p, dias: diasDesde(p.fecha_ultima_actividad) }))
+      .filter(x => x.dias !== null && x.dias >= DIAS_SIN_NOVEDADES)
+      .sort((a, b) => b.dias - a.dias);
+  }
+
+  function statsRango(dias){
+    const lim = dias ? new Date(hoyLocal().getTime() - dias * 86400000) : null;
+    const enRango = s => { if(!lim) return true; const f = aFecha(s); return !!f && f >= lim; };
+    const base = postulacionesFiltradas();
+    return {
+      postulaciones: base.filter(p => enRango(fechaPostulacion(p))).length,
+      entrevistas: base.filter(p => (p.timeline_eventos || []).some(e => ESTADOS_ENTREVISTA.includes(e.tipo_evento) && enRango(e.fecha))).length,
+      enProceso: base.filter(esActiva).length,
+      ofertas: base.filter(p => p.estado_actual === 'oferta_recibida').length
+    };
+  }
+
+  function filaProceso(p){
+    const f = fechaPostulacion(p);
+    const fecha = aFecha(f);
+    const cuando = fecha ? 'Postulé el ' + fecha.toLocaleDateString('es-CL', { day: 'numeric', month: 'short' }).replace(/\./g, '') : '';
+    return `<button type="button" class="hm-row" onclick="abrirFicha('${p.id}')">
+      <div class="logo-chip">${escapeHtml((p.empresa || '??').slice(0, 2).toUpperCase())}</div>
+      <div class="hm-row-main"><div class="r">${escapeHtml(p.cargo)}</div><div class="c">${escapeHtml(p.empresa)}</div><div class="d">${escapeHtml(cuando)}</div></div>
+      <div class="state-badge ${ESTADO_BADGE_CLASE[p.estado_actual] || ''}">${ESTADO_LABEL[p.estado_actual] || escapeHtml(p.estado_actual)}</div>
+    </button>`;
+  }
+
+  function renderHome(){
+    const el = $id('view-home');
+    if(!el) return;
+    const nombre = primerNombre();
+    let html = `<div class="hm-hello">Hola${nombre ? ', ' + escapeHtml(nombre) : ''} 👋</div><h1 class="hm-title">${postulaciones.length ? 'Lo más importante de hoy' : 'Empecemos tu bitácora'}</h1>`;
+
+    if(!postulaciones.length){
+      html += `<div class="hm-card"><div class="hm-role">Tu bitácora empieza aquí</div>
+        <p class="hm-company" style="margin:8px 0 14px;">Cada postulación que agregues arma tu historia: en qué etapa vas y qué te está funcionando. Para empezar, solo necesitas empresa y cargo.</p>
+        <button type="button" class="hm-cta" onclick="openModal()">＋ Agregar tu primera postulación</button></div>
+        <a class="hm-mini sueldo" href="/sueldo.html"><span class="mi-ic">💰</span><span class="mi-t">¿Cuánto pedir de sueldo?</span><span class="mi-s">Calcula tu rango en pesos. Gratis, tus datos no se guardan.</span></a>`;
+      el.innerHTML = html;
+      return;
+    }
+
+    // Próxima entrevista
+    const prox = proximaEntrevista();
+    if(prox){
+      const ev = prox.ev;
+      html += `<div class="hm-card hm-next"><div class="hm-eyebrow">Tu próxima entrevista</div>
+        <div class="hm-role">${escapeHtml(prox.p.cargo)}</div><div class="hm-company">${escapeHtml(prox.p.empresa)}</div>
+        <div class="hm-when"><span>🗓️ ${escapeHtml(fechaAmigable(ev.fecha, ev.hora))}</span>${ev.modalidad ? '<span>🎥 ' + escapeHtml(ev.modalidad) + '</span>' : ''}</div>
+        <button type="button" class="hm-cta" onclick="abrirPrepare('${prox.p.id}')">🎯 Prepárate</button>
+        <button type="button" class="hm-cta alt" onclick="abrirFicha('${prox.p.id}')">Ver detalles ›</button></div>`;
+    }else{
+      html += `<div class="hm-card"><div class="hm-eyebrow">Tu próxima entrevista</div>
+        <div class="hm-role">Todavía no tienes entrevistas agendadas</div>
+        <p class="hm-company" style="margin:6px 0 0;">Cuando te contacten, regístralo en la ficha de la postulación y aparecerá aquí.</p></div>`;
+    }
+
+    // ¿Qué sigue?
+    const sn = sinNovedades();
+    const oferta = postulacionesFiltradas().find(p => p.estado_actual === 'oferta_recibida');
+    const cardA = sn.length
+      ? `<button type="button" class="hm-mini warn" onclick="abrirFicha('${sn[0].p.id}')"><span class="mi-ic">⏳</span><span class="mi-t">Actualizar postulación</span><span class="mi-s">${escapeHtml(sn[0].p.empresa)}: sin novedades hace ${sn[0].dias} días${sn.length > 1 ? ' (y ' + (sn.length - 1) + ' más)' : ''}</span></button>`
+      : `<div class="hm-mini good"><span class="mi-ic">✅</span><span class="mi-t">Todo al día</span><span class="mi-s">No tienes postulaciones sin novedades hace más de ${DIAS_SIN_NOVEDADES} días.</span></div>`;
+    const cardB = oferta
+      ? `<a class="hm-mini sueldo" href="${enlacesSueldo(oferta).calc}"><span class="mi-ic">🎉</span><span class="mi-t">Revisa tu oferta</span><span class="mi-s">${escapeHtml(oferta.empresa)}: mira si te conviene en Workea Sueldo</span></a>`
+      : `<a class="hm-mini sueldo" href="/sueldo.html#busco"><span class="mi-ic">💰</span><span class="mi-t">¿Cuánto pedir de sueldo?</span><span class="mi-s">Calcula tu rango antes de que te lo pregunten</span></a>`;
+    html += `<div class="hm-h2"><h2>¿Qué sigue?</h2></div><div class="hm-grid2">${cardA}${cardB}</div>`;
+
+    // Tu progreso
+    const s = statsRango(rangoProgreso);
+    html += `<div class="hm-h2"><h2>Tu progreso</h2>
+      <div class="hm-range"><button type="button" class="hm-chip ${rangoProgreso === 30 ? 'active' : ''}" onclick="cambiarRango(30)">30 días</button><button type="button" class="hm-chip ${rangoProgreso === 0 ? 'active' : ''}" onclick="cambiarRango(0)">Todo</button></div></div>
+      <div class="hm-stats">
+        <div class="hm-stat"><b>${s.postulaciones}</b><span>Postulaciones</span></div>
+        <div class="hm-stat"><b>${s.entrevistas}</b><span>Entrevistas</span></div>
+        <div class="hm-stat"><b>${s.enProceso}</b><span>En proceso</span></div>
+        <div class="hm-stat"><b>${s.ofertas}</b><span>Ofertas</span></div>
+      </div>`;
+
+    // Procesos recientes
+    const recientes = postulacionesFiltradas().slice().sort((a, b) => String(b.fecha_ultima_actividad).localeCompare(String(a.fecha_ultima_actividad))).slice(0, 3);
+    html += `<div class="hm-h2"><h2>Procesos recientes</h2><button type="button" class="hm-link" onclick="goToView('list')">Ver todos ›</button></div>
+      <div class="hm-list">${recientes.map(filaProceso).join('')}</div>`;
+    el.innerHTML = html;
+  }
+
+  function cambiarRango(d){ rangoProgreso = d; renderHome(); }
+
+  function renderProgreso(){
+    const el = $id('progress-stats');
+    if(!el) return;
+    const base = postulacionesFiltradas();
+    if(!base.length){ el.innerHTML = '<div class="pg-card"><div class="pg-label">Cuando agregues postulaciones, aquí verás cómo va tu búsqueda.</div></div>'; return; }
+
+    const entrevista = base.filter(p => (p.timeline_eventos || []).some(e => ESTADOS_ENTREVISTA.includes(e.tipo_evento))).length;
+    const pct = Math.round(entrevista / base.length * 100);
+    const sn = sinNovedades().length;
+
+    // días entre postular y la primera respuesta registrada
+    const difs = [];
+    base.forEach(p => {
+      const f0 = aFecha(fechaPostulacion(p));
+      const resp = (p.timeline_eventos || []).filter(e => e.tipo_evento !== 'postule' && e.tipo_evento !== 'analisis' && e.fecha).sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)))[0];
+      if(f0 && resp){ const d = Math.round((aFecha(resp.fecha) - f0) / 86400000); if(d >= 0) difs.push(d); }
+    });
+    const prom = difs.length ? Math.round(difs.reduce((a, b) => a + b, 0) / difs.length) : null;
+
+    const porEstado = Object.keys(ESTADO_LABEL).map(k => ({ k: k, n: base.filter(p => p.estado_actual === k).length })).filter(x => x.n > 0);
+    const max = Math.max.apply(null, porEstado.map(x => x.n));
+
+    el.innerHTML = `
+      <div class="pg-card"><div class="pg-big">${entrevista} de ${base.length}</div><div class="pg-label">postulaciones llegaron a entrevista (${pct}%)</div></div>
+      <div class="pg-card"><div class="pg-big">${sn}</div><div class="pg-label">${sn === 1 ? 'proceso sin novedades' : 'procesos sin novedades'} hace más de ${DIAS_SIN_NOVEDADES} días. No significa que te hayan descartado: solo que no hay movimiento registrado.</div></div>
+      <div class="pg-card"><div class="pg-big">${prom === null ? '—' : prom + (prom === 1 ? ' día' : ' días')}</div><div class="pg-label">${prom === null ? 'Aún no hay respuestas registradas para calcular cuánto tardan en responderte.' : 'en promedio entre que postulas y registras la primera respuesta (' + difs.length + (difs.length === 1 ? ' proceso' : ' procesos') + ').'}</div></div>
+      <div class="pg-card"><div style="font-weight:800;margin-bottom:8px;">Tus postulaciones por etapa</div><div class="pg-bars">${porEstado.map(x => `<div class="pg-bar-row"><span>${ESTADO_LABEL[x.k]}</span><div class="pg-bar"><i style="width:${Math.max(8, Math.round(x.n / max * 100))}%"></i></div><b>${x.n}</b></div>`).join('')}</div></div>
+      <button type="button" class="hm-cta" style="margin-top:4px;" onclick="exportarExcel()">📊 Exportar a Excel</button>`;
+  }
+
+  function calcularAvisos(){
+    const av = [];
+    postulaciones.forEach(p => {
+      if(!esActiva(p)) return;
+      (p.timeline_eventos || []).forEach(ev => {
+        if(!(ESTADOS_ENTREVISTA.includes(ev.tipo_evento) || ev.tipo_evento === 'evaluacion')) return;
+        const n = diasDesde(ev.fecha);
+        if(n === 0 || n === -1) av.push({ orden: n === 0 ? 0 : 1, icono: '🎤', titulo: (n === 0 ? 'Hoy' : 'Mañana') + ' tienes una entrevista', detalle: p.cargo + ' · ' + p.empresa + (ev.hora ? ' · ' + String(ev.hora).slice(0, 5) + ' h' : ''), id: p.id });
+      });
+    });
+    sinNovedades().slice(0, 5).forEach(x => av.push({ orden: 2, icono: '⏳', titulo: 'Sin novedades hace ' + x.dias + ' días', detalle: x.p.cargo + ' · ' + x.p.empresa, id: x.p.id }));
+    postulaciones.filter(p => p.estado_actual === 'oferta_recibida').forEach(p => av.push({ orden: 3, icono: '🎉', titulo: 'Tienes una oferta de ' + p.empresa, detalle: 'Mira si te conviene en Workea Sueldo', id: p.id, href: enlacesSueldo(p).calc }));
+    return av.sort((a, b) => a.orden - b.orden);
+  }
+
+  function actualizarAvisos(){
+    const dot = $id('bell-dot');
+    if(dot) dot.hidden = calcularAvisos().length === 0;
+  }
+
+  function abrirAvisos(){
+    const av = calcularAvisos();
+    $id('avisos-list').innerHTML = av.length
+      ? av.map(a => a.href
+          ? `<a class="sheet-row" href="${a.href}"><span class="sr-ic">${a.icono}</span><span>${escapeHtml(a.titulo)}<span class="sr-sub">${escapeHtml(a.detalle)}</span></span></a>`
+          : `<button type="button" class="sheet-row" onclick="cerrarSheet('avisos-sheet'); abrirFicha('${a.id}')"><span class="sr-ic">${a.icono}</span><span>${escapeHtml(a.titulo)}<span class="sr-sub">${escapeHtml(a.detalle)}</span></span></button>`).join('')
+      : '<p class="sheet-sub" style="padding:10px 0;">No tienes avisos por ahora. Todo está al día. ✅</p>';
+    abrirSheet('avisos-sheet');
+  }
+  function abrirSheet(id){ $id(id).classList.add('show'); }
+  function cerrarSheet(id){ $id(id).classList.remove('show'); }
+  document.addEventListener('keydown', e => { if(e.key === 'Escape'){ cerrarSheet('more-sheet'); cerrarSheet('avisos-sheet'); cerrarSheet('seg-sheet'); cerrarSheet('prep-sheet'); } });
+
+  /* ===== Escribir seguimiento: mensajes listos para copiar (no se guardan ni se envían) ===== */
+  const SEG_SITUACIONES = [
+    { k: 'postule', t: 'Después de postular', tip: 'Lo ideal es escribir cuando pasaron entre 7 y 10 días hábiles desde que postulaste. Un solo mensaje; si no responden, espera otra semana antes de insistir.' },
+    { k: 'entrevista', t: 'Después de una entrevista', tip: 'Envíalo dentro de las 24 horas siguientes a la entrevista. Agradecer y preguntar por los próximos pasos deja una muy buena impresión.' },
+    { k: 'plazo', t: 'Pasó el plazo que me dieron', tip: 'Si pasaron al menos 2 o 3 días hábiles desde la fecha que te mencionaron, es razonable escribir. Mantén un tono tranquilo y amable.' },
+    { k: 'oferta', t: 'Tengo otra oferta', tip: 'Úsalo solo si es verdad y {empresa} realmente te interesa. Los reclutadores lo notan, y es una buena forma de pedir una fecha de decisión sin presionar.' }
+  ];
+  const SEG_CANALES = [{ k: 'correo', t: '✉️ Correo' }, { k: 'corto', t: '💬 WhatsApp o LinkedIn' }];
+  let segEstado = { id: null, sit: 'postule', canal: 'correo' };
+
+  function segDatos(p){
+    const m = (session && session.user && session.user.user_metadata) || {};
+    const yo = String(m.full_name || m.name || m.nombre || '').trim();
+    const nombreRec = String((p.reclutador && p.reclutador.nombre) || '').trim().split(/\s+/)[0];
+    const d = diasDesde(fechaPostulacion(p));
+    const hace = d === null || d < 7 ? 'hace unos días' : 'hace ' + d + ' días';
+    return { yo: yo || '[tu nombre]', nombreRec: nombreRec, cargo: p.cargo || 'el cargo', empresa: p.empresa || 'la empresa', hace: hace };
+  }
+
+  function segSituacionPorDefecto(p){
+    return ['postule'].includes(p.estado_actual) ? 'postule' : 'entrevista';
+  }
+
+  function segRedactar(p, sit, canal){
+    const x = segDatos(p);
+    const saludoC = x.nombreRec ? 'Hola ' + x.nombreRec + ':' : 'Hola, equipo de ' + x.empresa + ':';
+    const saludoL = x.nombreRec ? 'Hola ' + x.nombreRec + ', ¿cómo estás?' : 'Hola, ¿cómo están?';
+    const T = {
+      postule: {
+        asunto: 'Consulta por mi postulación al cargo de ' + x.cargo,
+        correo: [saludoC, '', 'Espero que estés bien. Postulé al cargo de ' + x.cargo + ' en ' + x.empresa + ' ' + x.hace + ' y quería consultar si es posible saber en qué etapa se encuentra el proceso.', '', 'Sigo con mucho interés en la oportunidad y quedo disponible para entregar cualquier información adicional que necesiten.', '', 'Muchas gracias por tu tiempo.', '', 'Saludos cordiales,', x.yo].join('\n'),
+        corto: [saludoL, 'Postulé al cargo de ' + x.cargo + ' en ' + x.empresa + ' ' + x.hace + ' y quería saber si hay novedades del proceso. Sigo con mucho interés. ¡Gracias por tu tiempo!', '', x.yo].join('\n')
+      },
+      entrevista: {
+        asunto: 'Gracias por la conversación · ' + x.cargo,
+        correo: [saludoC, '', 'Quería agradecerte el tiempo que dedicaste a conversar conmigo sobre el cargo de ' + x.cargo + '. Me interesó mucho conocer más sobre el equipo y el rol, y sigo con mucho interés en el proceso.', '', 'Si es posible, ¿podrías contarme cuáles son los próximos pasos y los plazos estimados?', '', 'Quedo disponible para lo que necesiten.', '', 'Saludos cordiales,', x.yo].join('\n'),
+        corto: [saludoL, 'Gracias por la conversación sobre el cargo de ' + x.cargo + '. Me quedé con muy buena impresión del rol y del equipo. ¿Sabes cuáles son los próximos pasos y los plazos? ¡Gracias!', '', x.yo].join('\n')
+      },
+      plazo: {
+        asunto: 'Seguimiento del proceso · ' + x.cargo,
+        correo: [saludoC, '', 'Espero que estés bien. En nuestra última conversación quedamos en que habría novedades del proceso para el cargo de ' + x.cargo + ' en estas fechas, y quería consultarte si hay alguna actualización.', '', 'Entiendo que estos procesos pueden tomar más tiempo del previsto, así que agradezco cualquier información que puedas compartirme. Sigo con mucho interés en la oportunidad.', '', 'Saludos cordiales,', x.yo].join('\n'),
+        corto: [saludoL, 'Quería saber si hay novedades del proceso para ' + x.cargo + '. Entiendo que a veces se demora más de lo previsto; sigo con mucho interés. ¡Gracias!', '', x.yo].join('\n')
+      },
+      oferta: {
+        asunto: 'Consulta por plazos del proceso · ' + x.cargo,
+        correo: [saludoC, '', 'Quería contarte que estoy avanzando en otro proceso y probablemente deba dar una respuesta pronto. ' + x.empresa + ' me interesa mucho, por eso quería consultarte si hay novedades del proceso para el cargo de ' + x.cargo + ' o una fecha estimada para la decisión.', '', 'Gracias por tu tiempo y por mantenerme al tanto.', '', 'Saludos cordiales,', x.yo].join('\n'),
+        corto: [saludoL, 'Estoy avanzando en otro proceso y pronto debería responder. ' + x.empresa + ' me interesa mucho, ¿hay novedades del proceso para ' + x.cargo + ' o una fecha estimada de decisión? ¡Gracias!', '', x.yo].join('\n')
+      }
+    };
+    return { asunto: T[sit].asunto, texto: T[sit][canal === 'correo' ? 'correo' : 'corto'] };
+  }
+
+  function abrirSeguimiento(id){
+    const p = postulaciones.find(x => x.id === id);
+    if(!p) return;
+    const email = p.reclutador && p.reclutador.email;
+    segEstado = { id: id, sit: segSituacionPorDefecto(p), canal: email ? 'correo' : 'corto' };
+    $id('seg-para').textContent = p.cargo + ' · ' + p.empresa;
+    segPintar(true);
+    abrirSheet('seg-sheet');
+  }
+
+  function segPintar(regenerar){
+    const p = postulaciones.find(x => x.id === segEstado.id);
+    if(!p) return;
+    $id('seg-sits').innerHTML = SEG_SITUACIONES.map(s => `<button type="button" class="hm-chip ${s.k === segEstado.sit ? 'active' : ''}" onclick="segElegir('sit','${s.k}')">${s.t}</button>`).join('');
+    $id('seg-canales').innerHTML = SEG_CANALES.map(c => `<button type="button" class="hm-chip ${c.k === segEstado.canal ? 'active' : ''}" onclick="segElegir('canal','${c.k}')">${c.t}</button>`).join('');
+    const sit = SEG_SITUACIONES.find(s => s.k === segEstado.sit);
+    $id('seg-tip').textContent = '💡 ' + sit.tip.replace('{empresa}', p.empresa || 'la empresa');
+    const esCorreo = segEstado.canal === 'correo';
+    $id('seg-asunto-wrap').style.display = esCorreo ? 'block' : 'none';
+    $id('seg-copiar-asunto').style.display = esCorreo ? 'flex' : 'none';
+    if(regenerar){
+      const r = segRedactar(p, segEstado.sit, segEstado.canal);
+      $id('seg-asunto').value = r.asunto;
+      $id('seg-texto').value = r.texto;
+    }
+    const mail = $id('seg-mailto'), ln = $id('seg-linkedin');
+    const email = p.reclutador && p.reclutador.email;
+    mail.hidden = !(esCorreo && email);
+    if(email) mail.href = 'mailto:' + encodeURIComponent(String(email).trim()).replace('%40', '@') + '?subject=' + encodeURIComponent($id('seg-asunto').value) + '&body=' + encodeURIComponent($id('seg-texto').value);
+    const lk = p.reclutador && p.reclutador.linkedin;
+    const lkOk = lk && /^(https?:\/\/|www\.|linkedin\.com)/i.test(String(lk).trim());
+    ln.hidden = !(lkOk && !esCorreo);
+    if(lkOk) ln.href = /^https?:\/\//i.test(lk.trim()) ? lk.trim() : 'https://' + lk.trim().replace(/^\/+/, '');
+  }
+
+  function segElegir(que, valor){
+    segEstado[que] = valor;
+    segPintar(true);
+  }
+
+  // El enlace de correo se arma con lo que la persona dejó escrito justo antes de tocarlo
+  document.addEventListener('click', function(e){
+    const a = e.target.closest && e.target.closest('#seg-mailto');
+    if(!a) return;
+    const p = postulaciones.find(x => x.id === segEstado.id);
+    const email = p && p.reclutador && p.reclutador.email;
+    if(email) a.href = 'mailto:' + encodeURIComponent(String(email).trim()).replace('%40', '@') + '?subject=' + encodeURIComponent($id('seg-asunto').value) + '&body=' + encodeURIComponent($id('seg-texto').value);
+  }, true);
+
+  function copiarTexto(txt, okMsg){
+    const respaldo = () => {
+      const ta = document.createElement('textarea');
+      ta.value = txt; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, txt.length);
+      let ok = false;
+      try{ ok = document.execCommand('copy'); }catch(e){}
+      document.body.removeChild(ta);
+      showToast(ok ? okMsg : 'No se pudo copiar. Mantén presionado el texto para copiarlo.');
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(() => showToast(okMsg), respaldo);
+    } else respaldo();
+  }
+  function segCopiar(que){
+    if(que === 'asunto') copiarTexto($id('seg-asunto').value, 'Asunto copiado');
+    else copiarTexto($id('seg-texto').value, 'Mensaje copiado');
+  }
+
+  /* ===== Prepárate para tu entrevista ===== */
+  const PREP_KEY = 'wk_prep_v1';
+  function prepLeer(id){ try{ const o = JSON.parse(localStorage.getItem(PREP_KEY) || '{}'); return o[id] || []; }catch(e){ return []; } }
+  function prepGuardar(id, arr){ try{ const o = JSON.parse(localStorage.getItem(PREP_KEY) || '{}'); o[id] = arr; localStorage.setItem(PREP_KEY, JSON.stringify(o)); }catch(e){} }
+
+  function eventoPreparable(p){
+    const hoy = hoyLocal();
+    let mejor = null;
+    (p.timeline_eventos || []).forEach(ev => {
+      if(!(ESTADOS_ENTREVISTA.includes(ev.tipo_evento) || ev.tipo_evento === 'evaluacion')) return;
+      const f = aFecha(ev.fecha);
+      if(!f || f < hoy) return;
+      const clave = ev.fecha + ' ' + (ev.hora || '99:99');
+      if(!mejor || clave < mejor.clave) mejor = { ev: ev, clave: clave };
+    });
+    return mejor ? mejor.ev : null;
+  }
+  function puedePrepararse(p){
+    if(!esActiva(p) || p.estado_actual === 'oferta_recibida') return false;
+    return !!eventoPreparable(p) || ESTADOS_ENTREVISTA.includes(p.estado_actual) || p.estado_actual === 'evaluacion';
+  }
+
+  function prepItems(p, ev){
+    const tipo = (ev && ev.tipo_evento) || p.estado_actual;
+    const enl = enlacesSueldo(p);
+    const items = [
+      { k: 'empresa', t: 'Investiga a la empresa', s: 'Qué hace, a quién le vende y alguna noticia reciente. Con eso puedes explicar por qué quieres trabajar ahí.' + (p.sitio_web ? ' <a href="' + escapeHtml(p.sitio_web) + '" target="_blank" rel="noopener">Abrir su sitio</a>' : '') },
+      { k: 'oferta', t: 'Relee la oferta y marca 3 requisitos que cumples', s: 'Para cada uno, piensa en una situación real donde lo demostraste.' + (p.link_oferta ? ' <a href="' + escapeHtml(p.link_oferta) + '" target="_blank" rel="noopener">Ver la oferta</a>' : '') }
+    ];
+    if(tipo === 'entrevista_rrhh' || tipo === 'me_contactaron' || tipo === 'postule') items.push({ k: 'presentacion', t: 'Ensaya tu presentación de 1 minuto', s: 'Quién eres hoy, qué has hecho y por qué este cargo. Dilo en voz alta una vez; suena distinto que en tu cabeza.' });
+    if(tipo === 'entrevista_tecnica') items.push({ k: 'tecnica', t: 'Repasa las herramientas del cargo', s: 'Elige un proyecto que puedas explicar paso a paso: el problema, qué decidiste tú y qué resultado tuvo.' });
+    if(tipo === 'entrevista_final') items.push({ k: 'final', t: 'Prepárate para hablar de condiciones', s: 'Fecha posible de inicio, modalidad y expectativas. En esta etapa suelen preguntarlo.' });
+    if(tipo === 'evaluacion') items.push({ k: 'eval', t: 'Prepara el espacio de la evaluación', s: 'Revisa las instrucciones, el tiempo disponible, tu conexión y que no te interrumpan.' });
+    items.push(
+      { k: 'ejemplos', t: 'Prepara 2 ejemplos con este formato', s: 'Situación → qué hiciste tú → resultado. Sirven para casi cualquier pregunta de «cuéntame de una vez que…».' },
+      { k: 'sueldo', t: 'Ten claro tu rango de sueldo', s: 'Te lo suelen preguntar. <a href="' + enl.calc + '" target="_blank" rel="noopener">Calcular mi rango en Workea Sueldo</a>' },
+      { k: 'preguntas', t: 'Lleva 2 preguntas para ellos', s: 'Por ejemplo: «¿Cómo se ve un buen primer trimestre en este cargo?» o «¿Cómo es el equipo con el que trabajaría?»' },
+      { k: 'logistica', t: 'Confirma lo práctico', s: 'Hora, dirección o enlace, cámara y audio si es virtual. Llega o conéctate 10 minutos antes.' }
+    );
+    return items;
+  }
+
+  function abrirPrepare(id){
+    const p = postulaciones.find(x => x.id === id);
+    if(!p) return;
+    prepPintar(p);
+    abrirSheet('prep-sheet');
+  }
+
+  function prepPintar(p){
+    const ev = eventoPreparable(p);
+    const items = prepItems(p, ev);
+    const hechos = prepLeer(p.id);
+    const nHechos = items.filter(i => hechos.includes(i.k)).length;
+    const cuando = ev ? fechaAmigable(ev.fecha, ev.hora) + (ev.modalidad ? ' · ' + ev.modalidad : '') : '';
+    $id('prep-body').innerHTML =
+      `<div class="prep-fecha">${escapeHtml(p.cargo)} · ${escapeHtml(p.empresa)}${cuando ? '<br><span style="font-weight:600;">🗓️ ' + escapeHtml(cuando) + '</span>' : ''}</div>
+       <div class="prep-prog">${nHechos} de ${items.length} listo${nHechos === 1 ? '' : 's'}${nHechos === items.length ? ' 🎉 ¡Vas muy bien preparado/a!' : ''}</div>` +
+      items.map(i => `<div class="prep-item ${hechos.includes(i.k) ? 'hecho' : ''}" role="checkbox" aria-checked="${hechos.includes(i.k)}" tabindex="0" onclick="if(event.target.closest('a')) return; prepMarcar('${p.id}','${i.k}')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();prepMarcar('${p.id}','${i.k}')}"><span class="prep-box">${hechos.includes(i.k) ? '✓' : ''}</span><span><span class="prep-t">${i.t}</span><span class="prep-s">${i.s}</span></span></div>`).join('') +
+      `<div class="prep-links">
+        <a class="seg-sec" style="display:flex;min-height:48px;align-items:center;justify-content:center;border:1.5px solid var(--line);border-radius:14px;font-weight:700;color:var(--ink);text-decoration:none;" href="/entrevistas.html" target="_blank" rel="noopener">🎤 Practicar la entrevista con Workea</a>
+        <a class="seg-sec" style="display:flex;min-height:48px;align-items:center;justify-content:center;border:1.5px solid var(--line);border-radius:14px;font-weight:700;color:var(--ink);text-decoration:none;" href="https://tupartnerlaboral.cl/#agenda" target="_blank" rel="noopener">👩‍💼 Prepararla con una asesoría personalizada</a>
+        <button type="button" class="seg-sec" style="min-height:48px;border:1.5px solid var(--line);border-radius:14px;background:#fff;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;" onclick="cerrarSheet('prep-sheet'); abrirSeguimiento('${p.id}')">✉️ Después: escribir mensaje de agradecimiento</button>
+      </div>`;
+  }
+
+  function prepMarcar(id, k){
+    const p = postulaciones.find(x => x.id === id);
+    if(!p) return;
+    let arr = prepLeer(id);
+    arr = arr.includes(k) ? arr.filter(x => x !== k) : arr.concat(k);
+    prepGuardar(id, arr);
+    const scroll = document.querySelector('#prep-sheet .sheet').scrollTop;
+    prepPintar(p);
+    document.querySelector('#prep-sheet .sheet').scrollTop = scroll;
+  }
+
+  // Escritorio: igual que siempre. Celular: Inicio, Progreso y barra inferior.
+  function aplicarModo(){
+    const m = esMovil();
+    document.body.classList.toggle('m-app', m);
+    const prog = $id('progress-top'), lista = $id('view-list');
+    if(m){ prog.appendChild($id('insight-card')); prog.appendChild($id('kpi-row')); }
+    else { lista.insertBefore($id('kpi-row'), lista.firstChild); lista.insertBefore($id('insight-card'), lista.firstChild); }
+  }
+  const vistaPorDefecto = () => (esMovil() ? 'home' : 'list');
+  const cambioDeModo = () => { aplicarModo(); if(fichaActivaId) return; goToView(VISTAS.includes(vistaActual) && (esMovil() || (vistaActual !== 'home' && vistaActual !== 'progress')) ? vistaActual : vistaPorDefecto()); };
+  if(mqMovil.addEventListener) mqMovil.addEventListener('change', cambioDeModo);
+  aplicarModo();
+
   init();
 </script>
 
+<script>
+/* App instalable: aviso de instalación y navegación dentro de la app */
+(function(){
+  var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  // Ya instalada: los enlaces a Sueldo se abren dentro de la misma app, no en otra pestaña
+  if(standalone){
+    document.addEventListener('click', function(e){
+      var a = e.target.closest && e.target.closest('a[href^="/sueldo.html"]');
+      if(a){ e.preventDefault(); location.href = a.getAttribute('href'); }
+    });
+    return;
+  }
+  var KEY = 'wk_install_cerrado';
+  try{ if(localStorage.getItem(KEY) === '1') return; }catch(e){}
+  var banner = document.getElementById('install-banner');
+  var txt = document.getElementById('install-text');
+  var btn = document.getElementById('install-btn');
+  var cerrar = document.getElementById('install-close');
+  var evento = null;
+  function mostrar(){ banner.hidden = false; }
+  var esIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault(); evento = e;
+    txt.textContent = 'Instala Workea en tu celular: tu Bitácora y la calculadora de sueldo a un toque, como una app.';
+    btn.hidden = false; mostrar();
+  });
+  if(esIOS){
+    txt.textContent = 'Para instalar Workea en tu iPhone: toca el botón Compartir de Safari y elige «Agregar a pantalla de inicio».';
+    mostrar();
+  }
+  btn.addEventListener('click', function(){
+    if(!evento) return;
+    evento.prompt();
+    evento.userChoice.then(function(){ evento = null; banner.hidden = true; });
+  });
+  cerrar.addEventListener('click', function(){
+    banner.hidden = true;
+    try{ localStorage.setItem(KEY, '1'); }catch(e){}
+  });
+  window.addEventListener('appinstalled', function(){ banner.hidden = true; });
+})();
+</script>
+<script>
+if('serviceWorker' in navigator){ window.addEventListener('load', function(){ navigator.serviceWorker.register('/sw.js').catch(function(){}); }); }
+</script>
 </body>
 </html>
