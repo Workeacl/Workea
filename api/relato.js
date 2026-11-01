@@ -46,8 +46,25 @@ async function verificarLimiteGratis(ip) {
   }
 }
 
+const SITUACIONES_POR_CODIGO = 3;
+
+// Si el relato no se pudo generar, se devuelve la situación al código para
+// que la persona no pierda lo que pagó.
+async function liberarCodigoRelato(codigoLimpio) {
+  try {
+    if (!codigoLimpio || codigoLimpio.toUpperCase() === 'WORKEA2026') return;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!serviceKey) return;
+    await fetch(`${SUPABASE_URL}/rest/v1/rpc/devolver_codigo_relato`, {
+      method: 'POST',
+      headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: codigoLimpio })
+    });
+  } catch (e) { console.error('No se pudo devolver la situación del código de Relato:', e); }
+}
+
 async function validarCodigoRelato(codigoLimpio) {
-  if (codigoLimpio.toUpperCase() === 'WORKEA2026') return { ok: true };
+  if (codigoLimpio.toUpperCase() === 'WORKEA2026') return { ok: true, restantes: 2 };
 
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!serviceKey) {
@@ -66,21 +83,20 @@ async function validarCodigoRelato(codigoLimpio) {
     return { ok: false, status: 401, error: 'Este código no corresponde a Workea Relato' };
   }
   if (fila.estado === 'usado') {
-    return { ok: false, status: 401, error: 'Este código ya fue utilizado. Cada código sirve para un relato.' };
+    return { ok: false, status: 401, error: 'Este código ya usó sus 3 situaciones.' };
   }
 
-  const patchUrl = `${SUPABASE_URL}/rest/v1/codigos?codigo=eq.${encodeURIComponent(codigoLimpio)}&estado=eq.libre`;
-  const patchRes = await fetch(patchUrl, {
-    method: 'PATCH',
-    headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-    body: JSON.stringify({ estado: 'usado' })
+  const rpc = await fetch(`${SUPABASE_URL}/rest/v1/rpc/usar_codigo_relato`, {
+    method: 'POST',
+    headers: { ...headers, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_codigo: codigoLimpio, p_max: SITUACIONES_POR_CODIGO })
   });
-  if (!patchRes.ok) return { ok: false, status: 502, error: 'No se pudo activar el código. Intenta de nuevo.' };
-  const actualizadas = await patchRes.json().catch(() => []);
-  if (!Array.isArray(actualizadas) || actualizadas.length === 0) {
-    return { ok: false, status: 401, error: 'Este código ya fue utilizado. Cada código sirve para un relato.' };
+  if (!rpc.ok) return { ok: false, status: 502, error: 'No se pudo activar el código. Intenta de nuevo.' };
+  const usos = await rpc.json().catch(() => null);
+  if (typeof usos !== 'number') {
+    return { ok: false, status: 401, error: 'Este código ya usó sus 3 situaciones.' };
   }
-  return { ok: true };
+  return { ok: true, restantes: Math.max(SITUACIONES_POR_CODIGO - usos, 0) };
 }
 
 // Base metodológica común a ambos niveles. Define el criterio de
@@ -120,6 +136,7 @@ module.exports = async (req, res) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'Falta ANTHROPIC_API_KEY' });
 
+  let codigoReclamado = null;
   try {
     const { accion, datos, codigo } = req.body || {};
     const contexto = construirContexto(datos);
@@ -194,6 +211,8 @@ Responde en JSON puro:
       }
       const validacion = await validarCodigoRelato(codigoLimpio.toUpperCase());
       if (!validacion.ok) return res.status(validacion.status).json({ error: validacion.error });
+      codigoReclamado = codigoLimpio.toUpperCase();
+      const restantes = validacion.restantes;
 
       const prompt = `${SISTEMA}
 
@@ -242,9 +261,11 @@ Genera entre 5 y 7 preguntas difíciles, solo las que apliquen de verdad a este 
       const data = await r.json();
       if (!r.ok) {
         console.error('Anthropic error:', JSON.stringify(data).substring(0, 300));
+        await liberarCodigoRelato(codigoReclamado);
         return res.status(502).json({ error: 'No pudimos generar tu relato en este momento. Intenta de nuevo en un rato.' });
       }
       if (data?.stop_reason === 'max_tokens') {
+        await liberarCodigoRelato(codigoReclamado);
         return res.status(502).json({ error: 'El relato quedó incompleto — intenta de nuevo' });
       }
 
@@ -257,15 +278,18 @@ Genera entre 5 y 7 preguntas difíciles, solo las que apliquen de verdad a este 
         if (match) { try { resultado = JSON.parse(match[0]); } catch (e2) {} }
         if (!resultado) {
           console.error('No se pudo parsear el relato:', texto.substring(0, 300));
+          await liberarCodigoRelato(codigoReclamado);
           return res.status(502).json({ error: 'No se pudo interpretar la respuesta. Intenta de nuevo.' });
         }
       }
+      resultado.situaciones_restantes = restantes;
       return res.status(200).json(resultado);
     }
 
     return res.status(400).json({ error: 'Acción desconocida' });
   } catch (err) {
     console.error('relato error:', err);
+    await liberarCodigoRelato(codigoReclamado);
     return res.status(500).json({ error: 'Error interno: ' + (err.message || 'desconocido') });
   }
 };
