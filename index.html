@@ -427,9 +427,10 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <a href="/workea-cv-planes.html">Workea CV</a>
       <a href="/career.html">Career</a>
       <a href="/bitacora.html">Bitácora</a>
+      <a href="/relato.html">Relato</a>
       <a href="/sueldo.html">Sueldo</a>
       <a href="/cuenta.html">Mi cuenta</a>
-      <button class="btn btn-primary" onclick="startApp()">Analizar una oferta</button>
+      <button class="btn btn-primary" onclick="startEsencial()">Analizar gratis</button>
     </div>
   </nav>
 
@@ -439,8 +440,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <h1>Postula con <em>estrategia</em>.</h1>
       <p class="sub">Workea te ayuda a entender las ofertas, potenciar tu CV, encontrar oportunidades que realmente encajen contigo y tomar mejores decisiones para tu carrera.</p>
       <div class="hero-ctas">
-        <a class="btn btn-primary" href="/workea-cv-planes.html">Empezar con mi CV →</a>
-        <button class="btn btn-ghost" onclick="startApp()">Analizar una oferta</button>
+        <button class="btn btn-primary" onclick="startEsencial()">Analizar mi oferta gratis →</button>
+        <a class="btn btn-ghost" href="/workea-cv-planes.html">Mejorar mi CV</a>
       </div>
     </div>
     <div class="demo-card" aria-label="Ejemplo de análisis Workea">
@@ -528,12 +529,12 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <span style="margin-top:1rem;font-weight:700;font-size:.88rem;color:#fff">Desde $2.990 →</span>
       </a>
 
-      <a href="#" onclick="startApp();return false" class="step-card" style="text-decoration:none;color:inherit;display:flex;flex-direction:column">
+      <a href="#" onclick="startEsencial();return false" class="step-card" style="text-decoration:none;color:inherit;display:flex;flex-direction:column">
         <span style="display:inline-flex;align-self:flex-start;background:var(--green-bg);color:var(--green);font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.3rem .8rem;border-radius:999px;margin-bottom:1rem">Empieza aquí · gratis</span>
         <div class="step-icon">🎯</div>
         <h3>Workea Match</h3>
         <p style="flex:1">¿Vale la pena postular? Analiza la oferta, cruza sus exigencias con tu experiencia y te muestra qué tan buena oportunidad es para ti, qué debes ajustar y qué brechas debes considerar antes de enviar tu CV.</p>
-        <span style="margin-top:1rem;font-weight:700;font-size:.88rem;color:var(--brand-strong)">Gratis para empezar →</span>
+        <span style="margin-top:1rem;font-weight:700;font-size:.88rem;color:var(--brand-strong)">Tu primer Informe Esencial es gratis →</span>
       </a>
     </div>
 
@@ -651,10 +652,10 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
   <section class="section" id="planes" style="padding-top:0;text-align:center">
     <div class="section-head" style="margin:0 auto">
-      <h2>¿Quieres ver los niveles de análisis de Workea Match?</h2>
-      <p>Desde el Informe Esencial gratis hasta el plan de acción priorizado del Informe Match.</p>
+      <h2>¿Quieres ver los niveles de análisis de Workea?</h2>
+      <p>Desde el Informe Esencial, que es gratis, hasta el Informe Match con plan de acción priorizado.</p>
     </div>
-    <a class="btn btn-primary" href="/match-planes.html">Ver planes de Workea Match →</a>
+    <a class="btn btn-primary" href="/match-planes.html">Ver todos los informes →</a>
   </section>
 
   <section class="section" style="padding-top:0">
@@ -670,7 +671,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   <section class="final-cta" style="background:var(--navy);border-radius:28px;margin:0 1.5rem;color:#fff">
     <h2 style="color:#fff">Postula con estrategia.</h2>
     <p style="color:#9fabd4;max-width:32rem;margin:0 auto 1.6rem">Empieza gratis, sin tarjeta de crédito ni compromiso.</p>
-    <button class="btn btn-brand" onclick="startApp()">Comenzar gratis →</button>
+    <button class="btn btn-brand" onclick="startEsencial()">Comenzar gratis →</button>
     <p style="margin-top:1.1rem"><a href="#ecosistema" style="color:#9fabd4;font-size:.85rem;text-decoration:underline">Ver todos los productos de Workea ↑</a></p>
     <div class="kw-legend" style="justify-content:center;margin-top:1.6rem;color:#c9d6ef">
       <span style="color:#c9d6ef">✓ Sin tarjeta de crédito</span>
@@ -1596,6 +1597,13 @@ function printResults(){
 
 /* ================= MODO ANÁLISIS REAL (IA) ================= */
 let realMode = false, accessCode = '', offerPayload = null, modoPlan = 'completo';
+let REAL_STRIP_ORIG = null;
+function mostrarCodigo(){
+  const st = document.getElementById('realStrip');
+  if(REAL_STRIP_ORIG) st.innerHTML = REAL_STRIP_ORIG;
+  realMode = false; modoPlan = 'completo'; accessCode = '';
+  const ci = document.getElementById('codigoInput'); if(ci) ci.focus();
+}
 
 function activarCodigo(){
   const v = document.getElementById('codigoInput').value.trim();
@@ -1624,8 +1632,10 @@ function startEsencial(){
   }
   realMode = true; modoPlan = 'esencial'; accessCode = '';
   startApp(); showScreen('scr-input',0);
-  document.getElementById('realStrip').innerHTML =
-    '<p><b>🩵 Informe Esencial gratis activado.</b> Pega el texto de tu oferta, sube su PDF o una captura — y luego tu CV. Recibirás tu orientación al instante (1 informe gratis por semana).</p>';
+  const _st = document.getElementById('realStrip');
+  if(REAL_STRIP_ORIG === null) REAL_STRIP_ORIG = _st.innerHTML;
+  _st.innerHTML =
+    '<p><b>🩵 Informe Esencial gratis activado.</b> Pega el texto de tu oferta, sube su PDF o una captura — y luego tu CV. Recibirás tu orientación al instante (1 informe gratis por semana). <a href="#" class="btn-link" onclick="mostrarCodigo();return false">¿Ya tienes un código de acceso?</a></p>';
   document.querySelector('[data-tab="link"]').classList.add('hidden');
   setTab('text');
 }
