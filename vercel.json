@@ -12,6 +12,9 @@
     "api/profile.js": {
       "maxDuration": 60
     },
+    "api/relato.js": {
+      "maxDuration": 90
+    },
     "api/career.js": {
       "maxDuration": 300
     },
