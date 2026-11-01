@@ -48,4 +48,12 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://workea.cl/terminos.html</loc>
+    <lastmod>2026-10-31</lastmod>
+  </url>
+  <url>
+    <loc>https://workea.cl/privacidad.html</loc>
+    <lastmod>2026-10-31</lastmod>
+  </url>
 </urlset>
