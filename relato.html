@@ -128,6 +128,10 @@ a{color:inherit;text-decoration:none}
 .central p{font-size:1.02rem;font-weight:600;line-height:1.5}
 
 /* bloqueo / upsell */
+.tag{display:inline-block;font-size:.64rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:.15rem .55rem;border-radius:999px;margin-left:.45rem;vertical-align:middle}
+.tag.free{background:#e3f6ec;color:#0f7a45}
+.tag.paid{background:var(--brand-tint);color:var(--brand-strong)}
+.plan-gratis{margin-top:1rem}
 .lock-card{background:var(--navy);border-radius:18px;padding:2rem 1.8rem;text-align:center;box-shadow:var(--shadow-lg);margin-top:1.4rem}
 .lock-card .ic{font-size:1.8rem;margin-bottom:.7rem}
 .lock-card h3{color:#fff;font-size:1.15rem;margin-bottom:.6rem}
@@ -202,14 +206,31 @@ a{color:inherit;text-decoration:none}
     </div>
 
     <div class="incluye">
-      <div class="inc"><b>👀 Cómo podría leerse</b><p>Qué dudas podrían surgirle a quien revise tu trayectoria, dichas sin dramatizar.</p></div>
-      <div class="inc"><b>💬 Tu relato en 3 versiones</b><p>Breve, para entrevista y ampliada. Habladas, no textos de IA.</p></div>
-      <div class="inc"><b>🎤 Preguntas difíciles</b><p>Las que podrían hacerte según tu caso, y cómo encararlas sin ponerte a la defensiva.</p></div>
-      <div class="inc"><b>🔒 Qué no explicar</b><p>Dónde está el límite entre dar contexto y contar de más.</p></div>
+      <div class="inc"><b>👀 Cómo podría leerse <span class="tag free">Gratis</span></b><p>Qué dudas podrían surgirle a quien revise tu trayectoria, dichas sin dramatizar.</p></div>
+      <div class="inc"><b>💬 Tu relato en 3 versiones <span class="tag paid">Completo</span></b><p>Breve, para entrevista y ampliada. Habladas, no textos de IA. La versión breve es gratis.</p></div>
+      <div class="inc"><b>🎤 Preguntas difíciles <span class="tag paid">Completo</span></b><p>Las que podrían hacerte según tu caso, y cómo encararlas sin ponerte a la defensiva.</p></div>
+      <div class="inc"><b>🔒 Qué no explicar <span class="tag paid">Completo</span></b><p>Dónde está el límite entre dar contexto y contar de más.</p></div>
     </div>
 
-    <button class="btn btn-brand btn-block" style="font-size:1rem;padding:.95rem" onclick="irScreen('scr-situacion')">Empezar — la vista previa es gratis →</button>
-    <p style="text-align:center;font-size:.8rem;color:var(--faint);margin-top:.8rem">Sin registro. Toma unos 3 minutos.</p>
+    <div class="lock-card" style="margin-top:1.6rem">
+      <h3>Relato completo</h3>
+      <p>Todo lo que necesitas para llegar tranquila o tranquilo a la entrevista.</p>
+      <div class="lock-list">
+        <div>💬 <span>Las tres versiones de tu relato: breve, para entrevista y ampliada</span></div>
+        <div>🎤 <span>Las preguntas difíciles de tu caso, con qué transmitir y qué evitar en cada una</span></div>
+        <div>🔒 <span>Qué no necesitas explicar, y cómo poner el límite con naturalidad</span></div>
+        <div>✦ <span>Tu mensaje central y qué practicar antes de la entrevista</span></div>
+        <div>🔁 <span>Hasta 3 situaciones con un mismo código</span></div>
+      </div>
+      <div class="lock-precio">$2.990</div>
+      <p class="lock-sub">Pago único · recibes tu código por correo y el resultado al instante</p>
+      <button class="btn btn-brand btn-block" style="font-size:1rem;padding:.95rem" onclick="comprarRelato(this)">Obtener mi relato completo →</button>
+    </div>
+
+    <div class="plan-gratis">
+      <button class="btn btn-ghost btn-block" style="font-size:.95rem;padding:.85rem" onclick="irScreen('scr-situacion')">O prueba primero la vista previa gratis →</button>
+      <p style="text-align:center;font-size:.8rem;color:var(--faint);margin-top:.7rem">Sin registro. Toma unos 3 minutos. Incluye cómo podría leerse tu trayectoria y la versión breve de tu relato.</p>
+    </div>
 
     <div style="text-align:center;margin-top:1.2rem">
       <button class="btn btn-ghost" style="font-size:.85rem" onclick="irScreen('scr-acceso')">¿Ya tienes un código? Actívalo aquí</button>
