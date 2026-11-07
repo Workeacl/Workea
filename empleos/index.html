@@ -34,12 +34,13 @@
     --radius:14px;
   }
   *{box-sizing:border-box}
+  [hidden]{display:none!important}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:16px;line-height:1.45}
   a{color:inherit}
   .wrap{max-width:980px;margin:0 auto;padding:0 18px}
   .hero{background:var(--ink);color:#fff;position:relative;overflow:hidden}
   .hero::after{content:"";position:absolute;inset:auto -10% -60% 40%;height:120%;background:radial-gradient(closest-side,rgba(123,92,240,.45),transparent),radial-gradient(closest-side at 30% 40%,rgba(43,224,248,.25),transparent);pointer-events:none}
-  header{padding:40px 18px 40px;position:relative;z-index:1}
+  .hero header{padding:40px 18px 52px;position:relative;z-index:1}
   .brandrow{display:flex;align-items:center;gap:10px;font-family:"Plus Jakarta Sans",Inter,sans-serif;font-weight:800;font-size:19px;letter-spacing:-.01em}
   .brandrow small{font-family:Inter,sans-serif;font-weight:500;font-size:12px;color:#9fb0d0;margin-left:2px}
   .brandrow .pill{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -128,7 +129,7 @@
 <main class="wrap">
   <div class="meta">
     <span id="count">Cargando ofertas…</span>
-    <button class="btn" id="btnResumen" type="button" title="Arma un mensaje listo para pegar en tu canal">📋 Copiar resumen para WhatsApp</button>
+    <button class="btn" id="btnResumen" type="button" hidden title="Arma un mensaje listo para pegar en tu canal">📋 Copiar resumen para WhatsApp</button>
   </div>
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty" hidden>No hay ofertas con esos filtros. Prueba con otra categoría.</div>
@@ -290,6 +291,7 @@ function renderGrid(){
   const list=filtered();
   $("count").textContent = `${list.length} oferta${list.length===1?"":"s"} ${state.cat||state.contrato||state.region||state.q?"con estos filtros":"publicadas"}`;
   $("empty").hidden = list.length>0;
+  $("empty").textContent = DATA.length ? "No hay ofertas con esos filtros. Prueba con otra categoría." : "Estamos cargando nuevas ofertas. Vuelve pronto o únete al canal de WhatsApp para enterarte primero.";
   $("grid").innerHTML=list.map(o=>{
     const c=catInfo(o.categoria), isNew=(Date.now()-new Date(o.fecha))<24*3600e3;
     const lugar=[o.comuna,o.region].filter(Boolean).join(", ");
@@ -343,6 +345,9 @@ $("dlgCopy").addEventListener("click",async()=>{
 (function init(){
   if(WHATSAPP_CANAL && WHATSAPP_CANAL!=="https://whatsapp.com/channel/") $("ctaCanal").href=WHATSAPP_CANAL; else $("ctaCanal").removeAttribute("target");
   $("ctaTPL").href=TPL_URL;
+  // Botón de resumen: solo visible para ti, entrando a workea.cl/empleos#admin
+  const showAdmin=()=>{ $("btnResumen").hidden = location.hash!=="#admin"; };
+  showAdmin(); window.addEventListener("hashchange",showAdmin);
   if(FORM_EMPRESAS) $("ctaEmpresas").href=FORM_EMPRESAS; else $("ctaEmpresas").hidden=true;
   const finish=rows=>{
     const limite=Date.now()-DIAS_VIGENCIA*864e5;
