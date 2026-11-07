@@ -1,1 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workea Empleos · Ofertas laborales en Chile</title>
+<meta name="description" content="Workea Empleos: ofertas reales de empresas en Chile, reunidas para ti. Prácticas, operativos, profesionales, plazo fijo, temporada y más. Analízalas antes de postular.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  // 1) TUS ofertas: link CSV de la hoja de respuestas de tu formulario
+  //    (Archivo → Compartir → Publicar en la web → CSV). Se publican al tiro.
+  //    Si lo dejas vacío, la página muestra ofertas de EJEMPLO.
+  //    ⚠️ La hoja queda pública: el formulario NO debe pedir correos ni datos personales.
+  const CSV_URL = "";
+  // 1b) Ofertas que envían EMPRESAS (otra hoja). Solo se publican las filas
+  //     donde tú escribes "sí" en la columna "Aprobada". Déjalo "" si aún no lo usas.
+  const CSV_EMPRESAS_URL = "";
+  // 2) Link de tu canal de WhatsApp
+  const WHATSAPP_CANAL = "https://whatsapp.com/channel/";
+  // 3) Link del formulario para que EMPRESAS envíen ofertas (opcional; déjalo "" para ocultar)
+  const FORM_EMPRESAS = "";
+  // 4) ¿Cuántos días se muestra una oferta antes de ocultarse sola?
+  const DIAS_VIGENCIA = 30;
+  // 5) Link a Workea (botón "Analizar" de cada oferta) y a Tu Partner Laboral (bloque final)
+  const WORKEA_URL = "https://workea.cl/?utm_source=empleos";
+  const TPL_URL = "https://tupartnerlaboral.cl";
+</script>
+<style>
+  :root{
+    --bg:#f4f7fb; --card:#ffffff; --ink:#0a1430; --muted:#5a6684; --line:#e1e7f0;
+    --brand:#1999f1; --brand-ink:#ffffff; --brand-soft:#e6f3fe; --accent:#7b5cf0;
+    --grad:linear-gradient(100deg,#2be0f8 0%,#1999f1 50%,#7b5cf0 100%);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:16px;line-height:1.45}
+  a{color:inherit}
+  .wrap{max-width:980px;margin:0 auto;padding:0 18px}
+  .hero{background:var(--ink);color:#fff;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset:auto -10% -60% 40%;height:120%;background:radial-gradient(closest-side,rgba(123,92,240,.45),transparent),radial-gradient(closest-side at 30% 40%,rgba(43,224,248,.25),transparent);pointer-events:none}
+  header{padding:40px 18px 40px;position:relative;z-index:1}
+  .brandrow{display:flex;align-items:center;gap:10px;font-family:"Plus Jakarta Sans",Inter,sans-serif;font-weight:800;font-size:19px;letter-spacing:-.01em}
+  .brandrow small{font-family:Inter,sans-serif;font-weight:500;font-size:12px;color:#9fb0d0;margin-left:2px}
+  .brandrow .pill{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  h1{font-family:"Plus Jakarta Sans",Inter,sans-serif;font-weight:800;font-size:clamp(30px,5.6vw,48px);line-height:1.06;margin:22px 0 12px;letter-spacing:-.02em;max-width:720px}
+  h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .lead{color:#c4cfe6}
+  .hero .btn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#fff}
+  .hero .btn.primary{background:var(--grad);border:none}
+  .lead{color:var(--muted);max-width:560px;margin:0 0 18px}
+  .ctas{display:flex;flex-wrap:wrap;gap:10px}
+  .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);padding:10px 14px;border-radius:999px;font-weight:600;font-size:14px;text-decoration:none;cursor:pointer;font-family:inherit;color:var(--ink)}
+  .btn.primary{background:var(--grad);color:#fff;border-color:transparent}
+  .btn:hover{filter:brightness(.97)}
+  .demo{margin:18px 0 0;background:rgba(255,255,255,.08);border:1px dashed rgba(255,255,255,.35);color:#dfe7f7;padding:10px 14px;border-radius:10px;font-size:14px}
 
+  .controls{position:sticky;top:0;z-index:5;background:var(--bg);padding:14px 0 10px;border-bottom:1px solid var(--line)}
+  .search{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font:inherit;background:var(--card)}
+  .search:focus{outline:2px solid var(--brand);outline-offset:1px}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 12px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--ink);white-space:nowrap}
+  .chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .chip .n{opacity:.6;margin-left:4px;font-size:12px}
+  .row2{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  select{font:inherit;font-size:14px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+
+  main{padding:16px 0 50px}
+  .meta{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-size:14px;margin-bottom:10px;flex-wrap:wrap}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:8px}
+  .tags{display:flex;gap:6px;flex-wrap:wrap}
+  .tag{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--brand-soft);color:var(--brand)}
+  .tag.alt{background:#efeafd;color:#5a3fcf}
+  .tag.new{background:#dcfbfe;color:#067a8a}
+  .card h3{margin:2px 0 0;font-size:17px;line-height:1.25}
+  .company{color:var(--muted);font-size:14px}
+  .card .foot{margin-top:auto;display:flex;gap:8px;align-items:center;justify-content:space-between;padding-top:6px}
+  .ago{font-size:12px;color:var(--muted)}
+  .actions{display:flex;gap:6px}
+  .apply{background:var(--ink);color:#fff;text-decoration:none;padding:8px 12px;border-radius:9px;font-weight:600;font-size:14px}
+  .share{border:1px solid var(--line);text-decoration:none;padding:8px 10px;border-radius:9px;font-size:14px}
+  .analyze{display:block;text-align:center;font-size:13px;font-weight:600;text-decoration:none;padding:8px;border-radius:9px;background:var(--brand-soft);color:#0b6fbf;margin-top:2px}
+  .analyze:hover{filter:brightness(.97)}
+  .tpl{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin:30px 0 0;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .tpl h2{margin:0 0 4px;font-family:"Plus Jakarta Sans",Inter,sans-serif;font-size:19px}
+  .tpl p{margin:0;color:var(--muted);font-size:14px;max-width:520px}
+  .empty{padding:40px 0;text-align:center;color:var(--muted)}
+  footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);font-size:13px}
+  .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  /* Panel para copiar el resumen al canal */
+  dialog{border:none;border-radius:16px;max-width:520px;width:92%;padding:20px}
+  dialog::backdrop{background:rgba(0,0,0,.35)}
+  dialog textarea{width:100%;height:260px;font:13px/1.4 ui-monospace,monospace;border:1px solid var(--line);border-radius:10px;padding:10px}
+  dialog h2{margin:0 0 6px;font-size:18px}
+  dialog p{margin:0 0 10px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div class="hero"><header class="wrap">
+  <div class="brandrow">
+    <svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2be0f8"/><stop offset=".5" stop-color="#1999f1"/><stop offset="1" stop-color="#7b5cf0"/></linearGradient></defs><path d="M5 10 L12 30 L20 14 L26 26 L35 7" fill="none" stroke="url(#wg)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Workea <span class="pill">Empleos</span></span><small>· No postules a ciegas</small>
+  </div>
+  <h1>Ofertas reales de empresas en Chile, <em>reunidas para ti</em>.</h1>
+  <p class="lead">Prácticas, cargos operativos, profesionales, plazo fijo, temporada y más. Filtra por lo que buscas, analiza la oferta con Workea y postula directo en el sitio de la empresa.</p>
+  <div class="ctas">
+    <a class="btn primary" id="ctaCanal" href="#" target="_blank" rel="noopener">Únete al canal de WhatsApp</a>
+    <a class="btn" id="ctaEmpresas" href="#" target="_blank" rel="noopener">¿Eres empresa? Publica gratis</a>
+  </div>
+  <div class="demo" id="demoNote" hidden>Vista previa con <strong>ofertas de ejemplo</strong> (empresas ficticias). Cuando conectes tu Google Sheet, aquí aparecerán tus ofertas reales.</div>
+</header></div>
+
+<div class="controls">
+  <div class="wrap">
+    <input class="search" id="q" type="search" placeholder="Buscar cargo, empresa o comuna…" aria-label="Buscar">
+    <div class="chips" id="chips" role="group" aria-label="Filtrar por tipo de oferta"></div>
+    <div class="row2">
+      <select id="fContrato" aria-label="Jornada o contrato"><option value="">Toda jornada / contrato</option></select>
+      <select id="fModalidad" aria-label="Modalidad"><option value="">Presencial, híbrido o remoto</option></select>
+      <select id="fRegion" aria-label="Región"><option value="">Todas las regiones</option></select>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="meta">
+    <span id="count">Cargando ofertas…</span>
+    <button class="btn" id="btnResumen" type="button" title="Arma un mensaje listo para pegar en tu canal">📋 Copiar resumen para WhatsApp</button>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>No hay ofertas con esos filtros. Prueba con otra categoría.</div>
+  <section class="tpl">
+    <div><h2>¿Quieres ayuda personalizada en tu búsqueda?</h2>
+    <p>Asesorías de empleabilidad con una psicóloga laboral: CV, entrevistas y estrategia de búsqueda, con Tu Partner Laboral.</p></div>
+    <a class="btn primary" id="ctaTPL" href="#" target="_blank" rel="noopener">Conocer asesorías</a>
+  </section>
+</main>
+
+<footer class="wrap">
+  Las ofertas son publicadas por las empresas en sus propios sitios. Workea Empleos solo las reúne, no es parte de los procesos de selección: postula siempre en el link oficial y <strong>nunca pagues por postular</strong>.
+</footer>
+
+<dialog id="dlg">
+  <h2>Resumen para tu canal</h2>
+  <p>Ofertas de las últimas 24 horas con los filtros actuales. Cópialo y pégalo en WhatsApp.</p>
+  <textarea id="resumenTxt" readonly></textarea>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+    <button class="btn" type="button" id="dlgClose">Cerrar</button>
+    <button class="btn primary" type="button" id="dlgCopy">Copiar</button>
+  </div>
+</dialog>
+<div class="toast" id="toast"></div>
+
+<script>
+// ---------------- Categorías (orden en que aparecen) ----------------
+const CATEGORIAS = [
+  {id:"Prácticas profesionales", emoji:"🎓"},
+  {id:"Operativos",              emoji:"📦"},
+  {id:"Técnicos",                emoji:"🔧"},
+  {id:"Administrativos",         emoji:"🗂️"},
+  {id:"Profesionales",           emoji:"💼"},
+  {id:"Atención al cliente / Ventas", emoji:"🛍️"},
+  {id:"Salud",                   emoji:"🩺"},
+  {id:"Tecnología",              emoji:"💻"},
+];
+const CONTRATOS = ["Indefinido","Plazo fijo","Temporada","Part-time","Fines de semana","Reemplazo","Freelance / Honorarios"];
+const MODALIDADES = ["Presencial","Híbrido","Remoto"];
+
+// ---------------- Datos de ejemplo (solo si no hay CSV_URL) ----------------
+function demoData(){
+  const h = n => new Date(Date.now()-n*3600e3).toISOString();
+  return [
+    {titulo:"Operario/a de bodega turno noche",empresa:"Logística Ejemplo SpA",link:"https://example.com",categoria:"Operativos",contrato:"Plazo fijo",modalidad:"Presencial",region:"Metropolitana",comuna:"Pudahuel",fecha:h(2)},
+    {titulo:"Práctica profesional Psicología Organizacional",empresa:"Consultora Ficticia",link:"https://example.com",categoria:"Prácticas profesionales",contrato:"",region:"Metropolitana",comuna:"Providencia",fecha:h(5)},
+    {titulo:"Reponedor/a fines de semana",empresa:"Supermercado Demo",link:"https://example.com",categoria:"Operativos",contrato:"Fines de semana",region:"Valparaíso",comuna:"Viña del Mar",fecha:h(8)},
+    {titulo:"Ingeniero/a de procesos",empresa:"Industrias Modelo",link:"https://example.com",categoria:"Profesionales",contrato:"Indefinido",region:"Biobío",comuna:"Concepción",fecha:h(20)},
+    {titulo:"Temporero/a packing de cerezas",empresa:"Agrícola Ejemplo",link:"https://example.com",categoria:"Operativos",contrato:"Temporada",region:"O'Higgins",comuna:"Rancagua",fecha:h(26)},
+    {titulo:"Asistente administrativo/a",empresa:"Servicios Demo Ltda.",link:"https://example.com",categoria:"Administrativos",contrato:"Reemplazo",region:"Metropolitana",comuna:"Santiago",fecha:h(30)},
+    {titulo:"Vendedor/a part-time retail",empresa:"Tienda Ficticia",link:"https://example.com",categoria:"Atención al cliente / Ventas",contrato:"Part-time",region:"Metropolitana",comuna:"Las Condes",fecha:h(40)},
+    {titulo:"Técnico/a en mantención eléctrica",empresa:"Energía Ejemplo",link:"https://example.com",categoria:"Técnicos",contrato:"Plazo fijo",region:"Antofagasta",comuna:"Antofagasta",fecha:h(52)},
+    {titulo:"TENS turno rotativo",empresa:"Clínica Demo",link:"https://example.com",categoria:"Salud",contrato:"Indefinido",region:"Metropolitana",comuna:"Ñuñoa",fecha:h(60)},
+    {titulo:"Práctica desarrollo web",empresa:"Startup Ficticia",link:"https://example.com",categoria:"Prácticas profesionales",contrato:"",region:"Metropolitana",comuna:"",modalidad:"Remoto",fecha:h(70)},
+    {titulo:"Analista de datos junior",empresa:"Retail Modelo",link:"https://example.com",categoria:"Tecnología",contrato:"Indefinido",modalidad:"Híbrido",region:"Metropolitana",comuna:"Huechuraba",fecha:h(90)},
+    {titulo:"Guía turístico/a temporada verano",empresa:"Turismo Ejemplo",link:"https://example.com",categoria:"Atención al cliente / Ventas",contrato:"Temporada",region:"Los Lagos",comuna:"Puerto Varas",fecha:h(100)},
+  ];
+}
+
+// ---------------- Lectura del CSV de Google Sheets ----------------
+function parseCSV(text){
+  const rows=[]; let row=[], cur="", q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=c; }
+    else if(c==='"') q=true;
+    else if(c===','){ row.push(cur); cur=""; }
+    else if(c==='\n'||c==='\r'){ if(c==='\r'&&text[i+1]==='\n') i++; row.push(cur); rows.push(row); row=[]; cur=""; }
+    else cur+=c;
+  }
+  if(cur!==""||row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(r=>r.some(x=>x.trim()!==""));
+}
+const norm = s => (s||"").toString().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").trim();
+// Reconoce las columnas por palabras clave, así no importa cómo las nombres exactamente en el formulario
+const COLS = {
+  fecha:["marca temporal","timestamp","fecha"],
+  titulo:["titulo","cargo","puesto"],
+  empresa:["empresa"],
+  link:["link","enlace","url","postular"],
+  categoria:["categoria","tipo de oferta","area"],
+  contrato:["contrato","jornada"],
+  modalidad:["modalidad","presencial","remoto"],
+  aprobada:["aprobada","aprobado"],
+  region:["region"],
+  comuna:["comuna","ciudad"],
+  oculta:["ocultar","oculta","cerrada"],
+};
+function hostName(u){ try{ return new URL(safeLink(u)).hostname.replace(/^www\./,""); }catch{ return ""; } }
+function mapRows(rows, needsApproval){
+  if(!rows.length) return [];
+  const head = rows[0].map(norm);
+  const idx = {};
+  for(const [k,keys] of Object.entries(COLS)) idx[k]=head.findIndex(h=>keys.some(key=>h.includes(key)));
+  return rows.slice(1).map(r=>{
+    const o={}; for(const k in idx) o[k]= idx[k]>=0 ? (r[idx[k]]||"").trim() : "";
+    o.fecha = parseFecha(o.fecha);
+    // Solo el link es obligatorio: si falta título o empresa, se completa solo
+    if(!o.titulo) o.titulo = "Oferta: " + (catInfo(o.categoria).id || "ver detalle");
+    if(!o.empresa) o.empresa = hostName(o.link) || "Ver en el link";
+    return o;
+  }).filter(o=>o.link && !/^(si|sí|x|true)$/i.test(o.oculta)
+            && (!needsApproval || /^(si|sí|x|true|ok)$/i.test(o.aprobada)));
+}
+function parseFecha(s){
+  if(!s) return new Date().toISOString();
+  // Google Forms en Chile: "05/11/2026 21:15:03"
+  const m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
+  if(m){ const d=new Date(+m[3],+m[2]-1,+m[1],+(m[4]||0),+(m[5]||0),+(m[6]||0)); return d.toISOString(); }
+  const d=new Date(s); return isNaN(d)?new Date().toISOString():d.toISOString();
+}
+
+// ---------------- Estado y render ----------------
+let DATA=[], state={cat:"",contrato:"",modalidad:"",region:"",q:""};
+const $=id=>document.getElementById(id);
+
+function catInfo(name){ return CATEGORIAS.find(c=>norm(c.id)===norm(name)) || {id:name||"Otras",emoji:"📌"}; }
+function agoText(iso){
+  const h=(Date.now()-new Date(iso))/3600e3;
+  if(h<1) return "Hace minutos"; if(h<24) return `Hace ${Math.floor(h)} h`;
+  const d=Math.floor(h/24); return d===1?"Ayer":`Hace ${d} días`;
+}
+function esc(s){ return (s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function safeLink(u){ return /^https?:\/\//i.test(u)?u:"https://"+u.replace(/^\/+/,""); }
+
+function filtered(){
+  const q=norm(state.q);
+  return DATA.filter(o=>
+    (!state.cat || norm(catInfo(o.categoria).id)===norm(state.cat)) &&
+    (!state.contrato || norm(o.contrato).includes(norm(state.contrato))) &&
+    (!state.region || norm(o.region)===norm(state.region)) &&
+    (!state.modalidad || norm(o.modalidad).includes(norm(state.modalidad))) &&
+    (!q || norm([o.titulo,o.empresa,o.comuna,o.region,o.categoria].join(" ")).includes(q))
+  );
+}
+
+function renderChips(){
+  const counts={}; DATA.forEach(o=>{const k=catInfo(o.categoria).id; counts[k]=(counts[k]||0)+1;});
+  const extra=Object.keys(counts).filter(k=>!CATEGORIAS.some(c=>c.id===k)).map(k=>({id:k,emoji:"📌"}));
+  const list=[{id:"",emoji:"✨",label:"Todas"},...CATEGORIAS,...extra];
+  $("chips").innerHTML=list.map(c=>{
+    const n=c.id?(counts[c.id]||0):DATA.length;
+    if(c.id && !n) return "";
+    return `<button class="chip" type="button" data-cat="${esc(c.id)}" aria-pressed="${state.cat===c.id}">${c.emoji} ${esc(c.label||c.id)}<span class="n">${n}</span></button>`;
+  }).join("");
+}
+function renderSelects(){
+  const regs=[...new Set(DATA.map(o=>o.region).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
+  $("fRegion").innerHTML=`<option value="">Todas las regiones</option>`+regs.map(r=>`<option>${esc(r)}</option>`).join("");
+  const present=new Set(DATA.flatMap(o=>o.contrato.split(/,\s*/)).filter(Boolean));
+  const cons=[...CONTRATOS.filter(c=>present.has(c)),...[...present].filter(c=>!CONTRATOS.includes(c))];
+  $("fContrato").innerHTML=`<option value="">Toda jornada / contrato</option>`+cons.map(c=>`<option>${esc(c)}</option>`).join("");
+  $("fModalidad").innerHTML=`<option value="">Presencial, híbrido o remoto</option>`+MODALIDADES.map(c=>`<option>${esc(c)}</option>`).join("");
+}
+function shareText(o){
+  return `${catInfo(o.categoria).emoji} *${o.titulo}*\n🏢 ${o.empresa}${o.comuna||o.region?`\n📍 ${[o.comuna,o.region].filter(Boolean).join(", ")}`:""}${o.contrato?`\n🕒 ${o.contrato}`:""}${o.modalidad?` · ${o.modalidad}`:""}\n👉 ${safeLink(o.link)}`;
+}
+function renderGrid(){
+  const list=filtered();
+  $("count").textContent = `${list.length} oferta${list.length===1?"":"s"} ${state.cat||state.contrato||state.region||state.q?"con estos filtros":"publicadas"}`;
+  $("empty").hidden = list.length>0;
+  $("grid").innerHTML=list.map(o=>{
+    const c=catInfo(o.categoria), isNew=(Date.now()-new Date(o.fecha))<24*3600e3;
+    const lugar=[o.comuna,o.region].filter(Boolean).join(", ");
+    return `<article class="card">
+      <div class="tags">${isNew?`<span class="tag new">Nueva</span>`:""}<span class="tag">${c.emoji} ${esc(c.id)}</span>${o.contrato?`<span class="tag alt">${esc(o.contrato)}</span>`:""}${o.modalidad?`<span class="tag alt">${esc(o.modalidad)}</span>`:""}</div>
+      <h3>${esc(o.titulo)}</h3>
+      <div class="company">${esc(o.empresa)}${lugar?` · ${esc(lugar)}`:""}</div>
+      <div class="foot"><span class="ago">${agoText(o.fecha)}</span>
+        <div class="actions">
+          <a class="share" href="https://wa.me/?text=${encodeURIComponent(shareText(o)+"\n\nMás ofertas en Workea Empleos: "+location.href.split("#")[0])}" target="_blank" rel="noopener" title="Compartir por WhatsApp">↗︎</a>
+          <a class="apply" href="${esc(safeLink(o.link))}" target="_blank" rel="noopener">Postular</a>
+        </div></div>
+      <a class="analyze" href="${esc(WORKEA_URL)}" target="_blank" rel="noopener">🔍 Analízala con Workea antes de postular</a>
+    </article>`;
+  }).join("");
+}
+function render(){ renderChips(); renderGrid(); }
+
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1800); }
+
+function buildResumen(){
+  let list=filtered().filter(o=>(Date.now()-new Date(o.fecha))<24*3600e3);
+  if(!list.length) list=filtered().slice(0,8);
+  const byCat={}; list.forEach(o=>{const k=catInfo(o.categoria).id;(byCat[k]=byCat[k]||[]).push(o);});
+  let txt=`🔔 *Nuevas ofertas de hoy* (${list.length})\n`;
+  for(const c of CATEGORIAS.map(c=>c.id).concat(Object.keys(byCat))){
+    if(!byCat[c]) continue;
+    txt+=`\n${catInfo(c).emoji} *${c.toUpperCase()}*\n`;
+    byCat[c].forEach(o=>{ txt+=`• ${o.titulo} – ${o.empresa}${o.comuna?` (${o.comuna})`:""}\n  ${safeLink(o.link)}\n`; });
+    delete byCat[c];
+  }
+  txt+=`\n👀 Todas las ofertas en *Workea Empleos*: ${location.href.split("#")[0]}\n🔍 Analízalas antes de postular con Workea\n🤝 Comparte con quien esté buscando trabajo`;
+  return txt;
+}
+
+// ---------------- Eventos ----------------
+$("chips").addEventListener("click",e=>{const b=e.target.closest(".chip"); if(!b) return; state.cat=b.dataset.cat; render();});
+$("fContrato").addEventListener("change",e=>{state.contrato=e.target.value; renderGrid();});
+$("fRegion").addEventListener("change",e=>{state.region=e.target.value; renderGrid();});
+$("fModalidad").addEventListener("change",e=>{state.modalidad=e.target.value; renderGrid();});
+$("q").addEventListener("input",e=>{state.q=e.target.value; renderGrid();});
+$("btnResumen").addEventListener("click",()=>{ $("resumenTxt").value=buildResumen(); $("dlg").showModal(); });
+$("dlgClose").addEventListener("click",()=>$("dlg").close());
+$("dlgCopy").addEventListener("click",async()=>{
+  const ta=$("resumenTxt");
+  try{ await navigator.clipboard.writeText(ta.value); toast("Copiado ✔︎ Pégalo en tu canal"); }
+  catch{ ta.select(); toast("Selecciona el texto y cópialo"); }
+});
+
+// ---------------- Inicio ----------------
+(function init(){
+  if(WHATSAPP_CANAL && WHATSAPP_CANAL!=="https://whatsapp.com/channel/") $("ctaCanal").href=WHATSAPP_CANAL; else $("ctaCanal").removeAttribute("target");
+  $("ctaTPL").href=TPL_URL;
+  if(FORM_EMPRESAS) $("ctaEmpresas").href=FORM_EMPRESAS; else $("ctaEmpresas").hidden=true;
+  const finish=rows=>{
+    const limite=Date.now()-DIAS_VIGENCIA*864e5;
+    DATA=rows.filter(o=>new Date(o.fecha)>=limite).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+    renderSelects(); render();
+  };
+  if(!CSV_URL && !CSV_EMPRESAS_URL){ $("demoNote").hidden=false; finish(demoData()); return; }
+  const timer=setTimeout(()=>{$("count").textContent="Está tardando en cargar… recarga la página en un momento.";},10000);
+  const load=(url,needsApproval)=> !url ? Promise.resolve([]) :
+    fetch(url+(url.includes("?")?"&":"?")+"t="+Date.now())
+      .then(r=>{ if(!r.ok) throw 0; return r.text(); })
+      .then(t=>mapRows(parseCSV(t),needsApproval))
+      .catch(()=>null);
+  Promise.all([load(CSV_URL,false),load(CSV_EMPRESAS_URL,true)]).then(([a,b])=>{
+    clearTimeout(timer);
+    if(a===null && b===null){ $("count").textContent="No pudimos cargar las ofertas. Intenta de nuevo en unos minutos."; return; }
+    finish([...(a||[]),...(b||[])]);
+  });
+})();
+</script>
+</body>
+</html>
