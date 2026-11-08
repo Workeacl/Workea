@@ -56,4 +56,10 @@
     <loc>https://workea.cl/privacidad.html</loc>
     <lastmod>2026-10-31</lastmod>
   </url>
+  <url>
+    <loc>https://workea.cl/empleos</loc>
+    <lastmod>2026-11-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
 </urlset>
