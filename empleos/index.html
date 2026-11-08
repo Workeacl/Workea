@@ -23,7 +23,7 @@
   // 4) ¿Cuántos días se muestra una oferta antes de ocultarse sola?
   const DIAS_VIGENCIA = 30;
   // 5) Link a Workea (botón "Analizar" de cada oferta) y a Tu Partner Laboral (bloque final)
-  const WORKEA_URL = "https://workea.cl/?utm_source=empleos";
+  const WORKEA_URL = "https://workea.cl/";
   const TPL_URL = "https://tupartnerlaboral.cl/";
   // 6) Registro de clics (URL de la aplicación web de Apps Script). "" = no registra.
   const CLICS_URL = "https://script.google.com/macros/s/AKfycbyTvc1_ZIxTSgrDInFiftgFr6GAFWQmD6GVbe0xeN_Qtw5kHDz9bLtu07EU4oMKzECc/exec";
@@ -308,7 +308,7 @@ function renderGrid(){
           <a class="share" data-k="compartir" data-i="${i}" href="https://wa.me/?text=${encodeURIComponent(shareText(o)+"\n\nMás ofertas en Workea Empleos: "+location.href.split("#")[0])}" target="_blank" rel="noopener" title="Compartir por WhatsApp">↗︎</a>
           <a class="apply" data-k="postular" data-i="${i}" href="${esc(safeLink(o.link))}" target="_blank" rel="noopener">Postular</a>
         </div></div>
-      <a class="analyze" data-k="analizar" data-i="${i}" href="${esc(WORKEA_URL)}" target="_blank" rel="noopener">🔍 Analízala con Workea antes de postular</a>
+      <a class="analyze" data-k="analizar" data-i="${i}" href="${esc(WORKEA_URL+"?oferta="+encodeURIComponent(safeLink(o.link))+"&utm_source=empleos")}" target="_blank" rel="noopener">🔍 Analízala con Workea antes de postular</a>
     </article>`;
   }).join("");
 }
