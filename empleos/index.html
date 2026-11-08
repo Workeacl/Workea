@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Workea Empleos · Ofertas laborales en Chile</title>
 <meta name="description" content="Workea Empleos: ofertas reales de empresas en Chile, reunidas para ti. Prácticas, operativos, profesionales, plazo fijo, temporada y más. Analízalas antes de postular.">
+<link rel="canonical" href="https://workea.cl/empleos">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Workea">
+<meta property="og:title" content="Workea Empleos · Ofertas reales en Chile, reunidas para ti">
+<meta property="og:description" content="Prácticas, operativos, profesionales, part-time, temporada y remoto. Filtra por lo que buscas y analiza cada oferta gratis antes de postular.">
+<meta property="og:url" content="https://workea.cl/empleos">
+<meta property="og:image" content="https://workea.cl/empleos/og-empleos.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="es_CL">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://workea.cl/empleos/og-empleos.jpg">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script>
@@ -195,18 +209,18 @@ const MODALIDADES = ["Presencial","Híbrido","Remoto"];
 function demoData(){
   const h = n => new Date(Date.now()-n*3600e3).toISOString();
   return [
-    {titulo:"Operario/a de bodega turno noche",empresa:"Logística Ejemplo SpA",link:"https://example.com",categoria:"Operativos",contrato:"Plazo fijo",modalidad:"Presencial",region:"Metropolitana",comuna:"Pudahuel",fecha:h(2)},
-    {titulo:"Práctica profesional Psicología Organizacional",empresa:"Consultora Ficticia",link:"https://example.com",categoria:"Prácticas profesionales",contrato:"",region:"Metropolitana",comuna:"Providencia",fecha:h(5)},
-    {titulo:"Reponedor/a fines de semana",empresa:"Supermercado Demo",link:"https://example.com",categoria:"Operativos",contrato:"Fines de semana",region:"Valparaíso",comuna:"Viña del Mar",fecha:h(8)},
-    {titulo:"Ingeniero/a de procesos",empresa:"Industrias Modelo",link:"https://example.com",categoria:"Profesionales",contrato:"Indefinido",region:"Biobío",comuna:"Concepción",fecha:h(20)},
-    {titulo:"Temporero/a packing de cerezas",empresa:"Agrícola Ejemplo",link:"https://example.com",categoria:"Operativos",contrato:"Temporada",region:"O'Higgins",comuna:"Rancagua",fecha:h(26)},
-    {titulo:"Asistente administrativo/a",empresa:"Servicios Demo Ltda.",link:"https://example.com",categoria:"Administrativos",contrato:"Reemplazo",region:"Metropolitana",comuna:"Santiago",fecha:h(30)},
-    {titulo:"Vendedor/a part-time retail",empresa:"Tienda Ficticia",link:"https://example.com",categoria:"Atención al cliente / Ventas",contrato:"Part-time",region:"Metropolitana",comuna:"Las Condes",fecha:h(40)},
-    {titulo:"Técnico/a en mantención eléctrica",empresa:"Energía Ejemplo",link:"https://example.com",categoria:"Técnicos",contrato:"Plazo fijo",region:"Antofagasta",comuna:"Antofagasta",fecha:h(52)},
-    {titulo:"TENS turno rotativo",empresa:"Clínica Demo",link:"https://example.com",categoria:"Salud",contrato:"Indefinido",region:"Metropolitana",comuna:"Ñuñoa",fecha:h(60)},
-    {titulo:"Práctica desarrollo web",empresa:"Startup Ficticia",link:"https://example.com",categoria:"Prácticas profesionales",contrato:"",region:"Metropolitana",comuna:"",modalidad:"Remoto",fecha:h(70)},
-    {titulo:"Analista de datos junior",empresa:"Retail Modelo",link:"https://example.com",categoria:"Tecnología",contrato:"Indefinido",modalidad:"Híbrido",region:"Metropolitana",comuna:"Huechuraba",fecha:h(90)},
-    {titulo:"Guía turístico/a temporada verano",empresa:"Turismo Ejemplo",link:"https://example.com",categoria:"Atención al cliente / Ventas",contrato:"Temporada",region:"Los Lagos",comuna:"Puerto Varas",fecha:h(100)},
+    {titulo:"Operario/a de bodega turno noche",empresa:"Logística Ejemplo SpA",link:"https://example.com/oferta-1",categoria:"Operativos",contrato:"Plazo fijo",modalidad:"Presencial",region:"Metropolitana",comuna:"Pudahuel",fecha:h(2)},
+    {titulo:"Práctica profesional Psicología Organizacional",empresa:"Consultora Ficticia",link:"https://example.com/oferta-2",categoria:"Prácticas profesionales",contrato:"",region:"Metropolitana",comuna:"Providencia",fecha:h(5)},
+    {titulo:"Reponedor/a fines de semana",empresa:"Supermercado Demo",link:"https://example.com/oferta-3",categoria:"Operativos",contrato:"Fines de semana",region:"Valparaíso",comuna:"Viña del Mar",fecha:h(8)},
+    {titulo:"Ingeniero/a de procesos",empresa:"Industrias Modelo",link:"https://example.com/oferta-4",categoria:"Profesionales",contrato:"Indefinido",region:"Biobío",comuna:"Concepción",fecha:h(20)},
+    {titulo:"Temporero/a packing de cerezas",empresa:"Agrícola Ejemplo",link:"https://example.com/oferta-5",categoria:"Operativos",contrato:"Temporada",region:"O'Higgins",comuna:"Rancagua",fecha:h(26)},
+    {titulo:"Asistente administrativo/a",empresa:"Servicios Demo Ltda.",link:"https://example.com/oferta-6",categoria:"Administrativos",contrato:"Reemplazo",region:"Metropolitana",comuna:"Santiago",fecha:h(30)},
+    {titulo:"Vendedor/a part-time retail",empresa:"Tienda Ficticia",link:"https://example.com/oferta-7",categoria:"Atención al cliente / Ventas",contrato:"Part-time",region:"Metropolitana",comuna:"Las Condes",fecha:h(40)},
+    {titulo:"Técnico/a en mantención eléctrica",empresa:"Energía Ejemplo",link:"https://example.com/oferta-8",categoria:"Técnicos",contrato:"Plazo fijo",region:"Antofagasta",comuna:"Antofagasta",fecha:h(52)},
+    {titulo:"TENS turno rotativo",empresa:"Clínica Demo",link:"https://example.com/oferta-9",categoria:"Salud",contrato:"Indefinido",region:"Metropolitana",comuna:"Ñuñoa",fecha:h(60)},
+    {titulo:"Práctica desarrollo web",empresa:"Startup Ficticia",link:"https://example.com/oferta-10",categoria:"Prácticas profesionales",contrato:"",region:"Metropolitana",comuna:"",modalidad:"Remoto",fecha:h(70)},
+    {titulo:"Analista de datos junior",empresa:"Retail Modelo",link:"https://example.com/oferta-11",categoria:"Tecnología",contrato:"Indefinido",modalidad:"Híbrido",region:"Metropolitana",comuna:"Huechuraba",fecha:h(90)},
+    {titulo:"Guía turístico/a temporada verano",empresa:"Turismo Ejemplo",link:"https://example.com/oferta-12",categoria:"Atención al cliente / Ventas",contrato:"Temporada",region:"Los Lagos",comuna:"Puerto Varas",fecha:h(100)},
   ];
 }
 
@@ -475,7 +489,14 @@ $("dlgCopy").addEventListener("click",async()=>{
   if(FORM_EMPRESAS) $("ctaEmpresas").href=FORM_EMPRESAS; else $("ctaEmpresas").hidden=true;
   const finish=rows=>{
     const limite=Date.now()-DIAS_VIGENCIA*864e5;
-    DATA=rows.filter(o=>new Date(o.fecha)>=limite).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+    // Sin duplicados: si el mismo link se cargó dos veces, queda solo la versión más nueva
+    const clave=u=>{ try{ const x=new URL(safeLink(u));
+      [...x.searchParams.keys()].forEach(k=>{ if(/^(utm_|ref|trk|tracking|fbclid|gclid|refid|origin|source)/i.test(k)) x.searchParams.delete(k); });
+      x.searchParams.sort();
+      return (x.hostname.replace(/^www\./,"")+x.pathname.replace(/\/+$/,"")+(x.search||"")).toLowerCase(); }catch{ return (u||"").toLowerCase().trim(); } };
+    const vistos=new Set();
+    DATA=rows.filter(o=>new Date(o.fecha)>=limite).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha))
+      .filter(o=>{ const k=clave(o.link); if(vistos.has(k)) return false; vistos.add(k); return true; });
     renderSelects(); render();
   };
   if(!CSV_URL && !CSV_EMPRESAS_URL){ $("demoNote").hidden=false; finish(demoData()); return; }
