@@ -7,6 +7,10 @@
 const SUPABASE_URL = 'https://pqelcrlxarendwearcwl.supabase.co';
 
 module.exports = async (req, res) => {
+  // /api/leer-oferta llega aquí (ver "rewrites" en vercel.json) para no sumar
+  // una función más al límite del plan gratuito de Vercel.
+  if (req.query && req.query.url) return require('./_leer-oferta')(req, res);
+
   // Si defines CRON_SECRET en Vercel, solo Vercel puede llamar a este endpoint.
   const secreto = process.env.CRON_SECRET;
   if (secreto && req.headers.authorization !== `Bearer ${secreto}`) {

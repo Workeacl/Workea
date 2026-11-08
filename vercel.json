@@ -54,5 +54,11 @@
       "path": "/api/keepalive",
       "schedule": "0 12 * * *"
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/leer-oferta",
+      "destination": "/api/keepalive"
+    }
   ]
 }
