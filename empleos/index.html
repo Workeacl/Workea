@@ -132,7 +132,10 @@
 <main class="wrap">
   <div class="meta">
     <span id="count">Cargando ofertas…</span>
-    <button class="btn" id="btnResumen" type="button" hidden title="Arma un mensaje listo para pegar en tu canal">📋 Copiar resumen para WhatsApp</button>
+    <span style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="btnImagen" type="button" hidden title="Imagen lista para Instagram, historias o TikTok">🖼️ Imagen del día</button>
+      <button class="btn" id="btnResumen" type="button" hidden title="Arma un mensaje listo para pegar en tu canal">📋 Copiar resumen para WhatsApp</button>
+    </span>
   </div>
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty" hidden>No hay ofertas con esos filtros. Prueba con otra categoría.</div>
@@ -154,6 +157,21 @@
   <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
     <button class="btn" type="button" id="dlgClose">Cerrar</button>
     <button class="btn primary" type="button" id="dlgCopy">Copiar</button>
+  </div>
+</dialog>
+<dialog id="dlgImg" style="max-width:640px">
+  <h2>Imagen del día</h2>
+  <p>Elige diseño y formato, revisa la vista previa y descárgala.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+    <select id="imgDiseno" aria-label="Diseño"><option value="resumen">Diseño: Resumen</option><option value="destacadas">Diseño: Destacadas</option></select>
+    <select id="imgFormato" aria-label="Formato"><option value="cuadrado">Cuadrado · post</option><option value="vertical">Vertical · historia / TikTok</option></select>
+  </div>
+  <div style="background:#eef2f8;border-radius:12px;padding:12px;display:flex;justify-content:center">
+    <canvas id="imgCanvas" style="max-width:100%;max-height:52vh;border-radius:10px"></canvas>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+    <button class="btn" type="button" id="imgClose">Cerrar</button>
+    <button class="btn primary" type="button" id="imgDown">⬇︎ Descargar imagen</button>
   </div>
 </dialog>
 <div class="toast" id="toast"></div>
@@ -345,6 +363,94 @@ $("grid").addEventListener("click",e=>{
   const o=LAST[+a.dataset.i]; if(o) registrarClic(a.dataset.k,o);
 });
 
+// ---------------- Imagen del día (canvas) ----------------
+function ofertasDelDia(){
+  let list=DATA.filter(o=>(Date.now()-new Date(o.fecha))<24*3600e3), reciente=false;
+  if(!list.length){ list=DATA.slice(0,10); reciente=true; }
+  return {list,reciente};
+}
+function rr(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function grad(ctx,x0,y0,x1,y1){ const g=ctx.createLinearGradient(x0,y0,x1,y1); g.addColorStop(0,"#2be0f8"); g.addColorStop(.5,"#1999f1"); g.addColorStop(1,"#7b5cf0"); return g; }
+function ajustarTexto(ctx,txt,maxW){ if(ctx.measureText(txt).width<=maxW) return txt; while(txt.length>3 && ctx.measureText(txt+"…").width>maxW) txt=txt.slice(0,-1); return txt.trim()+"…"; }
+function lineas(ctx,txt,maxW,max){ const w=txt.split(/\s+/), out=[]; let l=""; for(const p of w){ const t=l?l+" "+p:p; if(ctx.measureText(t).width>maxW && l){ out.push(l); l=p; } else l=t; } if(l) out.push(l); if(out.length>max){ out.length=max; out[max-1]=ajustarTexto(ctx,out[max-1]+"…",maxW); } return out; }
+const F_T='"Plus Jakarta Sans", Inter, system-ui, sans-serif', F_B='Inter, system-ui, sans-serif';
+
+function dibujarImagen(){
+  const cv=$("imgCanvas"), ctx=cv.getContext("2d");
+  const W=1080, H=$("imgFormato").value==="vertical"?1920:1080, V=H>W;
+  cv.width=W; cv.height=H;
+  // fondo navy + brillos
+  ctx.fillStyle="#0a1430"; ctx.fillRect(0,0,W,H);
+  const glow=(x,y,r,c)=>{ const g=ctx.createRadialGradient(x,y,0,x,y,r); g.addColorStop(0,c); g.addColorStop(1,"rgba(10,20,48,0)"); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); };
+  glow(W*.95,H*.08,W*.65,"rgba(123,92,240,.38)"); glow(W*.05,H*.95,W*.6,"rgba(43,224,248,.18)");
+  const M=V?96:80; let y=V?170:84;
+  // logo W en degradé
+  ctx.save(); ctx.translate(M,y-34); const s=1.9; ctx.scale(s,s);
+  ctx.strokeStyle=grad(ctx,0,0,40,40); ctx.lineWidth=4.4; ctx.lineCap="round"; ctx.lineJoin="round";
+  ctx.beginPath(); ctx.moveTo(5,10); ctx.lineTo(12,30); ctx.lineTo(20,14); ctx.lineTo(26,26); ctx.lineTo(35,7); ctx.stroke(); ctx.restore();
+  ctx.textBaseline="alphabetic"; ctx.font=`800 44px ${F_T}`; ctx.fillStyle="#fff";
+  ctx.fillText("Workea",M+92,y+12); const wW=ctx.measureText("Workea ").width;
+  ctx.fillStyle=grad(ctx,M+92+wW,0,M+92+wW+220,0); ctx.fillText("Empleos",M+92+wW,y+12);
+  const fecha=new Date().toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"});
+  ctx.font=`500 28px ${F_B}`; ctx.fillStyle="#9fb0d0"; ctx.textAlign="right"; ctx.fillText(fecha,W-M,y+8); ctx.textAlign="left";
+
+  const {list,reciente}=ofertasDelDia();
+  y+= V?240:120;
+  if($("imgDiseno").value==="resumen"){
+    ctx.font=`500 ${V?46:34}px ${F_B}`; ctx.fillStyle="#c4cfe6"; ctx.fillText(reciente?"Ofertas recientes":"Ofertas nuevas hoy",M,y);
+    y+= V?260:160; ctx.font=`800 ${V?260:180}px ${F_T}`; ctx.fillStyle=grad(ctx,M,0,M+420,0); ctx.fillText(String(list.length),M,y);
+    const nW=ctx.measureText(String(list.length)).width; ctx.font=`600 ${V?50:38}px ${F_B}`; ctx.fillStyle="#fff"; ctx.fillText("ofertas reales",M+nW+24,y-14);
+    const counts={}; list.forEach(o=>{const k=catInfo(o.categoria).id; counts[k]=(counts[k]||0)+1;});
+    const filas=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,V?7:5);
+    y+= V?120:62; const rowH=V?110:76;
+    filas.forEach(([cat,n],i)=>{
+      const cy=y+i*rowH;
+      ctx.fillStyle=grad(ctx,M,cy,M+18,cy+18); ctx.beginPath(); ctx.arc(M+10,cy-12,9,0,7); ctx.fill();
+      ctx.font=`500 ${V?44:34}px ${F_B}`; ctx.fillStyle="#fff"; ctx.fillText(ajustarTexto(ctx,cat,W-2*M-140),M+38,cy);
+      ctx.textAlign="right"; ctx.font=`700 ${V?48:36}px ${F_T}`; ctx.fillText(String(n),W-M,cy); ctx.textAlign="left";
+      if(i<filas.length-1){ ctx.fillStyle="rgba(255,255,255,.12)"; ctx.fillRect(M,cy+rowH*.42,W-2*M,2); }
+    });
+  } else {
+    ctx.font=`500 ${V?46:34}px ${F_B}`; ctx.fillStyle="#c4cfe6"; ctx.fillText(reciente?"Destacadas recientes":"Destacadas de hoy",M,y);
+    y+= V?60:36; const top=list.slice(0,3), cardH=V?300:172, gap=V?36:18;
+    top.forEach((o,i)=>{
+      const cy=y+i*(cardH+gap);
+      rr(ctx,M,cy,W-2*M,cardH,28); ctx.fillStyle="rgba(255,255,255,.07)"; ctx.fill(); ctx.strokeStyle="rgba(255,255,255,.14)"; ctx.lineWidth=2; ctx.stroke();
+      const cat=catInfo(o.categoria).id; ctx.font=`600 ${V?26:22}px ${F_B}`; const tw=ctx.measureText(cat).width+36;
+      rr(ctx,M+30,cy+(V?34:24),tw,V?50:40,20); ctx.fillStyle=grad(ctx,M+30,0,M+30+tw,0); ctx.fill();
+      ctx.fillStyle="#fff"; ctx.fillText(cat,M+48,cy+(V?68:51));
+      ctx.font=`700 ${V?46:34}px ${F_T}`; const ls=lineas(ctx,o.titulo,W-2*M-60,V?2:1);
+      ls.forEach((l,j)=>ctx.fillText(l,M+30,cy+(V?146:106)+j*56));
+      ctx.font=`500 ${V?32:25}px ${F_B}`; ctx.fillStyle="#9fb0d0";
+      ctx.fillText(ajustarTexto(ctx,[o.empresa,o.comuna||o.region].filter(Boolean).join(" · "),W-2*M-60),M+30,cy+cardH-(V?40:26));
+    });
+    const resto=list.length-top.length;
+    if(resto>0){ ctx.font=`600 ${V?38:32}px ${F_B}`; ctx.fillStyle="#fff"; ctx.fillText(`+ ${resto} oferta${resto===1?"":"s"} más`,M,y+top.length*(cardH+gap)+(V?44:28)); }
+    if(!top.length){ ctx.font=`500 36px ${F_B}`; ctx.fillStyle="#fff"; ctx.fillText("Aún no hay ofertas cargadas.",M,y+60); }
+  }
+  // CTA
+  const ch=V?112:96, cyb=H-M-ch;
+  rr(ctx,M,cyb,W-2*M,ch,ch/2); ctx.fillStyle=grad(ctx,M,0,W-M,0); ctx.fill();
+  ctx.font=`700 ${V?42:36}px ${F_T}`; ctx.fillStyle="#fff"; ctx.textAlign="center";
+  ctx.fillText("Míralas en workea.cl/empleos",W/2,cyb+ch/2+(V?15:13)); ctx.textAlign="left";
+  if(V){ ctx.font=`500 32px ${F_B}`; ctx.fillStyle="#9fb0d0"; ctx.textAlign="center"; ctx.fillText("No postules a ciegas · analiza cada oferta gratis",W/2,cyb-40); ctx.textAlign="left"; }
+}
+async function abrirImagen(){
+  try{ await document.fonts.ready; await Promise.all([document.fonts.load(`800 40px "Plus Jakarta Sans"`),document.fonts.load(`500 30px Inter`)]); }catch(e){}
+  dibujarImagen(); $("dlgImg").showModal();
+}
+$("btnImagen").addEventListener("click",abrirImagen);
+$("imgDiseno").addEventListener("change",dibujarImagen);
+$("imgFormato").addEventListener("change",dibujarImagen);
+$("imgClose").addEventListener("click",()=>$("dlgImg").close());
+$("imgDown").addEventListener("click",()=>{
+  const a=document.createElement("a");
+  const d=new Date().toISOString().slice(0,10);
+  a.download=`workea-empleos-${d}-${$("imgDiseno").value}-${$("imgFormato").value}.png`;
+  a.href=$("imgCanvas").toDataURL("image/png"); document.body.appendChild(a); a.click(); a.remove();
+  toast("Imagen descargada ✔︎");
+});
+
 // ---------------- Eventos ----------------
 $("chips").addEventListener("click",e=>{const b=e.target.closest(".chip"); if(!b) return; state.cat=b.dataset.cat; render();});
 $("fContrato").addEventListener("change",e=>{state.contrato=e.target.value; renderGrid();});
@@ -364,7 +470,7 @@ $("dlgCopy").addEventListener("click",async()=>{
   if(WHATSAPP_CANAL && WHATSAPP_CANAL!=="https://whatsapp.com/channel/") $("ctaCanal").href=WHATSAPP_CANAL; else $("ctaCanal").removeAttribute("target");
   $("ctaTPL").href=TPL_URL;
   // Botón de resumen: solo visible para ti, entrando a workea.cl/empleos#admin
-  const showAdmin=()=>{ $("btnResumen").hidden = location.hash!=="#admin"; };
+  const showAdmin=()=>{ const a=location.hash!=="#admin"; $("btnResumen").hidden=a; $("btnImagen").hidden=a; };
   showAdmin(); window.addEventListener("hashchange",showAdmin);
   if(FORM_EMPRESAS) $("ctaEmpresas").href=FORM_EMPRESAS; else $("ctaEmpresas").hidden=true;
   const finish=rows=>{
