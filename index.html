@@ -1355,9 +1355,47 @@ function mockTab(tab, btn){
 document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   const go = params.get('go');
+  const ofertaLink = params.get('oferta');
+  if(ofertaLink){ cargarOfertaDesdeEmpleos(ofertaLink); return; }
   if(go === 'esencial'){ startEsencial(); }
   if(go === 'activar'){ irActivarCodigo(); }
 });
+
+/* ================= conexión con Workea Empleos (workea.cl/empleos) =================
+   El botón "Analízala con Workea" llega aquí con ?oferta=<link>. Se abre el
+   Informe Esencial y /api/leer-oferta deja el texto de la oferta ya pegado. */
+function cargarOfertaDesdeEmpleos(link){
+  if(!/^https?:\/\//i.test(link)) return startEsencial();
+  startEsencial();
+  setTab('text');
+  ['demoBanner','demoEjemploStrip'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+  const linkSeguro = link.replace(/"/g,'%22').replace(/</g,'%3C').replace(/>/g,'%3E');
+  const panel = document.getElementById('tab-text');
+  let aviso = document.getElementById('avisoEmpleos');
+  if(!aviso){
+    aviso = document.createElement('div');
+    aviso.id = 'avisoEmpleos';
+    aviso.className = 'demo-strip';
+    aviso.style.cssText = 'margin-bottom:.9rem;background:var(--brand-tint);border-color:var(--brand-tint-2)';
+    panel.insertBefore(aviso, panel.firstChild);
+  }
+  aviso.innerHTML = '<p>⏳ <b>Cargando la oferta que viste en Workea Empleos…</b></p>';
+  fetch('/api/leer-oferta?url=' + encodeURIComponent(link))
+    .then(r => r.json())
+    .then(d => {
+      if(d && d.ok && d.texto && d.texto.length > 40){
+        const ta = document.getElementById('offerText');
+        if(!ta.value.trim()) ta.value = d.texto;
+        validateInput();
+        aviso.innerHTML = d.completo
+          ? '<p>✅ <b>Listo, cargamos la oferta de Workea Empleos.</b> Revisa el texto y sigue al siguiente paso.</p>'
+          : '<p>✅ <b>Cargamos el texto de la oferta.</b> Revísalo y borra lo que no sea parte de la oferta (menús, avisos, etc.) antes de seguir. <a href="' + linkSeguro + '" target="_blank" rel="noopener">Ver la oferta original</a></p>';
+      } else { throw new Error('sin texto'); }
+    })
+    .catch(() => {
+      aviso.innerHTML = '<p>ℹ️ <b>Este portal no nos deja leer la oferta automáticamente.</b> <a href="' + linkSeguro + '" target="_blank" rel="noopener">Ábrela aquí</a>, copia su texto y pégalo abajo.</p>';
+    });
+}
 
 /* ================= navegación ================= */
 function startApp(){
