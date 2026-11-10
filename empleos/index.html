@@ -202,24 +202,24 @@ const CATEGORIAS = [
   {id:"Salud",                   emoji:"🩺"},
   {id:"Tecnología",              emoji:"💻"},
 ];
-const CONTRATOS = ["Indefinido","Plazo fijo","Temporada","Part-time","Fines de semana","Reemplazo","Freelance / Honorarios"];
+const CONTRATOS = ["Full time","Part-time o por horas","Temporada","Otro"];
 const MODALIDADES = ["Presencial","Híbrido","Remoto"];
 
 // ---------------- Datos de ejemplo (solo si no hay CSV_URL) ----------------
 function demoData(){
   const h = n => new Date(Date.now()-n*3600e3).toISOString();
   return [
-    {titulo:"Operario/a de bodega turno noche",empresa:"Logística Ejemplo SpA",link:"https://example.com/oferta-1",categoria:"Operativos",contrato:"Plazo fijo",modalidad:"Presencial",region:"Metropolitana",comuna:"Pudahuel",fecha:h(2)},
+    {titulo:"Operario/a de bodega turno noche",empresa:"Logística Ejemplo SpA",link:"https://example.com/oferta-1",categoria:"Operativos",contrato:"Full time",modalidad:"Presencial",region:"Metropolitana",comuna:"Pudahuel",fecha:h(2)},
     {titulo:"Práctica profesional Psicología Organizacional",empresa:"Consultora Ficticia",link:"https://example.com/oferta-2",categoria:"Prácticas profesionales",contrato:"",region:"Metropolitana",comuna:"Providencia",fecha:h(5)},
-    {titulo:"Reponedor/a fines de semana",empresa:"Supermercado Demo",link:"https://example.com/oferta-3",categoria:"Operativos",contrato:"Fines de semana",region:"Valparaíso",comuna:"Viña del Mar",fecha:h(8)},
-    {titulo:"Ingeniero/a de procesos",empresa:"Industrias Modelo",link:"https://example.com/oferta-4",categoria:"Profesionales",contrato:"Indefinido",region:"Biobío",comuna:"Concepción",fecha:h(20)},
+    {titulo:"Reponedor/a fines de semana",empresa:"Supermercado Demo",link:"https://example.com/oferta-3",categoria:"Operativos",contrato:"Part-time o por horas",region:"Valparaíso",comuna:"Viña del Mar",fecha:h(8)},
+    {titulo:"Ingeniero/a de procesos",empresa:"Industrias Modelo",link:"https://example.com/oferta-4",categoria:"Profesionales",contrato:"Full time",region:"Biobío",comuna:"Concepción",fecha:h(20)},
     {titulo:"Temporero/a packing de cerezas",empresa:"Agrícola Ejemplo",link:"https://example.com/oferta-5",categoria:"Operativos",contrato:"Temporada",region:"O'Higgins",comuna:"Rancagua",fecha:h(26)},
-    {titulo:"Asistente administrativo/a",empresa:"Servicios Demo Ltda.",link:"https://example.com/oferta-6",categoria:"Administrativos",contrato:"Reemplazo",region:"Metropolitana",comuna:"Santiago",fecha:h(30)},
-    {titulo:"Vendedor/a part-time retail",empresa:"Tienda Ficticia",link:"https://example.com/oferta-7",categoria:"Atención al cliente / Ventas",contrato:"Part-time",region:"Metropolitana",comuna:"Las Condes",fecha:h(40)},
-    {titulo:"Técnico/a en mantención eléctrica",empresa:"Energía Ejemplo",link:"https://example.com/oferta-8",categoria:"Técnicos",contrato:"Plazo fijo",region:"Antofagasta",comuna:"Antofagasta",fecha:h(52)},
-    {titulo:"TENS turno rotativo",empresa:"Clínica Demo",link:"https://example.com/oferta-9",categoria:"Salud",contrato:"Indefinido",region:"Metropolitana",comuna:"Ñuñoa",fecha:h(60)},
+    {titulo:"Asistente administrativo/a",empresa:"Servicios Demo Ltda.",link:"https://example.com/oferta-6",categoria:"Administrativos",contrato:"Otro",region:"Metropolitana",comuna:"Santiago",fecha:h(30)},
+    {titulo:"Vendedor/a part-time retail",empresa:"Tienda Ficticia",link:"https://example.com/oferta-7",categoria:"Atención al cliente / Ventas",contrato:"Part-time o por horas",region:"Metropolitana",comuna:"Las Condes",fecha:h(40)},
+    {titulo:"Técnico/a en mantención eléctrica",empresa:"Energía Ejemplo",link:"https://example.com/oferta-8",categoria:"Técnicos",contrato:"Full time",region:"Antofagasta",comuna:"Antofagasta",fecha:h(52)},
+    {titulo:"TENS turno rotativo",empresa:"Clínica Demo",link:"https://example.com/oferta-9",categoria:"Salud",contrato:"Full time",region:"Metropolitana",comuna:"Ñuñoa",fecha:h(60)},
     {titulo:"Práctica desarrollo web",empresa:"Startup Ficticia",link:"https://example.com/oferta-10",categoria:"Prácticas profesionales",contrato:"",region:"Metropolitana",comuna:"",modalidad:"Remoto",fecha:h(70)},
-    {titulo:"Analista de datos junior",empresa:"Retail Modelo",link:"https://example.com/oferta-11",categoria:"Tecnología",contrato:"Indefinido",modalidad:"Híbrido",region:"Metropolitana",comuna:"Huechuraba",fecha:h(90)},
+    {titulo:"Analista de datos junior",empresa:"Retail Modelo",link:"https://example.com/oferta-11",categoria:"Tecnología",contrato:"Full time",modalidad:"Híbrido",region:"Metropolitana",comuna:"Huechuraba",fecha:h(90)},
     {titulo:"Guía turístico/a temporada verano",empresa:"Turismo Ejemplo",link:"https://example.com/oferta-12",categoria:"Atención al cliente / Ventas",contrato:"Temporada",region:"Los Lagos",comuna:"Puerto Varas",fecha:h(100)},
   ];
 }
