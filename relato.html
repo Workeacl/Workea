@@ -395,7 +395,8 @@ function esc(s){ const d = document.createElement('div'); d.textContent = s || '
 function activarCodigo(){
   const v = document.getElementById('codigoInput').value.trim();
   const err = document.getElementById('codigoError');
-  const ok = v.toUpperCase() === 'WORKEA2026' || v.toUpperCase().startsWith('RL-');
+  const _u = v.toUpperCase();
+  const ok = _u.startsWith('RL-') || (v.length >= 6 && !['WK-','EXP-','WC-','RL-','PC-','CAR-'].some(p => _u.startsWith(p) && p !== 'RL-'));
   if(!ok){
     err.innerHTML = '<div class="error-box">⚠️ <span>Ese código no tiene el formato de Workea Relato. Si no lo recuerdas, escríbenos a hola@workea.cl.</span></div>';
     return;
@@ -635,7 +636,8 @@ async function comprarRelato(btn){
 
 function activarInline(){
   const v = document.getElementById('codigoInline').value.trim();
-  if(!(v.toUpperCase() === 'WORKEA2026' || v.toUpperCase().startsWith('RL-'))){
+  const _u2 = v.toUpperCase();
+  if(!(_u2.startsWith('RL-') || (v.length >= 6 && !['WK-','EXP-','WC-','RL-','PC-','CAR-'].some(p => _u2.startsWith(p))))){
     alert('Ese código no tiene el formato de Workea Relato.');
     return;
   }

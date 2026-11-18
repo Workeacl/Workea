@@ -490,9 +490,10 @@ function safeLink(u){
 
 function checkAccess(){
   const v=document.getElementById('accessInput').value.trim();
-  const esMaestro = v.toUpperCase()==='WORKEA2026';
-  const esCar = v.toUpperCase().startsWith('CAR-');
-  if(esMaestro || esCar){
+  const _u = v.toUpperCase();
+  const esCar = _u.startsWith('CAR-');
+  const otroProducto = ['WK-','EXP-','WC-','RL-','PC-','CAR-'].some(p => _u.startsWith(p));
+  if(esCar || (v.length >= 6 && !otroProducto)){
     codigoIngresado = v;
     showScreen('scr-input');
     document.getElementById('accessConfirm').innerHTML=

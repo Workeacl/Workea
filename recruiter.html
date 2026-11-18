@@ -417,7 +417,7 @@ a{color:inherit;text-decoration:none}
 if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 /* ===== CONFIG ===== */
-const REC_CODIGO = 'WORKEA2026'; // ← tu código maestro (o uno nuevo solo para Recruiter)
+let REC_CODIGO = ''; // el código lo valida el servidor; aquí solo se guarda lo que escribe la persona
 
 /* ===== ESTADO ===== */
 let tab = 'text', pais = '', fileData = null;
@@ -425,7 +425,8 @@ let tab = 'text', pais = '', fileData = null;
 /* ===== ACCESO ===== */
 function checkAccess(){
   const v = document.getElementById('accessInput').value.trim();
-  if(v === REC_CODIGO){
+  if(v.length >= 4){
+    REC_CODIGO = v;
     document.getElementById('scr-access').classList.add('hidden');
     showScreen('scr-input');
     // Mostrar confirmación de acceso en la pantalla de ingreso
