@@ -25,7 +25,7 @@ async function obtenerOrdenValida(ordenId) {
 
   // Código maestro para pruebas, igual criterio que el resto del sitio —
   // no consulta Supabase, entrega las 5 preguntas genéricas sin historias reales.
-  if (ordenId.toUpperCase() === 'WORKEA2026') {
+  if (esCodigoMaestro(ordenId)) {
     return { ok: true, orden: { banco_historias: [] } };
   }
 
@@ -140,7 +140,7 @@ Responde en JSON puro, sin texto adicional:
       // Guardamos esta práctica en el historial de la orden, para que la
       // persona pueda retomar otro día sin perder su progreso. Si ya había
       // practicado esta misma pregunta, se reemplaza por el intento nuevo.
-      if (String(orden_id).toUpperCase() !== 'WORKEA2026') {
+      if (!esCodigoMaestro(orden_id)) {
         const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
         if (serviceKey) {
           const headers = { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` };
@@ -168,3 +168,10 @@ Responde en JSON puro, sin texto adicional:
     return res.status(500).json({ error: 'Error interno: ' + (err.message || 'desconocido') });
   }
 };
+
+// Código maestro SOLO para pruebas internas. Se define en Vercel (variable
+// CODIGO_MAESTRO). Si la variable no existe, el código maestro queda desactivado.
+function esCodigoMaestro(c) {
+  const m = (process.env.CODIGO_MAESTRO || '').trim().toUpperCase();
+  return m !== '' && String(c || '').trim().toUpperCase() === m;
+}
