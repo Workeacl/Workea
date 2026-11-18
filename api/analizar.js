@@ -145,7 +145,7 @@ export default async function handler(req, res) {
     const codigoLimpio = (codigo || '').trim();
 
     // El código maestro sigue funcionando igual que antes, sin pasar por Supabase.
-    const esMaestro = codigoLimpio.toUpperCase() === 'WORKEA2026';
+    const esMaestro = esCodigoMaestro(codigoLimpio);
 
     if (!esMaestro) {
       if (!codigoLimpio) {
@@ -341,4 +341,11 @@ Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`
     console.error('Error:', e);
     return res.status(500).json({ error: 'No se pudo generar el análisis. Intenta de nuevo.' });
   }
+}
+
+// Código maestro SOLO para pruebas internas. Se define en Vercel (variable
+// CODIGO_MAESTRO). Si la variable no existe, el código maestro queda desactivado.
+function esCodigoMaestro(c) {
+  const m = (process.env.CODIGO_MAESTRO || '').trim().toUpperCase();
+  return m !== '' && String(c || '').trim().toUpperCase() === m;
 }

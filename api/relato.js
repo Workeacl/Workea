@@ -52,7 +52,7 @@ const SITUACIONES_POR_CODIGO = 3;
 // que la persona no pierda lo que pagó.
 async function liberarCodigoRelato(codigoLimpio) {
   try {
-    if (!codigoLimpio || codigoLimpio.toUpperCase() === 'WORKEA2026') return;
+    if (!codigoLimpio || esCodigoMaestro(codigoLimpio)) return;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!serviceKey) return;
     await fetch(`${SUPABASE_URL}/rest/v1/rpc/devolver_codigo_relato`, {
@@ -64,7 +64,7 @@ async function liberarCodigoRelato(codigoLimpio) {
 }
 
 async function validarCodigoRelato(codigoLimpio) {
-  if (codigoLimpio.toUpperCase() === 'WORKEA2026') return { ok: true, restantes: 2 };
+  if (esCodigoMaestro(codigoLimpio)) return { ok: true, restantes: 2 };
 
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!serviceKey) {
@@ -206,7 +206,7 @@ Responde en JSON puro:
     if (accion === 'completo') {
       const codigoLimpio = (codigo || '').trim();
       if (!codigoLimpio) return res.status(401).json({ error: 'Necesitas un código de acceso' });
-      if (codigoLimpio.toUpperCase() !== 'WORKEA2026' && !codigoLimpio.toUpperCase().startsWith('RL-')) {
+      if (!esCodigoMaestro(codigoLimpio) && !codigoLimpio.toUpperCase().startsWith('RL-')) {
         return res.status(401).json({ error: 'Este código no corresponde a Workea Relato' });
       }
       const validacion = await validarCodigoRelato(codigoLimpio.toUpperCase());
@@ -293,3 +293,10 @@ Genera entre 5 y 7 preguntas difíciles, solo las que apliquen de verdad a este 
     return res.status(500).json({ error: 'Error interno: ' + (err.message || 'desconocido') });
   }
 };
+
+// Código maestro SOLO para pruebas internas. Se define en Vercel (variable
+// CODIGO_MAESTRO). Si la variable no existe, el código maestro queda desactivado.
+function esCodigoMaestro(c) {
+  const m = (process.env.CODIGO_MAESTRO || '').trim().toUpperCase();
+  return m !== '' && String(c || '').trim().toUpperCase() === m;
+}

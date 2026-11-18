@@ -61,7 +61,7 @@ export default async function handler(req, res) {
   const { texto, codigo } = req.body || {};
 
   const codigoLimpio = (codigo || '').trim();
-  const esMaestro = codigoLimpio.toUpperCase() === 'WORKEA2026';
+  const esMaestro = esCodigoMaestro(codigoLimpio);
 
   if (!esMaestro) {
     if (!codigoLimpio) return res.status(401).json({ error: 'Código de acceso inválido' });
@@ -195,4 +195,11 @@ export default async function handler(req, res) {
     console.error('Profile error:', e.message);
     return res.status(500).json({ error: 'No se pudo analizar el perfil: ' + e.message });
   }
+}
+
+// Código maestro SOLO para pruebas internas. Se define en Vercel (variable
+// CODIGO_MAESTRO). Si la variable no existe, el código maestro queda desactivado.
+function esCodigoMaestro(c) {
+  const m = (process.env.CODIGO_MAESTRO || '').trim().toUpperCase();
+  return m !== '' && String(c || '').trim().toUpperCase() === m;
 }

@@ -19,6 +19,8 @@ export default async function handler(req, res) {
 
   const listaCodigos = (process.env.WORKEA_CODIGO || '')
     .split(',').map(c => c.trim()).filter(Boolean);
+  const _maestro = (process.env.CODIGO_MAESTRO || '').trim();
+  if (_maestro) listaCodigos.push(_maestro);
 
   if (!listaCodigos.length) {
     return res.status(500).json({ error: 'Acceso no configurado. Configura WORKEA_CODIGO en Vercel.' });
