@@ -207,7 +207,7 @@ module.exports = async (req, res) => {
       if (!cv_original || !plan) return res.status(400).json({ error: 'cv_original y plan son obligatorios' });
 
       // Código maestro (para pruebas internas), igual que en Match.
-      const esMaestro = String(codigo || '').trim().toUpperCase() === 'WORKEA2026';
+      const esMaestro = esCodigoMaestro(codigo);
       if (!esMaestro) {
         const codigoLimpio = String(codigo || '').trim();
         if (!codigoLimpio) return res.status(401).json({ error: 'Necesitas un código de acceso válido para este plan' });
@@ -556,3 +556,10 @@ Responde en JSON puro:
     return res.status(500).json({ error: 'Error interno: ' + (err.message || 'desconocido') });
   }
 };
+
+// Código maestro SOLO para pruebas internas. Se define en Vercel (variable
+// CODIGO_MAESTRO). Si la variable no existe, el código maestro queda desactivado.
+function esCodigoMaestro(c) {
+  const m = (process.env.CODIGO_MAESTRO || '').trim().toUpperCase();
+  return m !== '' && String(c || '').trim().toUpperCase() === m;
+}
