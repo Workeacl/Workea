@@ -368,7 +368,7 @@ function renderGrid(){
           <a class="share" data-k="compartir" data-i="${i}" href="https://wa.me/?text=${encodeURIComponent(shareText(o)+"\n\nMás ofertas en Workea Empleos: "+location.href.split("#")[0])}" target="_blank" rel="noopener" title="Compartir por WhatsApp">↗︎</a>
           <a class="apply" data-k="postular" data-i="${i}" href="${esc(safeLink(o.link))}" target="_blank" rel="noopener">Postular</a>
         </div></div>
-      <a class="analyze" data-k="analizar" data-i="${i}" href="${esc(WORKEA_URL+"?oferta="+encodeURIComponent(safeLink(o.link))+"&utm_source=empleos")}" target="_blank" rel="noopener">🔍 Analízala con Workea antes de postular</a>
+      <a class="analyze" data-k="analizar" data-i="${i}" href="${esc(WORKEA_URL+"?oferta="+encodeURIComponent(safeLink(o.link))+"&utm_source=empleos")}" target="_blank" rel="noopener">🔍 Analízala gratis con Workea antes de postular<span style="display:block;font-weight:500;font-size:12px;opacity:.75;margin-top:2px">Hasta 3 análisis gratis por semana</span></a>
     </article>`;
   }).join("");
 }
