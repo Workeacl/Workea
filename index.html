@@ -413,6 +413,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 }
 
 @media (pointer:coarse){ footer a{ display:inline-block; padding:.55rem 0; } }
+.modo-empleos #realStrip a{display:none}
 </style>
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -1355,9 +1356,90 @@ function mockTab(tab, btn){
 document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   const go = params.get('go');
+  const ofertaLink = params.get('oferta');
+  if(ofertaLink){ cargarOfertaDesdeEmpleos(ofertaLink); return; }
   if(go === 'esencial'){ startEsencial(); }
   if(go === 'activar'){ irActivarCodigo(); }
 });
+
+/* ================= conexión con Workea Empleos (workea.cl/empleos) =================
+   El botón "Analízala con Workea" llega aquí con ?oferta=<link>. Se abre el
+   Informe Esencial y /api/leer-oferta deja el texto de la oferta ya pegado. */
+/* Modo prueba desde Workea Empleos: solo análisis gratis, sin ventas, con pregunta de feedback */
+let MODO_EMPLEOS = false, OFERTA_EMPLEOS = '';
+const FEEDBACK_URL = "https://script.google.com/macros/s/AKfycbyTvc1_ZIxTSgrDInFiftgFr6GAFWQmD6GVbe0xeN_Qtw5kHDz9bLtu07EU4oMKzECc/exec";
+function feedbackEmpleosHTML(){
+  return `<div class="real-cta" id="fbEmpleos" style="margin-top:1.4rem;display:block">
+    <h3>¿Te sirvió este análisis? 🩵</h3>
+    <p>Workea está en etapa de prueba y tu opinión nos ayuda a mejorarlo. Es anónimo.</p>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem">
+      <button class="btn btn-brand" type="button" onclick="feedbackEmpleos('si',this)">👍 Sí, me sirvió</button>
+      <button class="btn btn-ghost" type="button" onclick="feedbackEmpleos('no',this)">👎 No mucho</button>
+    </div>
+    <div id="fbExtra" class="hidden" style="margin-top:.9rem">
+      <textarea id="fbTexto" maxlength="400" rows="3" placeholder="¿Qué le agregarías o qué no te quedó claro? (opcional)" style="width:100%;padding:.7rem;border-radius:10px;border:1px solid var(--line);font:inherit"></textarea>
+      <button class="btn btn-ghost" type="button" style="margin-top:.5rem" onclick="feedbackEmpleos(window._fbVoto,this,true)">Enviar comentario</button>
+    </div>
+    <p style="margin-top:1rem"><a class="btn-link" href="/empleos">← Volver a las ofertas de Workea Empleos</a></p>
+  </div>`;
+}
+function feedbackEmpleos(voto, btn, conTexto){
+  window._fbVoto = voto;
+  const texto = conTexto ? (document.getElementById('fbTexto').value || '').trim() : '';
+  if(conTexto && !texto) return;
+  const body = JSON.stringify({ t:'feedback', c: voto==='si' ? 'Me sirvió' : 'No mucho', ti: texto, em:'', l: OFERTA_EMPLEOS });
+  try{
+    if(!(navigator.sendBeacon && navigator.sendBeacon(FEEDBACK_URL, new Blob([body],{type:'text/plain'}))))
+      fetch(FEEDBACK_URL,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain'},body});
+  }catch(e){}
+  const box = document.getElementById('fbEmpleos');
+  if(conTexto){ box.querySelector('#fbExtra').innerHTML = '<p>✅ <b>¡Gracias por tu comentario!</b></p>'; return; }
+  box.querySelectorAll('button').forEach(b=>{ if(!b.closest('#fbExtra')) b.disabled = true; });
+  btn.textContent = '✔︎ ' + btn.textContent.replace(/^\S+ /,'');
+  document.getElementById('fbExtra').classList.remove('hidden');
+}
+
+function cargarOfertaDesdeEmpleos(link){
+  if(!/^https?:\/\//i.test(link)) return startEsencial();
+  MODO_EMPLEOS = true; OFERTA_EMPLEOS = link;
+  document.body.classList.add('modo-empleos');
+  startEsencial();
+  const err = document.getElementById('inputError');
+  if(err && /Ya usaste/.test(err.textContent)){
+    const dias = (err.textContent.match(/en (\d+) d[ií]a/)||[])[1] || 'unos';
+    err.innerHTML = '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tu análisis gratis de esta semana. Vuelve a estar disponible en ' + dias + ' día' + (dias==='1'?'':'s') + '. Mientras tanto, <a href="/empleos">sigue revisando ofertas en Workea Empleos</a>.</span></div>';
+    return;
+  }
+  setTab('text');
+  ['demoBanner','demoEjemploStrip'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+  const linkSeguro = link.replace(/"/g,'%22').replace(/</g,'%3C').replace(/>/g,'%3E');
+  const panel = document.getElementById('tab-text');
+  let aviso = document.getElementById('avisoEmpleos');
+  if(!aviso){
+    aviso = document.createElement('div');
+    aviso.id = 'avisoEmpleos';
+    aviso.className = 'demo-strip';
+    aviso.style.cssText = 'margin-bottom:.9rem;background:var(--brand-tint);border-color:var(--brand-tint-2)';
+    panel.insertBefore(aviso, panel.firstChild);
+  }
+  aviso.innerHTML = '<p>⏳ <b>Cargando la oferta que viste en Workea Empleos…</b></p>';
+  fetch('/api/leer-oferta?url=' + encodeURIComponent(link))
+    .then(r => r.json())
+    .then(d => {
+      if(d && d.ok && d.texto && d.texto.length > 40){
+        const ta = document.getElementById('offerText');
+        if(!ta.value.trim()) ta.value = d.texto;
+        validateInput();
+        aviso.innerHTML = d.completo
+          ? '<p>✅ <b>Listo, cargamos la oferta de Workea Empleos.</b> Revisa el texto y sigue al siguiente paso.</p>'
+          : '<p>✅ <b>Cargamos el texto de la oferta.</b> Revísalo y borra lo que no sea parte de la oferta (menús, avisos, etc.) antes de seguir. <a href="' + linkSeguro + '" target="_blank" rel="noopener">Ver la oferta original</a></p>';
+      } else { throw new Error('sin texto'); }
+    })
+    .catch(() => {
+      aviso.innerHTML = '<p>ℹ️ <b>Este portal no nos deja leer la oferta automáticamente.</b> <a href="' + linkSeguro + '" target="_blank" rel="noopener">Ábrela aquí</a>, copia su texto y pégalo abajo.</p>';
+    });
+}
+
 
 /* ================= navegación ================= */
 function startApp(){
@@ -1791,7 +1873,7 @@ function renderResults(d){
       </div>
       <button class="btn btn-ghost" onclick="enviarInforme()" style="white-space:nowrap;flex-shrink:0">Enviar mi informe →</button>
     </div>`:''}
-    ${modoPlan==='esencial'?`<div class="real-cta"><div><h3>Este fue tu Informe Esencial 🩵</h3><p>Ya sabes si vale la pena postular. El <b>Workea Match</b> ($2.990, precio de acceso anticipado) te da 7 días de acceso ilimitado y agrega el análisis detallado, las palabras clave, las recomendaciones para tu CV, tu preparación de entrevista y el plan de acción priorizado — al instante.</p></div><button class="btn btn-wa" onclick="comprarMatch(this)">Obtener Informe Workea Match →</button></div>`:''}`;
+    ${modoPlan==='esencial' && MODO_EMPLEOS ? feedbackEmpleosHTML() : ''}${modoPlan==='esencial' && !MODO_EMPLEOS?`<div class="real-cta"><div><h3>Este fue tu Informe Esencial 🩵</h3><p>Ya sabes si vale la pena postular. El <b>Workea Match</b> ($2.990, precio de acceso anticipado) te da 7 días de acceso ilimitado y agrega el análisis detallado, las palabras clave, las recomendaciones para tu CV, tu preparación de entrevista y el plan de acción priorizado — al instante.</p></div><button class="btn btn-wa" onclick="comprarMatch(this)">Obtener Informe Workea Match →</button></div>`:''}`;
   document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
   document.getElementById('scr-results').classList.remove('hidden');
   renderStepper(6); window.scrollTo({top:0});

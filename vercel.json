@@ -60,5 +60,159 @@
       "source": "/api/leer-oferta",
       "destination": "/api/keepalive"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "missing": [
+        {
+          "type": "query",
+          "key": "oferta"
+        }
+      ],
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/index.html",
+      "missing": [
+        {
+          "type": "query",
+          "key": "oferta"
+        }
+      ],
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/match-planes",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/match-planes.html",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/sueldo",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/sueldo.html",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/relato",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/relato.html",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/career",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/career.html",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/ruta",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/ruta.html",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/profile",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/profile.html",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/recruiter",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/recruiter.html",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/entrevistas",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/entrevistas.html",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/bitacora",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/bitacora.html",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/cuenta",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/cuenta.html",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/workea-cv-experiencia",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/workea-cv-experiencia.html",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/workea-cv-planes",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/workea-cv-planes.html",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/workea-cv-plantillas",
+      "destination": "/empleos",
+      "permanent": false
+    },
+    {
+      "source": "/workea-cv-plantillas.html",
+      "destination": "/empleos",
+      "permanent": false
+    }
   ]
 }
