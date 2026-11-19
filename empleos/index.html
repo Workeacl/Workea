@@ -166,7 +166,11 @@
 
 <dialog id="dlg">
   <h2>Resumen para tu canal</h2>
-  <p>Ofertas de las últimas 24 horas con los filtros actuales. Cópialo y pégalo en WhatsApp.</p>
+  <p>Elige qué resumir, cópialo y pégalo en WhatsApp.</p>
+  <select id="resContenido" aria-label="Contenido" style="margin-bottom:10px">
+    <option value="hoy">Ofertas de hoy (con los filtros actuales)</option>
+    <option value="practicas">🎓 Sábado de prácticas (últimos 7 días)</option>
+  </select>
   <textarea id="resumenTxt" readonly></textarea>
   <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
     <button class="btn" type="button" id="dlgClose">Cerrar</button>
@@ -177,6 +181,7 @@
   <h2>Imagen del día</h2>
   <p>Elige diseño y formato, revisa la vista previa y descárgala.</p>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+    <select id="imgContenido" aria-label="Contenido"><option value="hoy">Ofertas de hoy</option><option value="practicas">🎓 Sábado de prácticas</option></select>
     <select id="imgDiseno" aria-label="Diseño"><option value="resumen">Diseño: Resumen</option><option value="destacadas">Diseño: Destacadas</option></select>
     <select id="imgFormato" aria-label="Formato"><option value="cuadrado">Cuadrado · post</option><option value="vertical">Vertical · historia / TikTok</option></select>
   </div>
@@ -348,7 +353,22 @@ function render(){ renderChips(); renderGrid(); }
 
 function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1800); }
 
+const esPractica=o=>norm(catInfo(o.categoria).id)===norm("Prácticas profesionales");
+function practicasSemana(){
+  let list=DATA.filter(o=>esPractica(o) && (Date.now()-new Date(o.fecha))<7*24*3600e3), reciente=false;
+  if(!list.length){ list=DATA.filter(esPractica).slice(0,8); reciente=true; }
+  return {list,reciente};
+}
+function urlBase(){ return location.href.split("#")[0]; }
 function buildResumen(){
+  if($("resContenido").value==="practicas"){
+    const {list}=practicasSemana();
+    let txt=`🎓 *Sábado de prácticas*\nPrácticas profesionales abiertas esta semana (${list.length})\n\n`;
+    if(!list.length) txt+=`Esta semana no hay prácticas nuevas cargadas.\n`;
+    list.forEach(o=>{ txt+=`• *${o.titulo}* – ${o.empresa}${o.comuna||o.region?` (${o.comuna||o.region})`:""}\n  ${safeLink(o.link)}\n`; });
+    txt+=`\n📌 ¿Conoces a alguien que esté buscando práctica? ¡Compártele este mensaje! 🤝\n👀 Todas las prácticas en *Workea Empleos*: ${urlBase()}#practicas`;
+    return txt;
+  }
   let list=filtered().filter(o=>(Date.now()-new Date(o.fecha))<24*3600e3);
   if(!list.length) list=filtered().slice(0,8);
   const byCat={}; list.forEach(o=>{const k=catInfo(o.categoria).id;(byCat[k]=byCat[k]||[]).push(o);});
@@ -379,6 +399,7 @@ $("grid").addEventListener("click",e=>{
 
 // ---------------- Imagen del día (canvas) ----------------
 function ofertasDelDia(){
+  if($("imgContenido").value==="practicas") return Object.assign(practicasSemana(),{practicas:true});
   let list=DATA.filter(o=>(Date.now()-new Date(o.fecha))<24*3600e3), reciente=false;
   if(!list.length){ list=DATA.slice(0,10); reciente=true; }
   return {list,reciente};
@@ -408,13 +429,13 @@ function dibujarImagen(){
   const fecha=new Date().toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"});
   ctx.font=`500 28px ${F_B}`; ctx.fillStyle="#9fb0d0"; ctx.textAlign="right"; ctx.fillText(fecha,W-M,y+8); ctx.textAlign="left";
 
-  const {list,reciente}=ofertasDelDia();
+  const {list,reciente,practicas}=ofertasDelDia();
   y+= V?240:120;
   if($("imgDiseno").value==="resumen"){
-    ctx.font=`500 ${V?46:34}px ${F_B}`; ctx.fillStyle="#c4cfe6"; ctx.fillText(reciente?"Ofertas recientes":"Ofertas nuevas hoy",M,y);
+    ctx.font=`500 ${V?46:34}px ${F_B}`; ctx.fillStyle="#c4cfe6"; ctx.fillText(practicas?"🎓 Sábado de prácticas":(reciente?"Ofertas recientes":"Ofertas nuevas hoy"),M,y);
     y+= V?260:160; ctx.font=`800 ${V?260:180}px ${F_T}`; ctx.fillStyle=grad(ctx,M,0,M+420,0); ctx.fillText(String(list.length),M,y);
-    const nW=ctx.measureText(String(list.length)).width; ctx.font=`600 ${V?50:38}px ${F_B}`; ctx.fillStyle="#fff"; ctx.fillText("ofertas reales",M+nW+24,y-14);
-    const counts={}; list.forEach(o=>{const k=catInfo(o.categoria).id; counts[k]=(counts[k]||0)+1;});
+    const nW=ctx.measureText(String(list.length)).width; ctx.font=`600 ${V?50:38}px ${F_B}`; ctx.fillStyle="#fff"; ctx.fillText(practicas?(list.length===1?"práctica abierta":"prácticas abiertas"):"ofertas reales",M+nW+24,y-14);
+    const counts={}; list.forEach(o=>{const k=practicas?(o.region||o.comuna||"Otras zonas"):catInfo(o.categoria).id; counts[k]=(counts[k]||0)+1;});
     const filas=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,V?7:5);
     y+= V?120:62; const rowH=V?110:76;
     filas.forEach(([cat,n],i)=>{
@@ -425,7 +446,7 @@ function dibujarImagen(){
       if(i<filas.length-1){ ctx.fillStyle="rgba(255,255,255,.12)"; ctx.fillRect(M,cy+rowH*.42,W-2*M,2); }
     });
   } else {
-    ctx.font=`500 ${V?46:34}px ${F_B}`; ctx.fillStyle="#c4cfe6"; ctx.fillText(reciente?"Destacadas recientes":"Destacadas de hoy",M,y);
+    ctx.font=`500 ${V?46:34}px ${F_B}`; ctx.fillStyle="#c4cfe6"; ctx.fillText(practicas?"🎓 Sábado de prácticas":(reciente?"Destacadas recientes":"Destacadas de hoy"),M,y);
     y+= V?60:36; const top=list.slice(0,3), cardH=V?300:172, gap=V?36:18;
     top.forEach((o,i)=>{
       const cy=y+i*(cardH+gap);
@@ -455,6 +476,8 @@ async function abrirImagen(){
 }
 $("btnImagen").addEventListener("click",abrirImagen);
 $("imgDiseno").addEventListener("change",dibujarImagen);
+$("imgContenido").addEventListener("change",dibujarImagen);
+$("resContenido").addEventListener("change",()=>{ $("resumenTxt").value=buildResumen(); });
 $("imgFormato").addEventListener("change",dibujarImagen);
 $("imgClose").addEventListener("click",()=>$("dlgImg").close());
 $("imgDown").addEventListener("click",()=>{
@@ -497,6 +520,8 @@ $("dlgCopy").addEventListener("click",async()=>{
     const vistos=new Set();
     DATA=rows.filter(o=>new Date(o.fecha)>=limite).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha))
       .filter(o=>{ const k=clave(o.link); if(vistos.has(k)) return false; vistos.add(k); return true; });
+    // workea.cl/empleos#practicas abre la página filtrada en prácticas
+    if(location.hash==="#practicas") state.cat="Prácticas profesionales";
     renderSelects(); render();
   };
   if(!CSV_URL && !CSV_EMPRESAS_URL){ $("demoNote").hidden=false; finish(demoData()); return; }
