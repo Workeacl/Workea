@@ -922,6 +922,10 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         </div>
 
         <div id="cvMsg"></div>
+        <label style="display:flex;gap:.5rem;align-items:flex-start;font-size:.85rem;color:var(--muted);margin:.4rem 0 .8rem;cursor:pointer">
+          <input type="checkbox" id="recordarCv" checked style="margin-top:.2rem">
+          <span>Recordar mi CV en este dispositivo para mis próximos análisis. Se guarda solo en tu navegador, no en nuestros servidores. Si usas un computador compartido, desmárcalo.</span>
+        </label>
 
         <div class="demo-strip">
           <p><b>¿Solo estás explorando?</b> Usa un CV de ejemplo para recorrer el análisis completo.</p>
@@ -1407,7 +1411,7 @@ function cargarOfertaDesdeEmpleos(link){
   const err = document.getElementById('inputError');
   if(err && /Ya usaste/.test(err.textContent)){
     const dias = (err.textContent.match(/en (\d+) d[ií]a/)||[])[1] || 'unos';
-    err.innerHTML = '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tu análisis gratis de esta semana. Vuelve a estar disponible en ' + dias + ' día' + (dias==='1'?'':'s') + '. Mientras tanto, <a href="/empleos">sigue revisando ofertas en Workea Empleos</a>.</span></div>';
+    err.innerHTML = '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tus 3 análisis gratis de esta semana. El próximo vuelve a estar disponible en ' + dias + ' día' + (dias==='1'?'':'s') + '. Mientras tanto, <a href="/empleos">sigue revisando ofertas en Workea Empleos</a>.</span></div>';
     return;
   }
   setTab('text');
@@ -1704,24 +1708,69 @@ function activarCodigo(){
   document.getElementById('extraOffers').classList.remove('hidden');
 }
 
+/* Informe Esencial gratis: hasta 3 por semana (se cuenta en este navegador y también en el servidor) */
+const ESENCIAL_MAX = 3, ESENCIAL_SEMANA = 7 * 24 * 60 * 60 * 1000;
+function usosEsencial(){
+  try{
+    let a = JSON.parse(localStorage.getItem('workea_esencial_usos') || '[]');
+    const antiguo = localStorage.getItem('workea_esencial_ultimo_uso');
+    if(antiguo){ a.push(parseInt(antiguo,10)); localStorage.removeItem('workea_esencial_ultimo_uso'); }
+    a = a.filter(t => Date.now() - t < ESENCIAL_SEMANA);
+    localStorage.setItem('workea_esencial_usos', JSON.stringify(a));
+    return a;
+  }catch(e){ return []; }
+}
+function registrarUsoEsencial(){
+  try{ const a = usosEsencial(); a.push(Date.now()); localStorage.setItem('workea_esencial_usos', JSON.stringify(a)); }catch(e){}
+}
+/* Recordar el CV solo en el navegador de la persona (nunca en el servidor) */
+function precargarCvGuardado(){
+  let guardado = '';
+  try{ guardado = localStorage.getItem('workea_cv_guardado') || ''; }catch(e){}
+  const ta = document.getElementById('cvText');
+  if(!guardado || ta.value.trim()) return;
+  setCvTab('text'); ta.value = guardado; validateCv();
+  let aviso = document.getElementById('cvGuardadoAviso');
+  if(!aviso){
+    aviso = document.createElement('p'); aviso.id = 'cvGuardadoAviso';
+    aviso.style.cssText = 'font-size:.85rem;color:var(--muted);margin:.2rem 0 .6rem';
+    ta.parentNode.insertBefore(aviso, ta);
+  }
+  aviso.innerHTML = '✅ Usamos el CV que guardaste en este dispositivo. Puedes editarlo aquí o <a href="#" class="btn-link" onclick="borrarCvGuardado();return false">borrarlo</a>.';
+}
+function borrarCvGuardado(){
+  try{ localStorage.removeItem('workea_cv_guardado'); }catch(e){}
+  document.getElementById('cvText').value = ''; validateCv();
+  const r = document.getElementById('recordarCv'); if(r) r.checked = false;
+  const a = document.getElementById('cvGuardadoAviso'); if(a) a.textContent = 'Listo, borramos el CV guardado en este dispositivo.';
+}
+function guardarCvSiCorresponde(cv){
+  try{
+    const r = document.getElementById('recordarCv');
+    if(r && r.checked && cv) localStorage.setItem('workea_cv_guardado', cv.slice(0, 20000));
+    else localStorage.removeItem('workea_cv_guardado');
+  }catch(e){}
+}
+
 function startEsencial(){
-  const ultimoUso = localStorage.getItem('workea_esencial_ultimo_uso');
-  const SIETE_DIAS = 7 * 24 * 60 * 60 * 1000;
-  if(ultimoUso && (Date.now() - parseInt(ultimoUso, 10)) < SIETE_DIAS){
-    const diasRestantes = Math.ceil((SIETE_DIAS - (Date.now() - parseInt(ultimoUso, 10))) / (24*60*60*1000));
+  const usos = usosEsencial();
+  if(usos.length >= ESENCIAL_MAX){
+    const diasRestantes = Math.max(1, Math.ceil((ESENCIAL_SEMANA - (Date.now() - Math.min(...usos))) / (24*60*60*1000)));
     startApp(); showScreen('scr-input',0);
     document.getElementById('inputError').innerHTML =
-      '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tu Informe Esencial gratis esta semana — vuelve a estar disponible en ' + diasRestantes + ' día' + (diasRestantes===1?'':'s') + '. Para analizar ahora, el <b>Workea Match</b> te entrega el plan de acción completo al instante.</span></div>';
+      '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tus ' + ESENCIAL_MAX + ' Informes Esenciales gratis de esta semana — el próximo vuelve a estar disponible en ' + diasRestantes + ' día' + (diasRestantes===1?'':'s') + '. Para analizar ahora, el <b>Workea Match</b> te entrega el plan de acción completo al instante.</span></div>';
     return;
   }
+  const quedan = ESENCIAL_MAX - usos.length;
   realMode = true; modoPlan = 'esencial'; accessCode = '';
   startApp(); showScreen('scr-input',0);
   const _st = document.getElementById('realStrip');
   if(REAL_STRIP_ORIG === null) REAL_STRIP_ORIG = _st.innerHTML;
   _st.innerHTML =
-    '<p><b>🩵 Informe Esencial gratis activado.</b> Pega el texto de tu oferta, sube su PDF o una captura — y luego tu CV. Recibirás tu orientación al instante (1 informe gratis por semana). <a href="#" class="btn-link" onclick="mostrarCodigo();return false">¿Ya tienes un código de acceso?</a></p>';
+    '<p><b>🩵 Informe Esencial gratis activado.</b> Pega el texto de tu oferta, sube su PDF o una captura — y luego tu CV. Recibirás tu orientación al instante (hasta ' + ESENCIAL_MAX + ' informes gratis por semana · te ' + (quedan===1?'queda 1':'quedan '+quedan) + '). <a href="#" class="btn-link" onclick="mostrarCodigo();return false">¿Ya tienes un código de acceso?</a></p>';
   document.querySelector('[data-tab="link"]').classList.add('hidden');
   setTab('text');
+  precargarCvGuardado();
 }
 
 function startOfferFlow(){
@@ -1767,7 +1816,8 @@ async function runRealAnalysis(oferta, cv){
     clearInterval(iv);
     if(!r.ok || data.error){ throw new Error(data.error||'Error del servidor'); }
     bar.style.width='100%';
-    if(modoPlan==='esencial'){ try{ localStorage.setItem('workea_esencial_ultimo_uso', Date.now().toString()); }catch(e){} }
+    if(modoPlan==='esencial') registrarUsoEsencial();
+    guardarCvSiCorresponde(cv);
     setTimeout(()=>{ renderResults(data); },400);
   }catch(e){
     clearInterval(iv);
