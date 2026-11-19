@@ -83,7 +83,7 @@
   .row2{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
   select{font:inherit;font-size:14px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
 
-  main{padding:16px 0 50px}
+  main.wrap{padding:16px 18px 72px}
   .meta{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-size:14px;margin-bottom:10px;flex-wrap:wrap}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:8px}
@@ -100,11 +100,21 @@
   .share{border:1px solid var(--line);text-decoration:none;padding:8px 10px;border-radius:9px;font-size:14px}
   .analyze{display:block;text-align:center;font-size:13px;font-weight:600;text-decoration:none;padding:8px;border-radius:9px;background:var(--brand-soft);color:#0b6fbf;margin-top:2px}
   .analyze:hover{filter:brightness(.97)}
-  .tpl{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin:30px 0 0;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .tips{margin:56px 0 0}
+  .tips h2,.cta-canal h2{font-family:"Plus Jakarta Sans",Inter,sans-serif;font-size:22px;margin:0 0 4px}
+  .tips>p{color:var(--muted);margin:0 0 16px;font-size:15px}
+  .tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .tip{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .tip .ico{font-size:24px}
+  .tip h3{margin:8px 0 6px;font-size:16px}
+  .tip p{margin:0;color:var(--muted);font-size:14px}
+  .cta-canal{margin:28px 0 0;background:var(--ink);color:#fff;border-radius:var(--radius);padding:24px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .cta-canal p{margin:0;color:#c4cfe6;font-size:15px}
+  .tpl{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin:28px 0 0;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
   .tpl h2{margin:0 0 4px;font-family:"Plus Jakarta Sans",Inter,sans-serif;font-size:19px}
   .tpl p{margin:0;color:var(--muted);font-size:14px;max-width:520px}
   .empty{padding:40px 0;text-align:center;color:var(--muted)}
-  footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);font-size:13px}
+  footer.wrap{border-top:1px solid var(--line);padding:26px 18px 44px;color:var(--muted);font-size:13px}
   .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
   .toast.show{opacity:1}
   /* Panel para copiar el resumen al canal */
@@ -153,6 +163,19 @@
   </div>
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty" hidden>No hay ofertas con esos filtros. Prueba con otra categoría.</div>
+  <section class="tips" aria-labelledby="tipsTitulo">
+    <h2 id="tipsTitulo">Antes de postular</h2>
+    <p>Consejos rápidos de una psicóloga laboral con años en selección de personal.</p>
+    <div class="tips-grid">
+      <div class="tip"><div class="ico">📄</div><h3>Ajusta tu CV a cada oferta</h3><p>Usa las mismas palabras del aviso para describir tu experiencia. Quien revisa los CV suele decidir en pocos segundos.</p></div>
+      <div class="tip"><div class="ico">⏱️</div><h3>Postula pronto</h3><p>Muchas ofertas reciben la mayoría de sus postulaciones en los primeros días. Si te interesa, no la dejes para después.</p></div>
+      <div class="tip"><div class="ico">🚩</div><h3>Ojo con las estafas</h3><p>Ninguna empresa seria cobra por postular, por una capacitación o por "reservar" un cupo. Si te piden dinero, no sigas.</p></div>
+    </div>
+  </section>
+  <section class="cta-canal">
+    <div><h2>Recibe las ofertas nuevas en WhatsApp</h2><p>Todos los días, gratis y ordenadas por tipo de trabajo.</p></div>
+    <a class="btn primary" id="ctaCanal2" href="#" target="_blank" rel="noopener">Unirme al canal</a>
+  </section>
   <section class="tpl">
     <div><h2>¿Quieres ayuda personalizada en tu búsqueda?</h2>
     <p>Asesorías de empleabilidad con una psicóloga laboral: CV, entrevistas y estrategia de búsqueda, con Tu Partner Laboral.</p></div>
@@ -506,6 +529,7 @@ $("dlgCopy").addEventListener("click",async()=>{
 (function init(){
   if(WHATSAPP_CANAL && WHATSAPP_CANAL!=="https://whatsapp.com/channel/") $("ctaCanal").href=WHATSAPP_CANAL; else $("ctaCanal").removeAttribute("target");
   $("ctaTPL").href=TPL_URL;
+  if(WHATSAPP_CANAL && WHATSAPP_CANAL!=="https://whatsapp.com/channel/") $("ctaCanal2").href=WHATSAPP_CANAL; else $("ctaCanal2").closest("section").hidden=true;
   // Botón de resumen: solo visible para ti, entrando a workea.cl/empleos#admin
   const showAdmin=()=>{ const a=location.hash!=="#admin"; $("btnResumen").hidden=a; $("btnImagen").hidden=a; };
   showAdmin(); window.addEventListener("hashchange",showAdmin);
