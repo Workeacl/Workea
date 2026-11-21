@@ -93,6 +93,7 @@
   .tag.new{background:#dcfbfe;color:#067a8a}
   .card h3{margin:2px 0 0;font-size:17px;line-height:1.25}
   .company{color:var(--muted);font-size:14px}
+  .dato{display:flex;gap:6px;align-items:flex-start;background:#fff7e6;border:1px solid #f5dfb3;color:#7a4b00;border-radius:9px;padding:7px 10px;font-size:14px;font-weight:600;line-height:1.35}
   .card .foot{margin-top:auto;display:flex;gap:8px;align-items:center;justify-content:space-between;padding-top:6px}
   .ago{font-size:12px;color:var(--muted)}
   .actions{display:flex;gap:6px}
@@ -237,7 +238,7 @@ const MODALIDADES = ["Presencial","Híbrido","Remoto"];
 function demoData(){
   const h = n => new Date(Date.now()-n*3600e3).toISOString();
   return [
-    {titulo:"Operario/a de bodega turno noche",empresa:"Logística Ejemplo SpA",link:"https://example.com/oferta-1",categoria:"Operativos",contrato:"Full time",modalidad:"Presencial",region:"Metropolitana",comuna:"Pudahuel",fecha:h(2)},
+    {titulo:"Operario/a de bodega turno noche",dato:"Turno noche · Licencia clase D · $650.000",empresa:"Logística Ejemplo SpA",link:"https://example.com/oferta-1",categoria:"Operativos",contrato:"Full time",modalidad:"Presencial",region:"Metropolitana",comuna:"Pudahuel",fecha:h(2)},
     {titulo:"Práctica profesional Psicología Organizacional",empresa:"Consultora Ficticia",link:"https://example.com/oferta-2",categoria:"Prácticas profesionales",contrato:"",region:"Metropolitana",comuna:"Providencia",fecha:h(5)},
     {titulo:"Reponedor/a fines de semana",empresa:"Supermercado Demo",link:"https://example.com/oferta-3",categoria:"Operativos",contrato:"Part-time o por horas",region:"Valparaíso",comuna:"Viña del Mar",fecha:h(8)},
     {titulo:"Ingeniero/a de procesos",empresa:"Industrias Modelo",link:"https://example.com/oferta-4",categoria:"Profesionales",contrato:"Full time",region:"Biobío",comuna:"Concepción",fecha:h(20)},
@@ -280,8 +281,40 @@ const COLS = {
   region:["region"],
   comuna:["comuna","ciudad"],
   oculta:["ocultar","oculta","cerrada"],
+  dato:["dato clave","destacado"],
 };
 function hostName(u){ try{ return new URL(safeLink(u)).hostname.replace(/^www\./,""); }catch{ return ""; } }
+// Nombres amigables de portales conocidos
+const PORTALES={ "laborum.cl":"Laborum", "bumeran.cl":"Bumeran", "computrabajo.com":"Computrabajo", "cl.computrabajo.com":"Computrabajo",
+  "trabajando.cl":"Trabajando.com", "linkedin.com":"LinkedIn", "cl.linkedin.com":"LinkedIn", "chiletrabajos.cl":"Chiletrabajos",
+  "indeed.com":"Indeed", "cl.indeed.com":"Indeed", "bne.cl":"Bolsa Nacional de Empleo", "empleospublicos.cl":"Empleos Públicos",
+  "getonbrd.com":"Get on Board", "firstjob.me":"Firstjob", "buk.cl":"Buk", "hiringroom.com":"HiringRoom" };
+function portalDe(u){ const h=hostName(u); if(PORTALES[h]) return PORTALES[h]; const k=Object.keys(PORTALES).find(d=>h.endsWith("."+d)); return k?PORTALES[k]:""; }
+// Si la oferta no trae título, lo sacamos del propio link (muchos portales lo incluyen)
+function tituloDesdeLink(u){
+  try{
+    const x=new URL(safeLink(u));
+    const GENERICO=/^(view|jobs?|trabajo|trabajos|empleo|empleos|oferta|ofertas|aviso|avisos|detalle|index|postular|trabaja con nosotros|careers?|vacantes?|trabajo empleo|ofertas de trabajo)$/i;
+    const partes=x.pathname.split("/").filter(Boolean).map(p=>{ try{ return decodeURIComponent(p); }catch(e){ return p; } }).reverse();
+    let t="";
+    for(const parte of partes){
+      let palabras=parte.replace(/\.(html?|php|aspx?)$/i,"").split(/[-_+\s]+/).filter(Boolean);
+      while(palabras.length && /\d/.test(palabras[palabras.length-1]) && palabras[palabras.length-1].length>=4) palabras.pop(); // códigos al final
+      let c=palabras.join(" ").trim().replace(/^(oferta de trabajo de|oferta de empleo de|oferta de|trabajo de|empleo de|empleos de)\s+/i,"");
+      if(/[a-záéíóúñ]{3,}/i.test(c) && !GENERICO.test(c)){ t=c; break; }
+    }
+    if(!t) return null;
+    let empresa="";
+    const at=t.match(/^(.*?)\s+at\s+(.+)$/i); // LinkedIn: "cargo-at-empresa"
+    if(at){ t=at[1]; empresa=at[2]; }
+    t=t.replace(/\b([a-záéíóúñ]+(?:o|or))\s+a\b/gi,"$1/a"); // "vendedor a" → "vendedor/a"
+    if(t.split(" ").length>14) return null;
+    const cap=w=>w.charAt(0).toUpperCase()+w.slice(1);
+    return { titulo: cap(t.toLowerCase()), empresa: empresa ? empresa.split(" ").map(cap).join(" ") : "" };
+  }catch(e){ return null; }
+}
+// Títulos que en realidad son páginas de bloqueo o del portal, no de la oferta
+const TITULO_INVALIDO=/^(just a moment|attention required|access denied|un momento|acceso denegado|403|forbidden|captcha|empleos?$|ofertas de (trabajo|empleo)|laborum|bumeran|computrabajo|trabajando\.com|linkedin|indeed)\b/i;
 function mapRows(rows, needsApproval){
   if(!rows.length) return [];
   const head = rows[0].map(norm);
@@ -291,8 +324,12 @@ function mapRows(rows, needsApproval){
     const o={}; for(const k in idx) o[k]= idx[k]>=0 ? (r[idx[k]]||"").trim() : "";
     o.fecha = parseFecha(o.fecha);
     // Solo el link es obligatorio: si falta título o empresa, se completa solo
-    if(!o.titulo) o.titulo = "Oferta: " + (catInfo(o.categoria).id || "ver detalle");
-    if(!o.empresa) o.empresa = hostName(o.link) || "Ver en el link";
+    if(o.titulo && TITULO_INVALIDO.test(o.titulo.trim())) o.titulo = "";
+    if(!o.titulo || !o.empresa){
+      const desdeLink = tituloDesdeLink(o.link);
+      if(!o.titulo) o.titulo = (desdeLink && desdeLink.titulo) || ("Oferta de " + (catInfo(o.categoria).id || "empleo").toLowerCase());
+      if(!o.empresa) o.empresa = (desdeLink && desdeLink.empresa) || (portalDe(o.link) ? "Publicada en " + portalDe(o.link) : (hostName(o.link) || "Ver en el link"));
+    }
     return o;
   }).filter(o=>o.link && !/^(si|sí|x|true)$/i.test(o.oculta)
             && (!needsApproval || /^(si|sí|x|true|ok)$/i.test(o.aprobada)));
@@ -348,7 +385,7 @@ function renderSelects(){
   $("fModalidad").innerHTML=`<option value="">Presencial, híbrido o remoto</option>`+MODALIDADES.map(c=>`<option>${esc(c)}</option>`).join("");
 }
 function shareText(o){
-  return `${catInfo(o.categoria).emoji} *${o.titulo}*\n🏢 ${o.empresa}${o.comuna||o.region?`\n📍 ${[o.comuna,o.region].filter(Boolean).join(", ")}`:""}${o.contrato && o.contrato!=="Otro"?`\n🕒 ${o.contrato}`:""}${o.modalidad?` · ${o.modalidad}`:""}\n👉 ${safeLink(o.link)}`;
+  return `${catInfo(o.categoria).emoji} *${o.titulo}*\n🏢 ${o.empresa}${o.comuna||o.region?`\n📍 ${[o.comuna,o.region].filter(Boolean).join(", ")}`:""}${o.contrato && o.contrato!=="Otro"?`\n🕒 ${o.contrato}`:""}${o.modalidad?` · ${o.modalidad}`:""}${o.dato?`\n⭐ ${o.dato}`:""}\n👉 ${safeLink(o.link)}`;
 }
 let LAST=[];
 function renderGrid(){
@@ -363,6 +400,7 @@ function renderGrid(){
       <div class="tags">${isNew?`<span class="tag new">Nueva</span>`:""}<span class="tag">${c.emoji} ${esc(c.id)}</span>${o.contrato && o.contrato!=="Otro"?`<span class="tag alt">${esc(o.contrato)}</span>`:""}${o.modalidad?`<span class="tag alt">${esc(o.modalidad)}</span>`:""}</div>
       <h3>${esc(o.titulo)}</h3>
       <div class="company">${esc(o.empresa)}${lugar?` · ${esc(lugar)}`:""}</div>
+      ${o.dato?`<div class="dato"><span aria-hidden="true">⭐</span><span>${esc(o.dato.slice(0,120))}</span></div>`:""}
       <div class="foot"><span class="ago">${agoText(o.fecha)}</span>
         <div class="actions">
           <a class="share" data-k="compartir" data-i="${i}" href="https://wa.me/?text=${encodeURIComponent(shareText(o)+"\n\nMás ofertas en Workea Empleos: "+location.href.split("#")[0])}" target="_blank" rel="noopener" title="Compartir por WhatsApp">↗︎</a>
@@ -388,7 +426,7 @@ function buildResumen(){
     const {list}=practicasSemana();
     let txt=`🎓 *Sábado de prácticas*\nPrácticas profesionales abiertas esta semana (${list.length})\n\n`;
     if(!list.length) txt+=`Esta semana no hay prácticas nuevas cargadas.\n`;
-    list.forEach(o=>{ txt+=`• *${o.titulo}* – ${o.empresa}${o.comuna||o.region?` (${o.comuna||o.region})`:""}\n  ${safeLink(o.link)}\n`; });
+    list.forEach(o=>{ txt+=`• *${o.titulo}* – ${o.empresa}${o.comuna||o.region?` (${o.comuna||o.region})`:""}${o.dato?`\n  ⭐ ${o.dato}`:""}\n  ${safeLink(o.link)}\n`; });
     txt+=`\n📌 ¿Conoces a alguien que esté buscando práctica? ¡Compártele este mensaje! 🤝\n👀 Todas las prácticas en *Workea Empleos*: ${urlBase()}#practicas`;
     return txt;
   }
@@ -399,7 +437,7 @@ function buildResumen(){
   for(const c of CATEGORIAS.map(c=>c.id).concat(Object.keys(byCat))){
     if(!byCat[c]) continue;
     txt+=`\n${catInfo(c).emoji} *${c.toUpperCase()}*\n`;
-    byCat[c].forEach(o=>{ txt+=`• ${o.titulo} – ${o.empresa}${o.comuna?` (${o.comuna})`:""}\n  ${safeLink(o.link)}\n`; });
+    byCat[c].forEach(o=>{ txt+=`• ${o.titulo} – ${o.empresa}${o.comuna?` (${o.comuna})`:""}${o.dato?`\n  ⭐ ${o.dato}`:""}\n  ${safeLink(o.link)}\n`; });
     delete byCat[c];
   }
   txt+=`\n👀 Todas las ofertas en *Workea Empleos*: ${location.href.split("#")[0]}\n🔍 Analízalas antes de postular con Workea\n🤝 Comparte con quien esté buscando trabajo`;
