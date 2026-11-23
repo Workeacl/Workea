@@ -91,6 +91,8 @@
   .tag{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--brand-soft);color:var(--brand)}
   .tag.alt{background:#efeafd;color:#5a3fcf}
   .tag.new{background:#dcfbfe;color:#067a8a}
+  .tag.sinexp{background:#e3f6e8;color:#1c7a3a}
+  #fSinExp[aria-pressed="true"]{background:#1c7a3a;border-color:#1c7a3a;color:#fff}
   .card h3{margin:2px 0 0;font-size:17px;line-height:1.25}
   .company{color:var(--muted);font-size:14px}
   .dato{display:flex;gap:6px;align-items:flex-start;background:#fff7e6;border:1px solid #f5dfb3;color:#7a4b00;border-radius:9px;padding:7px 10px;font-size:14px;font-weight:600;line-height:1.35}
@@ -150,6 +152,7 @@
       <select id="fContrato" aria-label="Jornada"><option value="">Toda jornada</option></select>
       <select id="fModalidad" aria-label="Modalidad"><option value="">Presencial, híbrido o remoto</option></select>
       <select id="fRegion" aria-label="Región"><option value="">Todas las regiones</option></select>
+      <button class="chip" id="fSinExp" type="button" aria-pressed="false" hidden>🌱 Sin experiencia <span class="n" id="nSinExp"></span></button>
     </div>
   </div>
 </div>
@@ -240,7 +243,7 @@ function demoData(){
   return [
     {titulo:"Operario/a de bodega turno noche",dato:"Turno noche · Licencia clase D · $650.000",empresa:"Logística Ejemplo SpA",link:"https://example.com/oferta-1",categoria:"Operativos",contrato:"Full time",modalidad:"Presencial",region:"Metropolitana",comuna:"Pudahuel",fecha:h(2)},
     {titulo:"Práctica profesional Psicología Organizacional",empresa:"Consultora Ficticia",link:"https://example.com/oferta-2",categoria:"Prácticas profesionales",contrato:"",region:"Metropolitana",comuna:"Providencia",fecha:h(5)},
-    {titulo:"Reponedor/a fines de semana",empresa:"Supermercado Demo",link:"https://example.com/oferta-3",categoria:"Operativos",contrato:"Part-time o por horas",region:"Valparaíso",comuna:"Viña del Mar",fecha:h(8)},
+    {titulo:"Reponedor/a fines de semana",etiquetas:"Sin experiencia",empresa:"Supermercado Demo",link:"https://example.com/oferta-3",categoria:"Operativos",contrato:"Part-time o por horas",region:"Valparaíso",comuna:"Viña del Mar",fecha:h(8)},
     {titulo:"Ingeniero/a de procesos",empresa:"Industrias Modelo",link:"https://example.com/oferta-4",categoria:"Profesionales",contrato:"Full time",region:"Biobío",comuna:"Concepción",fecha:h(20)},
     {titulo:"Temporero/a packing de cerezas",empresa:"Agrícola Ejemplo",link:"https://example.com/oferta-5",categoria:"Operativos",contrato:"Temporada",region:"O'Higgins",comuna:"Rancagua",fecha:h(26)},
     {titulo:"Asistente administrativo/a",empresa:"Servicios Demo Ltda.",link:"https://example.com/oferta-6",categoria:"Administrativos",contrato:"Otro",region:"Metropolitana",comuna:"Santiago",fecha:h(30)},
@@ -282,6 +285,7 @@ const COLS = {
   comuna:["comuna","ciudad"],
   oculta:["ocultar","oculta","cerrada"],
   dato:["dato clave","destacado"],
+  etiquetas:["etiqueta"],
 };
 function hostName(u){ try{ return new URL(safeLink(u)).hostname.replace(/^www\./,""); }catch{ return ""; } }
 // Nombres amigables de portales conocidos
@@ -323,6 +327,7 @@ function mapRows(rows, needsApproval){
   return rows.slice(1).map(r=>{
     const o={}; for(const k in idx) o[k]= idx[k]>=0 ? (r[idx[k]]||"").trim() : "";
     o.fecha = parseFecha(o.fecha);
+    o.sinExp = /sin experiencia|no requiere experiencia|sin exp\b/i.test([o.etiquetas,o.dato,o.titulo].join(" "));
     // Solo el link es obligatorio: si falta título o empresa, se completa solo
     if(o.titulo && TITULO_INVALIDO.test(o.titulo.trim())) o.titulo = "";
     if(!o.titulo || !o.empresa){
@@ -343,7 +348,7 @@ function parseFecha(s){
 }
 
 // ---------------- Estado y render ----------------
-let DATA=[], state={cat:"",contrato:"",modalidad:"",region:"",q:""};
+let DATA=[], state={cat:"",contrato:"",modalidad:"",region:"",q:"",sinExp:false};
 const $=id=>document.getElementById(id);
 
 function catInfo(name){ return CATEGORIAS.find(c=>norm(c.id)===norm(name)) || {id:name||"Otras",emoji:"📌"}; }
@@ -362,6 +367,7 @@ function filtered(){
     (!state.contrato || norm(o.contrato).includes(norm(state.contrato))) &&
     (!state.region || norm(o.region)===norm(state.region)) &&
     (!state.modalidad || norm(o.modalidad).includes(norm(state.modalidad))) &&
+    (!state.sinExp || o.sinExp) &&
     (!q || norm([o.titulo,o.empresa,o.comuna,o.region,o.categoria].join(" ")).includes(q))
   );
 }
@@ -377,6 +383,9 @@ function renderChips(){
   }).join("");
 }
 function renderSelects(){
+  const nSE=DATA.filter(o=>o.sinExp).length;
+  $("fSinExp").hidden = nSE===0; $("nSinExp").textContent = nSE || "";
+  if(!nSE){ state.sinExp=false; $("fSinExp").setAttribute("aria-pressed","false"); }
   const regs=[...new Set(DATA.map(o=>o.region).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
   $("fRegion").innerHTML=`<option value="">Todas las regiones</option>`+regs.map(r=>`<option>${esc(r)}</option>`).join("");
   const present=new Set(DATA.flatMap(o=>o.contrato.split(/,\s*/)).filter(Boolean));
@@ -385,19 +394,19 @@ function renderSelects(){
   $("fModalidad").innerHTML=`<option value="">Presencial, híbrido o remoto</option>`+MODALIDADES.map(c=>`<option>${esc(c)}</option>`).join("");
 }
 function shareText(o){
-  return `${catInfo(o.categoria).emoji} *${o.titulo}*\n🏢 ${o.empresa}${o.comuna||o.region?`\n📍 ${[o.comuna,o.region].filter(Boolean).join(", ")}`:""}${o.contrato && o.contrato!=="Otro"?`\n🕒 ${o.contrato}`:""}${o.modalidad?` · ${o.modalidad}`:""}${o.dato?`\n⭐ ${o.dato}`:""}\n👉 ${safeLink(o.link)}`;
+  return `${catInfo(o.categoria).emoji} *${o.titulo}*\n🏢 ${o.empresa}${o.comuna||o.region?`\n📍 ${[o.comuna,o.region].filter(Boolean).join(", ")}`:""}${o.contrato && o.contrato!=="Otro"?`\n🕒 ${o.contrato}`:""}${o.modalidad?` · ${o.modalidad}`:""}${o.sinExp?`\n🌱 Sin experiencia`:""}${o.dato?`\n⭐ ${o.dato}`:""}\n👉 ${safeLink(o.link)}`;
 }
 let LAST=[];
 function renderGrid(){
   const list=filtered(); LAST=list;
-  $("count").textContent = `${list.length} oferta${list.length===1?"":"s"} ${state.cat||state.contrato||state.region||state.q?"con estos filtros":"publicadas"}`;
+  $("count").textContent = `${list.length} oferta${list.length===1?"":"s"} ${state.cat||state.contrato||state.region||state.q||state.sinExp?"con estos filtros":"publicadas"}`;
   $("empty").hidden = list.length>0;
   $("empty").textContent = DATA.length ? "No hay ofertas con esos filtros. Prueba con otra categoría." : "Estamos cargando nuevas ofertas. Vuelve pronto o únete al canal de WhatsApp para enterarte primero.";
   $("grid").innerHTML=list.map((o,i)=>{
     const c=catInfo(o.categoria), isNew=(Date.now()-new Date(o.fecha))<24*3600e3;
     const lugar=[o.comuna,o.region].filter(Boolean).join(", ");
     return `<article class="card">
-      <div class="tags">${isNew?`<span class="tag new">Nueva</span>`:""}<span class="tag">${c.emoji} ${esc(c.id)}</span>${o.contrato && o.contrato!=="Otro"?`<span class="tag alt">${esc(o.contrato)}</span>`:""}${o.modalidad?`<span class="tag alt">${esc(o.modalidad)}</span>`:""}</div>
+      <div class="tags">${isNew?`<span class="tag new">Nueva</span>`:""}<span class="tag">${c.emoji} ${esc(c.id)}</span>${o.contrato && o.contrato!=="Otro"?`<span class="tag alt">${esc(o.contrato)}</span>`:""}${o.modalidad?`<span class="tag alt">${esc(o.modalidad)}</span>`:""}${o.sinExp?`<span class="tag sinexp">🌱 Sin experiencia</span>`:""}</div>
       <h3>${esc(o.titulo)}</h3>
       <div class="company">${esc(o.empresa)}${lugar?` · ${esc(lugar)}`:""}</div>
       ${o.dato?`<div class="dato"><span aria-hidden="true">⭐</span><span>${esc(o.dato.slice(0,120))}</span></div>`:""}
@@ -437,7 +446,7 @@ function buildResumen(){
   for(const c of CATEGORIAS.map(c=>c.id).concat(Object.keys(byCat))){
     if(!byCat[c]) continue;
     txt+=`\n${catInfo(c).emoji} *${c.toUpperCase()}*\n`;
-    byCat[c].forEach(o=>{ txt+=`• ${o.titulo} – ${o.empresa}${o.comuna?` (${o.comuna})`:""}${o.dato?`\n  ⭐ ${o.dato}`:""}\n  ${safeLink(o.link)}\n`; });
+    byCat[c].forEach(o=>{ txt+=`• ${o.titulo} – ${o.empresa}${o.comuna?` (${o.comuna})`:""}${o.sinExp?` 🌱`:""}${o.dato?`\n  ⭐ ${o.dato}`:""}\n  ${safeLink(o.link)}\n`; });
     delete byCat[c];
   }
   txt+=`\n👀 Todas las ofertas en *Workea Empleos*: ${location.href.split("#")[0]}\n🔍 Analízalas antes de postular con Workea\n🤝 Comparte con quien esté buscando trabajo`;
@@ -554,6 +563,7 @@ $("chips").addEventListener("click",e=>{const b=e.target.closest(".chip"); if(!b
 $("fContrato").addEventListener("change",e=>{state.contrato=e.target.value; renderGrid();});
 $("fRegion").addEventListener("change",e=>{state.region=e.target.value; renderGrid();});
 $("fModalidad").addEventListener("change",e=>{state.modalidad=e.target.value; renderGrid();});
+$("fSinExp").addEventListener("click",()=>{ state.sinExp=!state.sinExp; $("fSinExp").setAttribute("aria-pressed",String(state.sinExp)); renderGrid(); });
 $("q").addEventListener("input",e=>{state.q=e.target.value; renderGrid();});
 $("btnResumen").addEventListener("click",()=>{ $("resumenTxt").value=buildResumen(); $("dlg").showModal(); });
 $("dlgClose").addEventListener("click",()=>$("dlg").close());
