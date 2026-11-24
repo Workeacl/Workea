@@ -28,6 +28,12 @@ async function registrarUsoDelCodigo(codigoLimpio, ip, ipsVistasActual, usosActu
 // "esencial_usos": cada uso ocupa un "cupo" guardado como fila "<ip>|1", "<ip>|2"...
 // Un cupo se libera cuando pasan 7 días desde que se usó.
 const ESENCIAL_MAX = 3;
+
+// Modelos de IA: el Informe Esencial (gratis) usa uno más económico; los pagados, el más completo.
+// Para volver atrás sin tocar código: en Vercel → Settings → Environment Variables,
+// crea MODELO_ESENCIAL con el valor claude-sonnet-4-6 y vuelve a publicar.
+const MODELO_ESENCIAL = process.env.MODELO_ESENCIAL || 'claude-haiku-5-5';
+const MODELO_PAGADO = process.env.MODELO_PAGADO || 'claude-sonnet-4-6';
 async function verificarLimiteEsencial(ip) {
   if (!ip) return { ok: true }; // si no hay IP disponible, no bloqueamos (caso raro)
 
@@ -307,7 +313,7 @@ Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: esencial ? MODELO_ESENCIAL : MODELO_PAGADO,
         max_tokens: esencial ? 1600 : 5500,
         system,
         tools: [tool],
