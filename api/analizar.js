@@ -305,34 +305,42 @@ Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`
   };
 
   try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: esencial ? MODELO_ESENCIAL : MODELO_PAGADO,
-        max_tokens: esencial ? 1600 : 5500,
-        system,
-        tools: [tool],
-        tool_choice: { type: 'tool', name: 'generar_analisis' },
-        messages: [{
-          role: 'user',
-          content: [
-            ...listaImagenes.map(im => ({ type: 'image', source: { type: 'base64', media_type: im.media_type, data: im.data } })),
-            ...(listaImagenes.length ? [{ type: 'text', text: 'Las imágenes anteriores son capturas de la oferta laboral: léelas como una oferta.' }] : []),
-            ...listaOfertas.map((o, i) => ({ type: 'text', text: `OFERTA LABORAL ${i + 1}:\n${o}` })),
-            { type: 'text', text: (esencial ? 'MODO ESENCIAL.\n\n' : '') + `CV DE LA PERSONA:\n${cv}\n\nGenera el análisis Workea.` }
-          ]
-        }]
-      })
-    });
-
-    const data = await r.json();
+    // Si el modelo económico falla (no disponible, cambio de nombre, etc.), se intenta
+    // automáticamente con el siguiente, para que la persona nunca quede sin su análisis.
+    const candidatos = esencial
+      ? [...new Set([MODELO_ESENCIAL, 'claude-haiku-4-5', MODELO_PAGADO])]
+      : [MODELO_PAGADO];
+    let r = null, data = null;
+    for (const modelo of candidatos) {
+      r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: modelo,
+          max_tokens: esencial ? 1600 : 5500,
+          system,
+          tools: [tool],
+          tool_choice: { type: 'tool', name: 'generar_analisis' },
+          messages: [{
+            role: 'user',
+            content: [
+              ...listaImagenes.map(im => ({ type: 'image', source: { type: 'base64', media_type: im.media_type, data: im.data } })),
+              ...(listaImagenes.length ? [{ type: 'text', text: 'Las imágenes anteriores son capturas de la oferta laboral: léelas como una oferta.' }] : []),
+              ...listaOfertas.map((o, i) => ({ type: 'text', text: `OFERTA LABORAL ${i + 1}:\n${o}` })),
+              { type: 'text', text: (esencial ? 'MODO ESENCIAL.\n\n' : '') + `CV DE LA PERSONA:\n${cv}\n\nGenera el análisis Workea.` }
+            ]
+          }]
+        })
+      });
+      data = await r.json();
+      if (r.ok) break;
+      console.error(`Error Anthropic con ${modelo}:`, JSON.stringify(data).substring(0, 300));
+    }
     if (!r.ok) {
-      console.error('Error Anthropic:', JSON.stringify(data).substring(0, 300));
       return res.status(502).json({ error: 'El servicio de análisis no respondió correctamente' });
     }
     if (data.stop_reason === 'max_tokens') {
