@@ -321,7 +321,7 @@ Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`
         },
         body: JSON.stringify({
           model: modelo,
-          max_tokens: esencial ? 1600 : 5500,
+          max_tokens: esencial ? 4000 : 5500,
           system,
           tools: [tool],
           tool_choice: { type: 'tool', name: 'generar_analisis' },
@@ -337,6 +337,11 @@ Los campos de "info" que no aparezcan en la oferta déjalos como string vacío.`
         })
       });
       data = await r.json();
+      // Si responde bien pero se cortó por largo, probamos con el siguiente modelo.
+      if (r.ok && data.stop_reason === 'max_tokens' && modelo !== candidatos[candidatos.length - 1]) {
+        console.error(`Respuesta cortada con ${modelo}, probando con el siguiente modelo`);
+        continue;
+      }
       if (r.ok) break;
       console.error(`Error Anthropic con ${modelo}:`, JSON.stringify(data).substring(0, 300));
     }
