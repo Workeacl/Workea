@@ -1411,7 +1411,13 @@ function cargarOfertaDesdeEmpleos(link){
   const err = document.getElementById('inputError');
   if(err && /Ya usaste/.test(err.textContent)){
     const dias = (err.textContent.match(/en (\d+) d[ií]a/)||[])[1] || 'unos';
-    err.innerHTML = '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tus 3 análisis gratis de esta semana. El próximo vuelve a estar disponible en ' + dias + ' día' + (dias==='1'?'':'s') + '. Mientras tanto, <a href="/empleos">sigue revisando ofertas en Workea Empleos</a>.</span></div>';
+    err.innerHTML = '<div class="error-box" style="background:var(--amber-bg);border-color:var(--amber-line);color:#7d5c10">🩵 <span>Ya usaste tus 3 análisis gratis de esta semana. El próximo vuelve a estar disponible en ' + dias + ' día' + (dias==='1'?'':'s') + '. Mientras tanto, <a href="/empleos">sigue revisando ofertas en Workea Empleos</a>.</span></div>' +
+      '<div style="margin-top:1rem;text-align:center"><a class="btn btn-primary" href="/empleos" style="text-decoration:none;display:inline-flex">← Volver a las ofertas</a></div>';
+    // Pantalla limpia: sin formulario, ejemplo ni código de acceso (venimos de Empleos y no hay cupos)
+    const scr = document.getElementById('scr-input');
+    scr.querySelectorAll('.tabs, .tab-panel, #demoBanner, #demoEjemploStrip, #realStrip, .actions').forEach(el => el.style.display = 'none');
+    const head = scr.querySelector('.screen-head');
+    if(head) head.innerHTML = '<h2>Vuelve pronto por tu próximo análisis</h2><p>Tus análisis gratis se renuevan cada semana.</p>';
     return;
   }
   setTab('text');
