@@ -85,37 +85,30 @@
 
   main.wrap{padding:16px 18px 72px}
   .meta{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-size:14px;margin-bottom:10px;flex-wrap:wrap}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
-  .job{background:#fff;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 2px rgba(10,20,48,.04),0 8px 24px rgba(10,20,48,.06);border:1px solid #edf1f7;transition:transform .15s, box-shadow .15s}
-  .job:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(10,20,48,.05),0 14px 32px rgba(10,20,48,.1)}
-  .job-head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
-  .emp{font-size:13px;color:var(--muted);font-weight:500;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-  .job h3{margin:4px 0 0;font-family:"Plus Jakarta Sans",Inter,sans-serif;font-size:18px;line-height:1.28;letter-spacing:-.01em;color:var(--ink)}
-  .logo{width:46px;height:46px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:"Plus Jakarta Sans",Inter,sans-serif;font-weight:800;font-size:17px}
-  .nueva{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#067a8a;background:#dcfbfe;border-radius:999px;padding:2px 8px}
-  .destacado{display:flex;gap:6px;align-items:flex-start;font-size:15px;font-weight:700;line-height:1.35}
-  .destacado .g{background:linear-gradient(100deg,#1999f1,#7b5cf0);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .destacado.plano{color:#4a5878;font-weight:600;font-size:14px}
-  .jmeta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:#4a5878}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px}
+  .job{background:#fff;border-radius:16px;padding:20px 20px 18px;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(10,20,48,.04),0 8px 24px rgba(10,20,48,.05);border:1px solid #edf1f7;transition:box-shadow .15s, border-color .15s}
+  .job:hover{border-color:#d6e1f0;box-shadow:0 2px 4px rgba(10,20,48,.05),0 14px 30px rgba(10,20,48,.09)}
+  .job-top{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px}
+  .emp{color:#4a5878;font-weight:600;text-transform:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cuando{color:var(--muted);white-space:nowrap;flex:none}
+  .nueva{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#067a8a;background:#dcfbfe;border-radius:999px;padding:3px 9px}
+  .nueva::before{content:"";width:6px;height:6px;border-radius:50%;background:#0fb5c9}
+  .job h3{margin:8px 0 10px;font-family:"Plus Jakarta Sans",Inter,sans-serif;font-size:18px;line-height:1.3;letter-spacing:-.01em;color:var(--ink)}
+  .jmeta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:#4a5878;margin-bottom:12px}
   .jmeta span{display:inline-flex;align-items:center;gap:5px}
   .jmeta svg{width:15px;height:15px;flex:none;color:#8a97b5}
-  .job-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-top:4px}
-  .pills{display:flex;gap:6px;flex-wrap:wrap}
-  .tag{font-size:11.5px;font-weight:700;padding:5px 10px;border-radius:999px;background:#eef0fd;color:#5a3fcf;letter-spacing:.01em}
+  .desc{margin:0 0 12px;font-size:13.5px;line-height:1.55;color:#5a6684;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .destacado{display:flex;gap:7px;align-items:flex-start;font-size:14px;font-weight:700;line-height:1.4;margin-bottom:12px;padding:9px 11px;border-radius:10px;background:#f4f2ff}
+  .destacado .g{color:#4a34c9}
+  .pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:2px}
+  .tag{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:#eef2f8;color:#4a5878}
   .tag.sinexp{background:#e3f6e8;color:#1c7a3a}
-  .lugar{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--ink)}
-  .lugar svg{width:15px;height:15px;color:#8a97b5}
-  .job-actions{display:grid;grid-template-columns:1fr 1.35fr 42px;gap:8px;border-top:1px solid #eef1f6;padding-top:14px}
-  .apply{display:flex;align-items:center;justify-content:center;white-space:nowrap;background:var(--ink);color:#fff;text-decoration:none;padding:10px 8px;border-radius:11px;font-weight:700;font-size:14px}
+  .job-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;border-top:1px solid #eef1f6;margin-top:14px;padding-top:14px}
+  .apply,.analyze{display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;text-decoration:none;padding:11px 10px;border-radius:11px;font-weight:700;font-size:14px}
+  .apply{background:var(--ink);color:#fff}
   .apply:hover{background:#1b2850}
-  .analyze{display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;text-decoration:none;padding:10px 8px;border-radius:11px;background:#eaf4fe;color:#0b6fbf;font-weight:700;font-size:14px}
+  .analyze{background:#eaf4fe;color:#0b6fbf}
   .analyze:hover{background:#dcedfd}
-  .share{display:flex;align-items:center;justify-content:center;width:42px;border-radius:11px;border:1px solid #e4e9f2;color:#25a366;text-decoration:none}
-  .share:hover{background:#f2fbf6}
-  .share svg{width:18px;height:18px}
-  .dato{display:flex;gap:6px;align-items:flex-start;background:#fff7e6;border:1px solid #f5dfb3;color:#7a4b00;border-radius:10px;padding:7px 10px;font-size:13.5px;font-weight:600;line-height:1.35}
-  .cuando{color:var(--muted);font-weight:400}
-  .desc{margin:0;font-size:13.5px;line-height:1.5;color:#5a6684;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   @media (max-width:720px){ .grid{grid-template-columns:1fr;gap:14px} .job{padding:18px} }
   .tips{margin:56px 0 0}
   .tips h2,.cta-canal h2{font-family:"Plus Jakarta Sans",Inter,sans-serif;font-size:22px;margin:0 0 4px}
@@ -444,28 +437,25 @@ function renderGrid(){
     const lugar=[o.comuna,o.region].filter(Boolean).join(", ");
     const emp=nombreEmpresa(o);
     const jornada=o.contrato && o.contrato!=="Otro" ? o.contrato : "";
-    const tags=[];
-    if(jornada) tags.push(`<span class="tag">${esc(jornada)}</span>`);
-    if(o.modalidad) tags.push(`<span class="tag">${esc(o.modalidad)}</span>`);
-    if(o.sinExp) tags.push(`<span class="tag sinexp">🌱 Sin experiencia</span>`);
+    const pills=[`<span class="tag">${c.emoji} ${esc(c.id)}</span>`];
+    if(o.sinExp) pills.push(`<span class="tag sinexp">🌱 Sin experiencia</span>`);
     return `<article class="job">
-      <div class="job-head">
-        <div>
-          <div class="emp">${esc(o.empresa)}${isNew?`<span class="nueva">Nueva</span>`:`<span class="cuando">· ${esc(agoText(o.fecha).toLowerCase())}</span>`}</div>
-          <h3>${esc(tituloLegible(o.titulo))}</h3>
-        </div>
-        <div class="logo" style="background:${colorDe(emp)}" aria-hidden="true">${esc(iniciales(emp))}</div>
+      <div class="job-top">
+        <span class="emp" title="${esc(o.empresa)}">${esc(o.empresa)}</span>
+        ${isNew?`<span class="nueva">Nueva</span>`:`<span class="cuando">${esc(agoText(o.fecha))}</span>`}
+      </div>
+      <h3>${esc(tituloLegible(o.titulo))}</h3>
+      <div class="jmeta">
+        ${lugar?`<span>${ICO.pin}${esc(o.comuna||o.region)}</span>`:""}
+        ${jornada?`<span>${ICO.reloj}${esc(jornada)}</span>`:""}
+        ${o.modalidad?`<span>${ICO.casa}${esc(o.modalidad)}</span>`:""}
       </div>
       ${o.desc?`<p class="desc">${esc(o.desc.slice(0,240))}</p>`:""}
-      ${o.dato?`<div class="destacado"><span>⭐</span><span class="g">${esc(o.dato.slice(0,120))}</span></div>`:`<div class="destacado plano"><span>${c.emoji}</span><span>${esc(c.id)}</span></div>`}
-      <div class="job-foot">
-        <div class="pills">${tags.join("")}</div>
-        ${lugar?`<span class="lugar">${ICO.pin}${esc(o.comuna||o.region)}</span>`:""}
-      </div>
+      ${o.dato?`<div class="destacado"><span>⭐</span><span class="g">${esc(o.dato.slice(0,120))}</span></div>`:""}
+      <div class="pills">${pills.join("")}</div>
       <div class="job-actions">
         <a class="apply" data-k="postular" data-i="${i}" href="${esc(safeLink(o.link))}" target="_blank" rel="noopener">Postular</a>
         <a class="analyze" data-k="analizar" data-i="${i}" href="${esc(WORKEA_URL+"?oferta="+encodeURIComponent(safeLink(o.link))+"&utm_source=empleos")}" target="_blank" rel="noopener" title="Compara la oferta con tu CV · hasta 3 análisis gratis por semana">🔍 Analizar gratis</a>
-        <a class="share" data-k="compartir" data-i="${i}" href="https://wa.me/?text=${encodeURIComponent(shareText(o)+"\n\nMás ofertas en Workea Empleos: "+location.href.split("#")[0])}" target="_blank" rel="noopener" title="Compartir por WhatsApp" aria-label="Compartir por WhatsApp">${ICO.wsp}</a>
       </div>
     </article>`;
   }).join("");
