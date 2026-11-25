@@ -422,6 +422,9 @@ function iniciales(nombre){
 function colorDe(nombre){ let x=0; for(const ch of nombre) x=(x*31+ch.charCodeAt(0))>>>0; return PALETA[x%PALETA.length]; }
 // "PROMOTOR DE PERFUMERIA FULL TIME" → "Promotor de Perfumeria Full Time"
 function tituloLegible(t){
+  // Quita códigos numéricos del portal al inicio ("6154353 vendedor/a…") y pone mayúscula inicial
+  t=String(t||"").replace(/^\s*(?:[A-Z]{0,3}-?\d{4,}[\s\-–:|.]*)+/,"").trim();
+  if(t) t=t.charAt(0).toUpperCase()+t.slice(1);
   const letras=(t.match(/[A-Za-zÁÉÍÓÚÑáéíóúñ]/g)||[]), mayus=(t.match(/[A-ZÁÉÍÓÚÑ]/g)||[]);
   if(letras.length<4 || mayus.length/letras.length<0.7) return t;
   const chicas=/^(de|del|la|el|los|las|y|o|en|a|para|con|por|al)$/;
