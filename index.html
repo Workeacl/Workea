@@ -414,6 +414,16 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
 @media (pointer:coarse){ footer a{ display:inline-block; padding:.55rem 0; } }
 .modo-empleos #realStrip a{display:none}
+.modo-empleos #stepper,.modo-empleos #stepperMobile{display:none}
+.guia-pasos{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.9rem}
+.guia-pasos span{display:inline-flex;align-items:center;gap:.35rem;padding:.4rem .8rem;border-radius:999px;font-size:.88rem;font-weight:600;background:#eef0f6;color:#5b6478}
+.guia-pasos span.ok{background:#e3f6ec;color:#1f7a4d}
+.guia-pasos span.act{background:var(--brand-tint);color:var(--ink,#111);box-shadow:inset 0 0 0 1.5px var(--brand,#6d5df6)}
+#fbFlotante{position:fixed;left:8px;right:8px;margin:0 auto;width:fit-content;max-width:calc(100% - 16px);flex-wrap:wrap;justify-content:center;border-radius:18px;bottom:16px;z-index:60;background:#fff;border:1px solid var(--line);border-radius:999px;box-shadow:0 8px 28px rgba(15,20,40,.18);padding:.5rem .6rem .5rem 1rem;display:flex;align-items:center;gap:.5rem;font-size:.92rem;font-size:.9rem}
+#fbFlotante span{white-space:nowrap}
+#fbFlotante button{white-space:nowrap;border:0;border-radius:999px;padding:.45rem .8rem;font:inherit;font-weight:600;cursor:pointer;background:#eef0f6}
+#fbFlotante .x{background:none;color:#8a90a0;padding:.3rem .5rem}
+@media print{#fbFlotante{display:none!important}}
 </style>
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -1403,6 +1413,39 @@ function feedbackEmpleos(voto, btn, conTexto){
   document.getElementById('fbExtra').classList.remove('hidden');
 }
 
+function guiaPasos(n){
+  const p=[['Oferta','📄'],['Tu CV','👤'],['Tu análisis','✨']];
+  return '<div class="guia-pasos">'+p.map((x,i)=>'<span class="'+(i<n?'ok':(i===n?'act':''))+'">'+(i<n?'✓':x[1])+' '+(i+1)+'. '+x[0]+'</span>').join('')+'</div>';
+}
+function marcarEmpleos(tipo){
+  if(!MODO_EMPLEOS) return;
+  const body = JSON.stringify({ t:tipo, c:'', ti:'', em:'', l: OFERTA_EMPLEOS });
+  try{ if(!(navigator.sendBeacon && navigator.sendBeacon(FEEDBACK_URL, new Blob([body],{type:'text/plain'})))) fetch(FEEDBACK_URL,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain'},body}); }catch(e){}
+}
+/* Pregunta flotante "¿Te sirvió?" para quien no llega al final del informe */
+function activarFeedbackFlotante(){
+  if(!MODO_EMPLEOS || document.getElementById('fbFlotante')) return;
+  let mostrado=false;
+  const mostrar=()=>{
+    if(mostrado || !document.getElementById('fbEmpleos') || window._fbVoto) return;
+    mostrado=true;
+    const d=document.createElement('div'); d.id='fbFlotante';
+    d.innerHTML='<span>¿Te sirvió el análisis?</span><button type="button" data-v="si">👍 Sí</button><button type="button" data-v="no">👎 No mucho</button><button type="button" class="x" aria-label="Cerrar">✕</button>';
+    d.addEventListener('click',ev=>{
+      const b=ev.target.closest('button'); if(!b) return;
+      if(b.dataset.v){
+        const abajo=[...document.querySelectorAll('#fbEmpleos button')].find(x=>(x.getAttribute('onclick')||'').indexOf("'"+b.dataset.v+"'")>-1);
+        if(abajo) feedbackEmpleos(b.dataset.v, abajo);
+        d.innerHTML='<span>✅ ¡Gracias! Si quieres, déjanos un comentario al final del informe.</span>';
+        setTimeout(()=>d.remove(),3500);
+      } else d.remove();
+    });
+    document.body.appendChild(d);
+  };
+  setTimeout(mostrar,25000);
+  window.addEventListener('scroll',function f(){ if(window.scrollY>window.innerHeight*1.2){ mostrar(); window.removeEventListener('scroll',f);} },{passive:true});
+}
+
 function cargarOfertaDesdeEmpleos(link){
   if(!/^https?:\/\//i.test(link)) return startEsencial();
   MODO_EMPLEOS = true; OFERTA_EMPLEOS = link;
@@ -1421,6 +1464,17 @@ function cargarOfertaDesdeEmpleos(link){
     return;
   }
   setTab('text');
+  const head1 = document.querySelector('#scr-input .screen-head');
+  if(head1) head1.innerHTML = '<h2>Analiza esta oferta gratis</h2><p>Son solo 2 pasos: la oferta ya la cargamos por ti y luego subes tu CV. En alrededor de 1 minuto sabrás qué tanto calzas con el cargo y qué destacar al postular.</p>' + guiaPasos(0);
+  const quedan = ESENCIAL_MAX - usosEsencial().length;
+  const st = document.getElementById('realStrip');
+  if(st) st.innerHTML = '<p>🩵 <b>Es gratis.</b> Te ' + (quedan===1?'queda 1 análisis':'quedan '+quedan+' análisis') + ' esta semana.</p>';
+  const bA = document.getElementById('btnAnalyze'); if(bA) bA.textContent = 'Siguiente: subir mi CV →';
+  const cvHead = document.querySelector('#scr-cv .screen-head');
+  if(cvHead) cvHead.innerHTML = '<h2>Último paso: tu CV</h2><p>Súbelo en PDF o pega su contenido. Workea lo compara con la oferta usando solo lo que aparece en tu CV: no inventa ni asume nada.</p>' + guiaPasos(1);
+  const cvDemo = document.querySelector('#scr-cv .demo-strip'); if(cvDemo) cvDemo.style.display = 'none';
+  const cvBack = document.querySelector('#scr-cv .actions .btn-ghost'); if(cvBack){ cvBack.textContent = '← Volver a la oferta'; cvBack.setAttribute('onclick',"showScreen('scr-input',0)"); }
+  const bC = document.getElementById('btnCompare'); if(bC) bC.textContent = 'Ver mi análisis gratis →';
   ['demoBanner','demoEjemploStrip'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
   const linkSeguro = link.replace(/"/g,'%22').replace(/</g,'%3C').replace(/>/g,'%3E');
   const panel = document.getElementById('tab-text');
@@ -1794,6 +1848,7 @@ function startOfferFlow(){
   }
   offerPayload = { ofertas: textos, imagenes: realShots.slice(0,2) };
   showScreen('scr-cv',2);
+  if(!window._marcoCv){ window._marcoCv=1; marcarEmpleos('paso_cv'); }
 }
 
 function startCompare(){
@@ -1826,7 +1881,8 @@ async function runRealAnalysis(oferta, cv){
     bar.style.width='100%';
     if(modoPlan==='esencial') registrarUsoEsencial();
     guardarCvSiCorresponde(cv);
-    setTimeout(()=>{ renderResults(data); },400);
+    if(modoPlan==='esencial') marcarEmpleos('terminado');
+    setTimeout(()=>{ renderResults(data); activarFeedbackFlotante(); },400);
   }catch(e){
     clearInterval(iv);
     document.getElementById('scr-loading').classList.add('hidden');
